@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="buildfire" >
+<head>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../../../../styles/bootstrap.css">
+    <link rel="stylesheet" href="../../../../styles/siteIcons.css">
+    <link rel="stylesheet" href="../../../../styles/appStyle.css">
+    <link rel="stylesheet" href="../../../../styles/helper.css">
+    
+	<!-- jQuery & Owl Carousel -->
+	<script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>    
+	<script src="../../../../scripts/owlCarousel/owlCarousel.js"></script>
+    <link rel="stylesheet" href="../../../../scripts/owlCarousel/owlCarousel.css">
+
+    <!-- Meta -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<script type="text/javascript" charset="utf-8">
+	$(function(){
+		var slides = $('.plugin-slider .plugin-slide').length;
+		
+		// Slider needs at least 2 slides or you'll get an error.
+		if(slides > 1){
+			$('.plugin-slider').owlCarousel({
+				loop:true,
+				nav:false,
+				items:1
+			});	
+		}
+	})
+</script>
+<div class="holder padding-zero">
+	<div class="media-center-plugin layout3">
+		<div class="plugin-banner clearfix border-bottom-grey">
+			<div class="plugin-slider text-center">
+				<div class="plugin-slide">
+					<img src="http://www.placehold.it/1280x720.jpg">
+				</div>
+				<div class="plugin-slide">
+					<img src="http://www.placehold.it/1280x720.jpg">
+				</div>
+				<div class="plugin-slide">
+					<img src="http://www.placehold.it/1280x720.jpg">
+				</div>
+			</div>
+		</div>
+		<div class="padded text-left">
+			<p class="margin-bottom-zero">WYSIWYG Editor.</p>
+		</div>
+		<div class="plugin-banner clearfix border-bottom-grey">
+			<div class="plugin-slide text-center">
+				<img src="http://www.placehold.it/1280x720.jpg">
+			</div>
+		</div>
+		<div class="padded text-left">
+			<a class="text-primary">This is a title</a>
+			<p class="margin-bottom-zero">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+			<span class="list-item-date">Dec 21, 2014</span>
+		</div>
+		<div class="plugin-banner clearfix border-bottom-grey">
+			<div class="plugin-slide text-center">
+				<img src="http://www.placehold.it/1280x720.jpg">
+			</div>
+		</div>
+		<div class="padded text-left">
+			<a class="text-primary">This is a title</a>
+			<p class="margin-bottom-zero">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+		</div>
+		<div class="plugin-banner clearfix border-bottom-grey">
+			<div class="plugin-slide text-center">
+				<img src="http://www.placehold.it/1280x720.jpg">
+			</div>
+		</div>
+		<div class="padded text-left">
+			<a class="text-primary">This is a title</a>
+			<p class="margin-bottom-zero">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+		</div>
+	</div>
+</div>
+</html>
