@@ -1,0 +1,35 @@
+{
+  "name": "media-center-plugin",
+  "version": "0.0.0",
+  "authors": [
+    "deepakshrma <deepak.m.shrma@gmail.com>",
+    "vineetasharma <vineetasharma18791@gmail.com>"
+  ],
+  "description": "\"media-center-plugin\"",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "media-center-plugin",
+    "testing",
+    "buildfire",
+    "karma",
+    "jasmine\""
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "angular": "~1.4.2",
+    "angular-mocks": "~1.4.2",
+    "jquery": "~2.1.4",
+    "angular-bootstrap": "~0.13.3",
+    "angular-route": "~1.4.0",
+    "angular-animate": "~1.4.3"
+  }
+}
