@@ -8,9 +8,24 @@
         //injected ui.bootstrap for angular bootstrap component
         //injected ui.sortable for manual ordering of list
         //ngClipboard to provide copytoclipboard feature
-        .controller('HomeCtrl', function ($scope) {
-            var Home = this;
-            Home.firstName = "John";
-            Home.lastName = "Doe";
-        });
+        .config(['$routeProvider', 'ngClipProvider', function ($routeProvider, ngClipProvider) {
+            ngClipProvider.setPath("//cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.1.6/ZeroClipboard.swf");
+            $routeProvider
+                .when('/', {
+                    templateUrl: 'templates/home.html',
+                    controllerAs: 'ContentHome',
+                    controller: 'ContentHomeCtrl'
+                })
+                .when('/media', {
+                    templateUrl: 'templates/media.html',
+                    controllerAs: 'ContentMedia',
+                    controller: 'ContentMediaCtrl'
+                })
+                .when('/media/:itemId', {
+                    templateUrl: 'templates/media.html',
+                    controllerAs: 'ContentMedia',
+                    controller: 'ContentMediaCtrl'
+                })
+                .otherwise('/');
+        }])
 })(window.angular, window.buildfire);
