@@ -1,5 +1,4 @@
 (function (angular, URL, navigator) {
-    //created peoplePluginContent module
     angular
         .module('bngCsv', [])
         .provider("$csv", function () {

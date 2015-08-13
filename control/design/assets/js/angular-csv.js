@@ -1,5 +1,5 @@
 (function (angular, URL, navigator) {
-    //created peoplePluginContent module
+    //created bngCsv module
     angular
         .module('bngCsv', [])
         .provider("$csv", function () {

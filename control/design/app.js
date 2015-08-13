@@ -1,7 +1,7 @@
 'use strict';
 
 (function (angular, buildfire) {
-    //created peoplePluginContent module
+    //created mediaCenterContent module
     angular
         .module('mediaCenterContent', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ui.sortable', 'ngClipboard', 'infinite-scroll', "bngCsv"])
         //injected ngRoute for routing

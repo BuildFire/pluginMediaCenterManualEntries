@@ -1,16 +1,37 @@
 'use strict';
 
 (function (angular, buildfire) {
-    //created peoplePluginContent module
+    //created mediaCenterWidget module
     angular
-        .module('mediaCenterContent', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ui.sortable', 'ngClipboard', 'infinite-scroll', "bngCsv"])
+        .module('mediaCenterWidget', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ui.sortable', 'ngClipboard', 'infinite-scroll', "bngCsv"])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component
         //injected ui.sortable for manual ordering of list
         //ngClipboard to provide copytoclipboard feature
-        .controller('HomeCtrl', function ($scope) {
-            var Home = this;
-            Home.firstName = "John";
-            Home.lastName = "Doe";
+        .config(['$routeProvider', function ($routeProvider) {
+
+            /**
+             * Disable the pull down refresh
+             */
+            //buildfire.datastore.disableRefresh();
+
+            $routeProvider
+                .when('/', {
+                    templateUrl: 'templates/home.html',
+                    controllerAs: 'WidgetHome',
+                    controller: 'WidgetHomeCtrl'
+                })
+                .when('/media/:id', {
+                    templateUrl: 'templates/media.html',
+                    controllerAs: 'WidgetMedia',
+                    controller: 'WidgetMediaCtrl'
+                })
+                .otherwise('/');
+        }])
+        .run(function ($rootScope, $location) {
+            /* Buildfire.messaging.onReceivedMessage = function(message){
+             $location.path('/people/'+ message.id);
+             };*/
         });
+
 })(window.angular, window.buildfire);
