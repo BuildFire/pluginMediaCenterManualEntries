@@ -1,30 +1,42 @@
 <!DOCTYPE html>
-<html ng-app="mediaCenterManualEntriesPlugin">
+<html ng-app="mediaCenterContent">
 <head lang="en">
 	<!-- CSS -->
     <link href="../../../../styles/helper.css" rel="stylesheet">
     <link href="../../../../styles/siteIcons.css" rel="stylesheet">
-    
-	<!-- JS -->
-    <script src="../../../../scripts/buildfire.js"></script>
-    <script src="../../../../scripts/angular/angular.min.js"></script>
-    <script src="../../../../scripts/angular/angular.min.js"></script>
 
+    <!--SDK js-->
+    <script src="../../../../scripts/buildfire.js"></script>
+    <script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+    <script src="../../../../scripts/angular/angular.min.js"></script>
+    <script src="../../../../scripts/angular/angular-route.min.js"></script>
+    <script src="../../../../scripts/angular/angular-animate.min.js"></script>
+    <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+
+<!--
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/ZeroClipboard.min.js"></script>
+    <script src="js/sortable.js"></script>
+    <script src="js/ng-clip.min.js"></script>
+    <script src="js/ng-infinite-scroll.js"></script>
+    <script src="app.js"></script>
+    <script src="js/angular-csv.js"></script>
+    -->
+    <!-- JS -->
+    <script src="assets/js/jquery-ui.min.js"></script>
+    <script src="assets/js/sortable.js"></script>
+    <script src="assets/js/ng-infinite-scroll.js"></script>
+    <script src="assets/js/angular-csv.js"></script>
+    <script src="assets/js/ng-clip.min.js"></script>
+    <script src="assets/js/ZeroClipboard.min.js"></script>
+
+    <script src="app.js"></script>
+    <script src="controllers/content.home.controller.js"></script>
     <meta charset="UTF-8">
 </head>
 <body>
 <div class="main_view">
 	<div class="content" ng-view=""></div>
 </div>
-
-<script>
-    var mediaCenterManualEntriesPluginApp = angular.module('mediaCenterManualEntriesPlugin');
-
-    mediaCenterManualEntriesPluginApp.controller('mediaCenterManualEntriesPluginCtrl', ['$scope', function ($scope) {
-
-
-    }]);
-    
-</script>
 </body>
 </html>
