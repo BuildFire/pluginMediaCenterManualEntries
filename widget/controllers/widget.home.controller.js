@@ -1,4 +1,4 @@
-(function (angular, window) {
+(function (angular) {
     angular
         .module('mediaCenterWidget')
         .controller('WidgetHomeCtrl', ['$scope', '$window', function ($scope, $window) {
@@ -8,5 +8,6 @@
                     listLayout: 'list-1'
                 }
             }
+            console.log(WidgetHome.data)
         }]);
-})(window.angular, window);
+})(window.angular, undefined);
