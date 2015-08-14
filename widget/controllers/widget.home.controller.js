@@ -1,9 +1,10 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetHomeCtrl', ['$scope', '$window', 'MediaCenter', function ($scope, $window, MediaCenter) {
+        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', function ($scope, $window, DB, COLLECTIONS) {
             var WidgetHome = this;
             WidgetHome.media = {};
+            var MediaCenter = new DB(COLLECTIONS.MediaCenter)
             MediaCenter.get().then(BootStrap, showDummy)
             function BootStrap(media) {
                 WidgetHome.media = media;

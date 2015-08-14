@@ -1,5 +1,9 @@
 describe('mediaCenterWidget: Services', function () {
+    var COLLECTIONS;
     beforeEach(module('mediaCenterWidget'));
+    beforeEach(inject(function ($injector) {
+        COLLECTIONS = $injector.get('COLLECTIONS');
+    }));
     describe('Buildfire service', function () {
         var Buildfire;
         beforeEach(inject(
@@ -11,13 +15,15 @@ describe('mediaCenterWidget: Services', function () {
         });
     });
     describe('MediaCenter service', function () {
-        var MediaCenter;
+        var DB, MediaCenter;
         beforeEach(inject(
-            function (_MediaCenter_) {
-                MediaCenter = _MediaCenter_;
+            function (_DB_) {
+                DB = _DB_;
+                MediaCenter = new DB(COLLECTIONS.MediaCenter);
             }));
         it('MediaCenter should exists', function () {
             expect(MediaCenter).toBeDefined();
+            expect(MediaCenter._tagName).toEqual(COLLECTIONS.MediaCenter);
         });
         it('MediaCenter methods should exists', function () {
             expect(MediaCenter.get).toBeDefined();
@@ -26,6 +32,26 @@ describe('mediaCenterWidget: Services', function () {
             expect(MediaCenter.update).toBeDefined();
             expect(MediaCenter.delete).toBeDefined();
             expect(MediaCenter.insert).toBeDefined();
+        });
+    });
+    describe('MediaContent service', function () {
+        var DB, MediaContent;
+        beforeEach(inject(
+            function (_DB_) {
+                DB = _DB_;
+                MediaContent = new DB(COLLECTIONS.MediaContent);
+            }));
+        it('MediaContent should exists', function () {
+            expect(MediaContent).toBeDefined();
+            expect(MediaContent._tagName).toEqual(COLLECTIONS.MediaContent);
+        });
+        it('MediaCenter methods should exists', function () {
+            expect(MediaContent.get).toBeDefined();
+            expect(MediaContent.find).toBeDefined();
+            expect(MediaContent.save).toBeDefined();
+            expect(MediaContent.update).toBeDefined();
+            expect(MediaContent.delete).toBeDefined();
+            expect(MediaContent.insert).toBeDefined();
         });
     });
 });

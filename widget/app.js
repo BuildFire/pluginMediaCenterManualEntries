@@ -3,7 +3,13 @@
 (function (angular, buildfire) {
     //created mediaCenterWidget module
     angular
-        .module('mediaCenterWidget', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'infinite-scroll'])
+        .module('mediaCenterWidget', [
+            'mediaCenterEnums',
+            'mediaCenterServices',
+            'ngAnimate',
+            'ngRoute',
+            'ui.bootstrap',
+            'infinite-scroll'])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component
         //injected ui.sortable for manual ordering of list

@@ -1,6 +1,6 @@
 (function (angular) {
     angular
-        .module('mediaCenterWidget')
+        .module('mediaCenterEnums', [])
         .constant('CODES', {
             NOT_FOUND: 'NOTFOUND',
             SUCCESS: 'SUCCESS'
@@ -17,9 +17,12 @@
         .constant('EVENTS', {
             ROUTE_CHANGE: "ROUTE_CHANGE"
         })
+        .constant('COLLECTIONS', {
+            MediaContent: "MediaContent",
+            MediaCenter: "MediaCenter"
+        })
         .constant('PATHS', {
             MEDIA: "MEDIA",
             HOME: "HOME"
         });
-
 })(window.angular, undefined);
