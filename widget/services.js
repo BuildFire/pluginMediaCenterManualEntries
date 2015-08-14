@@ -1,12 +1,47 @@
 'use strict';
 
-(function (angular, buildfire) {
+(function (angular, buildfire, location) {
     //created mediaCenterWidget module
     angular
         .module('mediaCenterWidget')
         .provider('Buildfire', [function () {
             this.$get = function () {
                 return buildfire;
+            }
+        }])
+        .factory('Location', [function () {
+            var _location = location;
+            return {
+                go: function (path) {
+                    _location.href = path;
+                },
+                goToHome: function () {
+                    _location.href = _location.href.substr(0, _location.href.indexOf('#'));
+                }
+            };
+        }])
+        .factory('Orders', [function () {
+            var ordersMap = {
+                Manually: "Manually",
+                Newest: " Newest",
+                Oldest: " Oldest",
+                Most: " Oldest",
+                Least: " Oldest"
+            }
+            var orders = [
+                {id: 1, name: "Manually", value: "Manually"},
+                {id: 1, name: "Newest", value: "Newest"},
+                {id: 1, name: "Oldest", value: "Oldest"},
+                {id: 1, name: "Most", value: "Most Items"},
+                {id: 1, name: "Least", value: "Least Items"}
+            ];
+            return {
+                ordersMap: ordersMap,
+                getOrder: function (name) {
+                    return orders.filter(function (order) {
+                        return order.name === name;
+                    })[0];
+                }
             }
         }])
         .factory("MediaCenter", ['Buildfire', '$q', 'MESSAGES', 'CODES', function (Buildfire, $q, MESSAGES, CODES) {
@@ -129,4 +164,4 @@
                 }
             }
         }]);
-})(window.angular, window.buildfire);
+})(window.angular, window.buildfire, window.location);

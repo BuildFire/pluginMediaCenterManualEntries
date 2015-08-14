@@ -13,5 +13,13 @@
                 DATA_NOT_DEFINED: "Data is not defined",
                 OPTION_REQUIRES: "Requires options"
             }
+        })
+        .constant('EVENTS', {
+            ROUTE_CHANGE: "ROUTE_CHANGE"
+        })
+        .constant('PATHS', {
+            MEDIA: "MEDIA",
+            HOME: "HOME"
         });
+
 })(window.angular, undefined);

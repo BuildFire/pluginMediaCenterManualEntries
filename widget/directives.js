@@ -31,3 +31,48 @@
  <video videojs class="video-js vjs-default-skin vjs-controls-enabled vjs-has-started vjs-paused vjs-user-inactive" ng-model="video">
  </video>
  */
+(function (angular) {
+    angular
+        .module('mediaCenterWidget')
+        .directive('imageCarousel', function () {
+            return {
+                restrict: 'A',
+                link: function (scope, elem, attrs) {
+                    scope.carousel = null;
+                    scope.isCarouselInitiated = false;
+                    function initCarousel() {
+                        scope.carousel = null;
+                        setTimeout(function () {
+                            var obj = {
+                                'items': 1,
+                                'slideSpeed': 300,
+                                'dots': true,
+                                'autoplay': true
+                            };
+
+                            var totalImages = parseInt(attrs.imageCarousel, 10);
+                            if (totalImages) {
+                                if (totalImages > 1) {
+                                    obj['loop'] = true;
+                                }
+                                scope.carousel = $(elem).owlCarousel(obj);
+                                scope.isCarouselInitiated = true;
+                            }
+                            scope.$apply();
+                        }, 100);
+                    }
+                    initCarousel();
+                    scope.$watch("imagesUpdated", function (newVal, oldVal) {
+                        if (newVal) {
+                            if (scope.isCarouselInitiated) {
+                                scope.carousel.trigger("destroy.owl.carousel");
+                                scope.isCarouselInitiated = false;
+                            }
+                            $(elem).find(".owl-stage-outer").remove();
+                            initCarousel();
+                        }
+                    });
+                }
+            }
+        });
+})(window.angular, undefined);
