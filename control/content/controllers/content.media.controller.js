@@ -1,7 +1,7 @@
 (function (angular) {
     angular
         .module('mediaCenterContent')
-        .controller('ContentMediaCtrl', ['$scope', '$window','Buildfire','MediaContent','$routeParams',function ($scope, $window,Buildfire,MediaContent,$routeParams) {
+        .controller('ContentMediaCtrl', ['$scope', '$window','Buildfire','MediaContent','$routeParams','Location',function ($scope, $window,Buildfire,MediaContent,$routeParams,Location) {
             var ContentMedia = this;
             ContentMedia.data = {};
 
@@ -11,7 +11,6 @@
                     return console.error('Error:', error);
                 }
                 if (result.selectedFiles && result.selectedFiles.length) {
-                    console.log(result.selectedFiles);
                     ContentMedia.data.topImage = result.selectedFiles[0];
                     $scope.$digest();
                 }
@@ -30,7 +29,6 @@
                         return console.error('Error:', error);
                     }
                     if (result.selectedFiles && result.selectedFiles.length) {
-                        console.log(result.selectedFiles);
                         ContentMedia.data.image = result.selectedFiles[0];
                         $scope.$digest();
                     }
@@ -56,6 +54,7 @@
                     MediaContent.update(ContentMedia.data.id);
                 }
                 MediaContent.insert(ContentMedia.data).then(function(data){
+                    Location.goToHome();
                 },function(err){
                     console.error('---------------Error while inserting data------------',err);
                 });
