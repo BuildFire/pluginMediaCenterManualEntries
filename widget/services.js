@@ -9,109 +9,123 @@
                 return buildfire;
             }
         }])
-        .factory("MediaCenter", ['Buildfire', 'MESSAGES', 'CODES', function (Buildfire, MESSAGES, CODES) {
+        .factory("MediaCenter", ['Buildfire', '$q', 'MESSAGES', 'CODES', function (Buildfire, $q, MESSAGES, CODES) {
             var _tagName = "MediaCenter";
             return {
-                get: function (callback) {
-                    if (typeof callback != 'function') {
-                        return callback(new Error(MESSAGES.ERROR.NOT_FOND));
-                    }
+                get: function () {
+                    var deferred = $q.defer();
                     Buildfire.datastore.get(_tagName, function (err, result) {
                         if (err) {
-                            return callback(err);
+                            return deferred.reject(err);
                         }
                         else if (result && result.data) {
-                            return callback(err, result);
+                            return deferred.resolve(result);
                         } else {
-                            return callback(new Error(MESSAGES.ERROR.NOT_FOND));
+                            return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOND));
                         }
                     });
+                    return deferred.promise;
                 },
-                insert: function (items, callback) {
+                insert: function (items) {
+                    var deferred = $q.defer();
                     if (typeof items == 'undefined') {
-                        return callback(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
-                    }
-                    if (typeof callback != 'function') {
-                        return callback(new Error(MESSAGES.ERROR.CALLBACK_NOT_DEFINED));
+                        return deferred.reject(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
                     }
                     if (Array.isArray(items)) {
-                        Buildfire.datastore.bulkInsert(items, _tagName, function (err, data) {
+                        Buildfire.datastore.bulkInsert(items, _tagName, function (err, result) {
                             if (err) {
-                                return callback(err);
+                                return deferred.reject(err);
                             }
                             else if (result) {
-                                return callback(err, result);
+                                return deferred.resolve(result);
                             } else {
-                                return callback(new Error(MESSAGES.ERROR.NOT_FOND));
+                                return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOND));
                             }
                         });
                     } else {
                         Buildfire.datastore.insert(items, _tagName, false, function (err, result) {
                             if (err) {
-                                return callback(err);
+                                return deferred.reject(err);
                             }
                             else if (result) {
-                                return callback(err, result);
+                                return deferred.resolve(result);
                             } else {
-                                return callback(new Error(MESSAGES.ERROR.NOT_FOND));
+                                return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOND));
                             }
                         });
                     }
+                    return deferred.promise;
                 },
-                find: function (options, callback) {
-                    if (typeof callback == 'undefined') {
-                        callback = options;
-                        options = "";
-                    }
-                    if (typeof callback != 'function') {
-                        return callback(new Error(MESSAGES.ERROR.CALLBACK_NOT_DEFINED));
+                find: function (options) {
+                    var deferred = $q.defer();
+                    if (typeof options == 'undefined') {
+                        return deferred.reject(new Error(MESSAGES.ERROR.OPTION_REQUIRES));
                     }
                     Buildfire.datastore.search(options, _tagName, function (err, result) {
                         if (err) {
-                            return callback(err);
+                            return deferred.reject(err);
                         }
                         else if (result) {
-                            return callback(err, result);
+                            return deferred.resolve(result);
                         } else {
-                            return callback(new Error(MESSAGES.ERROR.NOT_FOND));
+                            return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOND));
                         }
                     });
+                    return deferred.promise;
                 },
-                update: function (id, item, callback) {
+                update: function (id, item) {
+                    var deferred = $q.defer();
                     if (typeof id == 'undefined') {
-                        return callback(new Error(MESSAGES.ERROR.ID_NOT_DEFINED));
+                        return deferred.reject(new Error(MESSAGES.ERROR.ID_NOT_DEFINED));
                     }
                     if (typeof item == 'undefined') {
-                        return callback(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
-                    }
-                    if (typeof callback != 'function') {
-                        return callback(new Error(MESSAGES.ERROR.CALLBACK_NOT_DEFINED));
+                        return deferred.reject(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
                     }
                     Buildfire.datastore.update(id, item, _tagName, function (err, result) {
-                        return callback(err, result);
+                        if (err) {
+                            return deferred.reject(err);
+                        }
+                        else if (result) {
+                            return deferred.resolve(result);
+                        } else {
+                            return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOND));
+                        }
                     })
+                    return deferred.promise;
                 },
-                save: function (item, callback) {
+                save: function (item) {
+                    var deferred = $q.defer();
                     if (typeof item == 'undefined') {
-                        return callback(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
-                    }
-                    if (typeof callback != 'function') {
-                        return callback(new Error(MESSAGES.ERROR.CALLBACK_NOT_DEFINED));
+                        return deferred.reject(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
                     }
                     Buildfire.datastore.save(item, _tagName, function (err, result) {
-                        return callback(err, result);
+                        if (err) {
+                            return deferred.reject(err);
+                        }
+                        else if (result) {
+                            return deferred.resolve(result);
+                        } else {
+                            return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOND));
+                        }
                     });
+                    return deferred.promise;
                 },
-                delete: function (id, callback) {
+                delete: function (id) {
+                    var deferred = $q.defer();
                     if (typeof id == 'undefined') {
-                        return callback(new Error(MESSAGES.ERROR.ID_NOT_DEFINED));
-                    }
-                    if (typeof callback != 'function') {
-                        return callback(new Error(MESSAGES.ERROR.CALLBACK_NOT_DEFINED));
+                        return deferred.reject(new Error(MESSAGES.ERROR.ID_NOT_DEFINED));
                     }
                     Buildfire.datastore.delete(id, _tagName, function (err, result) {
-                        return callback(err, result);
+                        if (err) {
+                            return deferred.reject(err);
+                        }
+                        else if (result) {
+                            return deferred.resolve(result);
+                        } else {
+                            return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOND));
+                        }
                     });
+                    return deferred.promise;
                 }
             }
         }]);
