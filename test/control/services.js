@@ -10,14 +10,14 @@ describe('mediaCenterContent: Services', function () {
             expect(Buildfire).toBeDefined();
         });
     });
-    describe('Media service', function () {
-        var Media;
+    describe('MediaContent service', function () {
+        var MediaContent;
         beforeEach(inject(
-            function (_Media_) {
-                Media = _Media_;
+            function (_MediaContent_) {
+                MediaContent = _MediaContent_;
             }));
         it('Buildfire should exists', function () {
-            expect(Media).toBeDefined();
+            expect(MediaContent).toBeDefined();
         });
     });
 });

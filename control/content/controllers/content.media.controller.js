@@ -1,7 +1,7 @@
 (function (angular) {
     angular
         .module('mediaCenterContent')
-        .controller('ContentMediaCtrl', ['$scope', '$window','TAG_NAMES','Buildfire','Media','$routeParams',function ($scope, $window,TAG_NAMES,Buildfire,Media,$routeParams) {
+        .controller('ContentMediaCtrl', ['$scope', '$window','Buildfire','MediaContent','$routeParams',function ($scope, $window,Buildfire,MediaContent,$routeParams) {
             var ContentMedia = this;
             ContentMedia.data = {};
 
@@ -42,61 +42,24 @@
             };
 
             if($routeParams.id){
-                Media.getById($routeParams.id,function(err,result){
-                    if(err){
-                        console.error('Error while getting data------',err);
+                MediaContent.get($routeParams.id).then(function(data){
+                    if(data){
+                        ContentMedia.data=data;
                     }
-                    else{
-                        ContentMedia.data=result;
-                    }
+                },function(err){
+                    console.error('---------------Error while getting data------------',err);
                 });
             }
 
             ContentMedia.done=function(){
-                Media.add(ContentMedia.data,function(err,result){
-                    if(err){
-                        console.error('-----Error while adding media-----',err);
-                    }
-                    else{
-                        console.log('Results-------',result);
-                    }
-
+                if(ContentMedia.data && ContentMedia.data.id){
+                    MediaContent.update(ContentMedia.data.id);
+                }
+                MediaContent.insert(ContentMedia.data).then(function(data){
+                },function(err){
+                    console.error('---------------Error while inserting data------------',err);
                 });
             };
-            ContentMedia.delete=function(){
-                Media.delete(ContentMedia.data.id,function(err,result){
-                    if(err){
-                        console.error('-----Error while adding media-----',err);
-                    }
-                    else{
-                        console.log('Results-------',result);
-                    }
-
-                });
-            };
-
-           /* var tmrDelayForPeoples = null;
-            var updateItemsWithDelay = function (item) {
-                if (tmrDelayForPeoples) {
-                    clearTimeout(tmrDelayForPeoples);
-                    ContentMedia.isUpdating = false;
-                }
-                ContentMedia.unchangedData = angular.equals(_data, ContentMedia.data);
-                ContentMedia.isItemValid = isValidItem(ContentMedia.data);
-                if (!ContentMedia.isUpdating && !isUnchanged(ContentMedia.item) && ContentMedia.isItemValid) {
-                    tmrDelayForPeoples = setTimeout(function () {
-                        if (item.id) {
-                            ContentMedia.updateItemData();
-                        }
-                        else if (!ContentMedia.isNewItemInserted) {
-                            ContentMedia.addNewItem();
-                        }
-                    }, 1000);
-                }
-            };
-
-            $scope.$watch(function () {
-                return ContentMedia.data;
-            }, updateItemsWithDelay, true);*/
+            ContentMedia.delete=function(){};
         }]);
 })(window.angular);
