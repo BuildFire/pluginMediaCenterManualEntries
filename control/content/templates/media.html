@@ -6,11 +6,11 @@
     <div class="main col-md-9 pull-right">
         <div class="screens clearfix">
             <div class="screen carouselicon pull-left text-center">
-                <a class="border-grey border-radius-three default-background-hover" onclick="alert('Open Media Library');">
+                <a class="border-grey border-radius-three default-background-hover" ng-click="ContentMedia.selectTopImage()">
                     <span class="add-icon hidden">+</span>
-                    <img src="http://www.placehold.it/34x49">
+                    <img ng-show="ContentMedia.data.topImage" ng-src="{{ContentMedia.data.topImage | getImageUrl : 82:110}}">
                 </a>
-                <span class="icon btn-delete-icon btn-danger transition-third" onclick="window.openDialog('remove.html', null, 'sm', null)"></span>
+                <span class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentMedia.removeTopImage()"></span>
                 <label class="secondary">1024x1024</label>
             </div>
         </div>
