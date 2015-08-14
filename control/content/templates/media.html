@@ -6,11 +6,11 @@
     <div class="main col-md-9 pull-right">
         <div class="screens clearfix">
             <div class="screen carouselicon pull-left text-center">
-                <a class="border-grey border-radius-three default-background-hover" onclick="alert('Open Media Library');">
+                <a class="border-grey border-radius-three default-background-hover" ng-click="ContentMedia.selectTopImage()">
                     <span class="add-icon hidden">+</span>
-                    <img src="http://www.placehold.it/34x49">
+                    <img ng-show="ContentMedia.data.topImage" ng-src="{{ContentMedia.data.topImage | getImageUrl : 82:110}}">
                 </a>
-                <span class="icon btn-delete-icon btn-danger transition-third" onclick="window.openDialog('remove.html', null, 'sm', null)"></span>
+                <span class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentMedia.removeTopImage()"></span>
                 <label class="secondary">1024x1024</label>
             </div>
         </div>
@@ -22,7 +22,7 @@
         <span>Summary</span>
     </div>
     <div class="main col-md-9 pull-right">
-        <textarea class="form-control" placeholder="Summary Text"></textarea>
+        <textarea class="form-control" placeholder="Summary Text" ng-model="ContentMedia.data.summary"></textarea>
     </div>
 </div>
 <hr class="none">
@@ -34,7 +34,7 @@
 <hr class="none">
 <div class="item clearfix row">
     <div class="main col-md-12 pull-right">
-        <textarea class="form-control" placeholder="WYSIWYG"></textarea>
+        <textarea class="form-control" placeholder="WYSIWYG" ng-model="ContentMedia.data.body"></textarea>
     </div>
 </div>
 <hr class="none">
@@ -43,7 +43,7 @@
         <span>Source URL</span>
     </div>
     <div class="main col-md-9 pull-right">
-        <input type="text" class="form-control" placeholder="Source URL">
+        <input type="text" class="form-control" placeholder="Source URL" ng-model="ContentMedia.data.srcUrl">
     </div>
 </div>
 <hr class="none">
@@ -52,7 +52,7 @@
         <span>Video URL</span>
     </div>
     <div class="main col-md-9 pull-right">
-        <input type="text" class="form-control" placeholder="Video URL">
+        <input type="text" class="form-control" placeholder="Video URL" ng-model="ContentMedia.data.videoUrl">
     </div>
 </div>
 <hr class="none">
@@ -61,7 +61,7 @@
         <span>Audio URL</span>
     </div>
     <div class="main col-md-9 pull-right">
-        <input type="text" class="form-control" placeholder="Audio URL">
+        <input type="text" class="form-control" placeholder="Audio URL" ng-model="ContentMedia.data.audioUrl">
     </div>
 </div>
 <hr class="none">
@@ -72,11 +72,11 @@
     <div class="main col-md-9 pull-right">
         <div class="screens clearfix">
             <div class="screen pull-left text-center">
-                <a class="border-grey border-radius-three default-background-hover" onclick="alert('Open Media Library');">
+                <a class="border-grey border-radius-three default-background-hover" ng-click="ContentMedia.selectAudioImage()">
                     <span class="add-icon hidden">+</span>
-                    <img src="http://www.placehold.it/34x49">
+                    <img ng-show="ContentMedia.data.image" ng-src="{{ContentMedia.data.image | getImageUrl : 82:110}}">
                 </a>
-                <span class="icon btn-delete-icon btn-danger transition-third" onclick="window.openDialog('remove.html', null, 'sm', null)"></span>
+                <span ng-hide="ContentMedia.data.image" class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentMedia.selectAudioImage()"></span>
                 <label class="secondary">1024x1024</label>
             </div>
         </div>
@@ -89,7 +89,7 @@
     </div>
     <div class="main col-md-9 pull-right">
         <div class="col-md-4 row">
-            <a class="btn btn-success stretch">Add Link</a>
+            <a class="btn btn-success stretch" ng-click="ContentMedia.openAddLinkPopup()">Add Link</a>
         </div>
     </div>
 </div>
@@ -112,54 +112,16 @@
                 <span class="btn-icon btn-delete-icon btn-danger transition-third" onclick="window.openDialog('remove.html', null, 'sm', null)"></span>
             </div>
         </div>
-        <div class="d-item double-line square-icon clearfix">
-            <span class="icon icon-menu pull-left"></span>
-            <div class="media-holder pull-left">
-                <img src="http://www.placehold.it/50x50">
-            </div>
-            <div class="copy pull-right">
-                <div class="col-md-4 padding-zero pull-left">
-                    <a class="text-primary"><span class="title ellipsis pull-left">Item Name Item Name Item Name</span></a>
-                    <span class="title ellipsis pull-left">Item Summary Item Summary Item Summary</span>
-                </div>
-                <div class="col-md-7 padding-right-zero pull-left">
-                    <span class="content ellipsis">http://www.thelinkgoeshereandifitslongitwillwraparound</span>
-                </div>
-                <span class="btn-icon btn-delete-icon btn-danger transition-third" onclick="window.openDialog('remove.html', null, 'sm', null)"></span>
-            </div>
-        </div>
-        <div class="d-item double-line square-icon clearfix">
-            <span class="icon icon-menu pull-left"></span>
-            <div class="media-holder pull-left">
-                <img src="http://www.placehold.it/50x50">
-            </div>
-            <div class="copy pull-right">
-                <div class="col-md-4 padding-zero pull-left">
-                    <a class="text-primary"><span class="title ellipsis pull-left">Item Name Item Name Item Name</span></a>
-                    <span class="title ellipsis pull-left">Item Summary Item Summary Item Summary</span>
-                </div>
-                <div class="col-md-7 padding-right-zero pull-left">
-                    <span class="content ellipsis">http://www.thelinkgoeshereandifitslongitwillwraparound</span>
-                </div>
-                <span class="btn-icon btn-delete-icon btn-danger transition-third" onclick="window.openDialog('remove.html', null, 'sm', null)"></span>
-            </div>
-        </div>
-        <div class="d-item double-line square-icon clearfix">
-            <span class="icon icon-menu pull-left"></span>
-            <div class="media-holder pull-left">
-                <img src="http://www.placehold.it/50x50">
-            </div>
-            <div class="copy pull-right">
-                <div class="col-md-4 padding-zero pull-left">
-                    <a class="text-primary"><span class="title ellipsis pull-left">Item Name Item Name Item Name</span></a>
-                    <span class="title ellipsis pull-left">Item Summary Item Summary Item Summary</span>
-                </div>
-                <div class="col-md-7 padding-right-zero pull-left">
-                    <span class="content ellipsis">http://www.thelinkgoeshereandifitslongitwillwraparound</span>
-                </div>
-                <span class="btn-icon btn-delete-icon btn-danger transition-third" onclick="window.openDialog('remove.html', null, 'sm', null)"></span>
-            </div>
-        </div>
     </div>
 </div>
+<hr class="none">
+<div class="item clearfix row">
+    <div class="main col-md-9 pull-right">
+        <div class="col-md-6 pull-left padding-left-zero padding-right-ten">
+            <a class="btn btn-danger pull-right stretch" ng-click="ContentMedia.delete();" href="javascript:void(0)">Delete</a>
+        </div>
+        <div class="col-md-6 pull-right padding-right-zero padding-left-ten">
+            <a class="btn btn-primary pull-right stretch" ng-click="ContentMedia.done()" href="javaScript:void(0);">Done</a>
+        </div>
+    </div>
 </div>
