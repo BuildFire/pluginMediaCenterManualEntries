@@ -24,6 +24,22 @@
             ContentMedia.removeTopImage = function () {
                 ContentMedia.data.topImage = null;
             };
+            ContentMedia.selectAudioImage = function () {
+                Buildfire.imageLib.showDialog(options,function (error, result) {
+                    if (error) {
+                        return console.error('Error:', error);
+                    }
+                    if (result.selectedFiles && result.selectedFiles.length) {
+                        console.log(result.selectedFiles);
+                        ContentMedia.data.image = result.selectedFiles[0];
+                        $scope.$digest();
+                    }
+                });
+            };
+
+            ContentMedia.removeAudioImage = function () {
+                ContentMedia.data.image = null;
+            };
 
             if($routeParams.id){
                 Media.getById($routeParams.id,function(err,result){
