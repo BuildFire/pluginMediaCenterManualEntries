@@ -43,7 +43,7 @@
         <span>Source URL</span>
     </div>
     <div class="main col-md-9 pull-right">
-        <input type="text" class="form-control" placeholder="Source URL">
+        <input type="text" class="form-control" placeholder="Source URL" ng-model="ContentMedia.data.srcUrl">
     </div>
 </div>
 <hr class="none">
@@ -52,7 +52,7 @@
         <span>Video URL</span>
     </div>
     <div class="main col-md-9 pull-right">
-        <input type="text" class="form-control" placeholder="Video URL">
+        <input type="text" class="form-control" placeholder="Video URL" ng-model="ContentMedia.data.videoUrl">
     </div>
 </div>
 <hr class="none">
@@ -61,7 +61,7 @@
         <span>Audio URL</span>
     </div>
     <div class="main col-md-9 pull-right">
-        <input type="text" class="form-control" placeholder="Audio URL">
+        <input type="text" class="form-control" placeholder="Audio URL" ng-model="ContentMedia.data.audioUrl">
     </div>
 </div>
 <hr class="none">
@@ -162,4 +162,14 @@
         </div>
     </div>
 </div>
+<hr class="none">
+<div class="item clearfix row">
+    <div class="main col-md-9 pull-right">
+        <div class="col-md-6 pull-left padding-left-zero padding-right-ten">
+            <a class="btn btn-danger pull-right stretch" ng-click="ContentMedia.delete();" href="javascript:void(0)">Delete</a>
+        </div>
+        <div class="col-md-6 pull-right padding-right-zero padding-left-ten">
+            <a class="btn btn-primary pull-right stretch" ng-click="ContentMedia.done()" href="javaScript:void(0);">Done</a>
+        </div>
+    </div>
 </div>
