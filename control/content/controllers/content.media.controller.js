@@ -57,10 +57,6 @@
                     if(err){
                         console.error('-----Error while adding media-----',err);
                     }
-                    else{
-                        console.log('Results-------',result);
-                    }
-
                 });
             };
             ContentMedia.delete=function(){
@@ -68,10 +64,6 @@
                     if(err){
                         console.error('-----Error while adding media-----',err);
                     }
-                    else{
-                        console.log('Results-------',result);
-                    }
-
                 });
             };
 
