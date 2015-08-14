@@ -16,22 +16,31 @@
                 //buildfire.datastore.disableRefresh();
 
             $routeProvider
-                .when('/', {
-                    templateUrl: 'templates/home.html',
-                    controllerAs: 'WidgetHome',
-                    controller: 'WidgetHomeCtrl'
-                })
-                .when('/media/:id', {
-                    templateUrl: 'templates/media.html',
+                .when('/media/:layout/:id', {
+                    templateUrl: function (params) {
+                        return 'templates/layouts/' + params.layout + '.html';
+                    },
                     controllerAs: 'WidgetMedia',
                     controller: 'WidgetMediaCtrl'
                 })
-                .otherwise('/');
+                .when('/media/:layout', {
+                    templateUrl: function (params) {
+                        return 'templates/layouts/' + params.layout + '.html';
+                    },
+                    controllerAs: 'WidgetMedia',
+                    controller: 'WidgetMediaCtrl'
+                })
+                .when('/:layout', {
+                    templateUrl: function (params) {
+                        return 'templates/layouts/' + params.layout + '.html';
+                    },
+                    controllerAs: 'WidgetHome',
+                    controller: 'WidgetHomeCtrl'
+                })
+                .otherwise('/list-1');
         }])
         .run(function ($rootScope, $location) {
-            /* Buildfire.messaging.onReceivedMessage = function(message){
-             $location.path('/people/'+ message.id);
-             };*/
+            
         });
 
 })(window.angular, window.buildfire);
