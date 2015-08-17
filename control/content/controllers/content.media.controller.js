@@ -5,6 +5,13 @@
             var ContentMedia = this;
             ContentMedia.isNewItemInserted = false;
             ContentMedia.unchangedData = true;
+
+            ContentMedia.bodyContentWYSIWYGOptions={
+                plugins: 'advlist autolink link image lists charmap print preview',
+                skin: 'lightgray',
+                trusted: true,
+                theme: 'modern'
+            };
             var data={
                 topImage: '',
                 summary: '',
