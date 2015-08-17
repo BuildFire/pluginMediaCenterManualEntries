@@ -3,7 +3,13 @@
 (function (angular, buildfire) {
     //created mediaCenterWidget module
     angular
-        .module('mediaCenterWidget', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'infinite-scroll'])
+        .module('mediaCenterWidget', [
+            'mediaCenterEnums',
+            'mediaCenterServices',
+            'ngAnimate',
+            'ngRoute',
+            'ui.bootstrap',
+            'infinite-scroll'])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component
         //injected ui.sortable for manual ordering of list
@@ -18,29 +24,57 @@
             $routeProvider
                 .when('/media/:layout/:id', {
                     templateUrl: function (params) {
-                        return 'templates/layouts/' + params.layout + '.html';
+                        var layout = params.layout || "item-1";
+                        return 'templates/layouts/' + layout + '.html';
                     },
                     controllerAs: 'WidgetMedia',
                     controller: 'WidgetMediaCtrl'
                 })
                 .when('/media/:layout', {
                     templateUrl: function (params) {
-                        return 'templates/layouts/' + params.layout + '.html';
+                        var layout = params.layout || "item-1";
+                        return 'templates/layouts/' + layout + '.html';
                     },
                     controllerAs: 'WidgetMedia',
                     controller: 'WidgetMediaCtrl'
                 })
-                .when('/:layout', {
+                .when('/:layout?', {
                     templateUrl: function (params) {
-                        return 'templates/layouts/' + params.layout + '.html';
+                        var layout = params.layout || "list-1";
+                        return 'templates/layouts/' + layout + '.html';
                     },
                     controllerAs: 'WidgetHome',
                     controller: 'WidgetHomeCtrl'
                 })
-                .otherwise('/list-1');
+                .otherwise('/');
         }])
-        .run(function ($rootScope, $location) {
-            
+        .run(function ($rootScope, $location, EVENTS, PATHS) {
+            buildfire.messaging.onReceivedMessage = function (event) {
+                if (event) {
+                    switch (event.name) {
+                        case EVENTS.ROUTE_CHANGE:
+                            var path = event.message.path,
+                                layout = event.message.layout,
+                                id = event.message.id;
+                            var url = "/";
+                            switch (path) {
+                                case PATHS.MEDIA:
+                                    url = url + "/media";
+                                    url = url + "/" + layout;
+                                    if (id) {
+                                        url = url + "/" + id;
+                                    }
+                                    break
+                                default :
+                                    url = url + "/" + layout;
+                                    if (id) {
+                                        url = url + "/" + id;
+                                    }
+                                    break
+                            }
+                            $location.path(url);
+                    }
+                }
+            };
         });
-
 })(window.angular, window.buildfire);
