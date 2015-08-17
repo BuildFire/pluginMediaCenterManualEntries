@@ -1,9 +1,10 @@
 (function (angular) {
     angular
         .module('mediaCenterContent')
-        .controller('ContentMediaCtrl', ['$scope', '$window','Buildfire','MediaContent','$routeParams','Location',function ($scope, $window,Buildfire,MediaContent,$routeParams,Location) {
+        .controller('ContentMediaCtrl', ['$scope', '$window','Buildfire','DB', 'COLLECTIONS','$routeParams','Location',function ($scope, $window,Buildfire,DB,COLLECTIONS,$routeParams,Location) {
             var ContentMedia = this;
             ContentMedia.data = {};
+            var MediaContent = new DB(COLLECTIONS.MediaContent);
 
             var options = {showIcons: false, multiSelection: false};
             var callback = function (error, result) {
