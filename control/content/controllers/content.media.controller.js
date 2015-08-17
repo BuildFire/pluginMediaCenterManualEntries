@@ -39,6 +39,22 @@
                 ContentMedia.data.image = null;
             };
 
+            ContentMedia.openAddLinkPopup = function () {
+                var options = {showIcons: false};
+                var callback = function (error, result) {
+                    console.log(result);
+                    if (error) {
+                        return console.error('Error:', error);
+                    }
+                    if (!ContentMedia.data.links)
+                        ContentMedia.data.links = [];
+                    ContentMedia.data.links.push(result);
+                    $scope.$digest();
+                };
+                Buildfire.actionItems.showDialog(null, options, callback);
+            };
+
+
             if($routeParams.id){
                 MediaContent.get($routeParams.id).then(function(data){
                     if(data){
@@ -50,7 +66,7 @@
             }
 
             ContentMedia.done=function(){
-                if(ContentMedia.data && ContentMedia.data.id){
+                if(ContentMedia.data && ContentMedia.data.id) {
                     MediaContent.update(ContentMedia.data.id);
                 }
                 MediaContent.insert(ContentMedia.data).then(function(data){

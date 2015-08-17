@@ -96,14 +96,14 @@
 <hr class="none">
 <div class="item clearfix">
     <div class="draggable-list-view wide-list has-btn links-list">
-        <div class="d-item double-line square-icon clearfix">
+        <div class="d-item double-line square-icon clearfix" ng-repeat="link in ContentMedia.data.links">
             <span class="icon icon-menu pull-left"></span>
             <div class="media-holder pull-left">
                 <img src="http://www.placehold.it/50x50">
             </div>
             <div class="copy pull-right">
                 <div class="col-md-4 padding-zero pull-left">
-                    <a class="text-primary"><span class="title ellipsis pull-left">Item Name Item Name Item Name</span></a>
+                    <a class="text-primary" href="link.url"><span class="title ellipsis pull-left">{{link.title}}</span></a>
                     <span class="title ellipsis pull-left">Item Summary Item Summary Item Summary</span>
                 </div>
                 <div class="col-md-7 padding-right-zero pull-left">
