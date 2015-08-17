@@ -80,6 +80,11 @@
                 Buildfire.actionItems.showDialog(null, options, callback);
             };
 
+            ContentMedia.removeLink=function(index){
+                if(ContentMedia.item && ContentMedia.item.data && ContentMedia.item.data.links)
+                ContentMedia.item.data.links.splice(index,1);
+            };
+
             ContentMedia.done=function(){
                 if(ContentMedia.item && ContentMedia.item.id) {
                     MediaContent.update(ContentMedia.item.id,ContentMedia.item.data);
