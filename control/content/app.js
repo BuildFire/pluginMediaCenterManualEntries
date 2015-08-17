@@ -3,7 +3,20 @@
 (function (angular, buildfire) {
     //created mediaCenterContent module
     angular
-        .module('mediaCenterContent', ['mediaCenterEnums', 'mediaCenterServices', 'ngAnimate', 'ngRoute', 'ui.bootstrap', 'ui.sortable', 'ngClipboard', 'infinite-scroll', "bngCsv",'ui.tinymce'])
+        .module('mediaCenterContent',
+        [
+            'mediaCenterEnums',
+            'mediaCenterServices',
+            'mediaCenterFilters',
+            'ngAnimate',
+            'ngRoute',
+            'ui.bootstrap',
+            'ui.sortable',
+            'ngClipboard',
+            'infinite-scroll',
+            'bngCsv',
+            'ui.tinymce'
+        ])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component
         //injected ui.sortable for manual ordering of list
@@ -16,7 +29,7 @@
                     controllerAs: 'ContentHome',
                     controller: 'ContentHomeCtrl',
                     resolve: {
-                        MediaCenter: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location', function ($q, DB, COLLECTIONS, Orders, Location) {
+                        MediaCenterInfo: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location', function ($q, DB, COLLECTIONS, Orders, Location) {
                             var deferred = $q.defer();
                             var MediaCenter = new DB(COLLECTIONS.MediaCenter);
                             var _bootstrap = function () {
@@ -34,7 +47,7 @@
                                         backgroundImage: ""
                                     }
                                 }).then(function success() {
-                                    Location.goToHome();
+                                    Location.go("/");
                                 }, function fail() {
                                     _bootstrap();
                                 })
@@ -89,6 +102,7 @@
             /* Buildfire.messaging.onReceivedMessage = function(message){
              $location.path('/people/'+ message.id);
              };*/
-        });
+        })
+
 })
 (window.angular, window.buildfire);

@@ -1,21 +1,23 @@
 'use strict';
 
-(function (angular, buildfire) {
-    //created mediaCenterContent module
+(function (angular, buildfire, location) {
+    //created mediaCenterWidget module
     angular
-        .module('mediaCenterContent')
-        .filter('getImageUrl', function () {
+        .module('mediaCenterFilters', [])
+        .filter('resizeImage', [function () {
             return function (url, width, height, type) {
-                if (type == 'resize')
-                    return buildfire.imageLib.resizeImage(url, {
-                        width: width,
-                        height: height
-                    });
-                else
-                    return buildfire.imageLib.cropImage(url, {
-                        width: width,
-                        height: height
-                    });
+                return buildfire.imageLib.resizeImage(url, {
+                    width: width,
+                    height: height
+                });
             }
-        });
-})(window.angular, window.buildfire);
+        }])
+        .filter('cropImage', [function () {
+            return function (url, width, height, type) {
+                return buildfire.imageLib.cropImage(url, {
+                    width: width,
+                    height: height
+                });
+            }
+        }]);
+})(window.angular, window.buildfire, window.location);

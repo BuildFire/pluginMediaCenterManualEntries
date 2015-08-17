@@ -37,7 +37,7 @@
                     return console.error('Error:', error);
                 }
                 if (result.selectedFiles && result.selectedFiles.length) {
-                    ContentMedia.data.topImage = result.selectedFiles[0];
+                    ContentMedia.item.data.topImage = result.selectedFiles[0];
                     $scope.$digest();
                 }
             };
@@ -47,7 +47,7 @@
             };
 
             ContentMedia.removeTopImage = function () {
-                ContentMedia.data.topImage = null;
+                ContentMedia.item.data.topImage = null;
             };
             ContentMedia.selectAudioImage = function () {
                 Buildfire.imageLib.showDialog(options,function (error, result) {
@@ -55,14 +55,14 @@
                         return console.error('Error:', error);
                     }
                     if (result.selectedFiles && result.selectedFiles.length) {
-                        ContentMedia.data.image = result.selectedFiles[0];
+                        ContentMedia.item.data.image = result.selectedFiles[0];
                         $scope.$digest();
                     }
                 });
             };
 
             ContentMedia.removeAudioImage = function () {
-                ContentMedia.data.image = null;
+                ContentMedia.item.data.image = null;
             };
 
             ContentMedia.openAddLinkPopup = function () {
@@ -72,17 +72,17 @@
                     if (error) {
                         return console.error('Error:', error);
                     }
-                    if (!ContentMedia.data.links)
-                        ContentMedia.data.links = [];
-                    ContentMedia.data.links.push(result);
+                    if (!ContentMedia.item.data.links)
+                        ContentMedia.item.data.links = [];
+                    ContentMedia.item.data.links.push(result);
                     $scope.$digest();
                 };
                 Buildfire.actionItems.showDialog(null, options, callback);
             };
 
             ContentMedia.done=function(){
-                if(ContentMedia.data && ContentMedia.data.id) {
-                    MediaContent.update(ContentMedia.data.id,ContentMedia.data);
+                if(ContentMedia.item && ContentMedia.item.id) {
+                    MediaContent.update(ContentMedia.item.id,ContentMedia.item.data);
                 }
 
                 Location.goToHome();

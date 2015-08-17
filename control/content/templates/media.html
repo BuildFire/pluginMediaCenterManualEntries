@@ -8,7 +8,7 @@
             <div class="screen carouselicon pull-left text-center">
                 <a class="border-grey border-radius-three default-background-hover" ng-click="ContentMedia.selectTopImage()">
                     <span class="add-icon hidden">+</span>
-                    <img ng-show="ContentMedia.item.data.topImage" ng-src="{{ContentMedia.item.data.topImage | getImageUrl : 82:110}}">
+                    <img ng-show="ContentMedia.item.data.topImage" ng-src="{{ContentMedia.item.data.topImage | resizeImage : 82:110}}">
                 </a>
                 <span class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentMedia.removeTopImage()"></span>
                 <label class="secondary">1024x1024</label>
@@ -74,7 +74,7 @@
             <div class="screen pull-left text-center">
                 <a class="border-grey border-radius-three default-background-hover" ng-click="ContentMedia.selectAudioImage()">
                     <span class="add-icon hidden">+</span>
-                    <img ng-show="ContentMedia.item.data.image" ng-src="{{ContentMedia.item.data.image | getImageUrl : 82:110}}">
+                    <img ng-show="ContentMedia.item.data.image" ng-src="{{ContentMedia.item.data.image | resizeImage : 82:110}}">
                 </a>
                 <span ng-hide="ContentMedia.item.data.image" class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentMedia.selectAudioImage()"></span>
                 <label class="secondary">1024x1024</label>
