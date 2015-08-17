@@ -48,7 +48,6 @@
             function DB(tagName) {
                 this._tagName = tagName;
             }
-
             DB.prototype.get = function () {
                 var that = this;
                 var deferred = $q.defer();
@@ -63,8 +62,24 @@
                     }
                 });
                 return deferred.promise;
-            }
+            };
+            DB.prototype.getById = function (id) {
+                var that = this;
+                var deferred = $q.defer();
+                    Buildfire.datastore.getById(id,that._tagName, function (err, result) {
+                        if (err) {
+                            return deferred.reject(err);
+                        }
+                        else if (result && result.data) {
+                            return deferred.resolve(result);
+                        } else {
+                            return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOND));
+                        }
+                    });
+                    return deferred.promise;
+                };
             DB.prototype.insert = function (items) {
+                var that = this;
                 var deferred = $q.defer();
                 if (typeof items == 'undefined') {
                     return deferred.reject(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
@@ -95,6 +110,7 @@
                 return deferred.promise;
             };
             DB.prototype.find = function (options) {
+                var that = this;
                 var deferred = $q.defer();
                 if (typeof options == 'undefined') {
                     return deferred.reject(new Error(MESSAGES.ERROR.OPTION_REQUIRES));
@@ -112,6 +128,7 @@
                 return deferred.promise;
             }
             DB.prototype.update = function (id, item) {
+                var that = this;
                 var deferred = $q.defer();
                 if (typeof id == 'undefined') {
                     return deferred.reject(new Error(MESSAGES.ERROR.ID_NOT_DEFINED));
@@ -132,6 +149,7 @@
                 return deferred.promise;
             };
             DB.prototype.save = function (item) {
+                var that = this;
                 var deferred = $q.defer();
                 if (typeof item == 'undefined') {
                     return deferred.reject(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
@@ -149,6 +167,7 @@
                 return deferred.promise;
             };
             DB.prototype.delete = function (id) {
+                var that = this;
                 var deferred = $q.defer();
                 if (typeof id == 'undefined') {
                     return deferred.reject(new Error(MESSAGES.ERROR.ID_NOT_DEFINED));
