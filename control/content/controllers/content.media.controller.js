@@ -80,6 +80,21 @@
                 Buildfire.actionItems.showDialog(null, options, callback);
             };
 
+            ContentMedia.openEditLinkPopup = function (link,index) {
+                var options = {showIcons: false};
+                var callback = function (error, result) {
+                    console.log(result);
+                    if (error) {
+                        return console.error('Error:', error);
+                    }
+                    if (!ContentMedia.item.data.links)
+                        ContentMedia.item.data.links = [];
+                    ContentMedia.item.data.links.splice(index,1,result);
+                    $scope.$digest();
+                };
+                Buildfire.actionItems.showDialog(link, options, callback);
+            };
+
             ContentMedia.removeLink=function(index){
                 if(ContentMedia.item && ContentMedia.item.data && ContentMedia.item.data.links)
                 ContentMedia.item.data.links.splice(index,1);
