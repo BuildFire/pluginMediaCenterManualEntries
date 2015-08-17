@@ -1,0 +1,22 @@
+<div class="header clearfix border-bottom-grey">
+    <h5 class="item-link-header">Import CSV File</h5>
+	<span class="icon icon-cross2 close-modal" onclick="alert('Close Modal');"></span>
+</div>
+<div class="modal-body">
+    <div class="item clearfix row">
+        <div class="labels col-md-3 padding-right-zero pull-left">
+            <span>Choose File</span>
+        </div>
+        <div class="main col-md-9 pull-right">
+            <input type="file" class="btn btn-primary" accept=".csv" file-reader="fileData" />
+        </div>
+    </div>
+</div>
+<div class="bottom border-top-grey clearfix">
+    <div class="col-md-6 pull-left text-center">
+        <a class="text-danger default-background-hover transition-third" ng-click="ImportCSVPopup.cancel()">Cancel</a>
+    </div>
+    <div class="col-md-6 pull-right text-center border-left-grey">
+        <a class="text-success default-background-hover transition-third" ng-click="ImportCSVPopup.ok()">Import</a>
+    </div>
+</div>

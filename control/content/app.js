@@ -8,6 +8,7 @@
             'mediaCenterEnums',
             'mediaCenterServices',
             'mediaCenterFilters',
+            'mediaCenterModals',
             'ngAnimate',
             'ngRoute',
             'ui.bootstrap',

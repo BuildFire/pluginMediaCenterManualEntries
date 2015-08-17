@@ -1,0 +1,8 @@
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+.edit_cell {
+    width: 15px;
+    cursor: pointer;
+}

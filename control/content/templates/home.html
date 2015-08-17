@@ -19,7 +19,8 @@
                     <span class="title ellipsis">{{image.title}}</span>
 
                     <div class="pull-right">
-                        <a ng-hide="image.url" class="text-primary text">Add Action</a>
+                        <span class="edit_cell glyphicon glyphicon-pencil" aria-hidden="true"
+                              ng-click="ContentHome.addCarouselImage($index)"></span>
                         <span class="btn-icon btn-delete-icon btn-danger transition-third"
                               ng-click="ContentHome.rmCarouselImage($index)"></span>
                     </div>
