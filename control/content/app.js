@@ -3,7 +3,7 @@
 (function (angular, buildfire) {
     //created mediaCenterContent module
     angular
-        .module('mediaCenterContent', ['mediaCenterEnums','mediaCenterServices','ngAnimate', 'ngRoute', 'ui.bootstrap', 'ui.sortable', 'ngClipboard', 'infinite-scroll', "bngCsv"])
+        .module('mediaCenterContent', ['mediaCenterEnums', 'mediaCenterServices', 'ngAnimate', 'ngRoute', 'ui.bootstrap', 'ui.sortable', 'ngClipboard', 'infinite-scroll', "bngCsv"])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component
         //injected ui.sortable for manual ordering of list
@@ -14,7 +14,47 @@
                 .when('/', {
                     templateUrl: 'templates/home.html',
                     controllerAs: 'ContentHome',
-                    controller: 'ContentHomeCtrl'
+                    controller: 'ContentHomeCtrl',
+                    resolve: {
+                        MediaCenter: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location', function ($q, DB, COLLECTIONS, Orders, Location) {
+                            var deferred = $q.defer();
+                            var MediaCenter = new DB(COLLECTIONS.MediaCenter);
+                            var _bootstrap = function () {
+                                MediaCenter.save({
+                                    content: {
+                                        images: [],
+                                        descriptionHTML: '',
+                                        description: '',
+                                        sortBy: Orders.ordersMap.Newest,
+                                        rankOfLastItem: ''
+                                    },
+                                    design: {
+                                        listLayout: "list-1",
+                                        itemLayout: "item-1",
+                                        backgroundImage: ""
+                                    }
+                                }).then(function success() {
+                                    Location.goToHome();
+                                }, function fail() {
+                                    _bootstrap();
+                                })
+                            }
+                            MediaCenter.get().then(function success(result) {
+                                    if (result && result.data && result.data.content && result.data.design) {
+                                        deferred.resolve(result);
+                                    }
+                                    else {
+                                        //error in bootstrapping
+                                        _bootstrap(); //bootstrap again  _bootstrap();
+                                    }
+                                },
+                                function fail() {
+                                    Location.goToHome();
+                                }
+                            )
+                            return deferred.promise;
+                        }]
+                    }
                 })
                 .when('/media', {
                     templateUrl: 'templates/media.html',
@@ -44,9 +84,11 @@
                 })
                 .otherwise('/');
         }])
-        .run(function ($rootScope, $location) {
+        .
+        run(function ($rootScope, $location) {
             /* Buildfire.messaging.onReceivedMessage = function(message){
              $location.path('/people/'+ message.id);
              };*/
         });
-})(window.angular, window.buildfire);
+})
+(window.angular, window.buildfire);
