@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html ng-app="mediaCenterContent">
 <head lang="en">
-	<!-- CSS -->
+    <!-- CSS -->
     <link href="../../../../styles/helper.css" rel="stylesheet">
     <link href="../../../../styles/siteIcons.css" rel="stylesheet">
+    <link href="assets/css/control.content.css" rel="stylesheet">
 
     <!--SDK js-->
     <script src="../../../../scripts/buildfire.js"></script>
@@ -12,6 +13,8 @@
     <script src="../../../../scripts/angular/angular-route.min.js"></script>
     <script src="../../../../scripts/angular/angular-animate.min.js"></script>
     <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+    <script src="../../../../scripts/tinymce/tinymce.min.js"></script>
+    <script src="../../../../scripts/tinymce/ui-tinymce.js"></script>
 
     <!-- JS -->
     <script src="assets/js/jquery-ui.min.js"></script>
@@ -25,6 +28,7 @@
     <script src="enums.js"></script>
     <script src="services.js"></script>
     <script src="filters.js"></script>
+    <script src="modals.js"></script>
     <!-- Controllers -->
     <script src="controllers/content.home.controller.js"></script>
     <script src="controllers/content.media.controller.js"></script>
@@ -32,7 +36,7 @@
 </head>
 <body>
 <div class="main_view">
-	<div class="content" ng-view=""></div>
+    <div class="content" ng-view=""></div>
 </div>
 </body>
 </html>

@@ -1,0 +1,17 @@
+<div class="header clearfix border-bottom-grey">
+	<h4 class="margin-zero">Remove</h4>
+	<span class="icon icon-cross2 close-modal" onclick="alert('Close Modal');"></span>
+</div>
+<div class="padded clearfix">
+	<div class="content">
+		<p class="margin-zero">Are you sure you want to remove {{RemovePeoplePopup.peopleInfo.fName}}?</p>
+	</div>
+</div>
+<div class="bottom border-top-grey clearfix">
+	<div class="col-md-6 pull-left text-center">
+		<a class="text-primary default-background-hover transition-third" ng-click="RemovePeoplePopup.cancel()">Cancel</a>
+	</div>
+	<div class="col-md-6 pull-right text-center border-left-grey">
+		<a class="text-danger default-background-hover transition-third" ng-click="RemovePeoplePopup.ok()">Remove</a>
+	</div>
+</div>

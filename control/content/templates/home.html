@@ -4,61 +4,32 @@
     </div>
     <div class="main col-md-9 pull-right">
         <div class="clearfix">
-            <a class="btn btn-success pull-left" onclick="alert('Open Media Library');">Add Image</a>
+            <a class="btn btn-success pull-left" ng-click="ContentHome.addCarouselImage()">Add Image</a>
         </div>
-        <div class="carousel-items draggable-list-view margin-top-twenty border-radius-four border-grey">
-            <div class="d-item">
+        <div class="carousel-items draggable-list-view margin-top-twenty border-radius-four border-grey"
+             ui-sortable="ContentHome.carouselOptions" ng-model="ContentHome.info.data.content.images"
+             data-ng-show="ContentHome.info.data.content.images.length">
+            <div class="d-item" data-ng-repeat="image in ContentHome.info.data.content.images">
                 <span class="icon icon-menu pull-left"></span>
+
                 <div class="media-holder pull-left">
-                    <img src="http://www.placehold.it/80x50">
+                    <img ng-src="{{image.imageUrl | resizeImage : 60 :40}}">
                 </div>
                 <div class="copy pull-right">
-                    <span class="title ellipsis">Image Title</span>
+                    <span class="title ellipsis">{{image.title}}</span>
+
                     <div class="pull-right">
-                        <a class="text-primary text">Add Action</a>
-							<span class="btn-icon btn-delete-icon btn-danger transition-third"><span>
+                        <span class="edit_cell glyphicon glyphicon-pencil" aria-hidden="true"
+                              ng-click="ContentHome.addCarouselImage($index)"></span>
+                        <span class="btn-icon btn-delete-icon btn-danger transition-third"
+                              ng-click="ContentHome.rmCarouselImage($index)"></span>
                     </div>
                 </div>
             </div>
-            <div class="d-item">
-                <span class="icon icon-menu pull-left"></span>
-                <div class="media-holder pull-left">
-                    <img src="http://www.placehold.it/80x50">
-                </div>
-                <div class="copy pull-right">
-                    <span class="title ellipsis">Image Title</span>
-                    <div class="pull-right">
-                        <a class="text-primary text">Add Action</a>
-							<span class="btn-icon btn-delete-icon btn-danger transition-third"><span>
-                    </div>
-                </div>
-            </div>
-            <div class="d-item">
-                <span class="icon icon-menu pull-left"></span>
-                <div class="media-holder pull-left">
-                    <img src="http://www.placehold.it/80x50">
-                </div>
-                <div class="copy pull-right">
-                    <span class="title ellipsis">Image Title</span>
-                    <div class="pull-right">
-                        <a class="text-primary text">Add Action</a>
-							<span class="btn-icon btn-delete-icon btn-danger transition-third"><span>
-                    </div>
-                </div>
-            </div>
-            <div class="d-item">
-                <span class="icon icon-menu pull-left"></span>
-                <div class="media-holder pull-left">
-                    <img src="http://www.placehold.it/80x50">
-                </div>
-                <div class="copy pull-right">
-                    <span class="title ellipsis">Image Title</span>
-                    <div class="pull-right">
-                        <a class="text-primary text">Add Action</a>
-							<span class="btn-icon btn-delete-icon btn-danger transition-third"><span>
-                    </div>
-                </div>
-            </div>
+        </div>
+        <div class="well text-center margin-bottom-zero border-none"
+             ng-hide="ContentHome.info.data.content.images.length">
+            <p class="margin-zero">No items found.</p>
         </div>
     </div>
 </div>
@@ -92,7 +63,8 @@
     </div>
     <div class="main pull-right col-md-9 padding-left-zero row">
         <div class="dropdown pull-left col-md-8 padding-zero" dropdown>
-            <button class="btn btn-default text-left dropdown-toggle" data-toggle="dropdown" dropdown-toggle aria-expanded="true">
+            <button class="btn btn-default text-left dropdown-toggle" data-toggle="dropdown" dropdown-toggle
+                    aria-expanded="true">
                 <span class="pull-left">Sort By</span>
                 <span class="chevron icon-chevron-down pull-right"></span>
             </button>
@@ -132,113 +104,19 @@
     <div class="tab-order draggable-list-view wide-list has-btn-link border-grey border-radius-four">
         <div class="d-item double-line square-icon clearfix">
             <span class="icon icon-menu pull-left"></span>
+
             <div class="media-holder pull-left">
                 <img src="http://www.placehold.it/50x50">
             </div>
             <div class="copy pull-right">
                 <a class="text-primary"><span class="title ellipsis pull-left">Item Name</span></a>
                 <span class="title ellipsis pull-left">Item Summary</span>
+
                 <div class="pull-right">
-                    <span class="btn-icon btn-link-icon btn-primary transition-third" onclick="window.openDialog('deepLink.html', null, 'sm', null)"></span>
-						<span class="btn-icon btn-delete-icon btn-danger transition-third" onclick="window.openDialog('remove.html', null, 'sm', null)"><span>
-                </div>
-            </div>
-        </div>
-        <div class="d-item double-line square-icon clearfix">
-            <span class="icon icon-menu pull-left"></span>
-            <div class="media-holder pull-left">
-                <img src="http://www.placehold.it/50x50">
-            </div>
-            <div class="copy pull-right">
-                <a class="text-primary"><span class="title ellipsis pull-left">Item Name</span></a>
-                <span class="title ellipsis pull-left">Item Summary</span>
-                <div class="pull-right">
-                    <span class="btn-icon btn-link-icon btn-primary transition-third" onclick="window.openDialog('deepLink.html', null, 'sm', null)"></span>
-						<span class="btn-icon btn-delete-icon btn-danger transition-third" onclick="window.openDialog('remove.html', null, 'sm', null)"><span>
-                </div>
-            </div>
-        </div>
-        <div class="d-item double-line square-icon clearfix">
-            <span class="icon icon-menu pull-left"></span>
-            <div class="media-holder pull-left">
-                <img src="http://www.placehold.it/50x50">
-            </div>
-            <div class="copy pull-right">
-                <a class="text-primary"><span class="title ellipsis pull-left">Item Name</span></a>
-                <span class="title ellipsis pull-left">Item Summary</span>
-                <div class="pull-right">
-                    <span class="btn-icon btn-link-icon btn-primary transition-third" onclick="window.openDialog('deepLink.html', null, 'sm', null)"></span>
-						<span class="btn-icon btn-delete-icon btn-danger transition-third" onclick="window.openDialog('remove.html', null, 'sm', null)"><span>
-                </div>
-            </div>
-        </div>
-        <div class="d-item double-line square-icon clearfix">
-            <span class="icon icon-menu pull-left"></span>
-            <div class="media-holder pull-left">
-                <img src="http://www.placehold.it/50x50">
-            </div>
-            <div class="copy pull-right">
-                <a class="text-primary"><span class="title ellipsis pull-left">Item Name</span></a>
-                <span class="title ellipsis pull-left">Item Summary</span>
-                <div class="pull-right">
-                    <span class="btn-icon btn-link-icon btn-primary transition-third" onclick="window.openDialog('deepLink.html', null, 'sm', null)"></span>
-						<span class="btn-icon btn-delete-icon btn-danger transition-third" onclick="window.openDialog('remove.html', null, 'sm', null)"><span>
-                </div>
-            </div>
-        </div>
-        <div class="d-item double-line square-icon clearfix">
-            <span class="icon icon-menu pull-left"></span>
-            <div class="media-holder pull-left">
-                <img src="http://www.placehold.it/50x50">
-            </div>
-            <div class="copy pull-right">
-                <a class="text-primary"><span class="title ellipsis pull-left">Item Name</span></a>
-                <span class="title ellipsis pull-left">Item Summary</span>
-                <div class="pull-right">
-                    <span class="btn-icon btn-link-icon btn-primary transition-third" onclick="window.openDialog('deepLink.html', null, 'sm', null)"></span>
-						<span class="btn-icon btn-delete-icon btn-danger transition-third" onclick="window.openDialog('remove.html', null, 'sm', null)"><span>
-                </div>
-            </div>
-        </div>
-        <div class="d-item double-line square-icon clearfix">
-            <span class="icon icon-menu pull-left"></span>
-            <div class="media-holder pull-left">
-                <img src="http://www.placehold.it/50x50">
-            </div>
-            <div class="copy pull-right">
-                <a class="text-primary"><span class="title ellipsis pull-left">Item Name</span></a>
-                <span class="title ellipsis pull-left">Item Summary</span>
-                <div class="pull-right">
-                    <span class="btn-icon btn-link-icon btn-primary transition-third" onclick="window.openDialog('deepLink.html', null, 'sm', null)"></span>
-						<span class="btn-icon btn-delete-icon btn-danger transition-third" onclick="window.openDialog('remove.html', null, 'sm', null)"><span>
-                </div>
-            </div>
-        </div>
-        <div class="d-item double-line square-icon clearfix">
-            <span class="icon icon-menu pull-left"></span>
-            <div class="media-holder pull-left">
-                <img src="http://www.placehold.it/50x50">
-            </div>
-            <div class="copy pull-right">
-                <a class="text-primary"><span class="title ellipsis pull-left">Item Name</span></a>
-                <span class="title ellipsis pull-left">Item Summary</span>
-                <div class="pull-right">
-                    <span class="btn-icon btn-link-icon btn-primary transition-third" onclick="window.openDialog('deepLink.html', null, 'sm', null)"></span>
-						<span class="btn-icon btn-delete-icon btn-danger transition-third" onclick="window.openDialog('remove.html', null, 'sm', null)"><span>
-                </div>
-            </div>
-        </div>
-        <div class="d-item double-line square-icon clearfix">
-            <span class="icon icon-menu pull-left"></span>
-            <div class="media-holder pull-left">
-                <img src="http://www.placehold.it/50x50">
-            </div>
-            <div class="copy pull-right">
-                <a class="text-primary"><span class="title ellipsis pull-left">Item Name</span></a>
-                <span class="title ellipsis pull-left">Item Summary</span>
-                <div class="pull-right">
-                    <span class="btn-icon btn-link-icon btn-primary transition-third" onclick="window.openDialog('deepLink.html', null, 'sm', null)"></span>
-						<span class="btn-icon btn-delete-icon btn-danger transition-third" onclick="window.openDialog('remove.html', null, 'sm', null)"><span>
+                    <span class="btn-icon btn-link-icon btn-primary transition-third"
+                          onclick="window.openDialog('deepLink.html', null, 'sm', null)"></span>
+                    <span class="btn-icon btn-delete-icon btn-danger transition-third"
+                          onclick="window.openDialog('remove.html', null, 'sm', null)"></span>
                 </div>
             </div>
         </div>
