@@ -15,7 +15,8 @@
             'ui.sortable',
             'ngClipboard',
             'infinite-scroll',
-            'bngCsv'
+            'bngCsv',
+            'ui.tinymce'
         ])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component
