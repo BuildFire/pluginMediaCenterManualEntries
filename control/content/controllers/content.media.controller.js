@@ -82,7 +82,14 @@
 
             };
 
-            ContentMedia.delete=function(){};
+            ContentMedia.delete=function(){
+                if(ContentMedia.item && ContentMedia.item.id)
+                MediaContent.delete(ContentMedia.item.id).then(function(data){
+                    Location.goToHome();
+                },function(err){
+                    console.error('Error while deleting an item-----',err);
+                });
+            };
 
             updateMasterItem(ContentMedia.item);
             function updateMasterItem(item) {
