@@ -6,6 +6,9 @@
             ContentMedia.isNewItemInserted = false;
             ContentMedia.unchangedData = true;
 
+            ContentMedia.linksSortableOptions = {
+                handle: '> .handle'
+            };
             ContentMedia.bodyContentWYSIWYGOptions={
                 plugins: 'advlist autolink link image lists charmap print preview',
                 skin: 'lightgray',
