@@ -8,7 +8,7 @@
             <div class="screen carouselicon pull-left text-center">
                 <a class="border-grey border-radius-three default-background-hover" ng-click="ContentMedia.selectTopImage()">
                     <span class="add-icon hidden">+</span>
-                    <img ng-show="ContentMedia.data.topImage" ng-src="{{ContentMedia.data.topImage | getImageUrl : 82:110}}">
+                    <img ng-show="ContentMedia.item.data.topImage" ng-src="{{ContentMedia.item.data.topImage | getImageUrl : 82:110}}">
                 </a>
                 <span class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentMedia.removeTopImage()"></span>
                 <label class="secondary">1024x1024</label>
@@ -22,7 +22,7 @@
         <span>Summary</span>
     </div>
     <div class="main col-md-9 pull-right">
-        <textarea class="form-control" placeholder="Summary Text" ng-model="ContentMedia.data.summary"></textarea>
+        <textarea class="form-control" placeholder="Summary Text" ng-model="ContentMedia.item.data.summary"></textarea>
     </div>
 </div>
 <hr class="none">
@@ -34,7 +34,7 @@
 <hr class="none">
 <div class="item clearfix row">
     <div class="main col-md-12 pull-right">
-        <textarea class="form-control" placeholder="WYSIWYG" ng-model="ContentMedia.data.body"></textarea>
+        <textarea class="form-control" placeholder="WYSIWYG" ng-model="ContentMedia.item.data.body"></textarea>
     </div>
 </div>
 <hr class="none">
@@ -43,7 +43,7 @@
         <span>Source URL</span>
     </div>
     <div class="main col-md-9 pull-right">
-        <input type="text" class="form-control" placeholder="Source URL" ng-model="ContentMedia.data.srcUrl">
+        <input type="text" class="form-control" placeholder="Source URL" ng-model="ContentMedia.item.data.srcUrl">
     </div>
 </div>
 <hr class="none">
@@ -52,7 +52,7 @@
         <span>Video URL</span>
     </div>
     <div class="main col-md-9 pull-right">
-        <input type="text" class="form-control" placeholder="Video URL" ng-model="ContentMedia.data.videoUrl">
+        <input type="text" class="form-control" placeholder="Video URL" ng-model="ContentMedia.item.data.videoUrl">
     </div>
 </div>
 <hr class="none">
@@ -61,7 +61,7 @@
         <span>Audio URL</span>
     </div>
     <div class="main col-md-9 pull-right">
-        <input type="text" class="form-control" placeholder="Audio URL" ng-model="ContentMedia.data.audioUrl">
+        <input type="text" class="form-control" placeholder="Audio URL" ng-model="ContentMedia.item.data.audioUrl">
     </div>
 </div>
 <hr class="none">
@@ -74,9 +74,9 @@
             <div class="screen pull-left text-center">
                 <a class="border-grey border-radius-three default-background-hover" ng-click="ContentMedia.selectAudioImage()">
                     <span class="add-icon hidden">+</span>
-                    <img ng-show="ContentMedia.data.image" ng-src="{{ContentMedia.data.image | getImageUrl : 82:110}}">
+                    <img ng-show="ContentMedia.item.data.image" ng-src="{{ContentMedia.item.data.image | getImageUrl : 82:110}}">
                 </a>
-                <span ng-hide="ContentMedia.data.image" class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentMedia.selectAudioImage()"></span>
+                <span ng-hide="ContentMedia.item.data.image" class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentMedia.selectAudioImage()"></span>
                 <label class="secondary">1024x1024</label>
             </div>
         </div>
@@ -96,7 +96,7 @@
 <hr class="none">
 <div class="item clearfix">
     <div class="draggable-list-view wide-list has-btn links-list">
-        <div class="d-item double-line square-icon clearfix" ng-repeat="link in ContentMedia.data.links">
+        <div class="d-item double-line square-icon clearfix" ng-repeat="link in ContentMedia.item.data.links">
             <span class="icon icon-menu pull-left"></span>
             <div class="media-holder pull-left">
                 <img src="http://www.placehold.it/50x50">

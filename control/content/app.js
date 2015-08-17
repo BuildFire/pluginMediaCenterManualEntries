@@ -20,7 +20,7 @@
         //injected ui.bootstrap for angular bootstrap component
         //injected ui.sortable for manual ordering of list
         //ngClipboard to provide copytoclipboard feature
-        .config(['$routeProvider', 'ngClipProvider', function ($routeProvider, ngClipProvider) {
+        .config(['$routeProvider', 'ngClipProvider','COLLECTIONS', function ($routeProvider, ngClipProvider,COLLECTIONS) {
             ngClipProvider.setPath("//cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.1.6/ZeroClipboard.swf");
             $routeProvider
                 .when('/', {
@@ -71,12 +71,28 @@
                 .when('/media', {
                     templateUrl: 'templates/media.html',
                     controllerAs: 'ContentMedia',
-                    controller: 'ContentMediaCtrl'
+                    controller: 'ContentMediaCtrl',
+                    resolve:{
+                        media:function(){
+                            return null;
+                        }
+                    }
+
                 })
                 .when('/media/:itemId', {
                     templateUrl: 'templates/media.html',
                     controllerAs: 'ContentMedia',
-                    controller: 'ContentMediaCtrl'
+                    controller: 'ContentMediaCtrl',
+                    resolve:{
+                        media:function(DB,$routeParams){
+                            var db=new DB(COLLECTIONS.MediaContent);
+                            db.find($routeParams.id).then(function(data){
+                                return data;
+                            },function(err){
+                                return null;
+                            });
+                        }
+                    }
                 })
                 .otherwise('/');
         }])
