@@ -9,6 +9,11 @@
                 return buildfire;
             }
         }])
+        .provider('ImageLib', [function () {
+            this.$get = function () {
+                return buildfire.imageLib;
+            }
+        }])
         .factory('Location', [function () {
             var _location = location;
             return {
@@ -64,7 +69,22 @@
                     }
                 });
                 return deferred.promise;
-            }
+            };
+            DB.prototype.getById = function (id) {
+                var that = this;
+                var deferred = $q.defer();
+                    Buildfire.datastore.getById(id,that._tagName, function (err, result) {
+                        if (err) {
+                            return deferred.reject(err);
+                        }
+                        else if (result && result.data) {
+                            return deferred.resolve(result);
+                        } else {
+                            return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOND));
+                        }
+                    });
+                    return deferred.promise;
+                };
             DB.prototype.insert = function (items) {
                 var that = this;
                 var deferred = $q.defer();

@@ -22,7 +22,7 @@
         //injected ui.bootstrap for angular bootstrap component
         //injected ui.sortable for manual ordering of list
         //ngClipboard to provide copytoclipboard feature
-        .config(['$routeProvider', 'ngClipProvider','COLLECTIONS', function ($routeProvider, ngClipProvider,COLLECTIONS) {
+        .config(['$routeProvider', 'ngClipProvider', 'COLLECTIONS', function ($routeProvider, ngClipProvider, COLLECTIONS) {
             ngClipProvider.setPath("//cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.1.6/ZeroClipboard.swf");
             $routeProvider
                 .when('/', {
@@ -74,8 +74,8 @@
                     templateUrl: 'templates/media.html',
                     controllerAs: 'ContentMedia',
                     controller: 'ContentMediaCtrl',
-                    resolve:{
-                        media:function(){
+                    resolve: {
+                        media: function () {
                             return null;
                         }
                     }
@@ -85,15 +85,29 @@
                     templateUrl: 'templates/media.html',
                     controllerAs: 'ContentMedia',
                     controller: 'ContentMediaCtrl',
-                    resolve:{
-                        media:function(DB,$routeParams){
-                            var db=new DB(COLLECTIONS.MediaContent);
-                            db.find($routeParams.id).then(function(data){
-                                return data;
-                            },function(err){
-                                return null;
-                            });
-                        }
+                    resolve: {
+                        media: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location', '$route', function ($q, DB, COLLECTIONS, Orders, Location, $route) {
+                            var deferred = $q.defer();
+                            var MediaContent = new DB(COLLECTIONS.MediaContent);
+                            if ($route.current.params.itemId) {
+                                MediaContent.getById($route.current.params.itemId).then(function success(result) {
+                                        if (result && result.data) {
+                                            deferred.resolve(result);
+                                        }
+                                        else {
+                                            Location.goToHome();
+                                        }
+                                    },
+                                    function fail() {
+                                        Location.goToHome();
+                                    }
+                                );
+                            }
+                            else{
+                                Location.goToHome();
+                            }
+                            return deferred.promise;
+                        }]
                     }
                 })
                 .otherwise('/');

@@ -21,6 +21,8 @@ module.exports = function(config) {
       './bower_components/angular-animate/angular-animate.min.js',
       './bower_components/angular-route/angular-route.min.js',
       './bower_components/angular-bootstrap/ui-bootstrap.min.js',
+      './bower_components/angular-ui-tinymce/src/tinymce.js',
+      './bower_components/tinymce-dist/tinymce.min.js',
       './test/assets/buildfire.js',
       './control/**/*.js',
       './widget/**/*.js',

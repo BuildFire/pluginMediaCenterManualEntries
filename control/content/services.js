@@ -53,6 +53,7 @@
             function DB(tagName) {
                 this._tagName = tagName;
             }
+
             DB.prototype.get = function () {
                 var that = this;
                 var deferred = $q.defer();
