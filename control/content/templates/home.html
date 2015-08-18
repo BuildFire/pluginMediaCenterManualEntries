@@ -4,7 +4,7 @@
     </div>
     <div class="main col-md-9 pull-right">
         <div class="clearfix">
-            <a class="btn btn-success pull-left" ng-click="ContentHome.addCarouselImage()">Add Image</a>
+            <a class="btn btn-success pull-left" ng-click="ContentHome.addUpdateCarouselImage()">Add Image</a>
         </div>
         <div class="carousel-items draggable-list-view margin-top-twenty border-radius-four border-grey"
              ui-sortable="ContentHome.carouselOptions" ng-model="ContentHome.info.data.content.images"
@@ -20,7 +20,7 @@
 
                     <div class="pull-right">
                         <span class="edit_cell glyphicon glyphicon-pencil" aria-hidden="true"
-                              ng-click="ContentHome.addCarouselImage($index)"></span>
+                              ng-click="ContentHome.addUpdateCarouselImage($index)"></span>
                         <span class="btn-icon btn-delete-icon btn-danger transition-third"
                               ng-click="ContentHome.rmCarouselImage($index)"></span>
                     </div>
