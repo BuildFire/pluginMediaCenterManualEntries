@@ -1,5 +1,9 @@
-describe('mediaCenterContent: Services', function () {
+xdescribe('mediaCenterContent: Services', function () {
+    var COLLECTIONS;
     beforeEach(module('mediaCenterContent'));
+    beforeEach(inject(function ($injector) {
+        COLLECTIONS = $injector.get('COLLECTIONS');
+    }));
     describe('Buildfire service', function () {
         var Buildfire;
         beforeEach(inject(
@@ -10,14 +14,44 @@ describe('mediaCenterContent: Services', function () {
             expect(Buildfire).toBeDefined();
         });
     });
-    describe('MediaContent service', function () {
-        var MediaContent;
+    xdescribe('MediaCenter service', function () {
+        var DB, MediaCenter;
         beforeEach(inject(
-            function (_MediaContent_) {
-                MediaContent = _MediaContent_;
+            function (_DB_) {
+                DB = _DB_;
+                MediaCenter = new DB(COLLECTIONS.MediaCenter);
             }));
-        it('Buildfire should exists', function () {
+        it('MediaCenter should exists', function () {
+            expect(MediaCenter).toBeDefined();
+            expect(MediaCenter._tagName).toEqual(COLLECTIONS.MediaCenter);
+        });
+       /* it('MediaCenter methods should exists', function () {
+            expect(MediaCenter.get).toBeDefined();
+            expect(MediaCenter.find).toBeDefined();
+            expect(MediaCenter.save).toBeDefined();
+            expect(MediaCenter.update).toBeDefined();
+            expect(MediaCenter.delete).toBeDefined();
+            expect(MediaCenter.insert).toBeDefined();
+        });*/
+    });
+    xdescribe('MediaContent service', function () {
+        var DB, MediaContent;
+        beforeEach(inject(
+            function (_DB_) {
+                DB = _DB_;
+                MediaContent = new DB(COLLECTIONS.MediaContent);
+            }));
+        it('MediaContent should exists', function () {
             expect(MediaContent).toBeDefined();
+            expect(MediaContent._tagName).toEqual(COLLECTIONS.MediaContent);
+        });
+        it('MediaCenter methods should exists', function () {
+            expect(MediaContent.get).toBeDefined();
+            expect(MediaContent.find).toBeDefined();
+            expect(MediaContent.save).toBeDefined();
+            expect(MediaContent.update).toBeDefined();
+            expect(MediaContent.delete).toBeDefined();
+            expect(MediaContent.insert).toBeDefined();
         });
     });
 });

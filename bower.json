@@ -30,6 +30,7 @@
     "jquery": "~2.1.4",
     "angular-bootstrap": "~0.13.3",
     "angular-route": "~1.4.0",
-    "angular-animate": "~1.4.3"
+    "angular-animate": "~1.4.3",
+    "angular-ui-tinymce": "~0.0.9"
   }
 }

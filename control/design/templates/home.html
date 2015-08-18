@@ -1,0 +1,77 @@
+<div class="item row clearfix">
+    <div class="labels col-md-3 padding-right-zero pull-left">
+        <span>List Layout</span>
+    </div>
+    <div class="main col-md-9 pull-right">
+        <div class="screens clearfix">
+            <div class="screen layouticon pull-left">
+                <a class="border-grey border-radius-three default-background-hover text-center">
+                    <img
+                            ng-src="assets/images/{{DesignHome.mediaInfo.data.design.listLayout}}.png" />
+                </a>
+            </div>
+            <div class="screen layoutgrid pull-right margin-left-zero border-grey border-radius-three">
+                <a ng-repeat="layout in DesignHome.layouts.listLayouts" class="layouticon border-grey border-radius-three default-background-hover text-center" ng-click="DesignHome.changeLayout(layout.name,'list')">
+                    <img ng-src="assets/images/{{layout.name}}.png">
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="item row clearfix margin-top-thirty">
+    <div class="labels col-md-3 padding-right-zero pull-left">
+        <span>Item Layout</span>
+    </div>
+    <div class="main col-md-9 pull-right">
+        <div class="screens clearfix">
+            <div class="screen layouticon pull-left">
+                <a class="border-grey border-radius-three default-background-hover text-center">
+                    <img
+                            ng-src="assets/images/{{DesignHome.mediaInfo.data.design.itemLayout}}.png" />
+                </a>
+            </div>
+            <div class="screen layoutgrid pull-right margin-left-zero border-grey border-radius-three">
+                <a ng-repeat="layout in DesignHome.layouts.itemLayouts" class="layouticon border-grey border-radius-three default-background-hover text-center" ng-click="DesignHome.changeLayout(layout.name,'item')">
+                    <img ng-src="assets/images/{{layout.name}}.png">
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!--
+<hr>
+<div class="item row clearfix margin-top-thirty">
+    <div class="labels col-md-3 padding-right-zero pull-left">
+        <span>Item List Background Image</span>
+    </div>
+    <div class="main col-md-9 pull-right">
+        <div class="screens clearfix">
+            <div class="screen text-center layouticon pull-left">
+                <a class="border-grey border-radius-three default-background-hover text-center" onclick="alert('Open Media Library');">
+                    <span class="add-icon hidden">+</span>
+                    <img src="http://www.placehold.it/133x101">
+                </a>
+                <label class="secondary">750x1334</label>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+<h4>Manual Item Entry Details Design</h4><br>
+<div class="item row clearfix">
+    <div class="labels col-md-3 padding-right-zero pull-left">
+        <span>Background Image</span>
+    </div>
+    <div class="main col-md-9 pull-right">
+        <div class="screens clearfix">
+            <div class="screen text-center layouticon pull-left">
+                <a class="border-grey border-radius-three default-background-hover text-center" onclick="alert('Open Media Library');">
+                    <span class="add-icon hidden">+</span>
+                    <img src="http://www.placehold.it/133x101">
+                </a>
+                <label class="secondary">750x1334</label>
+            </div>
+        </div>
+    </div>
+</div>-->

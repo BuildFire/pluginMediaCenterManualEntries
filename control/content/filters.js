@@ -19,5 +19,13 @@
                     height: height
                 });
             }
+        }])
+        .filter('safeHtml', ['$sce', function ($sce) {
+            return function (html) {
+                if (html)
+                    return $sce.trustAsHtml(html);
+                else
+                    return "";
+            }
         }]);
 })(window.angular, window.buildfire, window.location);
