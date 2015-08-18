@@ -3,10 +3,17 @@
 (function (angular, window) {
     angular
         .module('mediaCenterContent')
-        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', function ($scope, MediaCenterInfo, Modals) {
+        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'DB', 'COLLECTIONS', 'Orders', function ($scope, MediaCenterInfo, Modals, DB, COLLECTIONS, Orders) {
             var ContentHome = this;
             ContentHome.info = MediaCenterInfo;
-
+            var MediaCenter = new DB(COLLECTIONS.MediaContent);
+            var _page = 0,
+                _pageSize = 10,
+                searchOptions = {
+                    filter: {"$json.title": {"$regex": '/*'}},
+                    page: _page,
+                    pageSize: _pageSize + 1 // the plus one is to check if there are any more
+                };
             //option for wysiwyg
             ContentHome.bodyWYSIWYGOptions = {
                 plugins: 'advlist autolink link image lists charmap print preview',
@@ -14,6 +21,10 @@
                 trusted: true,
                 theme: 'modern'
             };
+            ContentHome.isBusy = false;
+            ContentHome.hasMore = false;
+            ContentHome.items = [];
+            ContentHome.sortOptions = Orders.options;
             //on remove button click remove carousel Image
             ContentHome.rmCarouselImage = function (index) {
                 if (typeof index == "undefined") {
@@ -33,6 +44,20 @@
                     //do something on cancel
                 });
             }
+
+            var updateSearchOptions = function () {
+                var order = Orders.getOrder(ContentHome.info.data.content.sortBy || Orders.ordersMap.Default);
+                if (order) {
+                    var sort = {};
+                    sort[order.key] = order.order;
+                    searchOptions.sort = sort;
+                    return searchOptions;
+                    ContentHome.itemSortableOptions.disabled == !(ContentHome.info.data.content.sortBy === Orders.ordersMap.Manually)
+                }
+                else {
+                    return;
+                }
+            };
             ContentHome.addUpdateCarouselImage = function (index) {
                 var link = null;
                 if (typeof index != 'undefined') {
@@ -58,5 +83,74 @@
             ContentHome.carouselOptions = {
                 handle: '> .cursor-grab'
             };
+            ContentHome.more = function (search) {
+                if (ContentHome.isBusy) {
+                    return;
+                }
+
+                if (updateSearchOptions()) {
+                    ContentHome.isBusy = true;
+                    MediaCenter.find(searchOptions).then(function success(result) {
+                        if (result.length > _pageSize) {// to indicate there are more
+                            result.pop();
+                            searchOptions.page = searchOptions.page + 1;
+                            ContentHome.hasMore = true;
+                        } else {
+                            ContentHome.hasMore = false;
+                        }
+                        ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
+                        ContentHome.isBusy = false;
+                    }, function fail() {
+                        ContentHome.isBusy = false;
+                    })
+                }
+            };
+            ContentHome.toggleSortOrder = function (name) {
+               ContentHome.info.data.content.sortBy = name;
+                console.log(name)
+            };
+            ContentHome.itemSortableOptions = {
+                handle: '> .cursor-grab',
+                disabled: !(ContentHome.info.data.content.sortBy === Orders.ordersMap.Manually),
+                stop: function (e, ui) {
+                    var endIndex = ui.item.sortable.dropindex,
+                        maxRank = 0,
+                        draggedItem = ContentHome.items[endIndex];
+
+                    if (draggedItem) {
+                        var prev = ContentHome.items[endIndex - 1],
+                            next = ContentHome.items[endIndex + 1];
+                        var isRankChanged = false;
+                        if (next) {
+                            if (prev) {
+                                draggedItem.data.rank = ((prev.data.rank || 0) + (next.data.rank || 0)) / 2;
+                                isRankChanged = true;
+                            } else {
+                                draggedItem.data.rank = (next.data.rank || 0) / 2;
+                                isRankChanged = true;
+                            }
+                        } else {
+                            if (prev) {
+                                draggedItem.data.rank = (((prev.data.rank || 0) * 2) + 10) / 2;
+                                maxRank = draggedItem.data.rank;
+                                isRankChanged = true;
+                            }
+                        }
+                        if (isRankChanged) {
+                            //Buildfire.datastore.update(draggedItem.id, draggedItem.data, TAG_NAMES.PEOPLE, function (err) {
+                            //    if (err) {
+                            //        console.error('Error during updating rank');
+                            //    } else {
+                            //        if (ContentHome.data.content.rankOfLastItem < maxRank) {
+                            //            ContentHome.data.content.rankOfLastItem = maxRank;
+                            //            RankOfLastItem.setRank(maxRank);
+                            //        }
+                            //    }
+                            //})
+                        }
+                    }
+                }
+            };
+
         }])
 })(window.angular, window);

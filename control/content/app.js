@@ -40,7 +40,7 @@
                                         descriptionHTML: '',
                                         description: '',
                                         sortBy: Orders.ordersMap.Newest,
-                                        rankOfLastItem: ''
+                                        rankOfLastItem: 0
                                     },
                                     design: {
                                         listLayout: "list-1",
@@ -48,7 +48,7 @@
                                         backgroundImage: ""
                                     }
                                 }).then(function success() {
-                                    Location.go("/");
+                                    Location.goToHome();
                                 }, function fail() {
                                     _bootstrap();
                                 })
