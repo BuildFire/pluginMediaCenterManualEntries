@@ -6,6 +6,13 @@
         .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', function ($scope, MediaCenterInfo, Modals) {
             var ContentHome = this;
             ContentHome.info = MediaCenterInfo;
+            ContentHome.bodyWYSIWYGOptions={
+                plugins: 'advlist autolink link image lists charmap print preview',
+                skin: 'lightgray',
+                trusted: true,
+                theme: 'modern'
+            };
+
             ContentHome.rmCarouselImage = function () {
 
             }
