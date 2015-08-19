@@ -48,7 +48,7 @@
                     controllerAs: 'WidgetHome',
                     controller: 'WidgetHomeCtrl',
                     resolve: {
-                        MediaCenterInfo: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location', function ($q, DB, COLLECTIONS, Orders, Location) {
+                        MediaCenterInfo: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location', '$rootScope', function ($q, DB, COLLECTIONS, Orders, Location, $rootScope) {
                             var deferred = $q.defer();
                             var MediaCenter = new DB(COLLECTIONS.MediaCenter);
                             var _bootstrap = function () {
@@ -73,6 +73,7 @@
                             }
                             MediaCenter.get().then(function success(result) {
                                     if (result && result.data) {
+                                        $rootScope.design = result.data.design;
                                         deferred.resolve(result);
                                     }
                                     else {
@@ -118,5 +119,25 @@
                     }
                 }
             };
-        });
+            $rootScope.$on("$routeChangeSuccess", function (event, next, current) {
+
+            });
+        })
+        .factory("Design", ['$rootScope', 'Buildfire', function ($rootScope, Buildfire) {
+            return {
+                changeBackgroundTheme: function (url) {
+                    if (url) {
+                        $rootScope.currentBackgroundImage = {
+                            "background-image": "url(" + Buildfire.imageLib.resizeImage(url, {
+                                width: 342,
+                                height: 770
+                            }) + ")"
+                        };
+                        return;
+                    } else {
+                        $rootScope.currentBackgroundImage = "";
+                    }
+                }
+            }
+        }])
 })(window.angular, window.buildfire);
