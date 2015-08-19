@@ -69,17 +69,8 @@
                 <span class="chevron icon-chevron-down pull-right"></span>
             </button>
             <ul class="dropdown-menu extended" role="menu">
-                <li>
-                    <a tabindex="-1" class="transition-third">Newest</a>
-                </li>
-                <li>
-                    <a tabindex="-1" class="transition-third">Oldest</a>
-                </li>
-                <li>
-                    <a tabindex="-1" class="transition-third">Most Items</a>
-                </li>
-                <li>
-                    <a tabindex="-1" class="transition-third">Least Items</a>
+                <li ng-repeat="value in ContentHome.orders">
+                    <a tabindex="-1" class="transition-third">{{value}}</a>
                 </li>
             </ul>
         </div>

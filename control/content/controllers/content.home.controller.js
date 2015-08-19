@@ -3,10 +3,14 @@
 (function (angular, window) {
     angular
         .module('mediaCenterContent')
-        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', function ($scope, MediaCenterInfo, Modals) {
+        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'DB', 'COLLECTIONS','Orders', function ($scope, MediaCenterInfo, Modals, DB, COLLECTIONS,Orders) {
+            var MediaCenter = new DB(COLLECTIONS.MediaCenter);
             var ContentHome = this;
+            ContentHome.orders=Orders.ordersMap;
             ContentHome.info = MediaCenterInfo;
-            ContentHome.bodyWYSIWYGOptions={
+            updateMasterInfo(ContentHome.info);
+            var tmrDelayForMedia=null;
+            ContentHome.bodyWYSIWYGOptions = {
                 plugins: 'advlist autolink link image lists charmap print preview',
                 skin: 'lightgray',
                 trusted: true,
@@ -41,5 +45,41 @@
             ContentHome.carouselOptions = {
                 handle: '> .cursor-grab'
             };
+            function updateMasterInfo(info) {
+                ContentHome.masterInfo = angular.copy(info);
+            }
+
+            function resetInfo() {
+                ContentHome.info = angular.copy(ContentHome.masterInfo);
+            }
+
+            function isUnchanged(info) {
+                return angular.equals(info, ContentHome.masterInfo);
+            }
+
+            function updateData() {
+                MediaCenter.update(ContentHome.info.id,ContentHome.info.data).then(function (data) {
+                    updateMasterInfo(data);
+                }, function (err) {
+                    resetInfo();
+                    console.error('Error-------', err);
+                });
+            }
+
+            function saveDataWithDelay(info) {
+                console.log('Save Data With Delay method called-----------',ContentHome.info);
+                if (tmrDelayForMedia) {
+                    clearTimeout(tmrDelayForMedia);
+                }
+                if (!isUnchanged(ContentHome.info)) {
+                    tmrDelayForMedia = setTimeout(function () {
+                        updateData();
+                    }, 1000);
+                }
+            }
+
+            $scope.$watch(function () {
+                return ContentHome.info;
+            }, saveDataWithDelay, true);
         }])
 })(window.angular, window);
