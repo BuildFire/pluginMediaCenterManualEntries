@@ -45,17 +45,11 @@
                 ContentMedia.item = angular.copy(ContentMedia.masterItem);
             }
 
-            function filter(item) {
-                var newItem = angular.copy(item);
-                if(newItem.data.body=='<p><br data-mce-bogus="1"></p>')
-                newItem.data.body = "";
-                return newItem;
-            }
-
             function isUnchanged(item) {
-                var item = filter(item);
-                var masterItem = filter(ContentMedia.masterItem);
-                return angular.equals(item, masterItem);
+                var isDescChanged = false;
+                if (item.data.body)
+                    isDescChanged = !angular.equals(tinymce.editors[0].getContent({format: 'text'}).trim(), "")
+                return isDescChanged && angular.equals(item, ContentMedia.masterItem);
             }
             function updateItemData() {
                 MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then(function (data) {
