@@ -45,11 +45,11 @@
                 ContentMedia.item = angular.copy(ContentMedia.masterItem);
             }
 
-            function isUnchanged(item) {
+            function isChanged(item) {
                 var isDescChanged = false;
                 if (item.data.body)
                     isDescChanged = !angular.equals(tinymce.editors[0].getContent({format: 'text'}).trim(), "")
-                return isDescChanged && angular.equals(item, ContentMedia.masterItem);
+                return isDescChanged && !angular.equals(item, ContentMedia.masterItem);
             }
             function updateItemData() {
                 MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then(function (data) {
@@ -60,6 +60,7 @@
                 });
             }
             function addNewItem() {
+                console.log('Add new item');
                 MediaContent.insert(ContentMedia.item.data).then(function (data) {
                     MediaContent.getById(data.id).then(function (data) {
                         ContentMedia.item = data;
@@ -77,7 +78,7 @@
                 if (tmrDelayForMedia) {
                     clearTimeout(tmrDelayForMedia);
                 }
-                if (!isUnchanged(ContentMedia.item)) {
+                if (isChanged(ContentMedia.item)) {
                     tmrDelayForMedia = setTimeout(function () {
                         if (item.id) {
                             updateItemData();
