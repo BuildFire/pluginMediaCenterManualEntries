@@ -1,7 +1,7 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', function ($scope, $window, DB, COLLECTIONS) {
+        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', '$rootScope','Buildfire', function ($scope, $window, DB, COLLECTIONS, $rootScope,Buildfire) {
             var WidgetHome = this;
             WidgetHome.media = {};
             var MediaCenter = new DB(COLLECTIONS.MediaCenter)
@@ -13,7 +13,18 @@
                         sortBy: "Newest"
                     }
                 }
+
+
+                if (WidgetHome.media.data) {
+                    var currentBackgroundImage = WidgetHome.media.data.design.backgroundImage;
+
+                    $rootScope.currentBackgroundImage = { "background-image" : "url(" +  Buildfire.imageLib.resizeImage(currentBackgroundImage, {
+                        width: 342,
+                        height: 770
+                    }) + ")"};
                 }
+
+            }
 
             function showDummy() {
                 console.log(WidgetHome.media)
