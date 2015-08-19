@@ -4,7 +4,7 @@
     </div>
     <div class="main col-md-9 pull-right">
         <div class="clearfix">
-            <a class="btn btn-success pull-left" ng-click="ContentHome.addCarouselImage()">Add Image</a>
+            <a class="btn btn-success pull-left" ng-click="ContentHome.addUpdateCarouselImage()">Add Image</a>
         </div>
         <div class="carousel-items draggable-list-view margin-top-twenty border-radius-four border-grey"
              ui-sortable="ContentHome.carouselOptions" ng-model="ContentHome.info.data.content.images"
@@ -20,7 +20,7 @@
 
                     <div class="pull-right">
                         <span class="edit_cell glyphicon glyphicon-pencil" aria-hidden="true"
-                              ng-click="ContentHome.addCarouselImage($index)"></span>
+                              ng-click="ContentHome.addUpdateCarouselImage($index)"></span>
                         <span class="btn-icon btn-delete-icon btn-danger transition-third"
                               ng-click="ContentHome.rmCarouselImage($index)"></span>
                     </div>
@@ -42,7 +42,8 @@
 <hr class="none">
 <div class="item clearfix row">
     <div class="main col-md-12 pull-right">
-        <textarea class="form-control" placeholder="WYSIWYG" ui-tinymce="ContentHome.bodyWYSIWYGOptions"  ng-model="ContentHome.info.data.content.descriptionHTML"></textarea>
+        <textarea class="form-control" placeholder="WYSIWYG" ui-tinymce="ContentHome.bodyWYSIWYGOptions"
+                  ng-model="ContentHome.info.data.content.descriptionHTML"></textarea>
     </div>
 </div>
 <hr>
@@ -62,15 +63,14 @@
         <span>Sort Items</span>
     </div>
     <div class="main pull-right col-md-9 padding-left-zero row">
-        <div class="dropdown pull-left col-md-8 padding-zero" dropdown>
-            <button class="btn btn-default text-left dropdown-toggle" data-toggle="dropdown" dropdown-toggle
-                    aria-expanded="true">
-                <span class="pull-left">Sort By</span>
+        <div class="dropdown pull-left col-md-8 padding-zero" dropdown is-open="status.isopen">
+            <button class="btn btn-default text-left dropdown-toggle" dropdown-toggle ng-disabled="disabled" aria-expanded="true">
+                <span class="pull-left">{{ContentHome.info.data.content.sortBy || 'Newest'}}</span>
                 <span class="chevron icon-chevron-down pull-right"></span>
             </button>
             <ul class="dropdown-menu extended" role="menu">
-                <li ng-repeat="value in ContentHome.orders">
-                    <a tabindex="-1" class="transition-third">{{value}}</a>
+                <li ng-repeat="option in ContentHome.sortOptions" ng-click="ContentHome.toggleSortOrder(option.name)">
+                    <a tabindex="-1" class="transition-third">{{option.value}}</a>
                 </li>
             </ul>
         </div>
@@ -92,22 +92,33 @@
 </div>
 <hr>
 <div class="item clearfix">
-    <div class="tab-order draggable-list-view wide-list has-btn-link border-grey border-radius-four">
-        <div class="d-item double-line square-icon clearfix">
-            <span class="icon icon-menu pull-left"></span>
+    <div id="scroll-infinite"
+         class="tab-order draggable-list-view wide-list has-btn-link border-grey border-radius-four">
+        <div infinite-scroll-distance="1" infinite-scroll="ContentHome.more()"
+             infinite-scroll-disabled="ContentHome.isBusy" infinite-scroll-container="'#scroll-infinite'">
+            <div ui-sortable="ContentHome.itemSortableOptions" ng-model="ContentHome.items">
+                <div class="well text-center margin-bottom-zero border-none" ng-hide="ContentHome.items.length">
+                    <p class="margin-zero">No items found.</p>
+                </div>
+                <div class="d-item double-line square-icon clearfix" ng-if="ContentHome.items.length"
+                     ng-repeat="item in ContentHome.items">
+                    <span class="icon icon-menu pull-left cursor-grab"  ng-class="{ 'disabled': ContentHome.itemSortableOptions.disabled }"></span>
 
-            <div class="media-holder pull-left">
-                <img src="http://www.placehold.it/50x50">
-            </div>
-            <div class="copy pull-right">
-                <a class="text-primary"  href="#/media/123456"><span class="title ellipsis pull-left">Item Name</span></a>
-                <span class="title ellipsis pull-left">Item Summary</span>
+                    <div class="media-holder pull-left">
+                        <img ng-src="{{item.data.topImage | resizeImage : 50:50}}" ng-if="item.data.topImage">
+                    </div>
+                    <div class="copy pull-right">
+                        <a class="text-primary" href="#/media/{{item.id}}"><span
+                                class="title ellipsis pull-left">{{item.data.title}}</span></a>
+                        <span class="title ellipsis pull-left">{{item.data.summary}}</span>
 
-                <div class="pull-right">
+                        <div class="pull-right">
                     <span class="btn-icon btn-link-icon btn-primary transition-third"
                           onclick="window.openDialog('deepLink.html', null, 'sm', null)"></span>
                     <span class="btn-icon btn-delete-icon btn-danger transition-third"
                           onclick="window.openDialog('remove.html', null, 'sm', null)"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
