@@ -6,7 +6,7 @@
 (function (angular, window) {
     angular
         .module('mediaCenterDesign')
-        .controller('DesignHomeCtrl', ['$scope', 'COLLECTIONS', 'DB', 'MediaCenterInfo', '$timeout', function ($scope, COLLECTIONS, DB, MediaCenterInfo, $timeout) {
+        .controller('DesignHomeCtrl', ['$scope', 'COLLECTIONS', 'DB', 'MediaCenterInfo', '$timeout','Buildfire', function ($scope, COLLECTIONS, DB, MediaCenterInfo, $timeout, Buildfire) {
 
             var DesignHome = this;
 
@@ -68,6 +68,28 @@
 
             }, true);
 
+
+            /*Background image area begins*/
+            var options = {showIcons: false, multiSelection: false};
+
+            DesignHome.addBackgroundImage = function () {
+                Buildfire.imageLib.showDialog(options, callback);
+            };
+            DesignHome.removeBackgroundImage = function () {
+                DesignHome.mediaInfo.data.design.backgroundImage = null;
+            };
+
+            var callback = function (error, result) {
+                if (error) {
+                    console.error('Error:', error);
+                } else {
+                    console.log(result.selectedFiles[0]);
+                    DesignHome.mediaInfo.data.design.backgroundImage = result.selectedFiles && result.selectedFiles[0] || null;
+                    $scope.$digest();
+
+                }
+            };
+            /*Background image area ends*/
 
         }])
 })(window.angular, window);
