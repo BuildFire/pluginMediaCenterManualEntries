@@ -6,10 +6,12 @@
         .module('mediaCenterWidget', [
             'mediaCenterEnums',
             'mediaCenterServices',
+            'mediaCenterFilters',
             'ngAnimate',
             'ngRoute',
             'ui.bootstrap',
-            'infinite-scroll'])
+            'infinite-scroll'
+        ])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component
         //injected ui.sortable for manual ordering of list
@@ -44,7 +46,47 @@
                         return 'templates/layouts/' + layout + '.html';
                     },
                     controllerAs: 'WidgetHome',
-                    controller: 'WidgetHomeCtrl'
+                    controller: 'WidgetHomeCtrl',
+                    resolve: {
+                        MediaCenterInfo: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location', function ($q, DB, COLLECTIONS, Orders, Location) {
+                            var deferred = $q.defer();
+                            var MediaCenter = new DB(COLLECTIONS.MediaCenter);
+                            var _bootstrap = function () {
+                                MediaCenter.save({
+                                    content: {
+                                        images: [],
+                                        descriptionHTML: '',
+                                        description: '',
+                                        sortBy: Orders.ordersMap.Newest,
+                                        rankOfLastItem: 0
+                                    },
+                                    design: {
+                                        listLayout: "list-1",
+                                        itemLayout: "item-1",
+                                        backgroundImage: ""
+                                    }
+                                }).then(function success() {
+                                    Location.goToHome();
+                                }, function fail(error) {
+                                    throw (error);
+                                })
+                            }
+                            MediaCenter.get().then(function success(result) {
+                                    if (result && result.data) {
+                                        deferred.resolve(result);
+                                    }
+                                    else {
+                                        //error in bootstrapping
+                                        _bootstrap(); //bootstrap again  _bootstrap();
+                                    }
+                                },
+                                function fail(err) {
+                                    throw (error);
+                                }
+                            );
+                            return deferred.promise;
+                        }]
+                    }
                 })
                 .otherwise('/');
         }])

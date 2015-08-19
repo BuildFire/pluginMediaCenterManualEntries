@@ -28,20 +28,22 @@
         .factory('Orders', [function () {
             var ordersMap = {
                 Manually: "Manually",
-                Newest: " Newest",
-                Oldest: " Oldest",
+                Default: "Manually",
+                Newest: "Newest",
+                Oldest: "Oldest",
                 Most: " Oldest",
                 Least: " Oldest"
             }
             var orders = [
-                {id: 1, name: "Manually", value: "Manually"},
-                {id: 1, name: "Newest", value: "Newest"},
-                {id: 1, name: "Oldest", value: "Oldest"},
-                {id: 1, name: "Most", value: "Most Items"},
-                {id: 1, name: "Least", value: "Least Items"}
+                {id: 1, name: "Manually", value: "Manually", key: "rank", order: 1},
+                {id: 1, name: "Newest", value: "Newest", key: "dateCreated", order: -1},
+                {id: 1, name: "Oldest", value: "Oldest", key: "dateCreated", order: 1},
+                {id: 1, name: "Most", value: "Most Items", key: "title", order: 1},
+                {id: 1, name: "Least", value: "Least Items", key: "title", order: -1}
             ];
             return {
                 ordersMap: ordersMap,
+                options: orders,
                 getOrder: function (name) {
                     return orders.filter(function (order) {
                         return order.name === name;
@@ -73,7 +75,7 @@
             DB.prototype.getById = function (id) {
                 var that = this;
                 var deferred = $q.defer();
-                    Buildfire.datastore.getById(id,that._tagName, function (err, result) {
+                Buildfire.datastore.getById(id, that._tagName, function (err, result) {
                         if (err) {
                             return deferred.reject(err);
                         }
