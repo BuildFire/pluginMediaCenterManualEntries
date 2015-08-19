@@ -22,7 +22,7 @@
         //injected ui.bootstrap for angular bootstrap component
         //injected ui.sortable for manual ordering of list
         //ngClipboard to provide copytoclipboard feature
-        .config(['$routeProvider', 'ngClipProvider', 'COLLECTIONS', function ($routeProvider, ngClipProvider, COLLECTIONS) {
+        .config(['$routeProvider', 'ngClipProvider', function ($routeProvider, ngClipProvider) {
             ngClipProvider.setPath("//cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.1.6/ZeroClipboard.swf");
             $routeProvider
                 .when('/', {
