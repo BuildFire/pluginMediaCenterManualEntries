@@ -11,6 +11,7 @@
                     topImage: '',
                     summary: '',
                     body: '',
+                    bodyHTML: '',
                     srcUrl: '',
                     audioUrl: '',
                     videoUrl: '',
@@ -44,14 +45,22 @@
             function resetItem() {
                 ContentMedia.item = angular.copy(ContentMedia.masterItem);
             }
+            function filter(item){
+                var newItem=angular.copy(item);
+                newItem.data.body='';
+                return newItem;
+            }
 
-            function isChanged(item) {
-                var isDescChanged = false;
-                if (item.data.body)
-                    isDescChanged = !angular.equals(tinymce.editors[0].getContent({format: 'text'}).trim(), "")
-                return isDescChanged && !angular.equals(item, ContentMedia.masterItem);
+            function isUnChanged(item) {
+                if(item.data.body && angular.equals(tinymce.editors[0].getContent({format: 'text'}).trim(), "")){
+                    return angular.equals(filter(item),ContentMedia.masterItem);
+                }
+                else {
+                    return angular.equals(item,ContentMedia.masterItem);
+                }
             }
             function updateItemData() {
+                ContentMedia.item.data.bodyHTML=ContentMedia.item.data.body;
                 MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then(function (data) {
                     updateMasterItem(ContentMedia.item);
                 }, function (err) {
@@ -60,7 +69,7 @@
                 });
             }
             function addNewItem() {
-                console.log('Add new item');
+                ContentMedia.item.data.bodyHTML=ContentMedia.item.data.body;
                 MediaContent.insert(ContentMedia.item.data).then(function (data) {
                     MediaContent.getById(data.id).then(function (data) {
                         ContentMedia.item = data;
@@ -78,7 +87,7 @@
                 if (tmrDelayForMedia) {
                     clearTimeout(tmrDelayForMedia);
                 }
-                if (isChanged(ContentMedia.item)) {
+                if (!isUnChanged(ContentMedia.item)) {
                     tmrDelayForMedia = setTimeout(function () {
                         if (item.id) {
                             updateItemData();
@@ -160,15 +169,7 @@
             };
 
             ContentMedia.done = function () {
-                if (ContentMedia.item.id) {
-                    MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then(function (data) {
                         Location.goToHome();
-                    }, function (err) {
-                        console.error('error----', err);
-                        //do something on error
-                    });
-                }
-
             };
 
             ContentMedia.delete = function () {
