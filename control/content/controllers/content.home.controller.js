@@ -6,6 +6,8 @@
         .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'DB', 'COLLECTIONS', 'Orders', function ($scope, MediaCenterInfo, Modals, DB, COLLECTIONS, Orders) {
             var ContentHome = this;
             ContentHome.info = MediaCenterInfo;
+            updateMasterInfo(ContentHome.info);
+            var tmrDelayForMedia=null;
             var MediaCenter = new DB(COLLECTIONS.MediaContent);
             var _page = 0,
                 _pageSize = 10,
@@ -107,8 +109,7 @@
             }
 
             ContentHome.toggleSortOrder = function (name) {
-                ContentHome.info.data.content.sortBy = name;
-                console.log(name)
+               ContentHome.info.data.content.sortBy = name;
             };
             ContentHome.itemSortableOptions = {
                 handle: '> .cursor-grab',
@@ -152,6 +153,41 @@
                     }
                 }
             };
+            function updateMasterInfo(info) {
+                ContentHome.masterInfo = angular.copy(info);
+            }
+
+            function resetInfo() {
+                ContentHome.info = angular.copy(ContentHome.masterInfo);
+            }
+
+            function isUnchanged(info) {
+                return angular.equals(info, ContentHome.masterInfo);
+            }
+
+            function updateData() {
+                MediaCenter.update(ContentHome.info.id,ContentHome.info.data).then(function (data) {
+                    updateMasterInfo(data);
+                }, function (err) {
+                    resetInfo();
+                    console.error('Error-------', err);
+                });
+            }
+
+            function saveDataWithDelay(info) {
+                if (tmrDelayForMedia) {
+                    clearTimeout(tmrDelayForMedia);
+                }
+                if (!isUnchanged(ContentHome.info)) {
+                    tmrDelayForMedia = setTimeout(function () {
+                        updateData();
+                    }, 1000);
+                }
+            }
+
+            $scope.$watch(function () {
+                return ContentHome.info;
+            }, saveDataWithDelay, true);
 
         }])
 })(window.angular, window);

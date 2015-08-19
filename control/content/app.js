@@ -54,7 +54,7 @@
                                 })
                             }
                             MediaCenter.get().then(function success(result) {
-                                    if (result && result.data && result.data.content && result.data.design) {
+                                    if (result && result.data) {
                                         deferred.resolve(result);
                                     }
                                     else {
@@ -62,10 +62,10 @@
                                         _bootstrap(); //bootstrap again  _bootstrap();
                                     }
                                 },
-                                function fail() {
+                                function fail(err) {
                                     Location.goToHome();
                                 }
-                            )
+                            );
                             return deferred.promise;
                         }]
                     }
