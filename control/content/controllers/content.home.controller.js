@@ -8,7 +8,8 @@
             ContentHome.info = MediaCenterInfo;
             updateMasterInfo(ContentHome.info);
             var tmrDelayForMedia = null;
-            var MediaCenter = new DB(COLLECTIONS.MediaContent);
+            var MediaContent = new DB(COLLECTIONS.MediaContent);
+            var MediaCenter = new DB(COLLECTIONS.MediaCenter);
             var _skip = 0,
                 _limit = 10,
                 searchOptions = {
@@ -89,7 +90,7 @@
                     return;
                 }
                 ContentHome.isBusy = true;
-                MediaCenter.find(searchOptions).then(function success(result) {
+                MediaContent.find(searchOptions).then(function success(result) {
                     console.log("#########Data###########", result.length)
                     if (result.length <= _limit) {// to indicate there are more
                         ContentHome.noMore = true;
