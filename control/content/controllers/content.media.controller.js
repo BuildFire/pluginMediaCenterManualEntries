@@ -28,13 +28,13 @@
                     trusted: true,
                     theme: 'modern'
                 };
+                updateMasterItem({data: data});
                 if (media) {
                     ContentMedia.item = media;
                 }
                 else {
                     ContentMedia.item = {data: data};
                 }
-                updateMasterItem(ContentMedia.item);
             }
 
             function updateMasterItem(item) {
@@ -46,9 +46,11 @@
             }
 
             function isUnchanged(item) {
-                return angular.equals(item, ContentMedia.masterItem);
+                var isDescChanged = false;
+                if (item.data.body)
+                    isDescChanged = !angular.equals(tinymce.editors[0].getContent({format: 'text'}).trim(), "")
+                return isDescChanged && angular.equals(item, ContentMedia.masterItem);
             }
-
             function updateItemData() {
                 MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then(function (data) {
                     updateMasterItem(ContentMedia.item);
@@ -57,7 +59,6 @@
                     console.error('Error-------', err);
                 });
             }
-
             function addNewItem() {
                 MediaContent.insert(ContentMedia.item.data).then(function (data) {
                     MediaContent.getById(data.id).then(function (data) {
@@ -82,9 +83,10 @@
                             updateItemData();
                         }
                         else {
-                            ContentMedia.item.data.dateCreated=+new Date();
+                            ContentMedia.item.data.dateCreated = +new Date();
                             addNewItem();
                         }
+
                     }, 1000);
                 }
             }
@@ -159,9 +161,9 @@
             ContentMedia.done = function () {
                 if (ContentMedia.item.id) {
                     MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then(function (data) {
-                            Location.goToHome();
+                        Location.goToHome();
                     }, function (err) {
-                        console.error('error----',err);
+                        console.error('error----', err);
                         //do something on error
                     });
                 }
@@ -169,7 +171,7 @@
             };
 
             ContentMedia.delete = function () {
-                if ( ContentMedia.item.id)
+                if (ContentMedia.item.id)
                     MediaContent.delete(ContentMedia.item.id).then(function (data) {
                         Location.goToHome();
                     }, function (err) {
