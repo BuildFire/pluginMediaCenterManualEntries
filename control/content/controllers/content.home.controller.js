@@ -7,14 +7,14 @@
             var ContentHome = this;
             ContentHome.info = MediaCenterInfo;
             updateMasterInfo(ContentHome.info);
-            var tmrDelayForMedia=null;
+            var tmrDelayForMedia = null;
             var MediaCenter = new DB(COLLECTIONS.MediaContent);
-            var _page = 0,
-                _pageSize = 10,
+            var _skip = 0,
+                _limit = 10,
                 searchOptions = {
                     filter: {"$json.title": {"$regex": '/*'}},
-                    page: _page,
-                    pageSize: _pageSize + 1 // the plus one is to check if there are any more
+                    skip: _skip,
+                    limit: _limit + 1 // the plus one is to check if there are any more
                 };
             //option for wysiwyg
             ContentHome.bodyWYSIWYGOptions = {
@@ -24,7 +24,6 @@
                 theme: 'modern'
             };
             ContentHome.isBusy = false;
-            ContentHome.hasMore = true;
             ContentHome.items = [];
             ContentHome.sortOptions = Orders.options;
             //on remove button click remove carousel Image
@@ -53,11 +52,10 @@
                     var sort = {};
                     sort[order.key] = order.order;
                     searchOptions.sort = sort;
-                    return searchOptions;
-                    ContentHome.itemSortableOptions.disabled == !(ContentHome.info.data.content.sortBy === Orders.ordersMap.Manually)
+                    return true;
                 }
                 else {
-                    return;
+                    return false;
                 }
             };
             ContentHome.addUpdateCarouselImage = function (index) {
@@ -82,23 +80,22 @@
                     //do something on cancel
                 });
             }
-            updateSearchOptions();
             ContentHome.carouselOptions = {
                 handle: '> .cursor-grab'
             };
             ContentHome.noMore = false;
-            ContentHome.getmore = function (search) {
+            ContentHome.getMore = function (search) {
                 if (ContentHome.isBusy && !ContentHome.noMore) {
                     return;
                 }
                 ContentHome.isBusy = true;
                 MediaCenter.find(searchOptions).then(function success(result) {
-                    console.log("#########Data###########",result.length)
-                    if (result.length <= _pageSize) {// to indicate there are more
+                    console.log("#########Data###########", result.length)
+                    if (result.length <= _limit) {// to indicate there are more
                         ContentHome.noMore = true;
                     } else {
                         result.pop();
-                        searchOptions.page = searchOptions.page + 1;
+                        searchOptions.skip = searchOptions.skip + _limit;
                         ContentHome.noMore = false;
                     }
                     ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
@@ -109,7 +106,7 @@
             }
 
             ContentHome.toggleSortOrder = function (name) {
-               ContentHome.info.data.content.sortBy = name;
+                ContentHome.info.data.content.sortBy = name;
             };
             ContentHome.itemSortableOptions = {
                 handle: '> .cursor-grab',
@@ -153,6 +150,7 @@
                     }
                 }
             };
+            updateSearchOptions();
             function updateMasterInfo(info) {
                 ContentHome.masterInfo = angular.copy(info);
             }
@@ -166,7 +164,7 @@
             }
 
             function updateData() {
-                MediaCenter.update(ContentHome.info.id,ContentHome.info.data).then(function (data) {
+                MediaCenter.update(ContentHome.info.id, ContentHome.info.data).then(function (data) {
                     updateMasterInfo(data);
                 }, function (err) {
                     resetInfo();
