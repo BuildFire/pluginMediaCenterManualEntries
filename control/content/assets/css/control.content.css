@@ -6,3 +6,7 @@
     width: 15px;
     cursor: pointer;
 }
+#scroll-infinite{
+    overflow-y: auto;
+    max-height: 457px;
+}

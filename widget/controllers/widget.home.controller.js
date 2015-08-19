@@ -13,8 +13,7 @@
                         sortBy: "Newest"
                     }
                 }
-                console.log(WidgetHome.media)
-            }
+                }
 
             function showDummy() {
                 console.log(WidgetHome.media)

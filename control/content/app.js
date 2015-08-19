@@ -40,7 +40,7 @@
                                         descriptionHTML: '',
                                         description: '',
                                         sortBy: Orders.ordersMap.Newest,
-                                        rankOfLastItem: ''
+                                        rankOfLastItem: 0
                                     },
                                     design: {
                                         listLayout: "list-1",
