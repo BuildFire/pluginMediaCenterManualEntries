@@ -22,7 +22,7 @@
                 theme: 'modern'
             };
             ContentHome.isBusy = false;
-            ContentHome.hasMore = false;
+            ContentHome.hasMore = true;
             ContentHome.items = [];
             ContentHome.sortOptions = Orders.options;
             //on remove button click remove carousel Image
@@ -80,33 +80,34 @@
                     //do something on cancel
                 });
             }
+            updateSearchOptions();
             ContentHome.carouselOptions = {
                 handle: '> .cursor-grab'
             };
-            ContentHome.more = function (search) {
-                if (ContentHome.isBusy) {
+            ContentHome.noMore = false;
+            ContentHome.getmore = function (search) {
+                if (ContentHome.isBusy && !ContentHome.noMore) {
                     return;
                 }
+                ContentHome.isBusy = true;
+                MediaCenter.find(searchOptions).then(function success(result) {
+                    console.log("#########Data###########",result.length)
+                    if (result.length <= _pageSize) {// to indicate there are more
+                        ContentHome.noMore = true;
+                    } else {
+                        result.pop();
+                        searchOptions.page = searchOptions.page + 1;
+                        ContentHome.noMore = false;
+                    }
+                    ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
+                    ContentHome.isBusy = false;
+                }, function fail() {
+                    ContentHome.isBusy = false;
+                })
+            }
 
-                if (updateSearchOptions()) {
-                    ContentHome.isBusy = true;
-                    MediaCenter.find(searchOptions).then(function success(result) {
-                        if (result.length > _pageSize) {// to indicate there are more
-                            result.pop();
-                            searchOptions.page = searchOptions.page + 1;
-                            ContentHome.hasMore = true;
-                        } else {
-                            ContentHome.hasMore = false;
-                        }
-                        ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
-                        ContentHome.isBusy = false;
-                    }, function fail() {
-                        ContentHome.isBusy = false;
-                    })
-                }
-            };
             ContentHome.toggleSortOrder = function (name) {
-               ContentHome.info.data.content.sortBy = name;
+                ContentHome.info.data.content.sortBy = name;
                 console.log(name)
             };
             ContentHome.itemSortableOptions = {
