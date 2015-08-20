@@ -94,8 +94,10 @@
 <div class="item clearfix">
     <div id="scroll-infinite"
          class="tab-order draggable-list-view wide-list has-btn-link border-grey border-radius-four">
-        <div infinite-scroll-distance="1" infinite-scroll="ContentHome.more()"
-             infinite-scroll-disabled="ContentHome.isBusy" infinite-scroll-container="'#scroll-infinite'">
+        <div infinite-scroll-distance="1"
+             infinite-scroll="ContentHome.getMore()"
+             infinite-scroll-disabled="ContentHome.noMore"
+             infinite-scroll-container="'#scroll-infinite'">
             <div ui-sortable="ContentHome.itemSortableOptions" ng-model="ContentHome.items">
                 <div class="well text-center margin-bottom-zero border-none" ng-hide="ContentHome.items.length">
                     <p class="margin-zero">No items found.</p>

@@ -1,6 +1,5 @@
-'use strict';
-
 (function (angular, buildfire) {
+    "use strict";
     //created mediaCenterContent module
     angular
         .module('mediaCenterContent',
@@ -22,7 +21,7 @@
         //injected ui.bootstrap for angular bootstrap component
         //injected ui.sortable for manual ordering of list
         //ngClipboard to provide copytoclipboard feature
-        .config(['$routeProvider', 'ngClipProvider', 'COLLECTIONS', function ($routeProvider, ngClipProvider, COLLECTIONS) {
+        .config(['$routeProvider', 'ngClipProvider', function ($routeProvider, ngClipProvider) {
             ngClipProvider.setPath("//cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.1.6/ZeroClipboard.swf");
             $routeProvider
                 .when('/', {
@@ -51,10 +50,10 @@
                                     Location.goToHome();
                                 }, function fail() {
                                     _bootstrap();
-                                })
-                            }
+                                });
+                            };
                             MediaCenter.get().then(function success(result) {
-                                    if (result && result.data && result.data.content && result.data.design) {
+                                    if (result && result.data) {
                                         deferred.resolve(result);
                                     }
                                     else {
@@ -62,10 +61,10 @@
                                         _bootstrap(); //bootstrap again  _bootstrap();
                                     }
                                 },
-                                function fail() {
+                                function fail(err) {
                                     Location.goToHome();
                                 }
-                            )
+                            );
                             return deferred.promise;
                         }]
                     }
@@ -79,7 +78,6 @@
                             return null;
                         }
                     }
-
                 })
                 .when('/media/:itemId', {
                     templateUrl: 'templates/media.html',
@@ -103,7 +101,7 @@
                                     }
                                 );
                             }
-                            else{
+                            else {
                                 Location.goToHome();
                             }
                             return deferred.promise;
@@ -111,13 +109,6 @@
                     }
                 })
                 .otherwise('/');
-        }])
-        .
-        run(function ($rootScope, $location) {
-            /* Buildfire.messaging.onReceivedMessage = function(message){
-             $location.path('/people/'+ message.id);
-             };*/
-        })
-
+        }]);
 })
 (window.angular, window.buildfire);

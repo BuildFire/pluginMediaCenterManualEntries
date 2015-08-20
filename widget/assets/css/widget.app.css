@@ -1,0 +1,9 @@
+.customBackground {
+    background-position: 50% 0%;
+    background-size: initial;
+    background-repeat: repeat;
+    background-origin: initial;
+    background-clip: initial;
+    background-attachment: fixed;
+    background-color: #010101;
+}
