@@ -2,11 +2,25 @@
 
 (function (angular, buildfire, location) {
     //created mediaCenterWidget module
+    var settings;
+    var Settings = {
+        setSettings: function (newSettings) {
+            settings = newSettings;
+        },
+        getSetting: function () {
+            return settings;
+        }
+    };
     angular
         .module('mediaCenterServices', ['mediaCenterEnums'])
         .provider('Buildfire', [function () {
             this.$get = function () {
                 return buildfire;
+            }
+        }])
+        .provider('Messaging', [function () {
+            this.$get = function () {
+                return buildfire.messaging;
             }
         }])
         .provider('ImageLib', [function () {
@@ -195,7 +209,28 @@
             }
             return DB;
         }])
-        .factory('Utility', [function () {
+        .value('Settings', Settings)
+        .factory("AppConfig", ['$rootScope', 'Buildfire', 'Settings', function ($rootScope, Buildfire, Settings) {
+            return {
+                setSettings: function (newSettings) {
+                    Settings.setSettings(newSettings);
+                },
+                getSettings: function () {
+                    return Settings.getSetting();
+                }, changeBackgroundTheme: function (url) {
+                    if (url) {
+                        $rootScope.currentBackgroundImage = {
+                            "background-image": "url(" + Buildfire.imageLib.resizeImage(url, {
+                                width: 342,
+                                height: 770
+                            }) + ")"
+                        };
+                        return;
+                    } else {
+                        $rootScope.currentBackgroundImage = "";
+                    }
+                }
+            }
 
         }])
 })(window.angular, window.buildfire, window.location);

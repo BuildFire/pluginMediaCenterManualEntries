@@ -2,11 +2,30 @@
 
 (function (angular, buildfire, location) {
     //created mediaCenterWidget module
+    var settings;
+    var Settings = {
+        setSettings: function (newSettings) {
+            settings = newSettings;
+        },
+        getSetting: function () {
+            return settings;
+        }
+    };
     angular
         .module('mediaCenterServices', ['mediaCenterEnums'])
         .provider('Buildfire', [function () {
             this.$get = function () {
                 return buildfire;
+            }
+        }])
+        .provider('Messaging', [function () {
+            this.$get = function () {
+                return buildfire.messaging;
+            }
+        }])
+        .provider('ImageLib', [function () {
+            this.$get = function () {
+                return buildfire.imageLib;
             }
         }])
         .factory('Location', [function () {
@@ -23,20 +42,22 @@
         .factory('Orders', [function () {
             var ordersMap = {
                 Manually: "Manually",
-                Newest: " Newest",
-                Oldest: " Oldest",
+                Default: "Manually",
+                Newest: "Newest",
+                Oldest: "Oldest",
                 Most: " Oldest",
                 Least: " Oldest"
             }
             var orders = [
-                {id: 1, name: "Manually", value: "Manually"},
-                {id: 1, name: "Newest", value: "Newest"},
-                {id: 1, name: "Oldest", value: "Oldest"},
-                {id: 1, name: "Most", value: "Most Items"},
-                {id: 1, name: "Least", value: "Least Items"}
+                {id: 1, name: "Manually", value: "Manually", key: "rank", order: 1},
+                {id: 1, name: "Newest", value: "Newest", key: "dateCreated", order: -1},
+                {id: 1, name: "Oldest", value: "Oldest", key: "dateCreated", order: 1},
+                {id: 1, name: "Most", value: "Most Items", key: "title", order: 1},
+                {id: 1, name: "Least", value: "Least Items", key: "title", order: -1}
             ];
             return {
                 ordersMap: ordersMap,
+                options: orders,
                 getOrder: function (name) {
                     return orders.filter(function (order) {
                         return order.name === name;
@@ -64,7 +85,22 @@
                     }
                 });
                 return deferred.promise;
-            }
+            };
+            DB.prototype.getById = function (id) {
+                var that = this;
+                var deferred = $q.defer();
+                Buildfire.datastore.getById(id, that._tagName, function (err, result) {
+                    if (err) {
+                        return deferred.reject(err);
+                    }
+                    else if (result && result.data) {
+                        return deferred.resolve(result);
+                    } else {
+                        return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOND));
+                    }
+                });
+                return deferred.promise;
+            };
             DB.prototype.insert = function (items) {
                 var that = this;
                 var deferred = $q.defer();
@@ -173,8 +209,28 @@
             }
             return DB;
         }])
-        .factory('Utility', [function () {
+        .value('Settings', Settings)
+        .factory("AppConfig", ['$rootScope', 'Buildfire', 'Settings', function ($rootScope, Buildfire, Settings) {
+            return {
+                setSettings: function (newSettings) {
+                    Settings.setSettings(newSettings);
+                },
+                getSettings: function () {
+                    return Settings.getSetting();
+                }, changeBackgroundTheme: function (url) {
+                    if (url) {
+                        $rootScope.currentBackgroundImage = {
+                            "background-image": "url(" + Buildfire.imageLib.resizeImage(url, {
+                                width: 342,
+                                height: 770
+                            }) + ")"
+                        };
+                        return;
+                    } else {
+                        $rootScope.currentBackgroundImage = "";
+                    }
+                }
+            }
 
         }])
-
 })(window.angular, window.buildfire, window.location);

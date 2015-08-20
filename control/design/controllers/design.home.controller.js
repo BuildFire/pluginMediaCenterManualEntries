@@ -6,7 +6,7 @@
 (function (angular, window) {
     angular
         .module('mediaCenterDesign')
-        .controller('DesignHomeCtrl', ['$scope', 'COLLECTIONS', 'DB', 'MediaCenterInfo', '$timeout','Buildfire', function ($scope, COLLECTIONS, DB, MediaCenterInfo, $timeout, Buildfire) {
+        .controller('DesignHomeCtrl', ['$scope', 'COLLECTIONS', 'DB', 'MediaCenterInfo', '$timeout', 'Buildfire', function ($scope, COLLECTIONS, DB, MediaCenterInfo, $timeout, Buildfire) {
 
             var DesignHome = this;
 
@@ -16,20 +16,8 @@
             var lastSaved = angular.copy(DesignHome.mediaInfo);
 
             DesignHome.layouts = {
-                listLayouts: [{
-                    name: "list-layout-1"
-                }, {
-                    name: "list-layout-2"
-                }],
-                itemLayouts: [{
-                    name: "item-layout-1"
-                }, {
-                    name: "item-layout-2"
-                }, {
-                    name: "item-layout-3"
-                }, {
-                    name: "item-layout-4"
-                }]
+                listLayouts: [{ name: "list-1" }, { name: "list-2" }, { name: "list-3" }, {  name: "list-4"  }],
+                itemLayouts: [ { name: "item-1" }, { name: "item-2" }]
             };
 
             DesignHome.changeLayout = function (layoutName, type) {
