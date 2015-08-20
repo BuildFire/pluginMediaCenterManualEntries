@@ -1,6 +1,5 @@
-'use strict';
-
 (function (angular, buildfire) {
+    'use strict';
     //created mediaCenterWidget module
     angular
         .module('mediaCenterWidget', [

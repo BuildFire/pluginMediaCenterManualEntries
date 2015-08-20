@@ -1,6 +1,5 @@
-'use strict';
-
 (function (angular, buildfire) {
+    'use strict';
     //created mediaCenterContent module
     angular
         .module('mediaCenterDesign', ['mediaCenterEnums', 'mediaCenterServices', 'mediaCenterFilters', 'ngAnimate', 'ngRoute', 'ui.bootstrap', 'ui.sortable', 'infinite-scroll', "bngCsv"])
@@ -9,7 +8,6 @@
         //injected ui.sortable for manual ordering of list
         //ngClipboard to provide copytoclipboard feature
         .config(['$routeProvider', function ($routeProvider) {
-
             $routeProvider
                 .when('/', {
                     templateUrl: 'templates/home.html',
@@ -37,8 +35,8 @@
                                     Location.go("/");
                                 }, function fail() {
                                     _bootstrap();
-                                })
-                            }
+                                });
+                            };
                             MediaCenter.get().then(function success(result) {
                                     if (result && result.data && result.data.content && result.data.design) {
                                         deferred.resolve(result);
@@ -51,16 +49,11 @@
                                 function fail() {
                                     Location.goToHome();
                                 }
-                            )
+                            );
                             return deferred.promise;
                         }]
                     }
                 })
                 .otherwise('/');
         }]);
-    /*.controller('HomeCtrl', function ($scope) {
-     var Home = this;
-     Home.firstName = "John";
-     Home.lastName = "Doe";
-     });*/
 })(window.angular, window.buildfire);

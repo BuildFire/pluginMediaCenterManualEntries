@@ -1,4 +1,5 @@
-(function (angular) {
+(function (angular, tinymce) {
+    'use strict';
     angular
         .module('mediaCenterContent')
         .controller('ContentMediaCtrl', ['$scope', '$window', 'Buildfire', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig',
@@ -46,22 +47,24 @@
                 function resetItem() {
                     ContentMedia.item = angular.copy(ContentMedia.masterItem);
                 }
-            function filter(item){
-                var newItem=angular.copy(item);
-                newItem.data.body='';
+
+                function filter(item) {
+                    var newItem = angular.copy(item);
+                    newItem.data.body = '';
                     return newItem;
                 }
 
                 function isUnChanged(item) {
-                if(item.data.body && angular.equals(tinymce.editors[0].getContent({format: 'text'}).trim(), "")){
-                    return angular.equals(filter(item),ContentMedia.masterItem);
+                    if (item.data.body && angular.equals(tinymce.editors[0].getContent({format: 'text'}).trim(), "")) {
+                        return angular.equals(filter(item), ContentMedia.masterItem);
                     }
                     else {
-                    return angular.equals(item,ContentMedia.masterItem);
+                        return angular.equals(item, ContentMedia.masterItem);
                     }
                 }
+
                 function updateItemData() {
-                ContentMedia.item.data.bodyHTML=ContentMedia.item.data.body;
+                    ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
                     MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then(function (data) {
                         updateMasterItem(ContentMedia.item);
                     }, function (err) {
@@ -69,8 +72,9 @@
                         console.error('Error-------', err);
                     });
                 }
+
                 function addNewItem() {
-                ContentMedia.item.data.bodyHTML=ContentMedia.item.data.body;
+                    ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
                     MediaContent.insert(ContentMedia.item.data).then(function (data) {
                         MediaContent.getById(data.id).then(function (data) {
                             ContentMedia.item = data;
@@ -142,8 +146,9 @@
                     if (error) {
                         return console.error('Error:', error);
                     }
-                    if (!ContentMedia.item.data.links)
+                    if (!ContentMedia.item.data.links) {
                         ContentMedia.item.data.links = [];
+                    }
                     ContentMedia.item.data.links.push(result);
                     $scope.$digest();
                 };
@@ -157,42 +162,42 @@
                         if (error) {
                             return console.error('Error:', error);
                         }
-                        if (!ContentMedia.item.data.links)
+                        if (!ContentMedia.item.data.links) {
                             ContentMedia.item.data.links = [];
+                        }
                         ContentMedia.item.data.links.splice(index, 1, result);
                         $scope.$digest();
                     });
                 };
 
                 ContentMedia.removeLink = function (index) {
-                    if (ContentMedia.item.data && ContentMedia.item.data.links)
+                    if (ContentMedia.item.data && ContentMedia.item.data.links) {
                         ContentMedia.item.data.links.splice(index, 1);
+                    }
                 };
-
                 ContentMedia.done = function () {
                     Location.goToHome();
                 };
 
                 ContentMedia.delete = function () {
-                    if (ContentMedia.item.id)
+                    if (ContentMedia.item.id) {
                         MediaContent.delete(ContentMedia.item.id).then(function (data) {
                             Location.goToHome();
                         }, function (err) {
                             console.error('Error while deleting an item-----', err);
                         });
+                    }
                 };
-
                 $scope.$watch(function () {
                     return ContentMedia.item;
                 }, updateItemsWithDelay, true);
-
                 init();
                 Messaging.sendMessageToWidget({
                     name: EVENTS.ROUTE_CHANGE,
                     message: {
                         path: PATHS.MEDIA,
-                        id:ContentMedia.item.id || null
+                        id: ContentMedia.item.id || null
                     }
                 });
             }]);
-})(window.angular);
+})(window.angular, window.tinymce);

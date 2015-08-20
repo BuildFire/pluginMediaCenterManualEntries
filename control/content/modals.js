@@ -1,8 +1,8 @@
-'use strict';
-
 (function (angular, buildfire) {
-    if (!buildfire)
+    'use strict';
+    if (!buildfire) {
         throw ("buildfire not found");
+    }
     angular
         .module('mediaCenterModals', ['mediaCenterFilters', 'ui.bootstrap'])
         .factory('Modals', ['$modal', '$q', function ($modal, $q) {
@@ -110,5 +110,5 @@
             RemovePopup.cancel = function () {
                 $modalInstance.dismiss('no');
             };
-        }])
+        }]);
 })(window.angular, window.buildfire);
