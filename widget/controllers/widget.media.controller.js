@@ -45,7 +45,7 @@
             });
             Buildfire.datastore.onUpdate(function (event) {
                 switch (event.tag) {
-                    case COLLECTIONS.MediaContent:
+                    case COLLECTIONS.MediaCenter:
                         if (event.data) {
                             if (event.data.design && event.data.design.itemLayout != currentItemLayout) {
                                 currentItemLayout = event.data.design.itemLayout;

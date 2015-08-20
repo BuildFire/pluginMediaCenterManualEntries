@@ -16,7 +16,7 @@
             var lastSaved = angular.copy(DesignHome.mediaInfo);
 
             /*Buildfire DB Service*/
-            var MediaContent = new DB(COLLECTIONS.MediaContent);
+            var MediaCenter = new DB(COLLECTIONS.MediaCenter);
 
             DesignHome.layouts = {
                 listLayouts: [{name: "list-1"}, {name: "list-2"}, {name: "list-3"}, {name: "list-4"}],
@@ -43,7 +43,7 @@
                     });
                 } else {
 
-                    MediaContent.update(DesignHome.mediaInfo.id, DesignHome.mediaInfo.data).then(function () {
+                    MediaCenter.update(DesignHome.mediaInfo.id, DesignHome.mediaInfo.data).then(function () {
 
                         /* sync lastSaved to latest value */
                         lastSaved = angular.copy(DesignHome.mediaInfo);
