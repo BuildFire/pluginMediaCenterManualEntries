@@ -6,7 +6,7 @@
 (function (angular, window) {
     angular
         .module('mediaCenterDesign')
-        .controller('DesignHomeCtrl', ['$scope', 'COLLECTIONS', 'DB', 'MediaCenterInfo', '$timeout', 'Buildfire', function ($scope, COLLECTIONS, DB, MediaCenterInfo, $timeout, Buildfire) {
+        .controller('DesignHomeCtrl', ['$scope', 'COLLECTIONS', 'DB', 'MediaCenterInfo', '$timeout', 'Buildfire', 'EVENTS','Messaging', function ($scope, COLLECTIONS, DB, MediaCenterInfo, $timeout, Buildfire, EVENTS,Messaging) {
 
             var DesignHome = this;
 
@@ -15,9 +15,12 @@
 
             var lastSaved = angular.copy(DesignHome.mediaInfo);
 
+            /*Buildfire DB Service*/
+            var MediaContent = new DB(COLLECTIONS.MediaContent);
+
             DesignHome.layouts = {
-                listLayouts: [{ name: "list-1" }, { name: "list-2" }, { name: "list-3" }, {  name: "list-4"  }],
-                itemLayouts: [ { name: "item-1" }, { name: "item-2" }]
+                listLayouts: [{name: "list-1"}, {name: "list-2"}, {name: "list-3"}, {name: "list-4"}],
+                itemLayouts: [{name: "item-1"}, {name: "item-2"}]
             };
 
             DesignHome.changeLayout = function (layoutName, type) {
@@ -26,8 +29,6 @@
                 }
             };
 
-            /*Buildfire DB Service*/
-            var MediaContent = new DB(COLLECTIONS.MediaContent);
 
             /* initializing flag to prevent firing watcher on page load*/
             var initializing = true;
@@ -46,6 +47,15 @@
 
                         /* sync lastSaved to latest value */
                         lastSaved = angular.copy(DesignHome.mediaInfo);
+                        ///on Control when a user drills to a section reflect the same on the widget
+                        Messaging.sendMessageToWidget({
+                            name: EVENTS.DESIGN_LAYOUT_CHANGE,
+                            message: {
+                                listLayout: DesignHome.mediaInfo.data.design.listLayout,
+                                itemLayout: DesignHome.mediaInfo.data.design.itemLayout
+                            }
+                        });
+
 
                     }, function () {
                         /* revert to previous value in case of error*/
@@ -58,14 +68,16 @@
 
 
             /*Background image area begins*/
-            var options = {showIcons: false, multiSelection: false};
 
-            DesignHome.addBackgroundImage = function () {
-                Buildfire.imageLib.showDialog(options, callback);
-            };
-            DesignHome.removeBackgroundImage = function () {
-                DesignHome.mediaInfo.data.design.backgroundImage = null;
-            };
+            /*This function invokes Message to Widget*/
+            function InvokeBGImageChangeMessaging(){
+                Messaging.sendMessageToWidget({
+                    name: EVENTS.DESIGN_BGIMAGE_CHANGE,
+                    message: {
+                        backgroundImage: DesignHome.mediaInfo.data.design.backgroundImage
+                    }
+                });
+            }
 
             var callback = function (error, result) {
                 if (error) {
@@ -73,10 +85,22 @@
                 } else {
                     console.log(result.selectedFiles[0]);
                     DesignHome.mediaInfo.data.design.backgroundImage = result.selectedFiles && result.selectedFiles[0] || null;
+                    InvokeBGImageChangeMessaging();
                     $scope.$digest();
 
                 }
             };
+
+            var options = {showIcons: false, multiSelection: false};
+
+            DesignHome.addBackgroundImage = function () {
+                Buildfire.imageLib.showDialog(options, callback);
+            };
+            DesignHome.removeBackgroundImage = function () {
+                DesignHome.mediaInfo.data.design.backgroundImage = null;
+                InvokeBGImageChangeMessaging();
+            };
+
             /*Background image area ends*/
 
         }])

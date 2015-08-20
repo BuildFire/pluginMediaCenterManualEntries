@@ -28,6 +28,17 @@
                             }
                             console.log(url)
                             Location.go("#/media");
+                            break;
+                        case EVENTS.DESIGN_CHANGE:
+                            if ('backgroundImage' in event.message) {
+                                WidgetMedia.media.data.design.backgroundImage = event.message.backgroundImage;
+                                AppConfig.changeBackgroundTheme(WidgetMedia.media.data.design.backgroundImage);
+                            }
+                            else {
+                                WidgetMedia.media.data.design.itemLayout = event.message.itemLayout;
+                            }
+                            $scope.$apply();
+                            break;
                     }
                 }
             });

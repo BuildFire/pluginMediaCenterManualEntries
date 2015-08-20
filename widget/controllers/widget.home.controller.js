@@ -27,6 +27,17 @@
                                         break
                                 }
                                 Location.go(url);
+                                break;
+                            case EVENTS.DESIGN_LAYOUT_CHANGE:
+                                    WidgetHome.media.data.design.listLayout = event.message.listLayout;
+                                    $scope.$digest();
+                                break;
+                            case EVENTS.DESIGN_BGIMAGE_CHANGE:
+                                    WidgetHome.media.data.design.backgroundImage = event.message.backgroundImage;
+                                    AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
+                                    $scope.$apply();
+
+                                break;
                         }
                     }
                 };
