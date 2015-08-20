@@ -5,8 +5,9 @@
             function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, MediaCenterInfo, AppConfig, Messaging, EVENTS, PATHS, Location) {
                 var WidgetHome = this;
                 WidgetHome.media = MediaCenterInfo;
+                var currentBackgroundImage = WidgetHome.media.data.design.backgroundImage;
                 AppConfig.setSettings(MediaCenterInfo.data);
-                AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
+                AppConfig.changeBackgroundTheme(currentBackgroundImage);
                 Messaging.onReceivedMessage = function (event) {
                     if (event) {
                         switch (event.name) {
@@ -40,6 +41,25 @@
                         }
                     }
                 };
+                Buildfire.datastore.onUpdate(function (event) {
+                    switch (event.tag) {
+                        case COLLECTIONS.MediaContent:
+                            if (event.data) {
+                                /**
+                                 * condition added to update the background image
+                                 */
+                                if (event.data.design && event.data.design.backgroundImage && currentBackgroundImage == event.data.design.backgroundImage) {
+                                    // do something on same
+                                }
+                                else {
+                                    currentBackgroundImage = event.data.design.backgroundImage;
+                                    AppConfig.changeBackgroundTheme(currentBackgroundImage);
+                                }
+                            }
+                            break;
+                    }
+
+                });
 
             }]);
 })(window.angular, undefined);
