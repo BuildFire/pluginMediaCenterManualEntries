@@ -15,7 +15,9 @@
             }
         })
         .constant('EVENTS', {
-            ROUTE_CHANGE: "ROUTE_CHANGE"
+            ROUTE_CHANGE: "ROUTE_CHANGE",
+            DESIGN_LAYOUT_CHANGE: "DESIGN_LAYOUT_CHANGE",
+            DESIGN_BGIMAGE_CHANGE: "DESIGN_BGIMAGE_CHANGE"
         })
         .constant('COLLECTIONS', {
             MediaContent: "MediaContent",
