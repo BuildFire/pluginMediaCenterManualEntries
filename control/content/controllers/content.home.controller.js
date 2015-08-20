@@ -3,8 +3,8 @@
 (function (angular, window) {
     angular
         .module('mediaCenterContent')
-        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'DB', 'COLLECTIONS', 'Orders', 'AppConfig',
-            function ($scope, MediaCenterInfo, Modals, DB, COLLECTIONS, Orders, AppConfig) {
+        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'DB', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS',
+            function ($scope, MediaCenterInfo, Modals, DB, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS) {
                 var ContentHome = this;
                 ContentHome.info = MediaCenterInfo;
                 AppConfig.setSettings(MediaCenterInfo.data);
@@ -189,6 +189,13 @@
                 $scope.$watch(function () {
                     return ContentHome.info;
                 }, saveDataWithDelay, true);
+
+                Messaging.sendMessageToWidget({
+                    name: EVENTS.ROUTE_CHANGE,
+                    message: {
+                        path: PATHS.HOME
+                    }
+                });
 
             }])
 })(window.angular, window);
