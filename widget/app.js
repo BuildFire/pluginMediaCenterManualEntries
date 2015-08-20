@@ -73,12 +73,41 @@
                 .when('/media/:mediaId', {
                     templateUrl: 'templates/media.html',
                     controllerAs: 'WidgetMedia',
-                    controller: 'WidgetMediaCtrl'
+                    controller: 'WidgetMediaCtrl',
+                    resolve: {
+                        media: ['$q', 'DB', 'COLLECTIONS', 'Location', '$route', function ($q, DB, COLLECTIONS, Location, $route) {
+                            var deferred = $q.defer();
+                            var MediaContent = new DB(COLLECTIONS.MediaContent);
+                            if ($route.current.params.mediaId) {
+                                MediaContent.getById($route.current.params.mediaId).then(function success(result) {
+                                        if (result && result.data) {
+                                            deferred.resolve(result);
+                                        }
+                                        else {
+                                            Location.goToHome();
+                                        }
+                                    },
+                                    function fail() {
+                                        Location.goToHome();
+                                    }
+                                );
+                            }
+                            else {
+                                Location.goToHome();
+                            }
+                            return deferred.promise;
+                        }]
+                    }
                 })
                 .when('/media', {
                     templateUrl: 'templates/media.html',
                     controllerAs: 'WidgetMedia',
-                    controller: 'WidgetMediaCtrl'
+                    controller: 'WidgetMediaCtrl',
+                    resolve: {
+                        media: function () {
+                            return null;
+                        }
+                    }
                 })
                 .otherwise('/');
         }])

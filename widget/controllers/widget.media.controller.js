@@ -1,13 +1,14 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media) {
             console.log(">>>>>>>>>><<<<<<<<<<<<<<<<<<<")
             var WidgetMedia = this;
             WidgetMedia.media = {
                 data: AppConfig.getSettings()
             };
-            var currentItemLayout=WidgetMedia.media.data.itemLayout;
+            WidgetMedia.item=media;
+            var currentItemLayout = WidgetMedia.media.data.itemLayout;
             Messaging.onReceivedMessage(function (event) {
                 if (event) {
                     switch (event.name) {
@@ -46,9 +47,9 @@
                 switch (event.tag) {
                     case COLLECTIONS.MediaContent:
                         if (event.data) {
-                            if (event.data.design && event.data.design.itemLayout!=currentItemLayout) {
-                                currentItemLayout=event.data.design.itemLayout;
-                                WidgetMedia.media.data.design.itemLayout=event.data.design.itemLayout;
+                            if (event.data.design && event.data.design.itemLayout != currentItemLayout) {
+                                currentItemLayout = event.data.design.itemLayout;
+                                WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
                                 AppConfig.setSettings(event);
                                 $scope.$digest();
                             }

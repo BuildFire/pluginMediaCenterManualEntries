@@ -8,9 +8,8 @@
                         <img src="http://www.placehold.it/250x400.jpg">
                     </div>
                     <div class="people-info text-center col-md-12">
-                        <h5 class="ellipsis margin-top-fifteen">This is an Item Title</h5>
-                        <h5 class="margin-bottom-zero">Manager of Finance Manager of Finance Manager of Finance Manager
-                            of Finance</h5>
+                        <h5 class="ellipsis margin-top-fifteen">{{WidgetMedia.item.data.title}}</h5>
+                        <h5 class="margin-bottom-zero">{{WidgetMedia.item.data.summary}}</h5>
                     </div>
                 </div>
             </div>
@@ -23,11 +22,7 @@
                 <a class="text-primary">Share</a>
             </div>
             <hr class="small">
-            <p>This is the WYSIWYG Editor.<br>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-                voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-                proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
 
             <div class="dynamic-links">
                 <a class="d-link">Dynamic Link</a>

@@ -190,7 +190,8 @@
                 Messaging.sendMessageToWidget({
                     name: EVENTS.ROUTE_CHANGE,
                     message: {
-                        path: PATHS.MEDIA
+                        path: PATHS.MEDIA,
+                        id:ContentMedia.item.id || null
                     }
                 });
             }]);
