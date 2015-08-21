@@ -1,9 +1,10 @@
 <div class="holder padding-zero">
     <div class="media-center-plugin layout1">
         <div class="media-center-banner clearfix border-bottom-grey">
-            <div class="plugin-slider text-center" data-ng-if="WidgetHome.media.content.images.length">
-                <div class="plugin-slide" data-ng-repeat="image in WidgetHome.media.content.images">
-                    <img src="http://www.placehold.it/1280x720.jpg">
+            <div class="plugin-slider text-center" data-ng-if="WidgetHome.media.data.content.images.length">
+                <div class="plugin-slide" >
+                    <!--data-ng-repeat="image in WidgetHome.media.data.content.images"-->
+                    <img ng-src="{{WidgetHome.media.data.content.images[0].imageUrl | resizeImage:1280:720}}">
                 </div>
             </div>
         </div>
@@ -16,7 +17,7 @@
                     <div class="list-item col-xs-6 pull-left" ng-repeat="item in WidgetHome.items">
                         <div class="list-item-media text-center border-radius-three overflow-hidden">
                             <div class="list-media-holder">
-                                <img err-src="http://www.placehold.it/240x160" ng-src="{{item.data.topImage | resizeImage:240:160}}">
+                                <img ng-if="item.data.topImage" err-src="http://www.placehold.it/240x160" ng-src="{{item.data.topImage | resizeImage:240:160}}">
                             </div>
                         </div>
                         <div class="list-item-copy text-left">

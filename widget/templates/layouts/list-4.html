@@ -2,14 +2,9 @@
     <div class="media-center-plugin list-layout layout4">
         <div class="media-center-banner clearfix border-bottom-grey">
             <div class="plugin-slider text-center">
-                <div class="plugin-slide">
-                    <img src="http://www.placehold.it/1280x720.jpg">
-                </div>
-                <div class="plugin-slide">
-                    <img src="http://www.placehold.it/1280x720.jpg">
-                </div>
-                <div class="plugin-slide">
-                    <img src="http://www.placehold.it/1280x720.jpg">
+                <div class="plugin-slide" >
+                    <!--data-ng-repeat="image in WidgetHome.media.data.content.images"-->
+                    <img ng-src="{{WidgetHome.media.data.content.images[0].imageUrl | resizeImage:1280:720}}">
                 </div>
             </div>
         </div>
@@ -20,7 +15,7 @@
         </div>
         <div class="padded padding-top-zero">
             <div class="list-layout">
-                <div class="row">
+               <!-- <div class="row" ng-repeat="item in WidgetHome.items">
                     <div class="list-item col-xs-6 pull-left">
                         <div class="list-item-media text-center border-radius-three overflow-hidden">
                             <div class="list-media-holder play-btn">
@@ -48,90 +43,37 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+-->
+
+                <div ng-repeat="item in WidgetHome.items" ng-if="$index % 2 == 0" class="row">
                     <div class="list-item col-xs-6 pull-left">
                         <div class="list-item-media text-center border-radius-three overflow-hidden">
                             <div class="list-media-holder play-btn">
-                                <img src="http://www.placehold.it/200x200">
+                                <img ng-if="WidgetHome.items[$index].data.topImage" ng-src="{{WidgetHome.items[$index].data.topImage | resizeImage:240:160}}">
                             </div>
                         </div>
                         <div class="list-item-copy text-left">
-                            <p class="ellipsis margin-zero"><a class="text-primary">This is a title</a></p>
+                            <p class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index].data.title}}</p>
 
-                            <p class="summary ellipsis margin-zero">Here is where the summary goes</p>
-                            <span class="list-item-date">Dec 21, 2014</span>
-                        </div>
-                    </div>
-                    <div class="list-item col-xs-6 pull-left">
-                        <div class="list-item-media text-center border-radius-three overflow-hidden">
-                            <div class="list-media-holder play-btn">
-                                <img src="http://www.placehold.it/200x200">
-                            </div>
-                        </div>
-                        <div class="list-item-copy text-left">
-                            <p class="ellipsis margin-zero"><a class="text-primary">This is a title</a></p>
-
-                            <p class="summary ellipsis margin-zero">Here is where the summary goes</p>
-                            <span class="list-item-date">Dec 21, 2014</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="list-item col-xs-6 pull-left">
-                        <div class="list-item-media text-center border-radius-three overflow-hidden">
-                            <div class="list-media-holder">
-                                <img src="http://www.placehold.it/200x200">
-                            </div>
-                        </div>
-                        <div class="list-item-copy text-left">
-                            <p class="ellipsis margin-zero"><a class="text-primary">This is a title</a></p>
-
-                            <p class="summary ellipsis margin-zero">Here is where the summary goes</p>
-                            <span class="list-item-date">Dec 21, 2014</span>
+                            <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index].data.summary}}</p>
+                            <span class="list-item-date">{{WidgetHome.items[$index].data.dateCreated  | jsDate | date:"MMMM dd, yyyy"}}</span>
                         </div>
                     </div>
                     <div class="list-item col-xs-6 pull-left">
                         <div class="list-item-media text-center border-radius-three overflow-hidden">
                             <div class="list-media-holder play-btn">
-                                <img src="http://www.placehold.it/200x200">
+                                <img ng-if="WidgetHome.items[$index + 1].data.topImage" ng-src="{{WidgetHome.items[$index + 1].data.topImage | resizeImage:240:160}}">
                             </div>
                         </div>
                         <div class="list-item-copy text-left">
-                            <p class="ellipsis margin-zero"><a class="text-primary">This is a title</a></p>
+                            <p class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index + 1].data.title}}</p>
 
-                            <p class="summary ellipsis margin-zero">Here is where the summary goes</p>
-                            <span class="list-item-date">Dec 21, 2014</span>
+                            <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.summary}}</p>
+                            <span class="list-item-date">{{WidgetHome.items[$index + 1].data.dateCreated  | jsDate | date:"MMMM dd, yyyy"}}</span>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="list-item col-xs-6 pull-left">
-                        <div class="list-item-media text-center border-radius-three overflow-hidden">
-                            <div class="list-media-holder">
-                                <img src="http://www.placehold.it/200x200">
-                            </div>
-                        </div>
-                        <div class="list-item-copy text-left">
-                            <p class="ellipsis margin-zero"><a class="text-primary">This is a title</a></p>
 
-                            <p class="summary ellipsis margin-zero">Here is where the summary goes</p>
-                            <span class="list-item-date">Dec 21, 2014</span>
-                        </div>
-                    </div>
-                    <div class="list-item col-xs-6 pull-left">
-                        <div class="list-item-media text-center border-radius-three overflow-hidden">
-                            <div class="list-media-holder">
-                                <img src="http://www.placehold.it/200x200">
-                            </div>
-                        </div>
-                        <div class="list-item-copy text-left">
-                            <p class="ellipsis margin-zero"><a class="text-primary">This is a title</a></p>
-
-                            <p class="summary ellipsis margin-zero">Here is where the summary goes</p>
-                            <span class="list-item-date">Dec 21, 2014</span>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
