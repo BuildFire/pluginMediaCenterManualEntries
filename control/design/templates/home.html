@@ -54,7 +54,7 @@
                             ng-show="DesignHome.mediaInfo.data.design.backgroundImage" ng-src="{{DesignHome.mediaInfo.data.design.backgroundImage | resizeImage : 80 :106}}">
 
                 </a>
-                <span class="icon btn-icon btn-delete-icon btn-danger btn-close transition-third" ng-click="DesignHome.removeBackgroundImage()"></span>
+                <span ng-show="DesignHome.mediaInfo.data.design.backgroundImage" class="icon btn-icon btn-delete-icon btn-danger btn-close transition-third" ng-click="DesignHome.removeBackgroundImage()"></span>
             </div>
         </div>
     </div>

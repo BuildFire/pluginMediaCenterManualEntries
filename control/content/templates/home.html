@@ -10,7 +10,7 @@
              ui-sortable="ContentHome.carouselOptions" ng-model="ContentHome.info.data.content.images"
              data-ng-show="ContentHome.info.data.content.images.length">
             <div class="d-item" data-ng-repeat="image in ContentHome.info.data.content.images">
-                <span class="icon icon-menu pull-left"></span>
+                <span class="icon icon-menu pull-left cursor-grab"></span>
 
                 <div class="media-holder pull-left">
                     <img ng-src="{{image.imageUrl | resizeImage : 60 :40}}">
@@ -83,10 +83,10 @@
 <div class="item clearfix row">
     <div class="main col-md-9 pull-right padding-left-zero row">
         <div class="pull-left inner-main col-md-8 padding-zero">
-            <input type="text" class="form-control" placeholder="Plugin Name">
+            <input type="text" class="form-control" placeholder="Plugin Name" ng-model="search">
         </div>
         <div class="col-md-4 pull-right">
-            <a class="btn btn-primary pull-right stretch">Search</a>
+            <a class="btn btn-primary pull-right stretch" ng-click="ContentHome.searchListItem(search)">Search</a>
         </div>
     </div>
 </div>

@@ -7,3 +7,73 @@
     background-attachment: fixed;
     background-color: #010101;
 }
+.plugin-banner {
+    overflow: hidden;
+}
+.owl-theme {
+    position: relative;
+    overflow: auto;
+    max-height: inherit !important;
+    min-height: 192px;
+}
+
+.owl-stage, .owl-stage-outer {
+    overflow: auto;
+    max-height: 380px;
+    min-height: 192px;
+}
+.plugin-slide {
+    position: relative;
+    max-height: 380px;
+    min-height: 192px;
+}
+
+.plugin-slide img {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    margin: auto !important;
+    max-height: 380px;
+}
+
+.owl-item {
+    float: left;
+    max-height: 380px;
+    min-height: 192px;
+    overflow: hidden;
+}
+
+.owl-dot {
+    display: inline-block;
+}
+
+.owl-controls {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+}
+
+.owl-dots .owl-dot span {
+    width: 10px;
+    height: 10px;
+    margin: 5px 7px;
+    background: rgba(255, 255, 255, 0.6);
+    display: block;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    -webkit-backface-visibility: visible;
+    -webkit-transition: opacity 200ms ease;
+    -moz-transition: opacity 200ms ease;
+    -ms-transition: opacity 200ms ease;
+    -o-transition: opacity 200ms ease;
+    transition: opacity 200ms ease;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    border-radius: 30px;
+}
+
+.owl-dots .owl-dot.active span, .owl-dots .owl-dot:hover span {
+    background: rgba(255, 255, 255, 1.0);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}

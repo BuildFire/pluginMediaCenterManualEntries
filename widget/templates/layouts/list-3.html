@@ -2,96 +2,27 @@
     <div class="media-center-plugin layout3">
         <div class="media-center-banner clearfix border-bottom-grey">
             <div class="plugin-slider text-center">
-                <div class="plugin-slide">
-                    <img src="http://www.placehold.it/1280x720.jpg">
-                </div>
-                <div class="plugin-slide">
-                    <img src="http://www.placehold.it/1280x720.jpg">
-                </div>
-                <div class="plugin-slide">
-                    <img src="http://www.placehold.it/1280x720.jpg">
+                <div class="plugin-slide" ng-if="WidgetHome.media.data.content.images[0].imageUrl">
+                    <!--data-ng-repeat="image in WidgetHome.media.data.content.images"-->
+                    <img ng-src="{{WidgetHome.media.data.content.images[0].imageUrl | resizeImage: 342 : 192}}">
                 </div>
             </div>
         </div>
         <div class="text-left padded padding-bottom-zero clearfix">
-            <p>This is the WYSIWYG Editor. This is the WYSIWYG Editor. This is the WYSIWYG Editor. This is the WYSIWYG
-                Editor. This is the WYSIWYG Editor. This is the WYSIWYG Editor. This is the WYSIWYG Editor. This is the
-                WYSIWYG Editor.</p</p>
+            <p ng-if="WidgetHome.media.data.content.descriptionHTML" ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">{{WidgetHome.media.data.content.descriptionHTML}}</p>
         </div>
         <div class="">
             <div class="list-layout">
-                <div class="list-item">
+                <div class="list-item" ng-repeat="item in WidgetHome.items">
                     <div class="list-item-media text-left overflow-hidden">
-                        <div class="list-media-holder pull-left play-btn">
-                            <img src="http://www.placehold.it/120x70">
+                        <div class="list-media-holder pull-left play-btn" ng-if="item.data.topImage">
+                            <img ng-src="{{item.data.topImage | resizeImage:240:160}}">
                         </div>
                         <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-                            <p class="ellipsis margin-zero"><a class="text-primary">This is a title This is a title This
-                                is a title</a></p>
+                            <p class="ellipsis margin-zero"><a class="text-primary">{{item.data.title}}</a></p>
 
-                            <p class="summary ellipsis margin-zero">Here is where the summary goes and if it's too long
-                                it disappears</p>
-                            <span class="list-item-date">Dec 21, 2014</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="list-item">
-                    <div class="list-item-media text-left overflow-hidden">
-                        <div class="list-media-holder pull-left play-btn">
-                            <img src="http://www.placehold.it/120x70">
-                        </div>
-                        <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-                            <p class="ellipsis margin-zero"><a class="text-primary">This is a title</a></p>
-
-                            <p class="summary ellipsis margin-zero">Here is where the summary goes</p>
-                            <span class="list-item-date">Dec 21, 2014</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="list-item">
-                    <div class="list-item-media text-left overflow-hidden">
-                        <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-                            <p class="ellipsis margin-zero"><a class="text-primary">This is a title</a></p>
-
-                            <p class="summary ellipsis margin-zero">Here is where the summary goes</p>
-                            <span class="list-item-date">Dec 21, 2014</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="list-item">
-                    <div class="list-item-media text-left overflow-hidden">
-                        <div class="list-media-holder pull-left play-btn">
-                            <img src="http://www.placehold.it/120x70">
-                        </div>
-                        <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-                            <p class="ellipsis margin-zero"><a class="text-primary">This is a title</a></p>
-
-                            <p class="summary ellipsis margin-zero">Here is where the summary goes and if it's too long
-                                it disappears</p>
-                            <span class="list-item-date">Dec 21, 2014</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="list-item">
-                    <div class="list-item-media text-left overflow-hidden">
-                        <div class="list-media-holder pull-left play-btn">
-                            <img src="http://www.placehold.it/120x70">
-                        </div>
-                        <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-                            <p class="ellipsis margin-zero"><a class="text-primary">This is a title</a></p>
-
-                            <p class="summary ellipsis margin-zero">Here is where the summary goes</p>
-                            <span class="list-item-date">Dec 21, 2014</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="list-item">
-                    <div class="list-item-media text-left overflow-hidden">
-                        <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-                            <p class="ellipsis margin-zero"><a class="text-primary">This is a title</a></p>
-
-                            <p class="summary ellipsis margin-zero">Here is where the summary goes</p>
-                            <span class="list-item-date">Dec 21, 2014</span>
+                            <p class="summary ellipsis margin-zero">{{item.data.summary}}</p>
+                            <span class="list-item-date" data-ng-if="item.data.dateCreated">{{item.data.dateCreated  | jsDate | date:"MMMM dd, yyyy"}}</span>
                         </div>
                     </div>
                 </div>
