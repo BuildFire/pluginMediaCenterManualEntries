@@ -8,12 +8,12 @@
             </div>
         </div>
         <div class="padded text-left">
-            <p class="margin-bottom-zero">WYSIWYG Editor.</p>
+            <p class="margin-bottom-zero" ng-if="WidgetHome.media.data.content.descriptionHTML" ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">{{WidgetHome.media.data.content.descriptionHTML}}</p>
         </div>
         <div ng-repeat="item in WidgetHome.items">
             <div class="plugin-banner clearfix border-bottom-grey">
-                <div class="plugin-slide text-center">
-                    <img ng-src="{{item.data.topImage | resizeImage:240:160}}" err-src="http://www.placehold.it/1280x720.jpg">
+                <div class="plugin-slide text-center" ng-if="item.data.topImage">
+                    <img ng-src="{{item.data.topImage | resizeImage:240:160}}">
                 </div>
             </div>
             <div class="padded text-left">

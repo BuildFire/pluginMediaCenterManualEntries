@@ -104,7 +104,7 @@
                 </div>
                 <div class="d-item double-line square-icon clearfix" ng-if="ContentHome.items.length"
                      ng-repeat="item in ContentHome.items">
-                    <span class="icon icon-menu pull-left cursor-grab"  ng-class="{ 'disabled': ContentHome.itemSortableOptions.disabled }"></span>
+                    <span class="icon icon-menu pull-left cursor-grab" ng-if="ContentHome.info.data.content.sortBy=='Manually'"></span>
 
                     <div class="media-holder pull-left">
                         <img ng-src="{{item.data.topImage | resizeImage : 50:50}}" ng-if="item.data.topImage">

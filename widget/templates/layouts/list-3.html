@@ -8,16 +8,14 @@
             </div>
         </div>
         <div class="text-left padded padding-bottom-zero clearfix">
-            <p>This is the WYSIWYG Editor. This is the WYSIWYG Editor. This is the WYSIWYG Editor. This is the WYSIWYG
-                Editor. This is the WYSIWYG Editor. This is the WYSIWYG Editor. This is the WYSIWYG Editor. This is the
-                WYSIWYG Editor.</p>
+            <p ng-if="WidgetHome.media.data.content.descriptionHTML" ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">{{WidgetHome.media.data.content.descriptionHTML}}</p>
         </div>
         <div class="">
             <div class="list-layout">
                 <div class="list-item" ng-repeat="item in WidgetHome.items">
                     <div class="list-item-media text-left overflow-hidden">
-                        <div class="list-media-holder pull-left play-btn">
-                            <img src="http://www.placehold.it/120x70">
+                        <div class="list-media-holder pull-left play-btn" ng-if="item.data.topImage">
+                            <img ng-src="{{item.data.topImage | resizeImage:240:160}}">
                         </div>
                         <div class="list-item-copy text-left padding-left-ten padding-right-ten">
                             <p class="ellipsis margin-zero"><a class="text-primary">{{item.data.title}}</a></p>

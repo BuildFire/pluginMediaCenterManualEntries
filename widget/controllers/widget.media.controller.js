@@ -8,7 +8,8 @@
                 data: AppConfig.getSettings()
             };
             WidgetMedia.item = media;
-            var currentItemLayout = WidgetMedia.media.data.itemLayout;
+            AppConfig.changeBackgroundTheme(WidgetMedia.media.data.design.backgroundImage);
+            var currentItemLayout = WidgetMedia.media.data.design.itemLayout;
             Messaging.onReceivedMessage(function (event) {
                 if (event) {
                     switch (event.name) {
