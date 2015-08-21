@@ -3,7 +3,8 @@
         <div class="media-center-banner clearfix border-bottom-grey">
             <div class="plugin-slider text-center">
                 <div class="plugin-slide">
-                    <img src="http://www.placehold.it/1280x720.jpg">
+                    <!--<img src="http://www.placehold.it/1280x720.jpg">-->
+                    <img ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 342 : 200}}">
                 </div>
             </div>
         </div>
@@ -23,10 +24,12 @@
             <p ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
 
             <div class="dynamic-links">
+                <a class="d-link" ng-repeat="link in WidgetMedia.item.data.links">{{link.title}}</a>
+
+                <!--<a class="d-link">Dynamic Link</a>
                 <a class="d-link">Dynamic Link</a>
                 <a class="d-link">Dynamic Link</a>
-                <a class="d-link">Dynamic Link</a>
-                <a class="d-link">Dynamic Link</a>
+                <a class="d-link">Dynamic Link</a>-->
             </div>
         </div>
     </div>

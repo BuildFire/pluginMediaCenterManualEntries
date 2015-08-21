@@ -1,6 +1,5 @@
-'use strict';
-
-(function (angular, window) {
+(function (angular) {
+    'use strict';
     angular
         .module('mediaCenterContent')
         .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'DB', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS',
@@ -32,24 +31,23 @@
                 ContentHome.sortOptions = Orders.options;
                 //on remove button click remove carousel Image
                 ContentHome.rmCarouselImage = function (index) {
-                    if (typeof index == "undefined") {
+                    if ("undefined" == typeof index) {
                         return;
                     }
-                    var image = ContentHome.info.data.content.images[index]
-                    if (typeof image == "undefined") {
-                        return;
+                    var image = ContentHome.info.data.content.images[index];
+                    if ("undefined" !== typeof image) {
+                        Modals.removePopupModal({title: image.title}).then(function (result) {
+                            if (result) {
+                                ContentHome.info.data.content.images.splice(index, 1);
+                            }
+                            else {
+                                console.info('Unable to load data.');
+                            }
+                        }, function (cancelData) {
+                            //do something on cancel
+                        });
                     }
-                    Modals.removePopupModal({title: image.title}).then(function (result) {
-                        if (result)
-                            ContentHome.info.data.content.images.splice(index, 1);
-                        else {
-                            console.info('Unable to load data.')
-                        }
-                    }, function (cancelData) {
-                        //do something on cancel
-                    });
-                }
-
+                };
                 var updateSearchOptions = function () {
                     var order = Orders.getOrder(ContentHome.info.data.content.sortBy || Orders.ordersMap.Default);
                     if (order) {
@@ -73,22 +71,23 @@
                                 ContentHome.info.data.content.images[index] = link;
                             }
                             else {
-                                if (!ContentHome.info.data.content.images)
+                                if (!ContentHome.info.data.content.images) {
                                     ContentHome.info.data.content.images = [];
+                                }
                                 ContentHome.info.data.content.images.push(JSON.parse(angular.toJson(link)));
                             }
                         } else {
-                            console.info('Unable to load data.')
+                            console.info('Unable to load data.');
                         }
                     }, function (err) {
                         //do something on cancel
                     });
-                }
+                };
                 ContentHome.carouselOptions = {
                     handle: '> .cursor-grab'
                 };
                 ContentHome.noMore = false;
-                ContentHome.getMore = function (search) {
+                ContentHome.getMore = function () {
                     if (ContentHome.isBusy && !ContentHome.noMore) {
                         return;
                     }
@@ -97,22 +96,20 @@
 
                     ContentHome.isBusy = true;
                     MediaContent.find(searchOptions).then(function success(result) {
-                        console.log("#########Data###########", result.length)
                         if (result.length <= _limit) {// to indicate there are more
                             ContentHome.noMore = true;
-                        } else {
+                        }
+                        else {
                             result.pop();
                             searchOptions.skip = searchOptions.skip + _limit;
                             ContentHome.noMore = false;
                         }
                         ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
-                        //ContentHome.isBusy = false;
+                        ContentHome.isBusy = false;
                     }, function fail() {
-                        //ContentHome.isBusy = false;
-                    }).finally(function () {
                         ContentHome.isBusy = false;
                     });
-                }
+                };
 
                 ContentHome.toggleSortOrder = function (name) {
                     if (!name) {
@@ -130,7 +127,6 @@
                     disabled: !(ContentHome.info.data.content.sortBy === Orders.ordersMap.Manually),
                     stop: function (e, ui) {
                         var endIndex = ui.item.sortable.dropindex,
-                            maxRank = 0,
                             draggedItem = ContentHome.items[endIndex];
 
                         if (draggedItem) {
@@ -148,7 +144,6 @@
                             } else {
                                 if (prev) {
                                     draggedItem.data.rank = (((prev.data.rank || 0) * 2) + 10) / 2;
-                                    maxRank = draggedItem.data.rank;
                                     isRankChanged = true;
                                 }
                             }
@@ -215,7 +210,7 @@
                     });
                 }
 
-                function saveDataWithDelay(info) {
+                function saveDataWithDelay() {
                     if (tmrDelayForMedia) {
                         clearTimeout(tmrDelayForMedia);
                     }
@@ -236,6 +231,5 @@
                         path: PATHS.HOME
                     }
                 });
-
-            }])
-})(window.angular, window);
+            }]);
+})(window.angular, undefined);

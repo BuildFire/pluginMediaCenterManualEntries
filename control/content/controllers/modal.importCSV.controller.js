@@ -1,6 +1,5 @@
-'use strict';
-
 (function (angular) {
+    'use strict';
     angular
         .module('mediaCenterContent')
         .controller('ImportCSVPopupCtrl', ['$scope', '$modalInstance', '$csv', function ($scope, $modalInstance, FormatConverter) {
@@ -22,5 +21,5 @@
             ImportCSVPopup.cancel = function () {
                 $modalInstance.dismiss('Dismiss');
             };
-        }])
+        }]);
 })(window.angular);

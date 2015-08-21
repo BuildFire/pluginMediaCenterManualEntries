@@ -225,6 +225,7 @@
                                 height: 770
                             }) + ")"
                         };
+                        return;
                     } else {
                         $rootScope.currentBackgroundImage = "";
                     }
