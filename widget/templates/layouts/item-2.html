@@ -5,7 +5,8 @@
             <div class="people-bg padding-top-fifteen padding-bottom-fifteen clearfix">
                 <div class="people-holder clearfix">
                     <div class="people-media text-center">
-                        <img src="http://www.placehold.it/250x400.jpg">
+                        <!--<img src="http://www.placehold.it/250x400.jpg">-->
+                        <img ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 250 : 400}}">
                     </div>
                     <div class="people-info text-center col-md-12">
                         <h5 class="ellipsis margin-top-fifteen">{{WidgetMedia.item.data.title}}</h5>
@@ -25,10 +26,7 @@
             <p ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
 
             <div class="dynamic-links">
-                <a class="d-link">Dynamic Link</a>
-                <a class="d-link">Dynamic Link</a>
-                <a class="d-link">Dynamic Link</a>
-                <a class="d-link">Dynamic Link</a>
+                <a class="d-link" ng-repeat="link in WidgetMedia.item.data.links">{{link.title}}</a>
             </div>
         </div>
     </div>
