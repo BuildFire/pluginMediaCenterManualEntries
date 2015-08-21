@@ -2,7 +2,7 @@
     <div class="media-center-plugin layout1">
         <div class="media-center-banner clearfix border-bottom-grey">
             <div class="plugin-slider text-center">
-                <div class="plugin-slide">
+                <div class="plugin-slide" ng-if="WidgetMedia.item.data.topImage">
                     <!--<img src="http://www.placehold.it/1280x720.jpg">-->
                     <img ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 342 : 200}}">
                 </div>
