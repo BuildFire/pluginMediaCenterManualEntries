@@ -10,7 +10,7 @@
              ui-sortable="ContentHome.carouselOptions" ng-model="ContentHome.info.data.content.images"
              data-ng-show="ContentHome.info.data.content.images.length">
             <div class="d-item" data-ng-repeat="image in ContentHome.info.data.content.images">
-                <span class="icon icon-menu pull-left"></span>
+                <span class="icon icon-menu pull-left cursor-grab"></span>
 
                 <div class="media-holder pull-left">
                     <img ng-src="{{image.imageUrl | resizeImage : 60 :40}}">
