@@ -1,6 +1,5 @@
-'use strict';
-
 (function (angular, buildfire) {
+    "use strict";
     //created mediaCenterContent module
     angular
         .module('mediaCenterContent',
@@ -51,8 +50,8 @@
                                     Location.goToHome();
                                 }, function fail() {
                                     _bootstrap();
-                                })
-                            }
+                                });
+                            };
                             MediaCenter.get().then(function success(result) {
                                     if (result && result.data) {
                                         deferred.resolve(result);
@@ -79,7 +78,6 @@
                             return null;
                         }
                     }
-
                 })
                 .when('/media/:itemId', {
                     templateUrl: 'templates/media.html',
@@ -103,7 +101,7 @@
                                     }
                                 );
                             }
-                            else{
+                            else {
                                 Location.goToHome();
                             }
                             return deferred.promise;
@@ -111,13 +109,6 @@
                     }
                 })
                 .otherwise('/');
-        }])
-        .
-        run(function ($rootScope, $location) {
-            /* Buildfire.messaging.onReceivedMessage = function(message){
-             $location.path('/people/'+ message.id);
-             };*/
-        })
-
+        }]);
 })
 (window.angular, window.buildfire);

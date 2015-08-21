@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "\"media-center-plugin\"",
   "scripts": {
-    "test": "karma start"
+    "test": "karma start --reporters progress"
   },
   "keywords": [
     "angularjs",
@@ -20,6 +20,9 @@
   },
   "devDependencies": {
     "chai": "^3.0.0",
+    "gulp": "^3.9.0",
+    "gulp-eslint": "^1.0.0",
+    "gulp-util": "^3.0.6",
     "jasmine-core": "^2.3.4",
     "karma": "^0.13.9",
     "karma-chai": "^0.1.0",

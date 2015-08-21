@@ -1,12 +1,8 @@
-/**
- * Created by lakshay on 17/8/15.
- */
-'use strict';
-
 (function (angular, window) {
+    'use strict';
     angular
         .module('mediaCenterDesign')
-        .controller('DesignHomeCtrl', ['$scope', 'COLLECTIONS', 'DB', 'MediaCenterInfo', '$timeout', 'Buildfire', 'EVENTS','Messaging', function ($scope, COLLECTIONS, DB, MediaCenterInfo, $timeout, Buildfire, EVENTS,Messaging) {
+        .controller('DesignHomeCtrl', ['$scope', 'COLLECTIONS', 'DB', 'MediaCenterInfo', '$timeout', 'Buildfire', 'EVENTS', 'Messaging', function ($scope, COLLECTIONS, DB, MediaCenterInfo, $timeout, Buildfire, EVENTS, Messaging) {
 
             var DesignHome = this;
 
@@ -70,7 +66,7 @@
             /*Background image area begins*/
 
             /*This function invokes Message to Widget*/
-            function InvokeBGImageChangeMessaging(){
+            function invokeBGImageChangeMessaging() {
                 Messaging.sendMessageToWidget({
                     name: EVENTS.DESIGN_BGIMAGE_CHANGE,
                     message: {
@@ -85,9 +81,8 @@
                 } else {
                     console.log(result.selectedFiles[0]);
                     DesignHome.mediaInfo.data.design.backgroundImage = result.selectedFiles && result.selectedFiles[0] || null;
-                    InvokeBGImageChangeMessaging();
+                    invokeBGImageChangeMessaging();
                     $scope.$digest();
-
                 }
             };
 
@@ -98,10 +93,10 @@
             };
             DesignHome.removeBackgroundImage = function () {
                 DesignHome.mediaInfo.data.design.backgroundImage = null;
-                InvokeBGImageChangeMessaging();
+                invokeBGImageChangeMessaging();
             };
 
             /*Background image area ends*/
 
-        }])
+        }]);
 })(window.angular, window);
