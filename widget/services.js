@@ -229,7 +229,7 @@
                     } else {
                         $rootScope.currentBackgroundImage = "";
                     }
-                    $rootScope.$apply();
+                    //$rootScope.$apply();
                 }
             }
 

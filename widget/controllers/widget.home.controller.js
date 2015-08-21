@@ -42,10 +42,11 @@
                     }
                 };
                 Buildfire.datastore.onUpdate(function (event) {
-
+                    $scope.imagesUpdated = false;
                     MediaCenter.get().then(function success(result) {
                             if (result && result.data) {
                                 WidgetHome.media = result;
+                                $scope.imagesUpdated = true;
                                 getContent();
                             }
                         },
@@ -109,6 +110,8 @@
                 };
                 getContent();
 
-
+                $scope.isDefined = function (item) {
+                    return item.imageUrl !== undefined && item.imageUrl !== '';
+                };
             }]);
 })(window.angular, undefined);
