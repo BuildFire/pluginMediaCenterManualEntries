@@ -2,7 +2,7 @@
     <div class="media-center-plugin list-layout layout4">
         <div class="media-center-banner clearfix border-bottom-grey">
             <div class="plugin-slider text-center">
-                <div class="plugin-slide" >
+                <div class="plugin-slide" ng-if="WidgetHome.media.data.content.images[0].imageUrl">
                     <!--data-ng-repeat="image in WidgetHome.media.data.content.images"-->
                     <img ng-src="{{WidgetHome.media.data.content.images[0].imageUrl | resizeImage:1280:720}}">
                 </div>
@@ -57,7 +57,7 @@
                             <span class="list-item-date">{{WidgetHome.items[$index].data.dateCreated  | jsDate | date:"MMMM dd, yyyy"}}</span>
                         </div>
                     </div>
-                    <div class="list-item col-xs-6 pull-left">
+                    <div class="list-item col-xs-6 pull-left" ng-if="WidgetHome.items[$index + 1]">
                         <div class="list-item-media text-center border-radius-three overflow-hidden">
                             <div class="list-media-holder play-btn">
                                 <img ng-if="WidgetHome.items[$index + 1].data.topImage" ng-src="{{WidgetHome.items[$index + 1].data.topImage | resizeImage:240:160}}">

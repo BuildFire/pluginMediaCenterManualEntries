@@ -2,7 +2,7 @@
     <div class="media-center-plugin layout3">
         <div class="plugin-banner clearfix border-bottom-grey">
             <div class="plugin-slider text-center">
-                <div class="plugin-slide" >
+                <div class="plugin-slide" ng-if="WidgetHome.media.data.content.images[0].imageUrl">
                     <!--data-ng-repeat="image in WidgetHome.media.data.content.images"-->
                     <img ng-src="{{WidgetHome.media.data.content.images[0].imageUrl | resizeImage:1280:720}}">
                 </div>
