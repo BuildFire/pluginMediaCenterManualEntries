@@ -43,11 +43,11 @@
                 };
                 Buildfire.datastore.onUpdate(function (event) {
                     switch (event.tag) {
-                        case COLLECTIONS.MediaContent:
+                        /*case COLLECTIONS.MediaContent:
                             if (event.data) {
-                                /**
+                                /!**
                                  * condition added to update the background image
-                                 */
+                                 *!/
                                 if (event.data.design && event.data.design.backgroundImage && currentBackgroundImage == event.data.design.backgroundImage) {
                                     // do something on same
                                 }
@@ -56,7 +56,7 @@
                                     AppConfig.changeBackgroundTheme(currentBackgroundImage);
                                 }
                             }
-                            break;
+                            break;*/
                     }
 
                 });
