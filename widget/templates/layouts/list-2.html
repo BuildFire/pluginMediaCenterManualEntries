@@ -2,53 +2,26 @@
     <div class="media-center-plugin layout3">
         <div class="plugin-banner clearfix border-bottom-grey">
             <div class="plugin-slider text-center">
-                <div class="plugin-slide">
-                    <img src="http://www.placehold.it/1280x720.jpg">
-                </div>
-                <div class="plugin-slide">
-                    <img src="http://www.placehold.it/1280x720.jpg">
-                </div>
-                <div class="plugin-slide">
-                    <img src="http://www.placehold.it/1280x720.jpg">
+                <div class="plugin-slide" ng-repeat="item in WidgetHome.items">
+                    <img ng-src="item.data.topImage" err-src="http://www.placehold.it/1280x720.jpg">
                 </div>
             </div>
         </div>
         <div class="padded text-left">
             <p class="margin-bottom-zero">WYSIWYG Editor.</p>
         </div>
-        <div class="plugin-banner clearfix border-bottom-grey">
-            <div class="plugin-slide text-center">
-                <img src="http://www.placehold.it/1280x720.jpg">
+        <div ng-repeat="item in WidgetHome.items">
+            <div class="plugin-banner clearfix border-bottom-grey">
+                <div class="plugin-slide text-center">
+                    <img ng-src="{{item.data.topImage | resizeImage:240:160}}" err-src="http://www.placehold.it/1280x720.jpg">
+                </div>
             </div>
-        </div>
-        <div class="padded text-left">
-            <a class="text-primary">This is a title</a>
+            <div class="padded text-left">
+                <a class="text-primary">{{item.data.title}}</a>
 
-            <p class="margin-bottom-zero">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua.</p>
-            <span class="list-item-date">Dec 21, 2014</span>
-        </div>
-        <div class="plugin-banner clearfix border-bottom-grey">
-            <div class="plugin-slide text-center">
-                <img src="http://www.placehold.it/1280x720.jpg">
+                <p class="margin-bottom-zero">{{item.data.summary}}</p>
+                <span class="list-item-date">{{item.data.dateCreated  | jsDate | date:"MMMM dd, yyyy"}}</span>
             </div>
-        </div>
-        <div class="padded text-left">
-            <a class="text-primary">This is a title</a>
-
-            <p class="margin-bottom-zero">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua.</p>
-        </div>
-        <div class="plugin-banner clearfix border-bottom-grey">
-            <div class="plugin-slide text-center">
-                <img src="http://www.placehold.it/1280x720.jpg">
-            </div>
-        </div>
-        <div class="padded text-left">
-            <a class="text-primary">This is a title</a>
-
-            <p class="margin-bottom-zero">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua.</p>
         </div>
     </div>
 </div>
