@@ -85,7 +85,7 @@
                     <span class="add-icon hidden">+</span>
                     <img ng-show="ContentMedia.item.data.image" ng-src="{{ContentMedia.item.data.image | resizeImage : 82:110}}">
                 </a>
-                <span ng-hide="ContentMedia.item.data.image" class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentMedia.selectAudioImage()"></span>
+                <span ng-show="ContentMedia.item.data.image" class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentMedia.removeAudioImage()"></span>
                 <label class="secondary">1024x1024</label>
             </div>
         </div>
