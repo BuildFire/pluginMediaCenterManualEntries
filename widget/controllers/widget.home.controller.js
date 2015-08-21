@@ -5,6 +5,7 @@
             function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, MediaCenterInfo, AppConfig, Messaging, EVENTS, PATHS, Location,Orders) {
                 var WidgetHome = this;
                 WidgetHome.media = MediaCenterInfo;
+                console.log('mediacenterinfo',MediaCenterInfo);
                 var currentBackgroundImage = WidgetHome.media.data.design.backgroundImage;
                 AppConfig.setSettings(MediaCenterInfo.data);
                 AppConfig.changeBackgroundTheme(currentBackgroundImage);
@@ -103,6 +104,7 @@
                     updateGetOptions();
                     console.log(searchOptions);
                     MediaContent.find(searchOptions).then(function success (result) {
+                        console.log(result);
                         WidgetHome.items = result;
                     }, function error(err, result) {
                         return console.error('-----------err-------------', err);
