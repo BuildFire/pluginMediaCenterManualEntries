@@ -1,5 +1,5 @@
 
-describe('Controller: ContentHomeCtrl', function () {
+xdescribe('Controller: ContentHomeCtrl', function () {
 
 // load the controller's module
     beforeEach(module('mediaCenterContent'));

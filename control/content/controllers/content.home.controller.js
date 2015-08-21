@@ -27,6 +27,7 @@
                     theme: 'modern'
                 };
                 ContentHome.isBusy = false;
+                /* tells if data is being fetched*/
                 ContentHome.items = [];
                 ContentHome.sortOptions = Orders.options;
                 //on remove button click remove carousel Image
@@ -91,6 +92,9 @@
                     if (ContentHome.isBusy && !ContentHome.noMore) {
                         return;
                     }
+
+                    updateSearchOptions();
+
                     ContentHome.isBusy = true;
                     MediaContent.find(searchOptions).then(function success(result) {
                         console.log("#########Data###########", result.length)
@@ -102,14 +106,24 @@
                             ContentHome.noMore = false;
                         }
                         ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
-                        ContentHome.isBusy = false;
+                        //ContentHome.isBusy = false;
                     }, function fail() {
+                        //ContentHome.isBusy = false;
+                    }).finally(function () {
                         ContentHome.isBusy = false;
-                    })
+                    });
                 }
 
                 ContentHome.toggleSortOrder = function (name) {
-                    ContentHome.info.data.content.sortBy = name;
+                    if (!name) {
+                        console.info('There was a problem sorting your data');
+                    } else {
+                        ContentHome.items = null;
+                        //searchOptions.page = 0;
+                        ContentHome.isBusy = false;
+                        ContentHome.info.data.content.sortBy = name;
+                        ContentHome.getMore(searchOptions);
+                    }
                 };
                 ContentHome.itemSortableOptions = {
                     handle: '> .cursor-grab',
@@ -153,6 +167,32 @@
                         }
                     }
                 };
+
+                /**
+                 * ContentHome.searchListItem() used to search items list
+                 * @param value to be search.
+                 */
+                ContentHome.searchListItem = function (value) {
+                    var title = '';
+                    //searchOptions.page=0;
+                    ContentHome.isBusy = false;
+                    ContentHome.items = null;
+                    value = value.trim();
+                    if (value) {
+                        if (value.indexOf(' ') !== -1) {
+                            title = value.split(' ');
+                            searchOptions.filter = {"$and": [{"$json.title": {"$regex": title[0]}}]};
+                        } else {
+                            title = value;
+                            searchOptions.filter = {"$or": [{"$json.title": {"$regex": title}}]};
+                        }
+                    } else {
+                        searchOptions.filter = {"$json.title": {"$regex": '/*'}};
+                    }
+                    ContentHome.getMore();
+                };
+
+
                 updateSearchOptions();
                 function updateMasterInfo(info) {
                     ContentHome.masterInfo = angular.copy(info);

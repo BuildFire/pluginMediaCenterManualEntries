@@ -79,6 +79,20 @@ describe('mediaCenterDesign', function () {
                 expect(controller.mediaInfo.data.design.backgroundImage).toBeNull();
             });
         });
+
+        describe('DesignHome.addBackgroundImage', function () {
+            it('shd give test value to the null backgroundImage property', function () {
+                var $scope = $rootScope.$new();
+                var controller = $controller('DesignHomeCtrl', {
+                    $scope: $scope,
+                    MediaCenterInfo: {data: {design: {listLayout: 'test',backgroundImage: null}}},
+                    Buildfire: {imageLib: {showDialog: function (o,c){return (null,{selectedFiles:['test']});} }}
+                });
+
+                controller.addBackgroundImage();
+                expect(controller.mediaInfo.data.design.backgroundImage).not.toBeNull();
+            });
+        });
     });
 
 
