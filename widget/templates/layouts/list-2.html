@@ -21,7 +21,7 @@
                 <a class="text-primary">{{item.data.title}}</a>
 
                 <p class="margin-bottom-zero">{{item.data.summary}}</p>
-                <span class="list-item-date">{{item.data.dateCreated  | jsDate | date:"MMMM dd, yyyy"}}</span>
+                <span class="list-item-date" data-ng-if="item.data.dateCreated">{{item.data.dateCreated  | jsDate | date:"MMMM dd, yyyy"}}</span>
             </div>
         </div>
     </div>

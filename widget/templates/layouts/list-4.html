@@ -67,7 +67,7 @@
                             <p class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index + 1].data.title}}</p>
 
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.summary}}</p>
-                            <span class="list-item-date">{{WidgetHome.items[$index + 1].data.dateCreated  | jsDate | date:"MMMM dd, yyyy"}}</span>
+                            <span class="list-item-date" data-ng-if="item.data.dateCreated">{{WidgetHome.items[$index + 1].data.dateCreated  | jsDate | date:"MMMM dd, yyyy"}}</span>
                         </div>
                     </div>
                 </div>
