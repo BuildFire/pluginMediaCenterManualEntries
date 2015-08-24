@@ -91,9 +91,7 @@
                     if (ContentHome.isBusy && !ContentHome.noMore) {
                         return;
                     }
-
                     updateSearchOptions();
-
                     ContentHome.isBusy = true;
                     MediaContent.find(searchOptions).then(function success(result) {
                         if (result.length <= _limit) {// to indicate there are more
@@ -118,8 +116,11 @@
                         ContentHome.items = null;
                         //searchOptions.page = 0;
                         ContentHome.isBusy = false;
+                        var sortOrder = Orders.getOrder(name || Orders.ordersMap.Default);
                         ContentHome.info.data.content.sortBy = name;
+                        ContentHome.info.data.content.sortByValue = sortOrder.value;
                         ContentHome.getMore(searchOptions);
+                        ContentHome.itemSortableOptions.disabled = !(ContentHome.info.data.content.sortBy === Orders.ordersMap.Manually);
                     }
                 };
                 ContentHome.itemSortableOptions = {
@@ -173,21 +174,12 @@
                     ContentHome.isBusy = false;
                     ContentHome.items = null;
                     value = value.trim();
-                    if (value) {
-                        if (value.indexOf(' ') !== -1) {
-                            title = value.split(' ');
-                            searchOptions.filter = {"$and": [{"$json.title": {"$regex": title[0]}}]};
-                        } else {
-                            title = value;
-                            searchOptions.filter = {"$or": [{"$json.title": {"$regex": title}}]};
-                        }
-                    } else {
-                        searchOptions.filter = {"$json.title": {"$regex": '/*'}};
+                    if (!value) {
+                        value = '/*';
                     }
+                    searchOptions.filter = {"$json.title": {"$regex": value}};
                     ContentHome.getMore();
                 };
-
-
                 updateSearchOptions();
                 function updateMasterInfo(info) {
                     ContentHome.masterInfo = angular.copy(info);
