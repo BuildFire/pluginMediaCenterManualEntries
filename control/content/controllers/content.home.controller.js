@@ -7,6 +7,7 @@
                 var ContentHome = this;
                 ContentHome.info = MediaCenterInfo;
                 AppConfig.setSettings(MediaCenterInfo.data);
+                AppConfig.setAppId(MediaCenterInfo.id);
                 updateMasterInfo(ContentHome.info);
                 var tmrDelayForMedia = null;
                 var MediaContent = new DB(COLLECTIONS.MediaContent);
@@ -113,7 +114,7 @@
                     if (!name) {
                         console.info('There was a problem sorting your data');
                     } else {
-                        ContentHome.items = null;
+                        ContentHome.items = [];
                         //searchOptions.page = 0;
                         ContentHome.isBusy = false;
                         var sortOrder = Orders.getOrder(name || Orders.ordersMap.Default);
@@ -128,8 +129,9 @@
                     disabled: !(ContentHome.info.data.content.sortBy === Orders.ordersMap.Manually),
                     stop: function (e, ui) {
                         var endIndex = ui.item.sortable.dropindex,
+                            maxRank = 0,
                             draggedItem = ContentHome.items[endIndex];
-
+                        console.log(ui.item.sortable.dropindex)
                         if (draggedItem) {
                             var prev = ContentHome.items[endIndex - 1],
                                 next = ContentHome.items[endIndex + 1];
@@ -145,20 +147,20 @@
                             } else {
                                 if (prev) {
                                     draggedItem.data.rank = (((prev.data.rank || 0) * 2) + 10) / 2;
+                                    maxRank = draggedItem.data.rank;
                                     isRankChanged = true;
                                 }
                             }
                             if (isRankChanged) {
-                                //Buildfire.datastore.update(draggedItem.id, draggedItem.data, TAG_NAMES.PEOPLE, function (err) {
-                                //    if (err) {
-                                //        console.error('Error during updating rank');
-                                //    } else {
-                                //        if (ContentHome.data.content.rankOfLastItem < maxRank) {
-                                //            ContentHome.data.content.rankOfLastItem = maxRank;
-                                //            RankOfLastItem.setRank(maxRank);
-                                //        }
-                                //    }
-                                //})
+                                MediaContent.update(draggedItem.id, draggedItem.data, function (err) {
+                                    if (err) {
+                                        console.error('Error during updating rank');
+                                    } else {
+                                        if (ContentHome.data.content.rankOfLastItem < maxRank) {
+                                            ContentHome.data.content.rankOfLastItem = maxRank;
+                                        }
+                                    }
+                                })
                             }
                         }
                     }
@@ -172,7 +174,7 @@
                     var title = '';
                     //searchOptions.page=0;
                     ContentHome.isBusy = false;
-                    ContentHome.items = null;
+                    ContentHome.items = [];
                     value = value.trim();
                     if (!value) {
                         value = '/*';
@@ -196,6 +198,7 @@
                 function updateData() {
                     MediaCenter.update(ContentHome.info.id, ContentHome.info.data).then(function (data) {
                         updateMasterInfo(data);
+                        AppConfig.setSettings(ContentHome.info.data);
                     }, function (err) {
                         resetInfo();
                         console.error('Error-------', err);

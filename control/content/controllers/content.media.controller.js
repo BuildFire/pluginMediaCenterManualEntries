@@ -7,6 +7,9 @@
                 var ContentMedia = this;
                 var tmrDelayForMedia = null;
                 var MediaContent = new DB(COLLECTIONS.MediaContent);
+                var MediaCenter = new DB(COLLECTIONS.MediaCenter);
+                var MediaCenterSettings = AppConfig.getSettings();
+                var appId = AppConfig.getAppId();
 
                 function init() {
                     var data = {
@@ -19,7 +22,7 @@
                         videoUrl: '',
                         image: '',
                         dateCreated: '',
-                        rank: '',
+                        rank: (MediaCenterSettings.content.rankOfLastItem || 0) + 10,
                         links: [] // this will contain action links
                     };
                     ContentMedia.linksSortableOptions = {
@@ -76,9 +79,15 @@
                 function addNewItem() {
                     ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
                     MediaContent.insert(ContentMedia.item.data).then(function (data) {
-                        MediaContent.getById(data.id).then(function (data) {
-                            ContentMedia.item = data;
-                            updateMasterItem(data);
+                        MediaContent.getById(data.id).then(function (item) {
+                            ContentMedia.item = item;
+                            updateMasterItem(item);
+                            MediaCenterSettings.content.rankOfLastItem = item.data.rank;
+                            MediaCenter.update(appId, MediaCenterSettings).then(function (data) {
+                            console.info("Updated MediaCenter rank");
+                            }, function (err) {
+                                console.error('Error-------', err);
+                            });
                         }, function (err) {
                             resetItem();
                             console.error('Error while getting----------', err);
