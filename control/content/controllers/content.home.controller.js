@@ -7,6 +7,7 @@
                 var ContentHome = this;
                 ContentHome.info = MediaCenterInfo;
                 AppConfig.setSettings(MediaCenterInfo.data);
+                AppConfig.setAppId(MediaCenterInfo.id);
                 updateMasterInfo(ContentHome.info);
                 var tmrDelayForMedia = null;
                 var MediaContent = new DB(COLLECTIONS.MediaContent);
@@ -91,9 +92,7 @@
                     if (ContentHome.isBusy && !ContentHome.noMore) {
                         return;
                     }
-
                     updateSearchOptions();
-
                     ContentHome.isBusy = true;
                     MediaContent.find(searchOptions).then(function success(result) {
                         if (result.length <= _limit) {// to indicate there are more
@@ -115,11 +114,14 @@
                     if (!name) {
                         console.info('There was a problem sorting your data');
                     } else {
-                        ContentHome.items = null;
+                        ContentHome.items = [];
                         //searchOptions.page = 0;
                         ContentHome.isBusy = false;
+                        var sortOrder = Orders.getOrder(name || Orders.ordersMap.Default);
                         ContentHome.info.data.content.sortBy = name;
+                        ContentHome.info.data.content.sortByValue = sortOrder.value;
                         ContentHome.getMore(searchOptions);
+                        ContentHome.itemSortableOptions.disabled = !(ContentHome.info.data.content.sortBy === Orders.ordersMap.Manually);
                     }
                 };
                 ContentHome.itemSortableOptions = {
@@ -127,8 +129,9 @@
                     disabled: !(ContentHome.info.data.content.sortBy === Orders.ordersMap.Manually),
                     stop: function (e, ui) {
                         var endIndex = ui.item.sortable.dropindex,
+                            maxRank = 0,
                             draggedItem = ContentHome.items[endIndex];
-
+                        console.log(ui.item.sortable.dropindex)
                         if (draggedItem) {
                             var prev = ContentHome.items[endIndex - 1],
                                 next = ContentHome.items[endIndex + 1];
@@ -144,20 +147,20 @@
                             } else {
                                 if (prev) {
                                     draggedItem.data.rank = (((prev.data.rank || 0) * 2) + 10) / 2;
+                                    maxRank = draggedItem.data.rank;
                                     isRankChanged = true;
                                 }
                             }
                             if (isRankChanged) {
-                                //Buildfire.datastore.update(draggedItem.id, draggedItem.data, TAG_NAMES.PEOPLE, function (err) {
-                                //    if (err) {
-                                //        console.error('Error during updating rank');
-                                //    } else {
-                                //        if (ContentHome.data.content.rankOfLastItem < maxRank) {
-                                //            ContentHome.data.content.rankOfLastItem = maxRank;
-                                //            RankOfLastItem.setRank(maxRank);
-                                //        }
-                                //    }
-                                //})
+                                MediaContent.update(draggedItem.id, draggedItem.data, function (err) {
+                                    if (err) {
+                                        console.error('Error during updating rank');
+                                    } else {
+                                        if (ContentHome.data.content.rankOfLastItem < maxRank) {
+                                            ContentHome.data.content.rankOfLastItem = maxRank;
+                                        }
+                                    }
+                                })
                             }
                         }
                     }
@@ -171,23 +174,14 @@
                     var title = '';
                     //searchOptions.page=0;
                     ContentHome.isBusy = false;
-                    ContentHome.items = null;
+                    ContentHome.items = [];
                     value = value.trim();
-                    if (value) {
-                        if (value.indexOf(' ') !== -1) {
-                            title = value.split(' ');
-                            searchOptions.filter = {"$and": [{"$json.title": {"$regex": title[0]}}]};
-                        } else {
-                            title = value;
-                            searchOptions.filter = {"$or": [{"$json.title": {"$regex": title}}]};
-                        }
-                    } else {
-                        searchOptions.filter = {"$json.title": {"$regex": '/*'}};
+                    if (!value) {
+                        value = '/*';
                     }
+                    searchOptions.filter = {"$json.title": {"$regex": value}};
                     ContentHome.getMore();
                 };
-
-
                 updateSearchOptions();
                 function updateMasterInfo(info) {
                     ContentHome.masterInfo = angular.copy(info);
@@ -204,6 +198,7 @@
                 function updateData() {
                     MediaCenter.update(ContentHome.info.id, ContentHome.info.data).then(function (data) {
                         updateMasterInfo(data);
+                        AppConfig.setSettings(ContentHome.info.data);
                     }, function (err) {
                         resetInfo();
                         console.error('Error-------', err);
