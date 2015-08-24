@@ -1,4 +1,4 @@
-xdescribe('mediaCenterWidget: Home:app.js', function () {
+describe('mediaCenterWidget: Home:app.js', function () {
     beforeEach(module('mediaCenterWidget'));
     var location, route, rootScope;
 
@@ -12,31 +12,49 @@ xdescribe('mediaCenterWidget: Home:app.js', function () {
     describe('Home route', function () {
         beforeEach(inject(
             function ($httpBackend) {
-                $httpBackend.expectGET('templates/layouts/list-1.html')
+                $httpBackend.expectGET('templates/home.html')
                     .respond(200);
-                $httpBackend.expectGET('/list-1')
+                $httpBackend.expectGET('/')
                     .respond(200);
              }));
 
         it('should load the home page on successful load of /', function () {
-            location.path('/list-1');
+            location.path('/');
             rootScope.$digest();
             expect(route.current.controller).toBe('WidgetHomeCtrl')
         });
     });
+
     describe('Media route', function () {
         beforeEach(inject(
             function ($httpBackend) {
-                $httpBackend.expectGET('templates/layouts/item-1.html')
+                $httpBackend.expectGET('templates/media.html')
                     .respond(200);
-                $httpBackend.expectGET('media/item-1/12345')
+                $httpBackend.expectGET('/media')
                     .respond(200);
-             }));
+            }));
 
-        it('should load the media page on successful load of /media/12345', function () {
-            location.path('media/item-1/12345');
+        it('should load the home page on successful load of /', function () {
+            location.path('/media');
             rootScope.$digest();
             expect(route.current.controller).toBe('WidgetMediaCtrl')
         });
     });
+
+    describe('Media with Id route', function () {
+        beforeEach(inject(
+            function ($httpBackend) {
+                $httpBackend.expectGET('templates/media.html')
+                    .respond(200);
+                $httpBackend.expectGET('/media/:mediaId')
+                    .respond(200);
+            }));
+
+        it('should load the home page on successful load of /', function () {
+            location.path('/media/:mediaId');
+            rootScope.$digest();
+            expect(route.current.controller).toBe('WidgetMediaCtrl')
+        });
+    });
+
 });
