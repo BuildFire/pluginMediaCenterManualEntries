@@ -90,5 +90,33 @@
                     });
                 }
             }
+        }).directive('videojs', function () {
+            var linker = function (scope, element, attrs){
+                attrs.type = attrs.type || "video/mp4";
+
+                var setup = {
+                    'techOrder' : ['html5', 'flash'],
+                    'controls' : true,
+                    'preload' : 'auto',
+                    'autoplay' : false,
+                    'height' : 264,
+                    'width' : 315
+                };
+
+                var videoid = 'vid';
+                attrs.id = videoid;
+                element.attr('id', attrs.id);
+                element.attr('poster', attrs.poster);
+                var player = _V_(attrs.id, setup, function(){
+                    var source =([
+                        {type:"video/mp4", src:attrs.src}
+                    ]);
+                    this.src({type : attrs.type, src: source });
+                });
+            }
+            return {
+                restrict : 'A',
+                link : linker
+            };
         });
 })(window.angular, undefined);
