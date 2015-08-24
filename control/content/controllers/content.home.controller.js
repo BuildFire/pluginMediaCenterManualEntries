@@ -91,9 +91,7 @@
                     if (ContentHome.isBusy && !ContentHome.noMore) {
                         return;
                     }
-
                     updateSearchOptions();
-
                     ContentHome.isBusy = true;
                     MediaContent.find(searchOptions).then(function success(result) {
                         if (result.length <= _limit) {// to indicate there are more
@@ -173,21 +171,12 @@
                     ContentHome.isBusy = false;
                     ContentHome.items = null;
                     value = value.trim();
-                    if (value) {
-                        if (value.indexOf(' ') !== -1) {
-                            title = value.split(' ');
-                            searchOptions.filter = {"$and": [{"$json.title": {"$regex": title[0]}}]};
-                        } else {
-                            title = value;
-                            searchOptions.filter = {"$or": [{"$json.title": {"$regex": title}}]};
-                        }
-                    } else {
-                        searchOptions.filter = {"$json.title": {"$regex": '/*'}};
+                    if (!value) {
+                        value = '/*';
                     }
+                    searchOptions.filter = {"$json.title": {"$regex": value}};
                     ContentHome.getMore();
                 };
-
-
                 updateSearchOptions();
                 function updateMasterInfo(info) {
                     ContentHome.masterInfo = angular.copy(info);

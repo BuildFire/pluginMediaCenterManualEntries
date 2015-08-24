@@ -28,5 +28,10 @@
                     return "";
             }
             };
-        }]);
+        }])
+        .filter("jsDate", function () {
+            return function (x) {
+                return new Date(x);
+            };
+        });
 })(window.angular, window.buildfire, window.location);
