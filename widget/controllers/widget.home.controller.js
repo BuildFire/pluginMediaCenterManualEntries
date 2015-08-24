@@ -113,5 +113,10 @@
                 $scope.isDefined = function (item) {
                     return item.imageUrl !== undefined && item.imageUrl !== '';
                 };
+
+                WidgetHome.loadMore = function () {
+                    alert('scroll');
+                };
+
             }]);
 })(window.angular, undefined);

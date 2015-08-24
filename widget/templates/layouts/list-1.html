@@ -7,6 +7,8 @@
                     <!--<img ng-src="{{WidgetHome.media.data.content.images[0].imageUrl | resizeImage: 342 : 192}}">-->
                 <!--</div>-->
             <!--</div>-->
+
+            <!--
             <div class="plugin-slider text-center"
                  image-carousel="{{WidgetHome.media.data.content.images.length}}">
                 <div class="plugin-slide item"
@@ -17,7 +19,11 @@
                     <img data-ng-if="!image.imageUrl"
                          ng-src="{{image.imageUrl | resizeImage : 342 : 192}}">
                 </div>
-            </div>
+            </div>-->
+
+
+            <buildfire-carousel images="WidgetHome.media.data.content.images"></buildfire-carousel>
+
         </div>
         <div class="text-left padded padding-bottom-zero clearfix">
             <p ng-if="WidgetHome.media.data.content.descriptionHTML" ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">{{WidgetHome.media.data.content.descriptionHTML}}</p>
@@ -27,7 +33,7 @@
                 <div class="row">
                     <div class="list-item col-xs-6 pull-left" ng-repeat="item in WidgetHome.items">
                         <div class="list-item-media text-center border-radius-three overflow-hidden">
-                            <div class="list-media-holder" ng-if="item.data.topImage">
+                            <div  play-btn="{{item.data.videoUrl.length > 0}}" class="list-media-holder" ng-if="item.data.topImage">
                                 <img ng-src="{{item.data.topImage | resizeImage:240:160}}">
                             </div>
                         </div>
