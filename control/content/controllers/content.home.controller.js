@@ -116,8 +116,11 @@
                         ContentHome.items = null;
                         //searchOptions.page = 0;
                         ContentHome.isBusy = false;
+                        var sortOrder = Orders.getOrder(name || Orders.ordersMap.Default);
                         ContentHome.info.data.content.sortBy = name;
+                        ContentHome.info.data.content.sortByValue = sortOrder.value;
                         ContentHome.getMore(searchOptions);
+                        ContentHome.itemSortableOptions.disabled = !(ContentHome.info.data.content.sortBy === Orders.ordersMap.Manually);
                     }
                 };
                 ContentHome.itemSortableOptions = {

@@ -65,7 +65,7 @@
     <div class="main pull-right col-md-9 padding-left-zero row">
         <div class="dropdown pull-left col-md-8 padding-zero" dropdown is-open="status.isopen">
             <button class="btn btn-default text-left dropdown-toggle" dropdown-toggle ng-disabled="disabled" aria-expanded="true">
-                <span class="pull-left">{{ContentHome.info.data.content.sortBy || 'Newest'}}</span>
+                <span class="pull-left">{{ContentHome.info.data.content.sortByValue || 'Newest'}}</span>
                 <span class="chevron icon-chevron-down pull-right"></span>
             </button>
             <ul class="dropdown-menu extended" role="menu">
@@ -99,7 +99,7 @@
              infinite-scroll-disabled="ContentHome.noMore"
              infinite-scroll-container="'#scroll-infinite'">
             <div ui-sortable="ContentHome.itemSortableOptions" ng-model="ContentHome.items">
-                <div class="well text-center margin-bottom-zero border-none" ng-hide="ContentHome.items.length">
+                <div class="well text-center margin-bottom-zero border-none" ng-show="ContentHome.items.length <1">
                     <p class="margin-zero">No items found.</p>
                 </div>
                 <div class="d-item double-line square-icon clearfix" ng-if="ContentHome.items.length"
