@@ -11,13 +11,15 @@
                 updateMasterInfo(ContentHome.info);
                 var header = {
                     topImage: 'Top image',
-                    summary: 'Summery',
+                    title: 'Title',
+                    summary: 'Summary',
                     bodyHTML: 'Media Content',
                     srcUrl: 'Source URL',
                     audioUrl: 'Audio URL',
                     videoUrl: 'Video URL',
                     image: 'Thumbnail Image URL'
                 };
+                var headerRow = ["topImage", "title", "summary", "bodyHTML", "srcUrl", "audioUrl", "videoUrl", "image"]
                 var tmrDelayForMedia = null;
                 var MediaContent = new DB(COLLECTIONS.MediaContent);
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
@@ -186,6 +188,7 @@
                 ContentHome.getTemplate = function () {
                     var templateData = [{
                         topImage: '',
+                        title: '',
                         summary: '',
                         bodyHTML: '',
                         srcUrl: '',
@@ -264,45 +267,46 @@
                             records = [];
                         });
                 };
+                function isValidItem(item, index, array) {
+                    return item.title || item.summary;
+                }
+
+                function validateCsv(items) {
+                    if (!Array.isArray(items) || !items.length) {
+                        return false;
+                    }
+                    return items.every(isValidItem);
+                }
+
                 /**
                  * method to open the importCSV Dialog
                  */
                 ContentHome.openImportCSVDialog = function () {
-                    var modalInstance = $modal
-                        .open({
-                            templateUrl: 'templates/modals/import-csv.html',
-                            controller: 'ImportCSVPopupCtrl',
-                            controllerAs: 'ImportCSVPopup',
-                            size: 'sm'
-                        });
-                    modalInstance.result.then(function (rows) {
+                    $csv.import(headerRow).then(function (rows) {
                         ContentHome.loading = true;
                         if (rows && rows.length) {
-                            var rank = ContentHome.data.content.rankOfLastItem || 0;
+                            var rank = ContentHome.info.data.content.rankOfLastItem || 0;
                             for (var index = 0; index < rows.length; index++) {
                                 rank += 10;
                                 rows[index].dateCreated = +new Date();
-                                rows[index].socialLinks = [];
+                                rows[index].links = [];
                                 rows[index].rank = rank;
+                                rows[index].body = "";
                             }
                             if (validateCsv(rows)) {
-                                Buildfire.datastore.bulkInsert(rows, TAG_NAMES.PEOPLE, function (err, data) {
+                                MediaContent.insert(rows).then(function (data) {
+                                    ContentHome.loading = false;
+                                    ContentHome.isBusy = false;
+                                    ContentHome.items = [];
+                                    ContentHome.info.data.content.rankOfLastItem = rank;
+                                    ContentHome.getMore();
+                                }, function errorHandler(error) {
+                                    console.error(error);
                                     ContentHome.loading = false;
                                     $scope.$apply();
-                                    if (err) {
-                                        console.error('There was a problem while importing the file----', err);
-                                    }
-                                    else {
-                                        console.info('File has been imported----------------------------');
-                                        ContentHome.busy = false;
-                                        ContentHome.items = null;
-                                        ContentHome.loadMore();
-                                        ContentHome.data.content.rankOfLastItem = rank;
-                                    }
                                 });
                             } else {
                                 ContentHome.loading = false;
-                                $scope.$apply();
                                 ContentHome.csvDataInvalid = true;
                                 $timeout(function hideCsvDataError() {
                                     ContentHome.csvDataInvalid = false;
@@ -317,7 +321,7 @@
                         ContentHome.loading = false;
                         $scope.apply();
                         //do something on cancel
-                    });
+                    })
                 };
 
                 /**

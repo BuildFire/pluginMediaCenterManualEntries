@@ -42,6 +42,7 @@
                     var data = {
                         topImage: '',
                         summary: '',
+                        title: '',
                         body: '',
                         bodyHTML: '',
                         srcUrl: '',

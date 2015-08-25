@@ -1,6 +1,6 @@
 (function (angular, URL, navigator) {
     angular
-        .module('bngCsv', [])
+        .module('bngCsv', ['ui.bootstrap'])
         .provider("$csv", function () {
             var CSVToArray = function (strData, strDelimiter) {
                 // Check to see if the delimiter is defined. If not,
@@ -57,7 +57,7 @@
                 return (arrData);
             };
 
-            this.$get = function () {
+            this.$get = ['$modal', '$q', function ($modal, $q) {
                 return {
                     csvToJson: function (csv, options) {
                         var rows = CSVToArray(csv);
@@ -69,7 +69,7 @@
                             header = options.header;
                         }
                         if (!Array.isArray(header) || !header.length) {
-                            return;
+                            throw ("header should be an array of values");
                         }
                         var items = [];
                         for (var row = 1; row < rows.length; row++) {
@@ -115,7 +115,7 @@
                             var line = '';
                             for (var index in header) {
                                 if (typeof array[rowNo][index] != 'object') {
-                                    var value = (array[rowNo][index]||"") + "";
+                                    var value = (array[rowNo][index] || "") + "";
                                     line += '"' + value.replace(/"/g, '""') + '",';
                                 }
                                 else {
@@ -150,8 +150,71 @@
                                 document.body.removeChild(link);
                             }
                         }
+                    },
+                    import: function (header, name) {
+                        var deferred = $q.defer();
+                        var modalInstance = $modal
+                            .open({
+                                templateUrl: 'templates/modals/import-csv.html',
+                                controller: 'ImportCSVCtrl',
+                                controllerAs: 'ImportCSVPopup',
+                                size: 'sm',
+                                resolve: {
+                                    header: function () {
+                                        return header;
+                                    }
+                                }
+                            });
+                        modalInstance.result.then(function (rows) {
+                            deferred.resolve(rows);
+                        }, function (error) {
+                            deferred.reject(error);
+                        });
+                        return deferred.promise;
                     }
                 }
-            }
+            }]
         })
+        .directive('fileReader', [function () {
+            return {
+                restrict: 'A',
+                scope: {
+                    result: "="
+                },
+                bindToController: true,
+                link: function (scope, element, attrs) {
+                    element.context.onchange = function (event) {
+                        var files = event.target.files; //FileList object
+                        for (var i = 0; i < files.length; i++) {
+                            var file = files[i];
+                            var picReader = new FileReader();
+                            picReader.addEventListener("load", function (event) {
+                                var textFile = event.target;
+                                scope.result = textFile.result;
+                                scope.$apply();
+                            });
+                            picReader.readAsText(file);
+                        }
+
+                    }
+
+                }
+            };
+        }])
+        .controller('ImportCSVCtrl', ['$scope', '$modalInstance', '$csv', 'header', function ($scope, $modalInstance, $csv, header) {
+            var ImportCSVPopup = this;
+            ImportCSVPopup.fileData = "";
+            ImportCSVPopup.ok = function () {
+                if (ImportCSVPopup.fileData) {
+                    var json = JSON.parse($csv.csvToJson(ImportCSVPopup.fileData, {header: header}));
+                    $modalInstance.close(json);
+                }
+                else {
+                    $modalInstance.close();
+                }
+            };
+            ImportCSVPopup.cancel = function () {
+                $modalInstance.dismiss('Dismiss');
+            };
+        }])
 })(window.angular, window.URL, window.navigator);
