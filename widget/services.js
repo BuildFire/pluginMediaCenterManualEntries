@@ -1,14 +1,19 @@
-'use strict';
-
 (function (angular, buildfire, location) {
+'use strict';
     //created mediaCenterWidget module
-    var settings;
+    var settings, appId;
     var Settings = {
         setSettings: function (newSettings) {
             settings = newSettings;
         },
+        setAppId: function (newId) {
+            appId = newId;
+        },
         getSetting: function () {
             return settings;
+        },
+        getAppId: function () {
+            return appId;
         }
     };
     angular
@@ -16,17 +21,17 @@
         .provider('Buildfire', [function () {
             this.$get = function () {
                 return buildfire;
-            }
+            };
         }])
         .provider('Messaging', [function () {
             this.$get = function () {
                 return buildfire.messaging;
-            }
+            };
         }])
         .provider('ImageLib', [function () {
             this.$get = function () {
                 return buildfire.imageLib;
-            }
+            };
         }])
         .factory('Location', [function () {
             var _location = location;
@@ -47,7 +52,7 @@
                 Oldest: "Oldest",
                 Most: " Oldest",
                 Least: " Oldest"
-            }
+            };
             var orders = [
                 {id: 1, name: "Manually", value: "Manually", key: "rank", order: 1},
                 {id: 1, name: "Newest", value: "Newest", key: "dateCreated", order: -1},
@@ -63,7 +68,7 @@
                         return order.name === name;
                     })[0];
                 }
-            }
+            };
         }])
         .factory("DB", ['Buildfire', '$q', 'MESSAGES', 'CODES', function (Buildfire, $q, MESSAGES, CODES) {
             function DB(tagName) {
@@ -96,7 +101,7 @@
                     else if (result && result.data) {
                         return deferred.resolve(result);
                     } else {
-                        return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOND));
+                        return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
                     }
                 });
                 return deferred.promise;
@@ -149,7 +154,7 @@
                     }
                 });
                 return deferred.promise;
-            }
+            };
             DB.prototype.update = function (id, item) {
                 var that = this;
                 var deferred = $q.defer();
@@ -168,7 +173,7 @@
                     } else {
                         return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
                     }
-                })
+                });
                 return deferred.promise;
             };
             DB.prototype.save = function (item) {
@@ -206,7 +211,7 @@
                     }
                 });
                 return deferred.promise;
-            }
+            };
             return DB;
         }])
         .value('Settings', Settings)
@@ -215,9 +220,16 @@
                 setSettings: function (newSettings) {
                     Settings.setSettings(newSettings);
                 },
+                setAppId: function (newAppId) {
+                    Settings.setAppId(newAppId);
+                },
                 getSettings: function () {
                     return Settings.getSetting();
-                }, changeBackgroundTheme: function (url) {
+                },
+                getAppId: function () {
+                    return Settings.getAppId();
+                },
+                changeBackgroundTheme: function (url) {
                     if (url) {
                         $rootScope.currentBackgroundImage = {
                             "background-image": "url(" + Buildfire.imageLib.resizeImage(url, {
@@ -229,9 +241,7 @@
                     } else {
                         $rootScope.currentBackgroundImage = "";
                     }
-                    //$rootScope.$apply();
                 }
-            }
-
-        }])
+            };
+        }]);
 })(window.angular, window.buildfire, window.location);

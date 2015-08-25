@@ -1,19 +1,18 @@
 <div class="holder padding-zero">
-    <div class="media-center-plugin layout3">
+    <div id="scroll-infinite" class="media-center-plugin layout3">
         <div class="plugin-banner clearfix border-bottom-grey">
-            <div class="plugin-slider text-center">
-                <div class="plugin-slide" ng-if="WidgetHome.media.data.content.images[0].imageUrl">
-                    <!--data-ng-repeat="image in WidgetHome.media.data.content.images"-->
-                    <img ng-src="{{WidgetHome.media.data.content.images[0].imageUrl | resizeImage: 342 : 192}}">
-                </div>
-            </div>
+            <buildfire-carousel images="WidgetHome.media.data.content.images"></buildfire-carousel>
         </div>
         <div class="padded text-left">
             <p class="margin-bottom-zero" ng-if="WidgetHome.media.data.content.descriptionHTML" ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">{{WidgetHome.media.data.content.descriptionHTML}}</p>
         </div>
+        <div infinite-scroll-distance="0"
+              infinite-scroll="WidgetHome.loadMore()"
+              infinite-scroll-disabled="WidgetHome.noMore"
+              infinite-scroll-container='"#scroll-infinite"'>
         <div ng-repeat="item in WidgetHome.items">
             <div class="plugin-banner clearfix border-bottom-grey">
-                <div class="plugin-slide text-center" ng-if="item.data.topImage">
+                <div class="plugin-slide text-center" ng-if="item.data.topImage" play-btn="{{item.data.videoUrl.length > 0}}">
                     <img ng-src="{{item.data.topImage | resizeImage:240:160}}">
                 </div>
             </div>
@@ -25,4 +24,5 @@
             </div>
         </div>
     </div>
+</div>
 </div>

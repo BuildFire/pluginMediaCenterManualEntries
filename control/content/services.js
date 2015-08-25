@@ -1,13 +1,19 @@
 (function (angular, buildfire, location) {
     'use strict';
     //created mediaCenterWidget module
-    var settings;
+    var settings, appId;
     var Settings = {
         setSettings: function (newSettings) {
             settings = newSettings;
         },
+        setAppId: function (newId) {
+            appId = newId;
+        },
         getSetting: function () {
             return settings;
+        },
+        getAppId: function () {
+            return appId;
         }
     };
     angular
@@ -132,8 +138,6 @@
                 return deferred.promise;
             };
             DB.prototype.find = function (options) {
-                console.log(options);
-
                 var that = this;
                 var deferred = $q.defer();
                 if (typeof options == 'undefined') {
@@ -216,9 +220,16 @@
                 setSettings: function (newSettings) {
                     Settings.setSettings(newSettings);
                 },
+                setAppId: function (newAppId) {
+                    Settings.setAppId(newAppId);
+                },
                 getSettings: function () {
                     return Settings.getSetting();
-                }, changeBackgroundTheme: function (url) {
+                },
+                getAppId: function () {
+                    return Settings.getAppId();
+                },
+                changeBackgroundTheme: function (url) {
                     if (url) {
                         $rootScope.currentBackgroundImage = {
                             "background-image": "url(" + Buildfire.imageLib.resizeImage(url, {
@@ -230,7 +241,6 @@
                     } else {
                         $rootScope.currentBackgroundImage = "";
                     }
-                    $rootScope.$apply();
                 }
             };
         }]);
