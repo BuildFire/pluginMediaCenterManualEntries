@@ -2,8 +2,8 @@
     'use strict';
     angular
         .module('mediaCenterContent')
-        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'DB', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', '$csv',
-            function ($scope, MediaCenterInfo, Modals, DB, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, $csv) {
+        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', '$csv',
+            function ($scope, MediaCenterInfo, Modals, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, $csv) {
                 var ContentHome = this;
                 ContentHome.info = MediaCenterInfo;
                 AppConfig.setSettings(MediaCenterInfo.data);
@@ -19,7 +19,7 @@
                     videoUrl: 'Video URL',
                     image: 'Thumbnail Image URL'
                 };
-                var headerRow = ["topImage", "title", "summary", "bodyHTML", "srcUrl", "audioUrl", "videoUrl", "image"]
+                var headerRow = ["topImage", "title", "summary", "bodyHTML", "srcUrl", "audioUrl", "videoUrl", "image"];
                 var tmrDelayForMedia = null;
                 var MediaContent = new DB(COLLECTIONS.MediaContent);
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
@@ -213,59 +213,61 @@
                  * @param records
                  * @param callback
                  */
-                function getRecords(searchOption, records, callback) {
-                    console.log("Data length", records.length);
-                    Buildfire.datastore.search(searchOption, TAG_NAMES.PEOPLE, function (err, result) {
-                        if (err) {
-                            console.error('-----------err in getting list-------------', err);
-                            return callback(err, []);
-                        }
-                        if (result.length <= _maxLimit) {// to indicate there are more
-                            records = records.concat(result);
-                            return callback(null, records);
-                        }
-                        else {
-                            result.pop();
-                            searchOption.skip = searchOption.skip + _maxLimit;
-                            records = records.concat(result);
-                            return getRecords(searchOption, records, callback);
-                        }
-                    });
-                }
+                /*function getRecords(searchOption, records, callback) {
+                 console.log("Data length", records.length);
+                 Buildfire.datastore.search(searchOption, TAG_NAMES.PEOPLE, function (err, result) {
+                 if (err) {
+                 console.error('-----------err in getting list-------------', err);
+                 return callback(err, []);
+                 }
+                 if (result.length <= _maxLimit) {// to indicate there are more
+                 records = records.concat(result);
+                 return callback(null, records);
+                 }
+                 else {
+                 result.pop();
+                 searchOption.skip = searchOption.skip + _maxLimit;
+                 records = records.concat(result);
+                 return getRecords(searchOption, records, callback);
+                 }
+                 });
+                 }*/
 
                 /**
                  * ContentHome.exportCSV() used to export people list data to CSV
                  */
                 ContentHome.exportCSV = function () {
-                    getRecords({
-                            filter: {"$json.fName": {"$regex": '/*'}},
-                            skip: 0,
-                            limit: _maxLimit + 1 // the plus one is to check if there are any more
-                        },
-                        []
-                        , function (err, data) {
-                            if (err) {
-                                return console.error('Err while exporting data--------------------------------', err);
-                            }
-                            if (data && data.length) {
-                                var persons = [];
-                                angular.forEach(angular.copy(data), function (value) {
-                                    delete value.data.dateCreated;
-                                    delete value.data.iconImage;
-                                    delete value.data.socialLinks;
-                                    delete value.data.rank;
-                                    persons.push(value.data);
-                                });
-                                var csv = $csv.jsonToCsv(angular.toJson(persons), {
-                                    header: header
-                                });
-                                $csv.download(csv, "Export.csv");
-                            }
-                            else {
-                                ContentHome.getTemplate();
-                            }
-                            records = [];
-                        });
+                    alert("In-Progress");
+                    /*getRecords({
+                     filter: {"$json.fName": {"$regex": '*/
+                    /*'}},
+                     skip: 0,
+                     limit: _maxLimit + 1 // the plus one is to check if there are any more
+                     },
+                     []
+                     , function (err, data) {
+                     if (err) {
+                     return console.error('Err while exporting data--------------------------------', err);
+                     }
+                     if (data && data.length) {
+                     var persons = [];
+                     angular.forEach(angular.copy(data), function (value) {
+                     delete value.data.dateCreated;
+                     delete value.data.iconImage;
+                     delete value.data.socialLinks;
+                     delete value.data.rank;
+                     persons.push(value.data);
+                     });
+                     var csv = $csv.jsonToCsv(angular.toJson(persons), {
+                     header: header
+                     });
+                     $csv.download(csv, "Export.csv");
+                     }
+                     else {
+                     ContentHome.getTemplate();
+                     }
+                     records = [];
+                     });*/
                 };
                 function isValidItem(item, index, array) {
                     return item.title || item.summary;
@@ -310,7 +312,7 @@
                                 ContentHome.csvDataInvalid = true;
                                 $timeout(function hideCsvDataError() {
                                     ContentHome.csvDataInvalid = false;
-                                }, 2000)
+                                }, 2000);
                             }
                         }
                         else {
@@ -321,7 +323,7 @@
                         ContentHome.loading = false;
                         $scope.apply();
                         //do something on cancel
-                    })
+                    });
                 };
 
                 /**
