@@ -25,6 +25,7 @@
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
                 var _skip = 0,
                     _limit = 5,
+                    _maxLimit = 19,
                     searchOptions = {
                         filter: {"$json.title": {"$regex": '/*'}},
                         skip: _skip,
@@ -213,61 +214,52 @@
                  * @param records
                  * @param callback
                  */
-                /*function getRecords(searchOption, records, callback) {
-                 console.log("Data length", records.length);
-                 Buildfire.datastore.search(searchOption, TAG_NAMES.PEOPLE, function (err, result) {
-                 if (err) {
-                 console.error('-----------err in getting list-------------', err);
-                 return callback(err, []);
-                 }
-                 if (result.length <= _maxLimit) {// to indicate there are more
-                 records = records.concat(result);
-                 return callback(null, records);
-                 }
-                 else {
-                 result.pop();
-                 searchOption.skip = searchOption.skip + _maxLimit;
-                 records = records.concat(result);
-                 return getRecords(searchOption, records, callback);
-                 }
-                 });
-                 }*/
+                function getRecords(searchOption, records, callback) {
+                    MediaContent.find(searchOption).then(function (result) {
+                        if (result.length <= _maxLimit) {// to indicate there are more
+                            records = records.concat(result);
+                            return callback(records);
+                        }
+                        else {
+                            result.pop();
+                            searchOption.skip = searchOption.skip + _maxLimit;
+                            records = records.concat(result);
+                            return getRecords(searchOption, records, callback);
+                        }
+                    }, function (error) {
+                        throw (error);
+                    });
+                }
 
                 /**
                  * ContentHome.exportCSV() used to export people list data to CSV
                  */
                 ContentHome.exportCSV = function () {
-                    alert("In-Progress");
-                    /*getRecords({
-                     filter: {"$json.fName": {"$regex": '*/
-                    /*'}},
-                     skip: 0,
-                     limit: _maxLimit + 1 // the plus one is to check if there are any more
-                     },
-                     []
-                     , function (err, data) {
-                     if (err) {
-                     return console.error('Err while exporting data--------------------------------', err);
-                     }
-                     if (data && data.length) {
-                     var persons = [];
-                     angular.forEach(angular.copy(data), function (value) {
-                     delete value.data.dateCreated;
-                     delete value.data.iconImage;
-                     delete value.data.socialLinks;
-                     delete value.data.rank;
-                     persons.push(value.data);
-                     });
-                     var csv = $csv.jsonToCsv(angular.toJson(persons), {
-                     header: header
-                     });
-                     $csv.download(csv, "Export.csv");
-                     }
-                     else {
-                     ContentHome.getTemplate();
-                     }
-                     records = [];
-                     });*/
+                    var search = angular.copy(searchOptions);
+                    search.skip = 0;
+                    search.limit = _maxLimit + 1;
+                    getRecords(search,
+                        []
+                        , function (data) {
+                            if (data && data.length) {
+                                var persons = [];
+                                angular.forEach(angular.copy(data), function (value) {
+                                    delete value.data.dateCreated;
+                                    delete value.data.links;
+                                    delete value.data.rank;
+                                    delete value.data.body;
+                                    persons.push(value.data);
+                                });
+                                var csv = $csv.jsonToCsv(angular.toJson(persons), {
+                                    header: header
+                                });
+                                $csv.download(csv, "Export.csv");
+                            }
+                            else {
+                                ContentHome.getTemplate();
+                            }
+                            records = [];
+                        });
                 };
                 function isValidItem(item, index, array) {
                     return item.title || item.summary;
