@@ -1,39 +1,25 @@
 <div class="holder padding-zero">
-    <div class="media-center-plugin people-plugin layout1">
+    <div id="scroll-infinite" class="media-center-plugin people-plugin layout1">
         <div class="media-center-banner  plugin-banner clearfix border-bottom-grey">
-            <!--<div class="plugin-slider text-center" data-ng-if="WidgetHome.media.data.content.images.length">-->
-                <!--<div class="plugin-slide" ng-if="WidgetHome.media.data.content.images[0].imageUrl">-->
-                    <!--&lt;!&ndash;data-ng-repeat="image in WidgetHome.media.data.content.images"&ndash;&gt;-->
-                    <!--<img ng-src="{{WidgetHome.media.data.content.images[0].imageUrl | resizeImage: 342 : 192}}">-->
-                <!--</div>-->
-            <!--</div>-->
-
-            <!--
-            <div class="plugin-slider text-center"
-                 image-carousel="{{WidgetHome.media.data.content.images.length}}">
-                <div class="plugin-slide item"
-                     data-ng-repeat="image in WidgetHome.media.data.content.images | filter:isDefined">
-                    <a href="{{image.imageUrl}}" data-ng-if="image.imageUrl"
-                       target="{{image.target}}"><img
-                            ng-src="{{image.imageUrl}}"></a>
-                    <img data-ng-if="!image.imageUrl"
-                         ng-src="{{image.imageUrl | resizeImage : 342 : 192}}">
-                </div>
-            </div>-->
-
-
             <buildfire-carousel images="WidgetHome.media.data.content.images"></buildfire-carousel>
-
         </div>
         <div class="text-left padded padding-bottom-zero clearfix">
-            <p ng-if="WidgetHome.media.data.content.descriptionHTML" ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">{{WidgetHome.media.data.content.descriptionHTML}}</p>
+            <p ng-if="WidgetHome.media.data.content.descriptionHTML"
+               ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">
+                {{WidgetHome.media.data.content.descriptionHTML}}</p>
         </div>
         <div class="padded padding-top-zero">
             <div class="list-layout">
-                <div class="row">
+                <div class="row"
+                     infinite-scroll-distance="0"
+                     infinite-scroll="WidgetHome.loadMore()"
+                     infinite-scroll-container='"#scroll-infinite"'
+                     infinit-scroll-disabled="WidgetHome.noMore"
+                      >
                     <div class="list-item col-xs-6 pull-left" ng-repeat="item in WidgetHome.items">
                         <div class="list-item-media text-center border-radius-three overflow-hidden">
-                            <div  play-btn="{{item.data.videoUrl.length > 0}}" class="list-media-holder" ng-if="item.data.topImage">
+                            <div play-btn="{{item.data.videoUrl.length > 0}}" class="list-media-holder"
+                                 ng-if="item.data.topImage">
                                 <img ng-src="{{item.data.topImage | resizeImage:240:160}}">
                             </div>
                         </div>

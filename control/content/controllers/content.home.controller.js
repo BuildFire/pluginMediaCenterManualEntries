@@ -13,7 +13,7 @@
                 var MediaContent = new DB(COLLECTIONS.MediaContent);
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
                 var _skip = 0,
-                    _limit = 10,
+                    _limit = 5,
                     searchOptions = {
                         filter: {"$json.title": {"$regex": '/*'}},
                         skip: _skip,
@@ -89,7 +89,9 @@
                 };
                 ContentHome.noMore = false;
                 ContentHome.getMore = function () {
+                    console.log('content load requested');
                     if (ContentHome.isBusy && !ContentHome.noMore) {
+                        console.log('no more content');
                         return;
                     }
                     updateSearchOptions();
@@ -115,12 +117,17 @@
                         console.info('There was a problem sorting your data');
                     } else {
                         ContentHome.items = [];
-                        //searchOptions.page = 0;
+
+                        /* reset Search options */
+                        ContentHome.noMore=false;
+                        searchOptions.skip = 0;
+                        /* Reset skip to ensure search begins from scratch*/
+
                         ContentHome.isBusy = false;
                         var sortOrder = Orders.getOrder(name || Orders.ordersMap.Default);
                         ContentHome.info.data.content.sortBy = name;
                         ContentHome.info.data.content.sortByValue = sortOrder.value;
-                        ContentHome.getMore(searchOptions);
+                        ContentHome.getMore();
                         ContentHome.itemSortableOptions.disabled = !(ContentHome.info.data.content.sortBy === Orders.ordersMap.Manually);
                     }
                 };
