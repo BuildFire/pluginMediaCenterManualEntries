@@ -1,10 +1,21 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', '$rootScope', 'Buildfire', 'MediaCenterInfo', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Location','Orders',
-            function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, MediaCenterInfo, AppConfig, Messaging, EVENTS, PATHS, Location,Orders) {
+        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', '$rootScope', 'Buildfire', 'MediaCenterInfo', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders',
+            function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, MediaCenterInfo, AppConfig, Messaging, EVENTS, PATHS, Location, Orders) {
                 var WidgetHome = this;
                 WidgetHome.media = MediaCenterInfo;
+
+                var _skip = 0,
+                    _limit = 5,
+                    searchOptions = {
+                        filter: {"$json.title": {"$regex": '/*'}},
+                        skip: _skip,
+                        limit: _limit + 1 // the plus one is to check if there are any more
+                    };
+
+                WidgetHome.isBusy = false;
+
                 var currentBackgroundImage = WidgetHome.media.data.design.backgroundImage;
                 AppConfig.setSettings(MediaCenterInfo.data);
                 AppConfig.changeBackgroundTheme(currentBackgroundImage);
@@ -42,12 +53,20 @@
                     }
                 };
                 Buildfire.datastore.onUpdate(function (event) {
+                    console.log(event);
                     $scope.imagesUpdated = false;
                     MediaCenter.get().then(function success(result) {
                             if (result && result.data) {
                                 WidgetHome.media = result;
                                 $scope.imagesUpdated = true;
-                                getContent();
+
+                                /* reset Search options */
+                                WidgetHome.noMore=false;
+                                searchOptions.skip = 0;
+                                /* Reset skip to ensure search begins from scratch*/
+
+                                WidgetHome.items =[];
+                                WidgetHome.loadMore();
                             }
                         },
                         function fail(error) {
@@ -55,21 +74,21 @@
                     );
 
                     /*switch (event.tag) {
-                        case COLLECTIONS.MediaContent:
-                         if (event.data) {
-                         /!**
-                         * condition added to update the background image
-                         *!/
-                         if (event.data.design && event.data.design.backgroundImage && currentBackgroundImage == event.data.design.backgroundImage) {
-                         // do something on same
-                         }
-                         else {
-                         currentBackgroundImage = event.data.design.backgroundImage;
-                         AppConfig.changeBackgroundTheme(currentBackgroundImage);
-                         }
-                         }
-                         break;
-                    }*/
+                     case COLLECTIONS.MediaContent:
+                     if (event.data) {
+                     /!**
+                     * condition added to update the background image
+                     *!/
+                     if (event.data.design && event.data.design.backgroundImage && currentBackgroundImage == event.data.design.backgroundImage) {
+                     // do something on same
+                     }
+                     else {
+                     currentBackgroundImage = event.data.design.backgroundImage;
+                     AppConfig.changeBackgroundTheme(currentBackgroundImage);
+                     }
+                     }
+                     break;
+                     }*/
 
                 });
 
@@ -92,30 +111,42 @@
                     }
                 };
 
-                var _skip = 0,
-                    _limit = 10,
-                    searchOptions = {
-                    filter: {"$json.title": {"$regex": '/*'}},
-                    skip: _skip,
-                    limit: _limit + 1 // the plus one is to check if there are any more
-                };
-
-                var getContent = function () {
-                    updateGetOptions();
-                    MediaContent.find(searchOptions).then(function success (result) {
-                        WidgetHome.items = result;
-                    }, function error(err, result) {
-                        return console.error('-----------err-------------', err);
-                    });
-                };
-                getContent();
-
                 $scope.isDefined = function (item) {
                     return item.imageUrl !== undefined && item.imageUrl !== '';
                 };
 
+                WidgetHome.items = [];
+                WidgetHome.noMore = false;
+
                 WidgetHome.loadMore = function () {
-                    alert('scroll');
+
+                    if (WidgetHome.isBusy && !WidgetHome.noMore) {
+                        return;
+                    }
+                    updateGetOptions();
+                    WidgetHome.isBusy = true;
+
+
+                    MediaContent.find(searchOptions).then(function success(result) {
+
+                        if (WidgetHome.noMore)
+                            return;
+
+                        if (result.length <= _limit) {// to indicate there are more
+
+                            WidgetHome.noMore = true;
+                        }
+                        else {
+                            result.pop();
+                            searchOptions.skip = searchOptions.skip + _limit;
+                            WidgetHome.noMore = false;
+                        }
+                        WidgetHome.items = WidgetHome.items ? WidgetHome.items.concat(result) : result;
+                        WidgetHome.isBusy = false;
+                    }, function fail() {
+                        WidgetHome.isBusy = false;
+                        console.log('error');
+                    });
                 };
 
             }]);
