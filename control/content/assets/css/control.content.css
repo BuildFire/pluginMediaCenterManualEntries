@@ -8,5 +8,25 @@
 }
 #scroll-infinite{
     overflow-y: auto;
-    max-height: 457px;
+    max-height: 245px;
+}
+/*
+Style for loader
+*/
+
+.loader-pan {
+    position: fixed;
+    width: 110px;
+    height: 110px;
+    margin: auto;
+    background: url("../images/loading.gif") no-repeat center center #fff;
+    box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    border-radius: 50%;
+    left:0; right: 0; top: 0; bottom: 0;
+}
+.item .alert-warning {
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+    color: #8a6d3b;
 }

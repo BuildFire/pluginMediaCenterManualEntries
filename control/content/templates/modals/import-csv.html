@@ -1,6 +1,6 @@
 <div class="header clearfix border-bottom-grey">
     <h5 class="item-link-header">Import CSV File</h5>
-	<span class="icon icon-cross2 close-modal" onclick="alert('Close Modal');"></span>
+    <span class="icon icon-cross2 close-modal" ng-click="ImportCSVPopup.cancel()"></span>
 </div>
 <div class="modal-body">
     <div class="item clearfix row">
@@ -8,7 +8,7 @@
             <span>Choose File</span>
         </div>
         <div class="main col-md-9 pull-right">
-            <input type="file" class="btn btn-primary" accept=".csv" file-reader="fileData" />
+            <input type="file" class="btn btn-primary" accept=".csv" file-reader result="ImportCSVPopup.fileData"/>
         </div>
     </div>
 </div>

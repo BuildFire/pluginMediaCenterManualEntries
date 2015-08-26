@@ -1,3 +1,4 @@
+<div class="loader-pan" ng-show="ContentHome.loading"></div>
 <div class="item clearfix row">
     <div class="labels col-md-3 padding-right-zero pull-left">
         <span>Image Carousel</span>
@@ -46,15 +47,23 @@
                   ng-model="ContentHome.info.data.content.descriptionHTML"></textarea>
     </div>
 </div>
+<div class="item clearfix row margin-top-thirty" data-ng-show="ContentHome.csvDataInvalid">
+    <div class="labels col-md-12">
+        <div class="alert alert-warning">
+            <a href="javascript:void(0)" class="close" data-ng-click="ContentHome.csvDataInvalid=false">×</a>
+            <strong>Note!</strong>Uploaded CSV data is incomplete.Title/Summary is required.
+        </div>
+    </div>
+</div>
 <hr>
 <div class="item clearfix row margin-top-thirty">
     <div class="labels col-md-3 padding-right-zero pull-left">
         <span>Bulk Actions</span>
     </div>
     <div class="main col-md-9 pull-right">
-        <a class="btn btn-primary" onclick="window.openDialog('importCSV.html', null, 'sm', null)">Import CSV</a>
-        <a class="btn btn-primary margin-left-ten">Export CSV</a>
-        <a class="btn btn-primary margin-left-ten">Get Template</a>
+        <a class="btn btn-primary" ng-click="ContentHome.openImportCSVDialog()">Import CSV</a>
+        <a class="btn btn-primary margin-left-ten" ng-click="ContentHome.exportCSV()">Export CSV</a>
+        <a class="btn btn-primary margin-left-ten" ng-click="ContentHome.getTemplate()">Get Template</a>
     </div>
 </div>
 <hr class="none">
