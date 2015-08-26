@@ -101,9 +101,7 @@
                 };
                 ContentHome.noMore = false;
                 ContentHome.getMore = function () {
-                    console.log('content load requested');
                     if (ContentHome.isBusy && !ContentHome.noMore) {
-                        console.log('no more content');
                         return;
                     }
                     updateSearchOptions();
@@ -150,6 +148,7 @@
                         var endIndex = ui.item.sortable.dropindex,
                             maxRank = 0,
                             draggedItem = ContentHome.items[endIndex];
+                        console.log(ui.item.sortable.dropindex)
                         if (draggedItem) {
                             var prev = ContentHome.items[endIndex - 1],
                                 next = ContentHome.items[endIndex + 1];
@@ -324,7 +323,9 @@
                  */
                 ContentHome.searchListItem = function (value) {
                     var title = '';
-                    //searchOptions.page=0;
+
+                    searchOptions.skip = 0; /*reset the skip value*/
+
                     ContentHome.isBusy = false;
                     ContentHome.items = [];
                     value = value.trim();
