@@ -2,18 +2,30 @@
     'use strict';
     angular
         .module('mediaCenterContent')
-        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'DB', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS',
-            function ($scope, MediaCenterInfo, Modals, DB, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS) {
+        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', '$csv',
+            function ($scope, MediaCenterInfo, Modals, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, $csv) {
                 var ContentHome = this;
                 ContentHome.info = MediaCenterInfo;
                 AppConfig.setSettings(MediaCenterInfo.data);
                 AppConfig.setAppId(MediaCenterInfo.id);
                 updateMasterInfo(ContentHome.info);
+                var header = {
+                    topImage: 'Top image',
+                    title: 'Title',
+                    summary: 'Summary',
+                    bodyHTML: 'Media Content',
+                    srcUrl: 'Source URL',
+                    audioUrl: 'Audio URL',
+                    videoUrl: 'Video URL',
+                    image: 'Thumbnail Image URL'
+                };
+                var headerRow = ["topImage", "title", "summary", "bodyHTML", "srcUrl", "audioUrl", "videoUrl", "image"];
                 var tmrDelayForMedia = null;
                 var MediaContent = new DB(COLLECTIONS.MediaContent);
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
                 var _skip = 0,
                     _limit = 5,
+                    _maxLimit = 19,
                     searchOptions = {
                         filter: {"$json.title": {"$regex": '/*'}},
                         skip: _skip,
@@ -89,9 +101,7 @@
                 };
                 ContentHome.noMore = false;
                 ContentHome.getMore = function () {
-                    console.log('content load requested');
                     if (ContentHome.isBusy && !ContentHome.noMore) {
-                        console.log('no more content');
                         return;
                     }
                     updateSearchOptions();
@@ -119,7 +129,7 @@
                         ContentHome.items = [];
 
                         /* reset Search options */
-                        ContentHome.noMore=false;
+                        ContentHome.noMore = false;
                         searchOptions.skip = 0;
                         /* Reset skip to ensure search begins from scratch*/
 
@@ -167,10 +177,144 @@
                                             ContentHome.data.content.rankOfLastItem = maxRank;
                                         }
                                     }
-                                })
+                                });
                             }
                         }
                     }
+                };
+                /**
+                 * ContentHome.getTemplate() used to download csv template
+                 */
+                ContentHome.getTemplate = function () {
+                    var templateData = [{
+                        topImage: '',
+                        title: '',
+                        summary: '',
+                        bodyHTML: '',
+                        srcUrl: '',
+                        audioUrl: '',
+                        videoUrl: '',
+                        image: ''
+                    }];
+                    var csv = $csv.jsonToCsv(angular.toJson(templateData), {
+                        header: header
+                    });
+                    $csv.download(csv, "Template.csv");
+                };
+                /**
+                 * records holds the data to export the data.
+                 * @type {Array}
+                 */
+                var records = [];
+
+                /**
+                 * getRecords function get the  all items from DB
+                 * @param searchOption
+                 * @param records
+                 * @param callback
+                 */
+                function getRecords(searchOption, records, callback) {
+                    MediaContent.find(searchOption).then(function (result) {
+                        if (result.length <= _maxLimit) {// to indicate there are more
+                            records = records.concat(result);
+                            return callback(records);
+                        }
+                        else {
+                            result.pop();
+                            searchOption.skip = searchOption.skip + _maxLimit;
+                            records = records.concat(result);
+                            return getRecords(searchOption, records, callback);
+                        }
+                    }, function (error) {
+                        throw (error);
+                    });
+                }
+
+                /**
+                 * ContentHome.exportCSV() used to export people list data to CSV
+                 */
+                ContentHome.exportCSV = function () {
+                    var search = angular.copy(searchOptions);
+                    search.skip = 0;
+                    search.limit = _maxLimit + 1;
+                    getRecords(search,
+                        []
+                        , function (data) {
+                            if (data && data.length) {
+                                var persons = [];
+                                angular.forEach(angular.copy(data), function (value) {
+                                    delete value.data.dateCreated;
+                                    delete value.data.links;
+                                    delete value.data.rank;
+                                    delete value.data.body;
+                                    persons.push(value.data);
+                                });
+                                var csv = $csv.jsonToCsv(angular.toJson(persons), {
+                                    header: header
+                                });
+                                $csv.download(csv, "Export.csv");
+                            }
+                            else {
+                                ContentHome.getTemplate();
+                            }
+                            records = [];
+                        });
+                };
+                function isValidItem(item, index, array) {
+                    return item.title || item.summary;
+                }
+
+                function validateCsv(items) {
+                    if (!Array.isArray(items) || !items.length) {
+                        return false;
+                    }
+                    return items.every(isValidItem);
+                }
+
+                /**
+                 * method to open the importCSV Dialog
+                 */
+                ContentHome.openImportCSVDialog = function () {
+                    $csv.import(headerRow).then(function (rows) {
+                        ContentHome.loading = true;
+                        if (rows && rows.length) {
+                            var rank = ContentHome.info.data.content.rankOfLastItem || 0;
+                            for (var index = 0; index < rows.length; index++) {
+                                rank += 10;
+                                rows[index].dateCreated = +new Date();
+                                rows[index].links = [];
+                                rows[index].rank = rank;
+                                rows[index].body = "";
+                            }
+                            if (validateCsv(rows)) {
+                                MediaContent.insert(rows).then(function (data) {
+                                    ContentHome.loading = false;
+                                    ContentHome.isBusy = false;
+                                    ContentHome.items = [];
+                                    ContentHome.info.data.content.rankOfLastItem = rank;
+                                    ContentHome.getMore();
+                                }, function errorHandler(error) {
+                                    console.error(error);
+                                    ContentHome.loading = false;
+                                    $scope.$apply();
+                                });
+                            } else {
+                                ContentHome.loading = false;
+                                ContentHome.csvDataInvalid = true;
+                                $timeout(function hideCsvDataError() {
+                                    ContentHome.csvDataInvalid = false;
+                                }, 2000);
+                            }
+                        }
+                        else {
+                            ContentHome.loading = false;
+                            $scope.$apply();
+                        }
+                    }, function (error) {
+                        ContentHome.loading = false;
+                        $scope.apply();
+                        //do something on cancel
+                    });
                 };
 
                 /**
@@ -179,7 +323,9 @@
                  */
                 ContentHome.searchListItem = function (value) {
                     var title = '';
-                    //searchOptions.page=0;
+
+                    searchOptions.skip = 0; /*reset the skip value*/
+
                     ContentHome.isBusy = false;
                     ContentHome.items = [];
                     value = value.trim();
