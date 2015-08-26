@@ -92,7 +92,7 @@ describe('mediaCenterDesign', function () {
                 controller.addBackgroundImage();
                 expect(controller.mediaInfo.data.design.backgroundImage).not.toBeNull();
             });
-        });
+                                                                                                                                                                    });
     });
 
 

@@ -3,68 +3,24 @@
     angular
         .module('mediaCenterDesign')
         .controller('DesignHomeCtrl', ['$scope', 'COLLECTIONS', 'DB', 'MediaCenterInfo', '$timeout', 'Buildfire', 'EVENTS', 'Messaging', function ($scope, COLLECTIONS, DB, MediaCenterInfo, $timeout, Buildfire, EVENTS, Messaging) {
-
             var DesignHome = this;
-
             /* populate VM with resolve */
             DesignHome.mediaInfo = MediaCenterInfo;
-
             var lastSaved = angular.copy(DesignHome.mediaInfo);
-
             /*Buildfire DB Service*/
             var MediaCenter = new DB(COLLECTIONS.MediaCenter);
-
             DesignHome.layouts = {
                 listLayouts: [{name: "list-1"}, {name: "list-2"}, {name: "list-3"}, {name: "list-4"}],
                 itemLayouts: [{name: "item-1"}, {name: "item-2"}]
             };
-
             DesignHome.changeLayout = function (layoutName, type) {
                 if (layoutName && DesignHome.mediaInfo.data.design) {
                     DesignHome.mediaInfo.data.design[type + "Layout"] = layoutName;
                 }
             };
-
-
             /* initializing flag to prevent firing watcher on page load*/
             var initializing = true;
-            $scope.$watch(function () {
-                return DesignHome.mediaInfo;
-            }, function () {
-
-                /* if first time dont call*/
-                if (initializing) {
-                    $timeout(function () {
-                        initializing = false;
-                    });
-                } else {
-
-                    MediaCenter.update(DesignHome.mediaInfo.id, DesignHome.mediaInfo.data).then(function () {
-
-                        /* sync lastSaved to latest value */
-                        lastSaved = angular.copy(DesignHome.mediaInfo);
-                        ///on Control when a user drills to a section reflect the same on the widget
-                        Messaging.sendMessageToWidget({
-                            name: EVENTS.DESIGN_LAYOUT_CHANGE,
-                            message: {
-                                listLayout: DesignHome.mediaInfo.data.design.listLayout,
-                                itemLayout: DesignHome.mediaInfo.data.design.itemLayout
-                            }
-                        });
-
-
-                    }, function () {
-                        /* revert to previous value in case of error*/
-                        DesignHome.mediaInfo = angular.copy(lastSaved);
-                    });
-                }
-
-
-            }, true);
-
-
             /*Background image area begins*/
-
             /*This function invokes Message to Widget*/
             function invokeBGImageChangeMessaging() {
                 Messaging.sendMessageToWidget({
@@ -85,9 +41,7 @@
                     $scope.$digest();
                 }
             };
-
             var options = {showIcons: false, multiSelection: false};
-
             DesignHome.addBackgroundImage = function () {
                 Buildfire.imageLib.showDialog(options, callback);
             };
@@ -96,7 +50,32 @@
                 invokeBGImageChangeMessaging();
             };
 
+            $scope.$watch(function () {
+                return DesignHome.mediaInfo;
+            }, function () {
+                /* if first time don't call*/
+                if (initializing) {
+                    $timeout(function () {
+                        initializing = false;
+                    });
+                } else {
+                    MediaCenter.update(DesignHome.mediaInfo.id, DesignHome.mediaInfo.data).then(function () {
+                        /* sync lastSaved to latest value */
+                        lastSaved = angular.copy(DesignHome.mediaInfo);
+                        ///on Control when a user drills to a section reflect the same on the widget
+                        Messaging.sendMessageToWidget({
+                            name: EVENTS.DESIGN_LAYOUT_CHANGE,
+                            message: {
+                                listLayout: DesignHome.mediaInfo.data.design.listLayout,
+                                itemLayout: DesignHome.mediaInfo.data.design.itemLayout
+                            }
+                        });
+                    }, function () {
+                        /* revert to previous value in case of error*/
+                        DesignHome.mediaInfo = angular.copy(lastSaved);
+                    });
+                }
+            }, true);
             /*Background image area ends*/
-
         }]);
 })(window.angular, window);
