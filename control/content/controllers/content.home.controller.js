@@ -335,6 +335,36 @@
                     searchOptions.filter = {"$json.title": {"$regex": value}};
                     ContentHome.getMore();
                 };
+
+                /**
+                 * ContentHome.removeListItem() used to delete an item from item list
+                 * @param _index tells the index of item to be deleted.
+                 */
+                ContentHome.removeListItem = function (index) {
+
+                    if ("undefined" == typeof index) {
+                        return;
+                    }
+                    var item = ContentHome.items[index];
+                    if ("undefined" !== typeof item) {
+                        Modals.removePopupModal({title: ''}).then(function (result) {
+                            if (result) {
+                                MediaContent.delete(item.id).then(function (data) {
+                                    ContentHome.items.splice(index, 1);
+                                }, function (err) {
+                                    console.error('Error while deleting an item-----', err);
+                                });
+                            }
+                            else {
+                                console.info('Unable to load data.');
+                            }
+                        }, function (cancelData) {
+                            //do something on cancel
+                        });
+                    }
+                };
+
+
                 updateSearchOptions();
                 function updateMasterInfo(info) {
                     ContentHome.masterInfo = angular.copy(info);

@@ -1,99 +1,133 @@
-/**
- * Created by lakshay on 18/8/15.
- */
-describe('mediaCenterDesign', function () {
-    beforeEach(module('mediaCenterDesign'));
-    var location, route, rootScope;
-    beforeEach(inject(
-        function (_$location_, _$route_, _$rootScope_) {
-            location = _$location_;
-            route = _$route_;
-            rootScope = _$rootScope_;
-        }));
+describe("DesignHomeCtrl", function () {
 
-    describe('Home route', function () {
-        beforeEach(inject(
-            function ($httpBackend) {
-                $httpBackend.expectGET('templates/home.html')
-                    .respond(200);
-                $httpBackend.expectGET('/')
-                    .respond(200);
-            }));
+    var $rootScope,
+        $scope,
+        controller,
+        mediaCenterSpy,
+        q;
 
-        it('should load the home page on successful load of /', function () {
-            location.path('/');
-            rootScope.$digest();
-            expect(route.current.controller).toBe('DesignHomeCtrl')
+
+    beforeEach(function () {
+        module('mediaCenterDesign');
+
+        inject(function ($injector, $q) {
+            $rootScope = $injector.get('$rootScope');
+            $scope = $rootScope.$new();
+            controller = $injector.get('$controller')('DesignHomeCtrl', {
+                $scope: $scope,
+                MediaCenterInfo: {id: '1', data: {design: {listLayout: 'test', backgroundImage: 'test1'}}},
+                Buildfire: {
+                    imageLib: {
+                        showDialog: function (options, callback) {
+                            controller._callback(null, {selectedFiles: ['test']});
+                        }
+                    }
+                }
+            });
+            q = $q;
         });
     });
 
-    describe('Design Controller', function () {
-        //beforeEach(module('mediaCenterDesign'));
 
-        var $controller, COLLECTIONS, DB, $timeout, Buildfire, $rootScope;
-
-        beforeEach(inject(function (_$controller_, _COLLECTIONS_, _DB_, /*_MediaCenterInfo_ ,*/_$timeout_, _Buildfire_, $q, _$rootScope_) {
-            // The injector unwraps the underscores (_) from around the parameter names when matching
-            $controller = _$controller_;
-            COLLECTIONS_ = _COLLECTIONS_;
-            DB_ = _DB_;
-            $timeout_ = _$timeout_;
-            Buildfire_ = _Buildfire_;
-            $rootScope = _$rootScope_;
-            /* spyOn(_MediaCenterInfo_, "makeRemoteCallReturningPromise").and.callFake(function() {
-             var deferred = $q.defer();
-             deferred.resolve('Remote call result');
-             return deferred.promise;
-             });*/
-        }));
-
-        describe('DesignHome.layouts', function () {
-            it('shd be initialised properly', function () {
-                var $scope = $rootScope.$new();
-                var controller = $controller('DesignHomeCtrl', {$scope: $scope, MediaCenterInfo: {}});
-                expect(controller.layouts).toBeDefined();
-            });
+    describe('Initialization', function () {
+        it('should initialize the listLayouts to the default value', function () {
+            expect(controller.layouts.listLayouts.length).toEqual(4);
         });
 
-        describe('changeLayout', function () {
-            it('shd change the DesignHome object and watchers must be called', function () {
-                var $scope = $rootScope.$new();
-                var controller = $controller('DesignHomeCtrl', {
-                    $scope: $scope,
-                    MediaCenterInfo: {data: {design: {listLayout: 'test'}}}
-                });
-                var earlyObject = angular.copy(controller.mediaInfo.data);
-                controller.changeLayout('test1', 'list');
-                expect(controller.mediaInfo.data).not.toEqual(earlyObject);
-            });
+        it('should initialize the itemLayouts to the default value', function () {
+            expect(controller.layouts.itemLayouts.length).toEqual(2);
         });
-
-        describe('DesignHome.removeBackgroundImage', function () {
-            it('shd make the backgroundImage property null', function () {
-                var $scope = $rootScope.$new();
-                var controller = $controller('DesignHomeCtrl', {
-                    $scope: $scope,
-                    MediaCenterInfo: {data: {design: {listLayout: 'test',backgroundImage: 'test'}}}
-                });
-                controller.removeBackgroundImage();
-                expect(controller.mediaInfo.data.design.backgroundImage).toBeNull();
-            });
-        });
-
-        describe('DesignHome.addBackgroundImage', function () {
-            it('shd give test value to the null backgroundImage property', function () {
-                var $scope = $rootScope.$new();
-                var controller = $controller('DesignHomeCtrl', {
-                    $scope: $scope,
-                    MediaCenterInfo: {data: {design: {listLayout: 'test',backgroundImage: null}}},
-                    Buildfire: {imageLib: {showDialog: function (o,c){return (null,{selectedFiles:['test']});} }}
-                });
-
-                controller.addBackgroundImage();
-                expect(controller.mediaInfo.data.design.backgroundImage).not.toBeNull();
-            });
-                                                                                                                                                                    });
     });
 
+    describe('changeLayout', function () {
+        it('should change the value of mediaInfo list when called for list', function () {
+            controller.changeLayout('test', 'list');
+            expect(controller.mediaInfo.data.design["listLayout"]).toEqual('test');
+        });
+
+        it('should change the value of mediaInfo item when called for item', function () {
+            controller.changeLayout('test', 'item');
+            expect(controller.mediaInfo.data.design["itemLayout"]).toEqual('test');
+        });
+
+        it('should do nothing if layout is null', function () {
+            controller.mediaInfo.data.design["itemLayout"] = 'test';
+            controller.changeLayout(null, 'item');
+            expect(controller.mediaInfo.data.design["itemLayout"]).toEqual('test');
+        });
+
+        it('should do nothing if layout is undefined', function () {
+            controller.mediaInfo.data.design["itemLayout"] = 'test';
+            controller.changeLayout(undefined, 'item');
+            expect(controller.mediaInfo.data.design["itemLayout"]).toEqual('test');
+        });
+
+        it('should do nothing if mediaInfo.data.design is undefined', function () {
+            controller.mediaInfo.data.design = undefined;
+            controller.changeLayout('test', 'item');
+            expect(controller.mediaInfo.data.design).toBeUndefined();
+        });
+
+
+        it('should do nothing if mediaInfo.data.design is null', function () {
+            controller.mediaInfo.data.design = null;
+            controller.changeLayout('test', 'item');
+            expect(controller.mediaInfo.data.design).toBeNull();
+        });
+    });
+
+    describe('removeBackgroundImage', function () {
+        it('should make the background image property null', function () {
+            controller.removeBackgroundImage();
+            expect(controller.mediaInfo.data.design.backgroundImage).toBeNull();
+        });
+    });
+
+    describe('addBackgroundImage', function () {
+
+        beforeEach(function () {
+            controller._mediaCenter.update = function () {
+                var deferred = q.defer();
+                deferred.resolve('Remote call result');
+                return deferred.promise;
+            };
+        });
+
+        it('should make the background image property null', function () {
+            controller.removeBackgroundImage();
+            controller.addBackgroundImage();
+            expect(controller.mediaInfo.data.design.backgroundImage).toEqual('test');
+        });
+    });
+
+    describe('watcher of controller.mediaInfo', function () {
+
+        it('should change the lastSaved when mediainfo is changed succesfully on db', function () {
+            controller._lastSaved = null;
+            controller._mediaCenter.update = function () {
+                var deferred = q.defer();
+                deferred.resolve('Remote call result');
+                return deferred.promise;
+            };
+            //controller.mediaInfo = {};
+            controller.mediaInfo.data.design.backgroundImage = 'test';
+            controller.removeBackgroundImage();
+            $scope.$digest();
+            expect(controller._lastSaved).not.toBeNull();
+        });
+
+        it('should revert the MediaInfo to lastSaved when db change failed', function () {
+            //controller._lastSaved = null;
+            controller._mediaCenter.update = function () {
+                var deferred = q.defer();
+                deferred.reject('Remote call result');
+                return deferred.promise;
+            };
+
+            controller.removeBackgroundImage();
+            $scope.$digest();
+            expect(controller.mediaInfo.data.design.backgroundImage).toEqual('test1');
+        });
+    });
 
 });

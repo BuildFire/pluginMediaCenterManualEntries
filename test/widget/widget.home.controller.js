@@ -1,23 +1,73 @@
 /**
  * Created by intelligrape on 24/8/15.
  */
-describe('WidgetHome Controller', function () {
-    //beforeEach(module('mediaCenterDesign'));
+describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
+    beforeEach(module('mediaCenterWidget'));
 
-    var $controller, COLLECTIONS, DB, $timeout, Buildfire, $rootScope;
+    var $window,$controller,$scope,WidgetHome, COLLECTIONS, DB, Buildfire, MediaCenterInfo, AppConfig, Messaging, EVENTS, PATHS, Location, Orders;
 
-    beforeEach(inject(function (_$controller_, _COLLECTIONS_, _DB_, /*_MediaCenterInfo_ ,*/_$timeout_, _Buildfire_, $q, _$rootScope_) {
-        // The injector unwraps the underscores (_) from around the parameter names when matching
+
+    beforeEach(inject(function (_$controller_,_$window_, _DB_, _COLLECTIONS_, _$rootScope_, _Buildfire_, _AppConfig_, _Messaging_, _EVENTS_, _PATHS_, _Location_, _Orders_) {
+
         $controller = _$controller_;
-        COLLECTIONS_ = _COLLECTIONS_;
-        DB_ = _DB_;
-        $timeout_ = _$timeout_;
-        Buildfire_ = _Buildfire_;
-        $rootScope = _$rootScope_;
-        /* spyOn(_MediaCenterInfo_, "makeRemoteCallReturningPromise").and.callFake(function() {
-         var deferred = $q.defer();
-         deferred.resolve('Remote call result');
-         return deferred.promise;
-         });*/
+        $scope = _$rootScope_.$new();
+        $window = _$window_;
+        DB = _DB_;
+        COLLECTIONS = _COLLECTIONS_;
+        Buildfire = _Buildfire_;
+       // MediaCenterInfo = _MediaCenterInfo_;
+        AppConfig = _AppConfig_;
+        Messaging = _Messaging_;
+        EVENTS = _EVENTS_;
+        PATHS = _PATHS_;
+        Location = _Location_;
+        Orders = _Orders_;
+
+
+        WidgetHome = $controller('WidgetHomeCtrl', {
+            $scope: $scope,
+            $window:$window,
+            Buildfire:Buildfire,
+            MediaCenterInfo: {id: '1', data: {design: {listLayout: 'test', backgroundImage: 'test1'}}},
+            AppConfig:AppConfig,
+            Messaging:Messaging,
+            EVENTS:EVENTS,
+            PATHS:PATHS,
+            Location:Location,
+            Orders:Orders,
+            DB:DB
+        });
     }));
+
+
+
+    describe('Unit : units should be Defined', function () {
+        it('it should pass if WidgetHome is defined', function () {
+            console.log(WidgetHome);
+            expect(WidgetHome).toBeDefined();
+        });
+        it('it should pass if DB is defined', function () {
+            expect(DB).not.toBeUndefined();
+        });
+        it('it should pass if Buildfire is defined', function () {
+            expect(Buildfire).not.toBeUndefined();
+        });
+
+        it('it should pass if Messaging is defined', function () {
+            expect(Messaging).not.toBeUndefined();
+        });
+        it('it should pass if AppConfig is defined', function () {
+            expect(AppConfig).not.toBeUndefined();
+        });
+        it('it should pass if EVENTS is defined', function () {
+            expect(EVENTS).not.toBeUndefined();
+        });
+        it('it should pass if PATHS is defined', function () {
+            expect(PATHS).not.toBeUndefined();
+        });
+        it('it should pass if Location is defined', function () {
+            expect(Location).not.toBeUndefined();
+        });
+    });
+
 });
