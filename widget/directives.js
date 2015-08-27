@@ -58,10 +58,9 @@
                 }
             }
         })
-        .directive('videojs', function () {
+        .directive('videoJs', function () {
             var linker = function (scope, element, attrs){
                 attrs.type = attrs.type || "video/mp4";
-
                 var setup = {
                     'techOrder' : ['html5', 'flash'],
                     'controls' : true,
@@ -71,16 +70,29 @@
                     'width' : 315
                 };
 
-                var videoid = 'vid';
+                var videoid = 'video';
                 attrs.id = videoid;
-                element.attr('id', attrs.id);
-                element.attr('poster', attrs.poster);
-                var player = _V_(attrs.id, setup, function(){
-                    var source =([
-                        {type:"video/mp4", src:attrs.src}
-                    ]);
-                    this.src({type : attrs.type, src: source });
-                });
+                var videlem;
+                element.attr('id', videoid);
+                element.html('');
+                videlem = document.createElement("video");
+                videlem.setAttribute('class', "video-js vjs-default-skin");
+                videlem.setAttribute("height", "264");
+                videlem.setAttribute("width", "315");
+                videlem.setAttribute("id", "vid");
+                videlem.setAttribute("data-setup", setup);
+                videlem.setAttribute("controls", "");
+                var sourceMP4 = document.createElement("source");
+                sourceMP4.type = "video/mp4";
+                sourceMP4.src = attrs.videoUrl;
+                videlem.appendChild(sourceMP4);
+                element.append(videlem);
+                setTimeout(function () {
+                    videojs("vid", {}, function () {
+                        myPlayer = this;
+                        myPlayer.play();
+                    });
+                },2000);
             }
             return {
                 restrict : 'A',
