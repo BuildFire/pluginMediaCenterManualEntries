@@ -39,7 +39,7 @@
                                 }
                                 Location.go(url);
                                 break;
-                            case EVENTS.DESIGN_LAYOUT_CHANGE:
+                          /*  case EVENTS.DESIGN_LAYOUT_CHANGE:
                                 WidgetHome.media.data.design.listLayout = event.message.listLayout;
                                 $scope.$digest();
                                 break;
@@ -48,12 +48,11 @@
                                 AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
                                 $scope.$apply();
 
-                                break;
+                                break;*/
                         }
                     }
                 };
                 Buildfire.datastore.onUpdate(function (event) {
-                    console.log(event);
                     $scope.imagesUpdated = false;
                     MediaCenter.get().then(function success(result) {
                             if (result && result.data) {
@@ -65,8 +64,14 @@
                                 searchOptions.skip = 0;
                                 /* Reset skip to ensure search begins from scratch*/
 
+                                AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
+
                                 WidgetHome.items =[];
                                 WidgetHome.loadMore();
+
+                                console.log(result.data);
+
+                                $scope.$apply();
                             }
                         },
                         function fail(error) {

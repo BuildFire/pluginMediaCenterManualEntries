@@ -1,10 +1,12 @@
-xdescribe('mediaCenterWidget: Services', function () {
+describe('Unit: mediaCenterWidget: Services', function () {
     var COLLECTIONS;
     beforeEach(module('mediaCenterWidget'));
+
     beforeEach(inject(function ($injector) {
         COLLECTIONS = $injector.get('COLLECTIONS');
     }));
-    describe('Buildfire service', function () {
+
+    describe('Unit : Buildfire service', function () {
         var Buildfire;
         beforeEach(inject(
             function (_Buildfire_) {
@@ -14,7 +16,8 @@ xdescribe('mediaCenterWidget: Services', function () {
             expect(Buildfire).toBeDefined();
         });
     });
-    describe('MediaCenter service', function () {
+
+    describe('Unit : MediaCenter service', function () {
         var DB, MediaCenter;
         beforeEach(inject(
             function (_DB_) {
@@ -34,7 +37,8 @@ xdescribe('mediaCenterWidget: Services', function () {
             expect(MediaCenter.insert).toBeDefined();
         });
     });
-    describe('MediaContent service', function () {
+
+    describe('Unit : MediaContent service', function () {
         var DB, MediaContent;
         beforeEach(inject(
             function (_DB_) {
@@ -53,5 +57,25 @@ xdescribe('mediaCenterWidget: Services', function () {
             expect(MediaContent.delete).toBeDefined();
             expect(MediaContent.insert).toBeDefined();
         });
+    });
+
+    xdescribe('Unit : ImageLib Factory', function () {
+        //var ImageLibrary, Buildfire, STATUS_MESSAGES, STATUS_CODE, q;
+        beforeEach(module('mediaCenterServices'));
+
+        beforeEach(inject(function () {
+            Buildfire = {
+                imageLib: {}
+            };
+            Buildfire.imageLib = jasmine.createSpyObj('Buildfire.imageLib', ['showDialog']);
+        }));
+
+        it('Buildfire should exist and be an object', function () {
+            expect(typeof Buildfire).toEqual('object');
+        });
+        it('Buildfire.imageLib should exist and be an object', function () {
+            expect(typeof Buildfire.imageLib).toEqual('object');
+        });
+
     });
 });
