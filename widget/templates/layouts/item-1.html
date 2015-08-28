@@ -6,8 +6,10 @@
                     <img data-ng-hide="WidgetMedia.item.data.videoUrl"
                          ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 342 : 200}}">
 
-                    <div data-ng-show="WidgetMedia.item.data.videoUrl" id="videoArea" video-js
+                    <div ng-if="WidgetMedia.item.data.videoUrl" id="videoArea" video-js
                          video-url="{{WidgetMedia.item.data.videoUrl}}">
+                    </div>
+                    <div ng-if="!WidgetMedia.item.data.videoUrl" audio-js audio-url="{{WidgetMedia.item.data.audioUrl}}">
                     </div>
                 </div>
 

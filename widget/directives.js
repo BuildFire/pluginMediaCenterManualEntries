@@ -76,7 +76,7 @@
                 element.attr('id', videoid);
                 element.html('');
                 videlem = document.createElement("video");
-                videlem.setAttribute('class', "video-js vjs-default-skin");
+                videlem.setAttribute('class', "video-js vjs-default-skin vjs-big-play-centered");
                 videlem.setAttribute("height", "264");
                 videlem.setAttribute("width", "315");
                 videlem.setAttribute("id", "vid");
@@ -93,6 +93,41 @@
                         myPlayer.play();
                     });
                 },2000);
+            }
+            return {
+                restrict : 'A',
+                link : linker
+            };
+        })
+        .directive('audioJs', function () {
+            var linker = function (scope, element, attrs){
+                attrs.type = attrs.type || "audio/mp3";
+                var setup = {
+                    'techOrder' : ['html5', 'flash'],
+                    'controls' : true,
+                    'preload' : 'auto',
+                    'autoplay' : false,
+                    'height' : 264,
+                    'width' : 315
+                };
+
+                var videoid = 'audiojs';
+                attrs.id = videoid;
+                var videlem;
+                element.attr('id', videoid);
+                element.html('');
+                videlem = document.createElement("audio");
+                videlem.setAttribute('class', "video-js vjs-default-skin vjs-big-play-centered");
+                videlem.setAttribute("height", "264");
+                videlem.setAttribute("width", "315");
+                videlem.setAttribute("id", "audio");
+                videlem.setAttribute("data-setup", setup);
+                videlem.setAttribute("controls", "");
+                var sourceMP3 = document.createElement("source");
+                sourceMP3.setAttribute('src',attrs.audioUrl);
+                sourceMP3.setAttribute('type',"audio/mp3");
+                videlem.appendChild(sourceMP3);
+                element.append(videlem);
             }
             return {
                 restrict : 'A',
