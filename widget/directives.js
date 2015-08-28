@@ -28,6 +28,7 @@
                             scope.$apply();
                         }, 100);
                     }
+
                     initCarousel();
                     scope.$watch("imagesUpdated", function (newVal, oldVal) {
                         if (newVal) {
@@ -42,15 +43,15 @@
                 }
             }
         })
-        .directive('errSrc', function() {
+        .directive('errSrc', function () {
             return {
-                link: function(scope, element, attrs) {
-                    element.bind('error', function() {
+                link: function (scope, element, attrs) {
+                    element.bind('error', function () {
                         if (attrs.src != attrs.errSrc) {
                             attrs.$set('src', attrs.errSrc);
                         }
                     });
-                    attrs.$observe('ngSrc', function(value) {
+                    attrs.$observe('ngSrc', function (value) {
                         if (!value && attrs.errSrc) {
                             attrs.$set('src', attrs.errSrc);
                         }
@@ -59,15 +60,15 @@
             }
         })
         .directive('videoJs', function () {
-            var linker = function (scope, element, attrs){
+            var linker = function (scope, element, attrs) {
                 attrs.type = attrs.type || "video/mp4";
                 var setup = {
-                    'techOrder' : ['html5', 'flash'],
-                    'controls' : true,
-                    'preload' : 'auto',
-                    'autoplay' : false,
-                    'height' : 264,
-                    'width' : 315
+                    'techOrder': ['html5', 'flash'],
+                    'controls': true,
+                    'preload': 'auto',
+                    'autoplay': false,
+                    'height': 264,
+                    'width': 315
                 };
 
                 var videoid = 'video';
@@ -92,23 +93,23 @@
                         myPlayer = this;
                         myPlayer.play();
                     });
-                },2000);
+                }, 2000);
             }
             return {
-                restrict : 'A',
-                link : linker
+                restrict: 'A',
+                link: linker
             };
         })
         .directive('audioJs', function () {
-            var linker = function (scope, element, attrs){
+            var linker = function (scope, element, attrs) {
                 attrs.type = attrs.type || "audio/mp3";
                 var setup = {
-                    'techOrder' : ['html5', 'flash'],
-                    'controls' : true,
-                    'preload' : 'auto',
-                    'autoplay' : false,
-                    'height' : 264,
-                    'width' : 315
+                    'techOrder': ['html5', 'flash'],
+                    'controls': true,
+                    'preload': 'auto',
+                    'autoplay': false,
+                    'height': 264,
+                    'width': 315
                 };
 
                 var videoid = 'audiojs';
@@ -124,14 +125,14 @@
                 videlem.setAttribute("data-setup", setup);
                 videlem.setAttribute("controls", "");
                 var sourceMP3 = document.createElement("source");
-                sourceMP3.setAttribute('src',attrs.audioUrl);
-                sourceMP3.setAttribute('type',"audio/mp3");
+                sourceMP3.setAttribute('src', attrs.audioUrl);
+                sourceMP3.setAttribute('type', "audio/mp3");
                 videlem.appendChild(sourceMP3);
                 element.append(videlem);
             }
             return {
-                restrict : 'A',
-                link : linker
+                restrict: 'A',
+                link: linker
             };
         })
         .directive('playBtn', function () {
@@ -144,19 +145,23 @@
                 link: linker
             };
         })
-        .directive('buildfireCarousel', function () {
+        .directive('buildfireCarousel', function ($timeout) {
             return {
                 restrict: 'E',
                 replace: true,
                 link: function (scope, elem, attrs) {
                     var view;
+
                     function initCarousel() {
-                        var imgs = scope.images || [];
-                        modifySource(imgs);
-                        view = new buildfire.components.carousel.view("#carousel", imgs);
+                        $timeout(function () {
+                            var imgs = scope.images || [];
+                            modifySource(imgs);
+                            view = new buildfire.components.carousel.view("#carousel", imgs);
+                        });
+
                     }
 
-                    function modifySource(arr){
+                    function modifySource(arr) {
                         angular.forEach(arr, function (i) {
                             i.iconUrl = i.imageUrl;
                         });
@@ -167,7 +172,7 @@
 
                     scope.$watch(function () {
                         return scope.images;
-                    },function(newValue,oldValue) {
+                    }, function (newValue, oldValue) {
                         var imgs = angular.copy(newValue);
                         modifySource(imgs);
                         view.loadItems(imgs);

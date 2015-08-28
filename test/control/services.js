@@ -1,9 +1,10 @@
-xdescribe('mediaCenterContent: Services', function () {
+describe('mediaCenterContent: Services', function () {
     var COLLECTIONS;
     beforeEach(module('mediaCenterContent'));
     beforeEach(inject(function ($injector) {
         COLLECTIONS = $injector.get('COLLECTIONS');
     }));
+
     describe('Buildfire service', function () {
         var Buildfire;
         beforeEach(inject(
@@ -14,7 +15,7 @@ xdescribe('mediaCenterContent: Services', function () {
             expect(Buildfire).toBeDefined();
         });
     });
-    xdescribe('MediaCenter service', function () {
+    describe('MediaCenter service', function () {
         var DB, MediaCenter;
         beforeEach(inject(
             function (_DB_) {
@@ -34,7 +35,7 @@ xdescribe('mediaCenterContent: Services', function () {
             expect(MediaCenter.insert).toBeDefined();
         });*/
     });
-    xdescribe('MediaContent service', function () {
+    describe('MediaContent service', function () {
         var DB, MediaContent;
         beforeEach(inject(
             function (_DB_) {

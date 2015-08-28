@@ -26,10 +26,10 @@ module.exports = function (config) {
             './test/assets/buildfire.js',
             './control/**/*.js',
             './widget/**/*.js',
-            './test/**/*.js'
+            './test/**/*.js',
             //'http://localhost:63342/sdk/scripts/buildfire.js',
-            //'http://localhost:63342/sdk/plugins/pluginMediaCenterManualEntries/widget/assets/js/owl.carousel.min.js',
-            //'http://localhost:63342/sdk/scripts/buildfire/components/carousel/carousel.js'
+            'http://localhost:63342/sdk/plugins/pluginMediaCenterManualEntries/widget/assets/js/owl.carousel.min.js',
+            'http://localhost:63342/sdk/scripts/buildfire/components/carousel/carousel.js'
         ],
 
 

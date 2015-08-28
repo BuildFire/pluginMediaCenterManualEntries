@@ -59,23 +59,25 @@ describe('Unit: mediaCenterWidget: Services', function () {
         });
     });
 
-    xdescribe('Unit : ImageLib Factory', function () {
-        //var ImageLibrary, Buildfire, STATUS_MESSAGES, STATUS_CODE, q;
-        beforeEach(module('mediaCenterServices'));
 
-        beforeEach(inject(function () {
-            Buildfire = {
-                imageLib: {}
-            };
-            Buildfire.imageLib = jasmine.createSpyObj('Buildfire.imageLib', ['showDialog']);
-        }));
+});
 
-        it('Buildfire should exist and be an object', function () {
-            expect(typeof Buildfire).toEqual('object');
-        });
-        it('Buildfire.imageLib should exist and be an object', function () {
-            expect(typeof Buildfire.imageLib).toEqual('object');
-        });
+describe('Unit : ImageLib Factory', function () {
+    //var ImageLibrary, Buildfire, STATUS_MESSAGES, STATUS_CODE, q;
+    beforeEach(module('mediaCenterServices'));
 
+    beforeEach(inject(function () {
+        Buildfire = {
+            imageLib: {}
+        };
+        Buildfire.imageLib = jasmine.createSpyObj('Buildfire.imageLib', ['showDialog']);
+    }));
+
+    it('Buildfire should exist and be an object', function () {
+        expect(typeof Buildfire).toEqual('object');
     });
+    it('Buildfire.imageLib should exist and be an object', function () {
+        expect(typeof Buildfire.imageLib).toEqual('object');
+    });
+
 });

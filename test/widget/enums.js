@@ -1,4 +1,4 @@
-xdescribe('mediaCenterWidget: Services', function () {
+describe('mediaCenterWidget: Services', function () {
     var COLLECTIONS,
         CODES,
         MESSAGES,
