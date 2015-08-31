@@ -10,9 +10,22 @@
                         <videogular vg-theme="WidgetMedia.config.theme.url">
                             <vg-media vg-src="WidgetMedia.config.sources"
                                       vg-tracks="WidgetMedia.config.tracks"
-                                      vg-native-controls="true">
+                                      vg-native-controls="false">
                             </vg-media>
+                            <vg-controls vg-autohide="true">
+                                <vg-play-pause-button></vg-play-pause-button>
+                                <vg-scrub-bar>
+                                    <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                                </vg-scrub-bar>
+                                <vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
+
+                                <vg-volume>
+                                    <vg-mute-button></vg-mute-button>
+                                    <vg-volume-bar></vg-volume-bar>
+                                </vg-volume>
+                            </vg-controls>
                         </videogular>
+
                     </div>
 
                     <div ng-if="!WidgetMedia.item.data.videoUrl" audio-js audio-url="{{WidgetMedia.item.data.audioUrl}}">
@@ -33,7 +46,7 @@
                 <a class="text-primary" ng-if="WidgetMedia.item.data.videoUrl">Watch</a>
                 <a class="text-primary" ng-if="WidgetMedia.item.data.srcUrl">View Source</a>
                 <a class="text-primary" ng-if="WidgetMedia.item.data.links.length">Share</a>
-                <a class="text-primary" ng-click="WidgetMedia.changeSource()">Change</a>
+                <!--<a class="text-primary" ng-click="WidgetMedia.changeSource()">Change</a>-->
 
             </div>
             <hr class="small">

@@ -5,6 +5,7 @@
             var WidgetMedia = this;
 
             WidgetMedia.config = {
+                autoHide:false,
                 preload: "none",
                 sources: [
                     {
@@ -33,7 +34,6 @@
                     url: "http://www.videogular.com/styles/themes/default/latest/videogular.css"
                 }
             };
-
             WidgetMedia.changeVideoSrc = function () {
                 if(WidgetMedia.item.data.videoUrl)
                     WidgetMedia.config.sources = [{
@@ -41,7 +41,7 @@
                         type:  'video/' + WidgetMedia.item.data.videoUrl.split('.').pop() //"video/mp4"
                     }];
             };
-
+            WidgetMedia.timeLeft = 0;
 
             WidgetMedia.media = {
                 data: AppConfig.getSettings()

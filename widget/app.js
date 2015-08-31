@@ -11,7 +11,9 @@
             'ui.bootstrap',
             'infinite-scroll',
             "ngSanitize",
-            "com.2fdevs.videogular"
+            "com.2fdevs.videogular",
+            //"info.vietnamcode.nampnq.videogular.plugins.youtube",
+            "com.2fdevs.videogular.plugins.controls"
         ])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component
