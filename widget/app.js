@@ -9,7 +9,9 @@
             'ngAnimate',
             'ngRoute',
             'ui.bootstrap',
-            'infinite-scroll'
+            'infinite-scroll',
+            "ngSanitize",
+            "com.2fdevs.videogular"
         ])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component

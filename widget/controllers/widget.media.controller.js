@@ -1,16 +1,60 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce) {
             var WidgetMedia = this;
+
+            WidgetMedia.config = {
+                preload: "none",
+                sources: [
+                    {
+                        src: $sce.trustAsResourceUrl("http://static.videogular.com/assets/videos/videogular.mp4"),
+                        type: "video/mp4"
+                    },
+                    {
+                        src: $sce.trustAsResourceUrl("http://static.videogular.com/assets/videos/videogular.webm"),
+                        type: "video/webm"
+                    },
+                    {
+                        src: $sce.trustAsResourceUrl("http://static.videogular.com/assets/videos/videogular.ogg"),
+                        type: "video/ogg"
+                    }
+                ],
+                tracks: [
+                    {
+                        src: "http://www.videogular.com/assets/subs/pale-blue-dot.vtt",
+                        kind: "subtitles",
+                        srclang: "en",
+                        label: "English",
+                        default: ""
+                    }
+                ],
+                theme: {
+                    url: "http://www.videogular.com/styles/themes/default/latest/videogular.css"
+                }
+            };
+
+            WidgetMedia.changeVideoSrc = function () {
+                if(WidgetMedia.item.data.videoUrl)
+                    WidgetMedia.config.sources = [{
+                        src: $sce.trustAsResourceUrl(WidgetMedia.item.data.videoUrl),
+                        type:  'video/' + WidgetMedia.item.data.videoUrl.split('.').pop() //"video/mp4"
+                    }];
+            };
+
+
             WidgetMedia.media = {
                 data: AppConfig.getSettings()
             };
-            WidgetMedia.item ={
-                data:{}
+            WidgetMedia.item = {
+                data: {}
             };
-            if(media)
+
+            if (media) {
                 WidgetMedia.item = media;
+                WidgetMedia.changeVideoSrc();
+            }
+
             AppConfig.changeBackgroundTheme(WidgetMedia.media.data.design.backgroundImage);
             var currentItemLayout = WidgetMedia.media.data.design.itemLayout;
             Messaging.onReceivedMessage(function (event) {
@@ -33,24 +77,24 @@
                             }
                             Location.go("#/media");
                             break;
-                        case EVENTS.DESIGN_LAYOUT_CHANGE:
-                            WidgetMedia.media.data.design.listLayout = event.message.listLayout;
-                            WidgetMedia.media.data.design.itemLayout = event.message.itemLayout;
-                            AppConfig.setSettings(WidgetMedia.media);
-                            $scope.$digest();
-                            break;
-                        case EVENTS.DESIGN_BGIMAGE_CHANGE:
-                            WidgetMedia.media.data.design.backgroundImage = event.message.backgroundImage;
-                            AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
-                            $scope.$apply();
+                        /*     case EVENTS.DESIGN_LAYOUT_CHANGE:
+                         WidgetMedia.media.data.design.listLayout = event.message.listLayout;
+                         WidgetMedia.media.data.design.itemLayout = event.message.itemLayout;
+                         AppConfig.setSettings(WidgetMedia.media);
+                         $scope.$digest();
+                         break;
+                         case EVENTS.DESIGN_BGIMAGE_CHANGE:
+                         WidgetMedia.media.data.design.backgroundImage = event.message.backgroundImage;
+                         AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
+                         $scope.$apply();
 
-                            break;
+                         break;*/
                     }
                 }
             });
             Buildfire.datastore.onUpdate(function (event) {
                 switch (event.tag) {
-                   case COLLECTIONS.MediaContent:
+                    case COLLECTIONS.MediaContent:
                         if (event.data) {
                             WidgetMedia.item = event;
                             $scope.$digest();
@@ -59,47 +103,20 @@
                 }
             });
 
-            //var initializing = true;
+
+            var initializing = true;
             $scope.$watch(function () {
-                return WidgetMedia.item.data;
-            }, function(){
-//alert(WidgetMedia.item.data.videoUrl);
-                if (WidgetMedia.item.data.videoUrl)  {
-                    LoadVideo();
-                }
-
-            }, true);
-
-            var myPlayer, videoArea,videlem;
-            function LoadVideo() {
-                // alert(1);
-                videoArea = $("#videoArea");
-                videoArea.html('');
-                videlem = document.createElement("video");
-                videlem.setAttribute('class', "video-js vjs-default-skin");
-                videlem.setAttribute("id", "vid");
-                videlem.setAttribute("controls", "");
-                videlem.setAttribute("height", "264");
-                videlem.setAttribute("width", "315");
-                var sourceMP4 = document.createElement("source");
-                sourceMP4.type = "video/mp4";
-                sourceMP4.src = WidgetMedia.item.data.videoUrl;
-                videlem.appendChild(sourceMP4);
-                $("#videoArea").append(videlem);
-                setTimeout(function () {
-                    videojs("vid", {}, function () {
-                        myPlayer = this;
-                        myPlayer.play();
+                return WidgetMedia.item.data.videoUrl;
+            }, function () {
+                if (initializing) {
+                    $timeout(function () {
+                        initializing = false;
                     });
-                },2000);
-
-
-            }
-            $scope.$on(
-                "$destroy",
-                function handleDestroyEvent() {
-                    videoArea.html('');
+                } else {
+                    WidgetMedia.changeVideoSrc();
                 }
-            );
+            });
+
+
         }]);
 })(window.angular, window);

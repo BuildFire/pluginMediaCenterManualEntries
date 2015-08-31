@@ -16,6 +16,7 @@
             'infinite-scroll',
             'bngCsv',
             'ui.tinymce'
+
         ])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component
