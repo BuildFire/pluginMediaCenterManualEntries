@@ -12,8 +12,21 @@
                             <videogular vg-theme="WidgetMedia.config.theme.url">
                                 <vg-media vg-src="WidgetMedia.config.sources"
                                           vg-tracks="WidgetMedia.config.tracks"
-                                          vg-native-controls="true">
+                                          vg-native-controls="false">
                                 </vg-media>
+                                <vg-controls vg-autohide="true">
+                                    <vg-play-pause-button></vg-play-pause-button>
+                                    <vg-scrub-bar>
+                                        <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                                    </vg-scrub-bar>
+                                    <vg-time-display>{{ timeLeft | date:'mm:ss':'+0530' | timeCorrect }}</vg-time-display>
+
+                                    <vg-volume>
+                                        <vg-mute-button></vg-mute-button>
+                                        <vg-volume-bar></vg-volume-bar>
+                                    </vg-volume>
+                                </vg-controls>
+                                <vg-overlay-play></vg-overlay-play>
                             </videogular>
                         </div>
                         <div ng-if="audio" style="background-image: url({{WidgetMedia.item.data.image |resizeImage : 250:400}})">

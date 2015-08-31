@@ -33,5 +33,11 @@
             return function (x) {
                 return new Date(x);
             };
+        })
+        .filter("timeCorrect", function () {
+            return function (x) {
+                x = '0' + x.substring(1);
+                return x;
+            };
         });
 })(window.angular, window.buildfire, window.location);
