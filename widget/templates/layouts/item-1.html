@@ -17,15 +17,15 @@
                                 <vg-scrub-bar>
                                     <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
                                 </vg-scrub-bar>
-                                <vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
+                                <vg-time-display>{{ timeLeft | date:'mm:ss':'+0530' | timeCorrect }}</vg-time-display>
 
                                 <vg-volume>
                                     <vg-mute-button></vg-mute-button>
                                     <vg-volume-bar></vg-volume-bar>
                                 </vg-volume>
                             </vg-controls>
+                            <vg-overlay-play></vg-overlay-play>
                         </videogular>
-
                     </div>
 
                     <div ng-if="!WidgetMedia.item.data.videoUrl" audio-js audio-url="{{WidgetMedia.item.data.audioUrl}}">

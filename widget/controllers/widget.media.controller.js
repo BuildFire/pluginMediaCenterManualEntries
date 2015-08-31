@@ -41,7 +41,6 @@
                         type:  'video/' + WidgetMedia.item.data.videoUrl.split('.').pop() //"video/mp4"
                     }];
             };
-            WidgetMedia.timeLeft = 0;
 
             WidgetMedia.media = {
                 data: AppConfig.getSettings()

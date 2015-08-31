@@ -8,12 +8,25 @@
                         <img data-ng-hide="WidgetMedia.item.data.videoUrl" ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 250 : 400}}">
                        <!-- <div ng-if="WidgetMedia.item.data.videoUrl" id="videoArea" video-js video-url="{{WidgetMedia.item.data.videoUrl}}">
                         </div>-->
-                        <div data-ng-show="WidgetMedia.item.data.videoUrl" class="videogular-container">
+                        <div ng-show="WidgetMedia.item.data.videoUrl" class="videogular-container">
                             <videogular vg-theme="WidgetMedia.config.theme.url">
                                 <vg-media vg-src="WidgetMedia.config.sources"
                                           vg-tracks="WidgetMedia.config.tracks"
-                                          vg-native-controls="true">
+                                          vg-native-controls="false">
                                 </vg-media>
+                                <vg-controls vg-autohide="true">
+                                    <vg-play-pause-button></vg-play-pause-button>
+                                    <vg-scrub-bar>
+                                        <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                                    </vg-scrub-bar>
+                                    <vg-time-display>{{ timeLeft | date:'mm:ss':'+0530' | timeCorrect }}</vg-time-display>
+
+                                    <vg-volume>
+                                        <vg-mute-button></vg-mute-button>
+                                        <vg-volume-bar></vg-volume-bar>
+                                    </vg-volume>
+                                </vg-controls>
+                                <vg-overlay-play></vg-overlay-play>
                             </videogular>
                         </div>
                         <div ng-if="!WidgetMedia.item.data.videoUrl" audio-js audio-url="{{WidgetMedia.item.data.audioUrl}}">
