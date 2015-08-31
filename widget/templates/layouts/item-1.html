@@ -6,9 +6,15 @@
                     <img data-ng-hide="WidgetMedia.item.data.videoUrl"
                          ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 342 : 200}}">
 
-                    <div ng-if="WidgetMedia.item.data.videoUrl" id="videoArea" video-js
-                         video-url="{{WidgetMedia.item.data.videoUrl}}">
+                    <div ng-show="WidgetMedia.item.data.videoUrl" class="videogular-container">
+                        <videogular vg-theme="WidgetMedia.config.theme.url">
+                            <vg-media vg-src="WidgetMedia.config.sources"
+                                      vg-tracks="WidgetMedia.config.tracks"
+                                      vg-native-controls="true">
+                            </vg-media>
+                        </videogular>
                     </div>
+
                     <div ng-if="!WidgetMedia.item.data.videoUrl" audio-js audio-url="{{WidgetMedia.item.data.audioUrl}}">
                     </div>
                 </div>
@@ -27,6 +33,8 @@
                 <a class="text-primary" ng-if="WidgetMedia.item.data.videoUrl">Watch</a>
                 <a class="text-primary" ng-if="WidgetMedia.item.data.srcUrl">View Source</a>
                 <a class="text-primary" ng-if="WidgetMedia.item.data.links.length">Share</a>
+                <a class="text-primary" ng-click="WidgetMedia.changeSource()">Change</a>
+
             </div>
             <hr class="small">
             <p ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
