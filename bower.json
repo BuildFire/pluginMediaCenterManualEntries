@@ -35,5 +35,9 @@
   },
   "resolutions": {
     "angular": "~1.x"
+  },
+  "dependencies": {
+    "videogular-controls": "~1.2.6",
+    "videogular-overlay-play": "~1.2.6"
   }
 }
