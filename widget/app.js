@@ -113,20 +113,34 @@
                         }
                     }
                 })
-                .when('/nowplaying/:audiourl', {
+                .when('/nowplaying/:mediaId', {
                     templateUrl: 'templates/layouts/now-playing.html',
                     controllerAs: 'NowPlaying',
                     controller: 'NowPlayingCtrl',
-                    resolve: {
-                        track: ['$route', function ($route) {
-                            if ($route.current.params.audiourl) {
-                                return $route.current.params.audiourl;
-                            }
-                            else {
-                                return null;
-                            }
-                        }]
-                    }
+                     resolve: {
+                     media: ['$q', 'DB', 'COLLECTIONS', 'Location', '$route', function ($q, DB, COLLECTIONS, Location, $route) {
+                     var deferred = $q.defer();
+                     var MediaContent = new DB(COLLECTIONS.MediaContent);
+                     if ($route.current.params.mediaId) {
+                     MediaContent.getById($route.current.params.mediaId).then(function success(result) {
+                     if (result && result.data) {
+                     deferred.resolve(result);
+                     }
+                     else {
+                     Location.goToHome();
+                     }
+                     },
+                     function fail() {
+                     Location.goToHome();
+                     }
+                     );
+                     }
+                     else {
+                     Location.goToHome();
+                     }
+                     return deferred.promise;
+                     }]
+                     }
                 })
 
                 .otherwise('/');

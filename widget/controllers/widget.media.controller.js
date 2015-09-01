@@ -3,54 +3,6 @@
         .module('mediaCenterWidget')
         .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce) {
             var WidgetMedia = this;
-            $scope.audio=false;
-            WidgetMedia.listen=function(){
-                console.log('method called');
-                $scope.audio=true;
-            };
-            var audioPlayer=Buildfire.services.media.audioPlayer;
-            audioPlayer.onEvent (function(e){
-                if(e.event =="timeUpdate"){
-                    $scope.currentTime = e.data.currentTime;
-                    $scope.duration = e.data.duration;
-                    $scope.$apply();
-                }
-                else if(e.event =="audioEnded" && $scope.currentTrack){
-                    $scope.currentTrack.playing = false;
-                    $scope.$apply();
-                }
-            });
-            WidgetMedia.playAudio=function(){
-                if(WidgetMedia.item.data.audioUrl){
-                    audioPlayer.play({url:WidgetMedia.item.data.audioUrl});
-                }
-            };
-            WidgetMedia.previous=function(){
-                audioPlayer.previous();
-            };
-            WidgetMedia.skip=function(num){
-                audioPlayer.skip(num);
-            };
-            WidgetMedia.pause=function(){
-                audioPlayer.pause();
-            };
-            WidgetMedia.next=function(){
-                audioPlayer.next();
-            };
-
-            var slider = $('#slider');
-
-            slider.onchange = function(){
-                if (Math.abs( this.value - $scope.currentTime) > 1 )
-                    audioPlayer.setTime(this.value);
-            };
-            slider.onmousedown = function(){
-                this.stopUpdateing = true;
-            };
-            slider.onmouseup = function(){
-                this.stopUpdateing = false;
-            };
-
             WidgetMedia.config = {
                 autoHide:false,
                 preload: "none",

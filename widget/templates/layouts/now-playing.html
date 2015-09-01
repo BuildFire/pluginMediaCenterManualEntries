@@ -8,8 +8,12 @@
             </div>
         </div>
         <div class="slider margin-top-twenty">
-            Slide Placeholder
-        </div>
+            <div class="playerMP">
+                <div>{{currentTime | number:2}}</div>
+                <div><input id="slider" ng-show="duration" type="range" min="0" max="{{duration}}" ng-model="currentTime"/></div>
+                <div>{{duration | number:2}}</div>
+            </div>
+            </div>
         <div class="media-player-info margin-top-twenty">
             <h4 class="margin-zero ellipsis">Keane</h4>
 
@@ -18,9 +22,10 @@
             <p class="margin-zero">July 25, 2014</p>
         </div>
         <div class="media-player-btns margin-top-twenty">
-            <span class="icon icon-backward-circle"></span>
-            <span class="icon icon-play-circle icon-main"></span>
-            <span class="icon icon-forward-circle"></span>
+            <span class="icon icon-backward-circle" ng-click=""></span>
+            <span ng-if="(currentTime==duration) || !currentTime" class="icon icon-play-circle icon-main" ng-click="NowPlaying.pause()"></span>
+            <span ng-if="currentTime!=duration" class="icon icon-pause-circle icon-main" ng-click="NowPlaying.playAudio()"></span>
+            <span class="icon icon-forward-circle" ng-click=""></span>
         </div>
     </div>
 </div>
