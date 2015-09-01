@@ -2,31 +2,12 @@
     <div class="media-center-plugin layout1">
         <div class="media-center-banner clearfix border-bottom-grey">
             <div class="plugin-slider text-center">
-                <div class="plugin-slide">
+                <div ng-style="WidgetMedia.item.data.videoUrl == '' ? {'min-height': '192px'} : {}"  class="plugin-slide">
                     <img data-ng-hide="WidgetMedia.item.data.videoUrl"
-                         ng-src="{{WidgetMedia.item.data.image | resizeImage : 300 : 180}}"/>
+                         ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 300 : 180}}"/>
 
-                    <div ng-show="WidgetMedia.item.data.videoUrl" class="videogular-container">
-                        <videogular vg-theme="WidgetMedia.config.theme.url">
-                            <vg-media vg-src="WidgetMedia.config.sources"
-                                      vg-tracks="WidgetMedia.config.tracks"
-                                      vg-native-controls="false">
-                            </vg-media>
-                            <vg-controls vg-autohide="true">
-                                <vg-play-pause-button></vg-play-pause-button>
-                                <vg-scrub-bar>
-                                    <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
-                                </vg-scrub-bar>
-                                <vg-time-display>{{ timeLeft | date:'mm:ss':'+0530' | timeCorrect }}</vg-time-display>
+                    <div ng-include="'templates/layouts/videoPlayer.html'"></div>
 
-                                <vg-volume>
-                                    <vg-mute-button></vg-mute-button>
-                                    <vg-volume-bar></vg-volume-bar>
-                                </vg-volume>
-                            </vg-controls>
-                            <vg-overlay-play></vg-overlay-play>
-                        </videogular>
-                    </div>
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 .customBackground {
-    background-position: 50% 0%;
+    background-position: center center !important;
     background-size: initial;
-    background-repeat: repeat;
+    background-repeat: no-repeat !important;
     background-origin: initial;
     background-clip: initial;
     background-attachment: fixed;
@@ -25,7 +25,7 @@
 .plugin-slide {
     position: relative;
     max-height: 380px;
-    min-height: 192px;
+    /*min-height: 192px; commented by Lakshay on 1 Sept; min height gives a blank area if small video is being shown*/
 }
 
 .plugin-slide img {
@@ -84,14 +84,14 @@
 }
 
 
-html, body {
+/*html, body {
     margin: 0;
     padding: 0;
-}
+}*/
 
 .videogular-container {
     width: 100%;
-    height: 320px;
+    /*height: 320px;*/
     margin: auto;
     overflow: hidden;
 }

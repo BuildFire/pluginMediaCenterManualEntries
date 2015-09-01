@@ -3,41 +3,29 @@
         .module('mediaCenterWidget')
         .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce) {
             var WidgetMedia = this;
+
+
+            WidgetMedia.API = null;
+
+            WidgetMedia.onPlayerReady = function ($API) {
+                WidgetMedia.API = $API;
+                console.log(WidgetMedia.API);
+            };
+
             WidgetMedia.config = {
-                autoHide:false,
+                autoHide: false,
                 preload: "none",
-                sources: [
-                    {
-                        src: $sce.trustAsResourceUrl("http://static.videogular.com/assets/videos/videogular.mp4"),
-                        type: "video/mp4"
-                    },
-                    {
-                        src: $sce.trustAsResourceUrl("http://static.videogular.com/assets/videos/videogular.webm"),
-                        type: "video/webm"
-                    },
-                    {
-                        src: $sce.trustAsResourceUrl("http://static.videogular.com/assets/videos/videogular.ogg"),
-                        type: "video/ogg"
-                    }
-                ],
-                tracks: [
-                    {
-                        src: "http://www.videogular.com/assets/subs/pale-blue-dot.vtt",
-                        kind: "subtitles",
-                        srclang: "en",
-                        label: "English",
-                        default: ""
-                    }
-                ],
+                sources: undefined,
+                tracks: undefined,
                 theme: {
                     url: "http://www.videogular.com/styles/themes/default/latest/videogular.css"
                 }
             };
             WidgetMedia.changeVideoSrc = function () {
-                if(WidgetMedia.item.data.videoUrl)
+                if (WidgetMedia.item.data.videoUrl)
                     WidgetMedia.config.sources = [{
                         src: $sce.trustAsResourceUrl(WidgetMedia.item.data.videoUrl),
-                        type:  'video/' + WidgetMedia.item.data.videoUrl.split('.').pop() //"video/mp4"
+                        type: 'video/' + WidgetMedia.item.data.videoUrl.split('.').pop() //"video/mp4"
                     }];
             };
 
@@ -48,10 +36,17 @@
                 data: {}
             };
 
+            WidgetMedia.sourceChanged = function ($source) {
+                WidgetMedia.API.stop();
+                console.log(WidgetMedia.API.mediaElement[0].videoHeight);
+            };
+
+
             if (media) {
                 WidgetMedia.item = media;
                 WidgetMedia.changeVideoSrc();
             }
+
 
             AppConfig.changeBackgroundTheme(WidgetMedia.media.data.design.backgroundImage);
             var currentItemLayout = WidgetMedia.media.data.design.itemLayout;

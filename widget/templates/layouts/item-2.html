@@ -7,28 +7,7 @@
                        <img data-ng-hide="WidgetMedia.item.data.videoUrl"
                              ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 250 : 400}}">
 
-                        <div data-ng-show="WidgetMedia.item.data.videoUrl" class="videogular-container">
-                            <videogular vg-theme="WidgetMedia.config.theme.url">
-                                <vg-media vg-src="WidgetMedia.config.sources"
-                                          vg-tracks="WidgetMedia.config.tracks"
-                                          vg-native-controls="false">
-                                </vg-media>
-                                <vg-controls vg-autohide="true">
-                                    <vg-play-pause-button></vg-play-pause-button>
-                                    <vg-scrub-bar>
-                                        <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
-                                    </vg-scrub-bar>
-                                    <vg-time-display>{{ timeLeft | date:'mm:ss':'+0530' | timeCorrect }}
-                                    </vg-time-display>
-
-                                    <vg-volume>
-                                        <vg-mute-button></vg-mute-button>
-                                        <vg-volume-bar></vg-volume-bar>
-                                    </vg-volume>
-                                </vg-controls>
-                                <vg-overlay-play></vg-overlay-play>
-                            </videogular>
-                        </div>
+                        <div ng-include="'templates/layouts/videoPlayer.html'"></div>
                     </div>
                     <div class="people-info text-center col-md-12">
                         <h5 class="ellipsis margin-top-fifteen">{{WidgetMedia.item.data.title}}</h5>

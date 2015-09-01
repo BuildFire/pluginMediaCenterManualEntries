@@ -14,7 +14,8 @@
             "com.2fdevs.videogular",
             //"info.vietnamcode.nampnq.videogular.plugins.youtube",
             "com.2fdevs.videogular.plugins.controls",
-            "com.2fdevs.videogular.plugins.overlayplay"
+            "com.2fdevs.videogular.plugins.overlayplay",
+            "videosharing-embed"
         ])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component
@@ -85,6 +86,7 @@
                             if ($route.current.params.mediaId) {
                                 MediaContent.getById($route.current.params.mediaId).then(function success(result) {
                                         if (result && result.data) {
+                                            console.log(result.data);
                                             deferred.resolve(result);
                                         }
                                         else {

@@ -39,5 +39,10 @@
                 x = '0' + x.substring(1);
                 return x;
             };
+        })
+        .filter("isYoutubeVimeoLink", function () {
+            return function (x) {
+            return (x.indexOf('youtube.com') >= 0 || x.indexOf('vimeo.com') >= 0);
+            };
         });
 })(window.angular, window.buildfire, window.location);
