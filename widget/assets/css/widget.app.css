@@ -1,7 +1,7 @@
 .customBackground {
-    background-position: 50% 0%;
+    background-position: center center !important;
     background-size: initial;
-    background-repeat: repeat;
+    background-repeat: no-repeat !important;
     background-origin: initial;
     background-clip: initial;
     background-attachment: fixed;
