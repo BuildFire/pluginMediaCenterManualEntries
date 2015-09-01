@@ -2,11 +2,11 @@
     <div class="media-center-plugin layout1">
         <div class="media-center-banner clearfix border-bottom-grey">
             <div class="plugin-slider text-center">
-                <div class="plugin-slide" style="background: url(http://s7obnu.cloudimage.io/s/resizenp/300x180/undefined) center no-repeat;">
-                    <!--<img data-ng-hide="WidgetMedia.item.data.videoUrl"
-                         ng-src="{{WidgetMedia.item.data.image | resizeImage : 300 : 180}}"/>-->
+                <div class="plugin-slide">
+                    <img data-ng-hide="WidgetMedia.item.data.videoUrl"
+                         ng-src="{{WidgetMedia.item.data.image | resizeImage : 300 : 180}}"/>
 
-                    <div ng-show="WidgetMedia.item.data.videoUrl && audio" class="videogular-container">
+                    <div ng-show="WidgetMedia.item.data.videoUrl" class="videogular-container">
                         <videogular vg-theme="WidgetMedia.config.theme.url">
                             <vg-media vg-src="WidgetMedia.config.sources"
                                       vg-tracks="WidgetMedia.config.tracks"
@@ -27,19 +27,6 @@
                             <vg-overlay-play></vg-overlay-play>
                         </videogular>
                     </div>
-                    <div ng-if="WidgetMedia.item.data.audioUrl">
-                        <h2>
-                            Playing
-                        </h2>
-                        <input id="slider" ng-show="duration" type="range" min="0" max="{{duration}}"
-                               ng-model="currentTime"/>
-                        <a href="javascript:void(0)" ng-click="WidgetMedia.previous()">&lt&lt Previous</a>
-                        <a href="javascript:void(0)" ng-click="WidgetMedia.skip(-10)">&lt Back</a>
-                        <a href="javascript:void(0)" ng-click="WidgetMedia.pause();">Pause ||</a>
-                        <a href="javascript:void(0)" ng-click="WidgetMedia.playAudio()">Play </a>
-                        <a href="javascript:void(0)" ng-click="WidgetMedia.skip(10)">Skip &gt;</a>
-                        <a href="javascript:void(0)" ng-click="WidgetMedia.next()">Next &gt;&gt;</a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -51,7 +38,7 @@
             <hr class="small">
             <div class="link-list">
                 <a class="text-primary" ng-if="WidgetMedia.item.data.audioUrl"
-                   ng-click="WidgetMedia.listen()">Listen</a>
+                   href="#/nowplaying/{{WidgetMedia.item.data.audioUrl}}">Listen</a>
                 <a class="text-primary" ng-if="WidgetMedia.item.data.videoUrl">Watch</a>
                 <a class="text-primary" ng-if="WidgetMedia.item.data.srcUrl">View Source</a>
                 <a class="text-primary" ng-if="WidgetMedia.item.data.links.length">Share</a>
