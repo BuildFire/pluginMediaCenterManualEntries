@@ -1,10 +1,10 @@
 <div class="holder now-playing text-center">
-    <div class="blurred-image"></div>
+    <div></div>
     <div class="media-center-plugin">
         <div class="media-holder">
             <div class="media-inner text-center">
                 <img class="border-radius-four"
-                     src="http://4.bp.blogspot.com/-8bBgFCVGbpE/TvQU6q_f7qI/AAAAAAAAAEk/b2QtDIIbv4I/s1600/Tycho-Dive.png">
+                     ng-src="{{NowPlaying.item.data.image}}" height="260px" width="260">
             </div>
         </div>
         <div class="slider margin-top-twenty">
@@ -19,13 +19,13 @@
 
             <p class="margin-zero ellipsis">Under the Iron Sea</p>
 
-            <p class="margin-zero">July 25, 2014</p>
+            <p class="margin-zero">{{NowPlaying.item.data.dateCreated  | jsDate | date:"MMMM dd, yyyy"}}</p>
         </div>
         <div class="media-player-btns margin-top-twenty">
-            <span class="icon icon-backward-circle" ng-click=""></span>
-            <span ng-if="(currentTime==duration) || !currentTime" class="icon icon-play-circle icon-main" ng-click="NowPlaying.pause()"></span>
-            <span ng-if="currentTime!=duration" class="icon icon-pause-circle icon-main" ng-click="NowPlaying.playAudio()"></span>
-            <span class="icon icon-forward-circle" ng-click=""></span>
+            <span class="icon icon-backward-circle" ng-click="NowPlaying.previous()"></span>
+            <a><span ng-if="!NowPlaying.playing" class="icon icon-play-circle icon-main" ng-click="NowPlaying.playAudio()"></span></a>
+            <a><span ng-if="NowPlaying.playing" class="icon icon-pause-circle icon-main" ng-click="NowPlaying.pause()"></span></a>
+            <span class="icon icon-forward-circle" ng-click="NowPlaying.next()"></span>
         </div>
     </div>
 </div>
