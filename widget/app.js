@@ -113,6 +113,21 @@
                         }
                     }
                 })
+                .when('/nowplaying/:audiourl', {
+                    templateUrl: 'templates/layouts/now-playing.html',
+                    controllerAs: 'NowPlaying',
+                    controller: 'NowPlayingCtrl',
+                    resolve: {
+                        track: ['$route', function ($route) {
+                            if ($route.current.params.audiourl) {
+                                return $route.current.params.audiourl;
+                            }
+                            else {
+                                return null;
+                            }
+                        }]
+                    }
+                })
 
                 .otherwise('/');
         }])
