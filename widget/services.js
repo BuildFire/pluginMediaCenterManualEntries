@@ -245,3 +245,6 @@
             };
         }]);
 })(window.angular, window.buildfire, window.location);
+/*$rootScope.currentBackgroundImage ={
+ "background-color": "black"
+ };*/
