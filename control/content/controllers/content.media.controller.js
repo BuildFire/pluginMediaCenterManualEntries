@@ -11,7 +11,7 @@
         .controller('ContentMediaCtrl', ['$scope', '$window', 'Buildfire', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig',
             function ($scope, $window, Buildfire, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig) {
                 /**
-                 * Using Control as syntex this
+                 * Using Control as syntax this
                  */
                 var ContentMedia = this;
                 var tmrDelayForMedia = null;

@@ -35,9 +35,9 @@
             NowPlaying.previous = function () {
                 audioPlayer.previous();
             };
-            NowPlaying.skip = function (num) {
+           /* NowPlaying.skip = function (num) {
                 audioPlayer.skip(num);
-            };
+            };*/
             NowPlaying.pause = function () {
                 NowPlaying.paused=true;
                 audioPlayer.pause();
@@ -58,7 +58,5 @@
             slider.onmouseup = function () {
                 this.stopUpdateing = false;
             };
-
-            console.log('Now playing controller loaded', NowPlaying.track, media);
         }]);
 })(window.angular, undefined);

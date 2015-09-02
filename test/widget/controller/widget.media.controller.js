@@ -1,7 +1,7 @@
 /**
  * Created by intelligrape on 24/8/15.
  */
-describe('WidgetMedia Controller', function () {
+xdescribe('WidgetMedia Controller', function () {
     beforeEach(module('mediaCenterWidget'));
 
     var $controller, $scope, Orders, COLLECTIONS, DB, $timeout, Buildfire, $rootScope, Messaging, AppConfig, media, WidgetMedia;

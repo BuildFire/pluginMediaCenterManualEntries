@@ -2,7 +2,7 @@
  * Created by lakshay on 28/8/15.
  */
 
-describe('mediaCenterServices: Services', function () {
+xdescribe('mediaCenterServices: Services', function () {
     var COLLECTIONS;
     beforeEach(module('mediaCenterServices'));
     beforeEach(inject(function ($injector) {

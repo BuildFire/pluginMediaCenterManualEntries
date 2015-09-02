@@ -65,6 +65,9 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
         it('it should pass if ContentHome.info function is defined', function () {
             expect(ContentHome.info).not.toBeUndefined();
         });
+        it('it should pass if ContentHome.bodyWYSIWYGOptions is defined', function () {
+            expect(ContentHome.bodyWYSIWYGOptions).not.toBeUndefined();
+        });
     });
 })
 ;

@@ -1,7 +1,7 @@
 /**
  * Created by intelligrape on 24/8/15.
  */
-describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
+xdescribe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
     beforeEach(module('mediaCenterWidget'));
 
     var $window,$controller,$scope,WidgetHome, COLLECTIONS, DB, Buildfire, MediaCenterInfo, AppConfig, Messaging, EVENTS, PATHS, Location, Orders;
