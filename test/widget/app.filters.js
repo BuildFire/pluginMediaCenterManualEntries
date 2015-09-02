@@ -17,3 +17,54 @@ describe('Unit: resizeImage filter', function () {
         expect(result).toEqual("http://s7obnu.cloudimage.io/s/resizenp/88x124/");
     });
 });
+describe('Unit: cropImage filter', function () {
+    beforeEach(module('mediaCenterFilters'));
+    var filter;
+    beforeEach(inject(function (_$filter_) {
+        filter = _$filter_;
+    }));
+
+    it('it should pass if "cropImage" filter returns cropped image url', function () {
+        var result;
+        result = filter('cropImage')('https://www.facebook.com/photo.php?fbid=1008284442533844&set=a.359021657460129.98766.100000568920267&type=1&theater', 88, 124);
+        expect(result).toEqual("http://s7obnu.cloudimage.io/s/crop/88x124/https://www.facebook.com/photo.php?fbid=1008284442533844&set=a.359021657460129.98766.100000568920267&type=1&theater");
+    });
+
+    it('it should give a default image even if parameter is blank', function () {
+        var result;
+        result = filter('cropImage')('', 88, 124);
+        expect(result).toEqual("http://s7obnu.cloudimage.io/s/crop/88x124/");
+    });
+});
+describe('Unit: safeHtml filter', function () {
+    beforeEach(module('mediaCenterFilters'));
+    var filter;
+    beforeEach(inject(function (_$filter_) {
+        filter = _$filter_;
+    }));
+
+    /*it('it should pass if "safeHtml" filter returns text', function () {
+        var result;
+        result = filter('safeHtml')('<div>Hello</div>');
+        expect(result).toEqual("Hello");
+    });*/
+
+    it('it should give black even if parameter is blank', function () {
+        var result;
+        result = filter('safeHtml')();
+        expect(result).toEqual("");
+    });
+});
+describe('Unit: jsDate filter', function () {
+    beforeEach(module('mediaCenterFilters'));
+    var filter;
+    beforeEach(inject(function (_$filter_) {
+        filter = _$filter_;
+    }));
+
+   /* it('it should pass if "jsDate" filter returns time', function () {
+        var result;
+        result = filter('jsDate')('1441209271403');
+        expect(result).toEqual("Wed Sep 02 2015 21:24:31 GMT+0530 (IST)");
+    });*/
+});
