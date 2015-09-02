@@ -175,6 +175,7 @@
                     }, function (newValue, oldValue) {
                         var imgs = angular.copy(newValue);
                         modifySource(imgs);
+                        if(view)
                         view.loadItems(imgs);
                     });
 

@@ -1,4 +1,4 @@
-xdescribe('Unit: mediaCenterWidget: Services', function () {
+describe('Unit: mediaCenterWidget: Services', function () {
     var COLLECTIONS;
     beforeEach(module('mediaCenterWidget'));
 

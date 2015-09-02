@@ -1,4 +1,4 @@
-xdescribe('Unit: mediaPlugin widget app', function () {
+describe('Unit: mediaPlugin widget app', function () {
     describe('Unit: app routes', function () {
         beforeEach(module('mediaCenterWidget'));
         var location, route, rootScope;
@@ -58,6 +58,21 @@ xdescribe('Unit: mediaPlugin widget app', function () {
                 location.path('/media/:mediaId');
                 rootScope.$digest();
                 expect(route.current.controller).toBe('WidgetMediaCtrl')
+            });
+        });
+        describe('nowplaying with Id route', function () {
+            beforeEach(inject(
+                function ($httpBackend) {
+                    $httpBackend.expectGET('templates/layouts/now-playing.html')
+                        .respond(200);
+                    $httpBackend.expectGET('/nowplaying/:mediaId')
+                        .respond(200);
+                }));
+
+            it('should load the home page on successful load of /', function () {
+                location.path('/nowplaying/:mediaId');
+                rootScope.$digest();
+                expect(route.current.controller).toBe('NowPlayingCtrl')
             });
         });
     });
