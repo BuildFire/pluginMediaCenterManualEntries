@@ -19,6 +19,7 @@
                 var currentBackgroundImage = WidgetHome.media.data.design.backgroundImage;
                 AppConfig.setSettings(MediaCenterInfo.data);
                 AppConfig.changeBackgroundTheme(currentBackgroundImage);
+
                 Messaging.onReceivedMessage = function (event) {
                     if (event) {
                         switch (event.name) {
@@ -52,6 +53,7 @@
                         }
                     }
                 };
+
                 Buildfire.datastore.onUpdate(function (event) {
                     $scope.imagesUpdated = false;
                     MediaCenter.get().then(function success(result) {
@@ -68,8 +70,6 @@
 
                                 WidgetHome.items =[];
                                 WidgetHome.loadMore();
-
-                                console.log(result.data);
 
                                 $scope.$apply();
                             }

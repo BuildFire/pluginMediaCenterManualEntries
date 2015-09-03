@@ -42,7 +42,10 @@
         })
         .filter("isYoutubeVimeoLink", function () {
             return function (x) {
-            return (x.indexOf('youtube.com') >= 0 || x.indexOf('vimeo.com') >= 0);
+                if (x)
+                    return (x.indexOf('youtube.com') >= 0 || x.indexOf('vimeo.com') >= 0);
+                else
+                    return false;
             };
         });
 })(window.angular, window.buildfire, window.location);

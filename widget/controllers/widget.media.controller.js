@@ -1,9 +1,8 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce",function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce) {
             var WidgetMedia = this;
-
 
             WidgetMedia.API = null;
 
@@ -21,6 +20,7 @@
                     url: "http://www.videogular.com/styles/themes/default/latest/videogular.css"
                 }
             };
+
             WidgetMedia.changeVideoSrc = function () {
                 if (WidgetMedia.item.data.videoUrl)
                     WidgetMedia.config.sources = [{
@@ -32,15 +32,15 @@
             WidgetMedia.media = {
                 data: AppConfig.getSettings()
             };
-            WidgetMedia.item = {
-                data: {}
-            };
 
             WidgetMedia.sourceChanged = function ($source) {
                 WidgetMedia.API.stop();
-                console.log(WidgetMedia.API.mediaElement[0].videoHeight);
             };
 
+
+            WidgetMedia.item = {
+                data: {}
+            };
 
             if (media) {
                 WidgetMedia.item = media;
@@ -49,8 +49,10 @@
 
 
             AppConfig.changeBackgroundTheme(WidgetMedia.media.data.design.backgroundImage);
-            var currentItemLayout = WidgetMedia.media.data.design.itemLayout;
-            Messaging.onReceivedMessage(function (event) {
+
+              var currentItemLayout = WidgetMedia.media.data.design.itemLayout;
+
+           Messaging.onReceivedMessage(function (event) {
                 if (event) {
                     switch (event.name) {
                         case EVENTS.ROUTE_CHANGE:
@@ -85,13 +87,20 @@
                     }
                 }
             });
+
+
             Buildfire.datastore.onUpdate(function (event) {
                 switch (event.tag) {
                     case COLLECTIONS.MediaContent:
                         if (event.data) {
+
                             WidgetMedia.item = event;
                             $scope.$digest();
                         }
+                        break;
+                    case COLLECTIONS.MediaCenter:
+                        WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
+
                         break;
                 }
             });

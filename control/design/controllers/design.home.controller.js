@@ -28,7 +28,6 @@
                 if (error) {
                     console.error('Error:', error);
                 } else {
-                    console.log(result.selectedFiles[0]);
                     DesignHome.mediaInfo.data.design.backgroundImage = result.selectedFiles && result.selectedFiles[0] || null;
                     $scope.$digest();
                 }

@@ -20,3 +20,36 @@ describe('Unit: resizeImage filter', function () {
         expect(result).toEqual("http://s7obnu.cloudimage.io/s/resizenp/88x124/");
     });
 });
+
+
+describe('Unit: isYoutubeVimeoLink filter', function () {
+    beforeEach(module('mediaCenterFilters'));
+    var filter;
+    beforeEach(inject(function (_$filter_) {
+        filter = _$filter_;
+    }));
+
+    it('it should pass if returns true for vimeo link', function () {
+        var result;
+        result = filter('isYoutubeVimeoLink')('https://vimeo.com/8733915','isYoutubeVimeoLink');
+        expect(result).toBeTruthy();
+    });
+
+    it('it should pass if returns true for youtube link', function () {
+        var result;
+        result = filter('isYoutubeVimeoLink')('https://www.youtube.com/?v=e1ZUQoRyhi4','isYoutubeVimeoLink');
+        expect(result).toBeTruthy();
+    });
+
+    it('it should pass if returns false for blank input', function () {
+        var result;
+        result = filter('isYoutubeVimeoLink')('','isYoutubeVimeoLink');
+        expect(result).toBeFalsy();
+    });
+
+    it('it should pass if returns false for undefined input', function () {
+        var result;
+        result = filter('isYoutubeVimeoLink')(undefined,'isYoutubeVimeoLink');
+        expect(result).toBeFalsy();
+    });
+});

@@ -21,8 +21,14 @@
                 };
                 var headerRow = ["topImage", "title", "summary", "bodyHTML", "srcUrl", "audioUrl", "videoUrl", "image"];
                 var tmrDelayForMedia = null;
+
+                /**
+                 * Create instance of MediaContent, MediaCenter db collection
+                 * @type {DB}
+                 */
                 var MediaContent = new DB(COLLECTIONS.MediaContent);
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
+
                 var _skip = 0,
                     _limit = 5,
                     _maxLimit = 19,
@@ -42,7 +48,8 @@
                 /* tells if data is being fetched*/
                 ContentHome.items = [];
                 ContentHome.sortOptions = Orders.options;
-                //on remove button click remove carousel Image
+
+                //on remove button click remove carousel Image at the selected index
                 ContentHome.rmCarouselImage = function (index) {
                     if ("undefined" == typeof index) {
                         return;
@@ -99,7 +106,15 @@
                 ContentHome.carouselOptions = {
                     handle: '> .cursor-grab'
                 };
+
+                /**
+                 * ContentHome.noMore tells if all data has been loaded
+                 */
                 ContentHome.noMore = false;
+
+                /**
+                 * ContentHome.getMore is used to load the items
+                 */
                 ContentHome.getMore = function () {
                     if (ContentHome.isBusy && !ContentHome.noMore) {
                         return;
@@ -122,6 +137,9 @@
                     });
                 };
 
+                /**
+                 * ContentHome.toggleSortOrder() to change the sort by
+                 */
                 ContentHome.toggleSortOrder = function (name) {
                     if (!name) {
                         console.info('There was a problem sorting your data');
@@ -182,6 +200,7 @@
                         }
                     }
                 };
+
                 /**
                  * ContentHome.getTemplate() used to download csv template
                  */
@@ -201,6 +220,7 @@
                     });
                     $csv.download(csv, "Template.csv");
                 };
+
                 /**
                  * records holds the data to export the data.
                  * @type {Array}
