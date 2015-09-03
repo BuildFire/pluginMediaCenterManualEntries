@@ -303,6 +303,7 @@
                         id: ContentMedia.item.id || null
                     }
                 });
+
                 /**
                  * Watch on ContentMedia.item to see changes and call updateItemsWithDelay
                  */

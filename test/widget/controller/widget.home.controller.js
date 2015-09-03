@@ -67,4 +67,14 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
         });
     });
 
+    describe('WidgetHome.loadMore', function () {
+        it('should not change WidgetHome.items when isBusy is true (data is begin fetched)', function () {
+            WidgetHome.isBusy = true;
+            WidgetHome.items = [];
+            WidgetHome.loadMore();
+            expect(WidgetHome.items.length).toEqual(0);
+        });
+    });
+
+
 });

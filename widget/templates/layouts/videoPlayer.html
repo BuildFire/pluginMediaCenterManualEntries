@@ -1,0 +1,29 @@
+
+    <div ng-show="WidgetMedia.item.data.videoUrl" class="videogular-container">
+        <videogular data-ng-hide="WidgetMedia.item.data.videoUrl | isYoutubeVimeoLink" vg-player-ready="WidgetMedia.onPlayerReady($API)"
+                    vg-change-source="WidgetMedia.sourceChanged($source)"
+                    vg-theme="WidgetMedia.config.theme.url"
+                    vg-error="WidgetMedia.onVideoError($event)">
+            <vg-media vg-src="WidgetMedia.config.sources"
+                      vg-tracks="WidgetMedia.config.tracks"
+                      vg-native-controls="false">
+            </vg-media>
+            <vg-controls vg-autohide="true">
+                <vg-play-pause-button></vg-play-pause-button>
+                <vg-scrub-bar>
+                    <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                </vg-scrub-bar>
+                <vg-time-display>{{ timeLeft | date:'mm:ss':'+0530' | timeCorrect }}</vg-time-display>
+
+                <vg-volume>
+                    <vg-mute-button></vg-mute-button>
+                    <vg-volume-bar></vg-volume-bar>
+                </vg-volume>
+            </vg-controls>
+            <vg-overlay-play></vg-overlay-play>
+        </videogular>
+
+
+        <embed-video data-ng-show="WidgetMedia.item.data.videoUrl | isYoutubeVimeoLink" data-ng-href="{{WidgetMedia.item.data.videoUrl}}" controls="0"></embed-video>
+    </div>
+

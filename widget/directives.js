@@ -1,7 +1,7 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .directive('imageCarousel', function () {
+        /*.directive('imageCarousel', function () {
             return {
                 restrict: 'A',
                 link: function (scope, elem, attrs) {
@@ -134,7 +134,7 @@
                 restrict: 'A',
                 link: linker
             };
-        })
+        })*/
         .directive('playBtn', function () {
             var linker = function (scope, element, attrs) {
                 if (attrs.playBtn == 'true')
