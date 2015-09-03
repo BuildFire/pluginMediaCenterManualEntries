@@ -1,6 +1,3 @@
-/**
- * Created by lakshay on 27/8/15.
- */
 describe('Unit: resizeImage filter', function () {
     beforeEach(module('mediaCenterFilters'));
     var filter;
@@ -18,39 +15,6 @@ describe('Unit: resizeImage filter', function () {
         var result;
         result = filter('resizeImage')('', 88, 124, 'resize');
         expect(result).toEqual("http://s7obnu.cloudimage.io/s/resizenp/88x124/");
-    });
-});
-
-
-describe('Unit: isYoutubeVimeoLink filter', function () {
-    beforeEach(module('mediaCenterFilters'));
-    var filter;
-    beforeEach(inject(function (_$filter_) {
-        filter = _$filter_;
-    }));
-
-    it('it should pass if returns true for vimeo link', function () {
-        var result;
-        result = filter('isYoutubeVimeoLink')('https://vimeo.com/8733915','isYoutubeVimeoLink');
-        expect(result).toBeTruthy();
-    });
-
-    it('it should pass if returns true for youtube link', function () {
-        var result;
-        result = filter('isYoutubeVimeoLink')('https://www.youtube.com/?v=e1ZUQoRyhi4','isYoutubeVimeoLink');
-        expect(result).toBeTruthy();
-    });
-
-    it('it should pass if returns false for blank input', function () {
-        var result;
-        result = filter('isYoutubeVimeoLink')('','isYoutubeVimeoLink');
-        expect(result).toBeFalsy();
-    });
-
-    it('it should pass if returns false for undefined input', function () {
-        var result;
-        result = filter('isYoutubeVimeoLink')(undefined,'isYoutubeVimeoLink');
-        expect(result).toBeFalsy();
     });
 });
 describe('Unit: cropImage filter', function () {
@@ -80,27 +44,14 @@ describe('Unit: safeHtml filter', function () {
     }));
 
     /*it('it should pass if "safeHtml" filter returns text', function () {
-        var result;
-        result = filter('safeHtml')('<div>Hello</div>');
-        expect(result).toEqual("Hello");
-    });*/
+     var result;
+     result = filter('safeHtml')('<div>Hello</div>');
+     expect(result).toEqual("Hello");
+     });*/
 
     it('it should give black even if parameter is blank', function () {
         var result;
         result = filter('safeHtml')();
         expect(result).toEqual("");
     });
-});
-describe('Unit: jsDate filter', function () {
-    beforeEach(module('mediaCenterFilters'));
-    var filter;
-    beforeEach(inject(function (_$filter_) {
-        filter = _$filter_;
-    }));
-
-   /* it('it should pass if "jsDate" filter returns time', function () {
-        var result;
-        result = filter('jsDate')('1441209271403');
-        expect(result).toEqual("Wed Sep 02 2015 21:24:31 GMT+0530 (IST)");
-    });*/
 });

@@ -31,38 +31,6 @@ describe('Unit: mediaPlugin design app', function () {
                 expect(route.routes['/'].resolve.MediaCenterInfo).toBeDefined();
             });
         });
-
-      /*  describe('Media route', function () {
-            beforeEach(inject(
-                function ($httpBackend) {
-                    $httpBackend.expectGET('templates/media.html')
-                        .respond(200);
-                    $httpBackend.expectGET('/media')
-                        .respond(200);
-                }));
-
-            it('should load the home page on successful load of /', function () {
-                location.path('/media');
-                rootScope.$digest();
-                expect(route.current.controller).toBe('WidgetMediaCtrl')
-            });
-        });
-
-        describe('Media with Id route', function () {
-            beforeEach(inject(
-                function ($httpBackend) {
-                    $httpBackend.expectGET('templates/media.html')
-                        .respond(200);
-                    $httpBackend.expectGET('/media/:mediaId')
-                        .respond(200);
-                }));
-
-            it('should load the home page on successful load of /', function () {
-                location.path('/media/:mediaId');
-                rootScope.$digest();
-                expect(route.current.controller).toBe('WidgetMediaCtrl')
-            });
-        });*/
     });
 
 });

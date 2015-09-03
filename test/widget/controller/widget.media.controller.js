@@ -1,7 +1,4 @@
-/**
- * Created by intelligrape on 24/8/15.
- */
-xdescribe('WidgetMedia Controller', function () {
+describe('WidgetMedia Controller', function () {
     beforeEach(module('mediaCenterWidget'));
 
     var $controller, $scope, Orders, COLLECTIONS, DB, $timeout, Buildfire, $rootScope, Messaging, AppConfig, media, WidgetMedia;
@@ -12,11 +9,8 @@ xdescribe('WidgetMedia Controller', function () {
             COLLECTIONS = _COLLECTIONS_;
             DB = _DB_;
             $timeout = _$timeout_;
-            //Buildfire = _Buildfire_;
             $rootScope = _$rootScope_;
             $scope = $rootScope.$new();
-            //Messaging = _Messaging_;
-            //AppConfig = _AppConfig_;
             Orders = _Orders_;
             WidgetMedia = $controller('WidgetMediaCtrl', {
                 $scope: $scope,

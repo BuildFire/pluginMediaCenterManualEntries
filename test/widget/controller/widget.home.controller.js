@@ -1,6 +1,3 @@
-/**
- * Created by intelligrape on 24/8/15.
- */
 describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
     beforeEach(module('mediaCenterWidget'));
 
