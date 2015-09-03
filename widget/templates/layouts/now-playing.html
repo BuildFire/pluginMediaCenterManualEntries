@@ -1,5 +1,6 @@
 <div class="holder now-playing text-center">
-    <div></div>
+    <a href="#/media/{{NowPlaying.item.id}}"><span class="icon icon-chevron-left" style="margin-left: -282px;"></span></a>
+    <div class="back-color"></div>
     <div class="media-center-plugin">
         <div class="media-holder">
             <div class="media-inner text-center">
@@ -10,21 +11,24 @@
         <div class="slider margin-top-twenty">
             <div class="playerMP">
                 <div>{{currentTime | number:2}}</div>
-                <div><input id="slider" ng-show="duration" type="range" min="0" max="{{duration}}" ng-model="currentTime"/></div>
+                <div><input id="slider" ng-show="duration" type="range" min="0" max="{{duration}}"
+                            ng-model="currentTime"/></div>
                 <div>{{duration | number:2}}</div>
             </div>
-            </div>
+        </div>
         <div class="media-player-info margin-top-twenty">
             <h4 class="margin-zero ellipsis">{{NowPlaying.item.data.audioTitle}}</h4>
 
             <p class="margin-zero ellipsis">Under the Iron Sea</p>
 
-            <p class="margin-zero">{{NowPlaying.item.data.dateCreated  | jsDate | date:"MMMM dd, yyyy"}}</p>
+            <p class="margin-zero">{{NowPlaying.item.data.dateCreated | jsDate | date:"MMMM dd, yyyy"}}</p>
         </div>
         <div class="media-player-btns margin-top-twenty">
             <span class="icon icon-backward-circle" ng-click="NowPlaying.previous()"></span>
-            <a><span ng-if="!NowPlaying.playing" class="icon icon-play-circle icon-main" ng-click="NowPlaying.playAudio()"></span></a>
-            <a><span ng-if="NowPlaying.playing" class="icon icon-pause-circle icon-main" ng-click="NowPlaying.pause()"></span></a>
+            <span ng-if="!NowPlaying.playing" class="icon icon-play-circle icon-main"
+                  ng-click="NowPlaying.playAudio()"></span>
+            <span ng-if="NowPlaying.playing" class="icon icon-pause-circle icon-main"
+                  ng-click="NowPlaying.pause()"></span>
             <span class="icon icon-forward-circle" ng-click="NowPlaying.next()"></span>
         </div>
     </div>

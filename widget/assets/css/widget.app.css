@@ -7,9 +7,11 @@
     background-attachment: fixed;
     background-color: #010101;
 }
+
 .plugin-banner {
     overflow: hidden;
 }
+
 .owl-theme {
     position: relative;
     overflow: auto;
@@ -22,6 +24,7 @@
     max-height: 380px;
     min-height: 192px;
 }
+
 .plugin-slide {
     position: relative;
     max-height: 380px;
@@ -78,11 +81,10 @@
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-#scroll-infinite{
+#scroll-infinite {
     overflow-y: auto;
     max-height: 580px;
 }
-
 
 /*html, body {
     margin: 0;
@@ -132,20 +134,21 @@
     }
 }
 
-.overlayPlayContainer{
+.overlayPlayContainer {
     margin-left: -160px;
 }
 
 /*# sourceMappingURL=main.css.map */
 
 /*Styles for slider*/
-.playerMP{
+.playerMP {
     width: 100%;
     display: inline-block;
     padding: 0px;
     margin: 0px;
 }
-.playerMP div{
+
+.playerMP div {
     width: 15%;
     float: left;
     text-align: center;
@@ -153,7 +156,8 @@
     margin: 0px;
     line-height: 36px;
 }
-.playerMP div:nth-child(2){
+
+.playerMP div:nth-child(2) {
     width: 70%;
 }
 
@@ -162,9 +166,11 @@ input[type=range] {
     margin: 18px 0;
     width: 100%;
 }
+
 input[type=range]:focus {
     outline: none;
 }
+
 input[type=range]::-webkit-slider-runnable-track {
     width: 100%;
     height: 2px;
@@ -172,6 +178,7 @@ input[type=range]::-webkit-slider-runnable-track {
     animate: 0.2s;
     background: #ffffff;
 }
+
 input[type=range]::-webkit-slider-thumb {
     height: 12px;
     width: 2px;
@@ -180,9 +187,11 @@ input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
     margin-top: -5px;
 }
+
 input[type=range]:focus::-webkit-slider-runnable-track {
     background: #367ebd;
 }
+
 input[type=range]::-moz-range-track {
     width: 100%;
     height: 8.4px;
@@ -193,6 +202,7 @@ input[type=range]::-moz-range-track {
     border-radius: 1.3px;
     border: 0.2px solid #010101;
 }
+
 input[type=range]::-moz-range-thumb {
     box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
     border: 1px solid #000000;
@@ -202,6 +212,7 @@ input[type=range]::-moz-range-thumb {
     background: #ffffff;
     cursor: pointer;
 }
+
 input[type=range]::-ms-track {
     width: 100%;
     height: 8.4px;
@@ -212,18 +223,21 @@ input[type=range]::-ms-track {
     border-width: 16px 0;
     color: transparent;
 }
+
 input[type=range]::-ms-fill-lower {
     background: #2a6495;
     border: 0.2px solid #010101;
     border-radius: 2.6px;
     box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
 }
+
 input[type=range]::-ms-fill-upper {
     background: #3071a9;
     border: 0.2px solid #010101;
     border-radius: 2.6px;
     box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
 }
+
 input[type=range]::-ms-thumb {
     box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
     border: 1px solid #000000;
@@ -233,9 +247,25 @@ input[type=range]::-ms-thumb {
     background: #ffffff;
     cursor: pointer;
 }
+
 input[type=range]:focus::-ms-fill-lower {
     background: #3071a9;
 }
+
 input[type=range]:focus::-ms-fill-upper {
     background: #367ebd;
+}
+
+/*style to change the background color*/
+.back-color {
+    filter: blur(6px) brightness(0.2);
+    position: fixed;
+    top: -5%;
+    left: -5%;
+    background-color: black;
+    background-size: cover;
+    height: 110%;
+    width: 110%;
+    z-index: -1;
+    opacity: .85;
 }
