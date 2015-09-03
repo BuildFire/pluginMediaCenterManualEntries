@@ -59,7 +59,7 @@
                                     })
                                 }
                                 MediaCenter.get().then(function success(result) {
-                                        if (result && result.data) {
+                                        if (result && result.data && result.id) {
                                             deferred.resolve(result);
                                         }
                                         else {

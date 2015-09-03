@@ -54,7 +54,7 @@
                                 });
                             };
                             MediaCenter.get().then(function success(result) {
-                                    if (result && result.data) {
+                                    if (result && result.id && result.data) {
                                         deferred.resolve(result);
                                     }
                                     else {

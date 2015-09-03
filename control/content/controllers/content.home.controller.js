@@ -69,7 +69,9 @@
                     }
                 };
                 var updateSearchOptions = function () {
-                    var order = Orders.getOrder(ContentHome.info.data.content.sortBy || Orders.ordersMap.Default);
+                    var order;
+                    if (ContentHome.info && ContentHome.info.data && ContentHome.info.data.content)
+                        order = Orders.getOrder(ContentHome.info.data.content.sortBy || Orders.ordersMap.Default);
                     if (order) {
                         var sort = {};
                         sort[order.key] = order.order;
