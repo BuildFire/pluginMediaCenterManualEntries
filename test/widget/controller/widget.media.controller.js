@@ -1,6 +1,3 @@
-/**
- * Created by intelligrape on 24/8/15.
- */
 describe('WidgetMedia Controller', function () {
     beforeEach(module('mediaCenterWidget'));
 
@@ -12,11 +9,8 @@ describe('WidgetMedia Controller', function () {
             COLLECTIONS = _COLLECTIONS_;
             DB = _DB_;
             $timeout = _$timeout_;
-            //Buildfire = _Buildfire_;
             $rootScope = _$rootScope_;
             $scope = $rootScope.$new();
-            //Messaging = _Messaging_;
-            //AppConfig = _AppConfig_;
             Orders = _Orders_;
             WidgetMedia = $controller('WidgetMediaCtrl', {
                 $scope: $scope,
@@ -59,23 +53,20 @@ describe('WidgetMedia Controller', function () {
 
     describe('WidgetMedia', function () {
         it('shd be initialised properly', function () {
-            console.log($controller);
             expect(WidgetMedia).toBeDefined();
         });
     });
-    /* describe('WidgetMediaCtrl.item', function () {
-     it('shd be initialised properly', function () {
-     var $scope = $rootScope.$new();
-     var controller = $controller('WidgetMediaCtrl', {$scope: $scope, item: media});
-     expect(controller.item).toBeDefined();
-     });
-     });
-     describe('WidgetMediaCtrl.changeBackgroundTheme', function () {
-     it('shd be initialised properly', function () {
-     var $scope = $rootScope.$new();
-     var controller = $controller('WidgetMediaCtrl', {$scope: $scope, AppConfig: {changeBackgroundTheme:function(image){}}});
-     controller.AppConfig.changeBackgroundTheme('imageUrl');
-     expect(AppConfig.setSettings());
-     });
-     });*/
+
+    describe('Units: units should be Defined', function () {
+        it('it should pass if COLLECTIONS is defined', function () {
+            expect(COLLECTIONS).toBeDefined();
+        });
+        it('it should pass if DB is defined', function () {
+            expect(DB).toBeDefined();
+        });
+        it('it should pass if Orders is defined', function () {
+            expect(Orders).not.toBeUndefined();
+        });
+
+    });
 });

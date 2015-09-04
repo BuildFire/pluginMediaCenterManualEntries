@@ -6,9 +6,14 @@
             var DesignHome = this;
             /* populate VM with resolve */
             DesignHome.mediaInfo = MediaCenterInfo;
-            var lastSaved = angular.copy(DesignHome.mediaInfo);
+
+            DesignHome._lastSaved = angular.copy(DesignHome.mediaInfo);
+
             /*Buildfire DB Service*/
-            var MediaCenter = new DB(COLLECTIONS.MediaCenter);
+
+            DesignHome._mediaCenter = new DB(COLLECTIONS.MediaCenter);
+            var MediaCenter = DesignHome._mediaCenter;
+
             DesignHome.layouts = {
                 listLayouts: [{name: "list-1"}, {name: "list-2"}, {name: "list-3"}, {name: "list-4"}],
                 itemLayouts: [{name: "item-1"}, {name: "item-2"}]
@@ -18,63 +23,38 @@
                     DesignHome.mediaInfo.data.design[type + "Layout"] = layoutName;
                 }
             };
-            /* initializing flag to prevent firing watcher on page load*/
-            var initializing = true;
-            /*Background image area begins*/
-            /*This function invokes Message to Widget*/
-            function invokeBGImageChangeMessaging() {
-                Messaging.sendMessageToWidget({
-                    name: EVENTS.DESIGN_BGIMAGE_CHANGE,
-                    message: {
-                        backgroundImage: DesignHome.mediaInfo.data.design.backgroundImage
-                    }
-                });
-            }
 
             var callback = function (error, result) {
                 if (error) {
                     console.error('Error:', error);
                 } else {
-                    console.log(result.selectedFiles[0]);
                     DesignHome.mediaInfo.data.design.backgroundImage = result.selectedFiles && result.selectedFiles[0] || null;
-                    invokeBGImageChangeMessaging();
                     $scope.$digest();
                 }
             };
+
+            DesignHome._callback = callback;
+
             var options = {showIcons: false, multiSelection: false};
             DesignHome.addBackgroundImage = function () {
                 Buildfire.imageLib.showDialog(options, callback);
             };
             DesignHome.removeBackgroundImage = function () {
                 DesignHome.mediaInfo.data.design.backgroundImage = null;
-                invokeBGImageChangeMessaging();
             };
 
             $scope.$watch(function () {
                 return DesignHome.mediaInfo;
             }, function () {
-                /* if first time don't call*/
-                if (initializing) {
-                    $timeout(function () {
-                        initializing = false;
-                    });
-                } else {
                     MediaCenter.update(DesignHome.mediaInfo.id, DesignHome.mediaInfo.data).then(function () {
                         /* sync lastSaved to latest value */
-                        lastSaved = angular.copy(DesignHome.mediaInfo);
+                        DesignHome._lastSaved = angular.copy(DesignHome.mediaInfo);
                         ///on Control when a user drills to a section reflect the same on the widget
-                        Messaging.sendMessageToWidget({
-                            name: EVENTS.DESIGN_LAYOUT_CHANGE,
-                            message: {
-                                listLayout: DesignHome.mediaInfo.data.design.listLayout,
-                                itemLayout: DesignHome.mediaInfo.data.design.itemLayout
-                            }
-                        });
                     }, function () {
                         /* revert to previous value in case of error*/
-                        DesignHome.mediaInfo = angular.copy(lastSaved);
+                        DesignHome.mediaInfo = angular.copy(DesignHome._lastSaved);
                     });
-                }
+
             }, true);
             /*Background image area ends*/
         }]);

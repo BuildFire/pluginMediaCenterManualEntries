@@ -9,7 +9,13 @@
             'ngAnimate',
             'ngRoute',
             'ui.bootstrap',
-            'infinite-scroll'
+            'infinite-scroll',
+            "ngSanitize",
+            "com.2fdevs.videogular",
+            //"info.vietnamcode.nampnq.videogular.plugins.youtube",
+            "com.2fdevs.videogular.plugins.controls",
+            "com.2fdevs.videogular.plugins.overlayplay",
+            "videosharing-embed"
         ])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component
@@ -53,7 +59,7 @@
                                     })
                                 }
                                 MediaCenter.get().then(function success(result) {
-                                        if (result && result.data) {
+                                        if (result && result.data && result.id) {
                                             deferred.resolve(result);
                                         }
                                         else {
@@ -107,6 +113,35 @@
                             return null;
                         }
                     }
+                })
+                .when('/nowplaying/:mediaId', {
+                    templateUrl: 'templates/layouts/now-playing.html',
+                    controllerAs: 'NowPlaying',
+                    controller: 'NowPlayingCtrl',
+                     resolve: {
+                     media: ['$q', 'DB', 'COLLECTIONS', 'Location', '$route', function ($q, DB, COLLECTIONS, Location, $route) {
+                     var deferred = $q.defer();
+                     var MediaContent = new DB(COLLECTIONS.MediaContent);
+                     if ($route.current.params.mediaId) {
+                     MediaContent.getById($route.current.params.mediaId).then(function success(result) {
+                     if (result && result.data) {
+                     deferred.resolve(result);
+                     }
+                     else {
+                     Location.goToHome();
+                     }
+                     },
+                     function fail() {
+                     Location.goToHome();
+                     }
+                     );
+                     }
+                     else {
+                     Location.goToHome();
+                     }
+                     return deferred.promise;
+                     }]
+                     }
                 })
 
                 .otherwise('/');

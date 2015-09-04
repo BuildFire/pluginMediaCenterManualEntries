@@ -1,10 +1,10 @@
-describe('mediaCenterWidget: Services', function () {
+describe('mediaCenterDesign: Services', function () {
     var COLLECTIONS,
         CODES,
         MESSAGES,
         EVENTS,
         PATHS;
-    beforeEach(module('mediaCenterWidget'));
+    beforeEach(module('mediaCenterDesign'));
     beforeEach(inject(function ($injector) {
         COLLECTIONS = $injector.get('COLLECTIONS');
         CODES = $injector.get('CODES');

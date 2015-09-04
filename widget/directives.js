@@ -1,7 +1,7 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .directive('imageCarousel', function () {
+        /*.directive('imageCarousel', function () {
             return {
                 restrict: 'A',
                 link: function (scope, elem, attrs) {
@@ -28,6 +28,7 @@
                             scope.$apply();
                         }, 100);
                     }
+
                     initCarousel();
                     scope.$watch("imagesUpdated", function (newVal, oldVal) {
                         if (newVal) {
@@ -42,15 +43,15 @@
                 }
             }
         })
-        .directive('errSrc', function() {
+        .directive('errSrc', function () {
             return {
-                link: function(scope, element, attrs) {
-                    element.bind('error', function() {
+                link: function (scope, element, attrs) {
+                    element.bind('error', function () {
                         if (attrs.src != attrs.errSrc) {
                             attrs.$set('src', attrs.errSrc);
                         }
                     });
-                    attrs.$observe('ngSrc', function(value) {
+                    attrs.$observe('ngSrc', function (value) {
                         if (!value && attrs.errSrc) {
                             attrs.$set('src', attrs.errSrc);
                         }
@@ -58,35 +59,82 @@
                 }
             }
         })
-        .directive('videojs', function () {
-            var linker = function (scope, element, attrs){
+        .directive('videoJs', function () {
+            var linker = function (scope, element, attrs) {
                 attrs.type = attrs.type || "video/mp4";
-
                 var setup = {
-                    'techOrder' : ['html5', 'flash'],
-                    'controls' : true,
-                    'preload' : 'auto',
-                    'autoplay' : false,
-                    'height' : 264,
-                    'width' : 315
+                    'techOrder': ['html5', 'flash'],
+                    'controls': true,
+                    'preload': 'auto',
+                    'autoplay': false,
+                    'height': 264,
+                    'width': 315
                 };
 
-                var videoid = 'vid';
+                var videoid = 'video';
                 attrs.id = videoid;
-                element.attr('id', attrs.id);
-                element.attr('poster', attrs.poster);
-                var player = _V_(attrs.id, setup, function(){
-                    var source =([
-                        {type:"video/mp4", src:attrs.src}
-                    ]);
-                    this.src({type : attrs.type, src: source });
-                });
+                var videlem;
+                element.attr('id', videoid);
+                element.html('');
+                videlem = document.createElement("video");
+                videlem.setAttribute('class', "video-js vjs-default-skin vjs-big-play-centered");
+                videlem.setAttribute("height", "264");
+                videlem.setAttribute("width", "315");
+                videlem.setAttribute("id", "vid");
+                videlem.setAttribute("data-setup", setup);
+                videlem.setAttribute("controls", "");
+                var sourceMP4 = document.createElement("source");
+                sourceMP4.type = "video/mp4";
+                sourceMP4.src = attrs.videoUrl;
+                videlem.appendChild(sourceMP4);
+                element.append(videlem);
+                setTimeout(function () {
+                    videojs("vid", {}, function () {
+                        myPlayer = this;
+                        myPlayer.play();
+                    });
+                }, 2000);
             }
             return {
-                restrict : 'A',
-                link : linker
+                restrict: 'A',
+                link: linker
             };
         })
+        .directive('audioJs', function () {
+            var linker = function (scope, element, attrs) {
+                attrs.type = attrs.type || "audio/mp3";
+                var setup = {
+                    'techOrder': ['html5', 'flash'],
+                    'controls': true,
+                    'preload': 'auto',
+                    'autoplay': false,
+                    'height': 264,
+                    'width': 315
+                };
+
+                var videoid = 'audiojs';
+                attrs.id = videoid;
+                var videlem;
+                element.attr('id', videoid);
+                element.html('');
+                videlem = document.createElement("audio");
+                videlem.setAttribute('class', "video-js vjs-default-skin vjs-big-play-centered");
+                videlem.setAttribute("height", "264");
+                videlem.setAttribute("width", "315");
+                videlem.setAttribute("id", "audio");
+                videlem.setAttribute("data-setup", setup);
+                videlem.setAttribute("controls", "");
+                var sourceMP3 = document.createElement("source");
+                sourceMP3.setAttribute('src', attrs.audioUrl);
+                sourceMP3.setAttribute('type', "audio/mp3");
+                videlem.appendChild(sourceMP3);
+                element.append(videlem);
+            }
+            return {
+                restrict: 'A',
+                link: linker
+            };
+        })*/
         .directive('playBtn', function () {
             var linker = function (scope, element, attrs) {
                 if (attrs.playBtn == 'true')
@@ -97,19 +145,23 @@
                 link: linker
             };
         })
-        .directive('buildfireCarousel', function () {
+        .directive('buildfireCarousel', function ($timeout) {
             return {
                 restrict: 'E',
                 replace: true,
                 link: function (scope, elem, attrs) {
                     var view;
+
                     function initCarousel() {
-                        var imgs = scope.images || [];
-                        modifySource(imgs);
-                        view = new buildfire.components.carousel.view("#carousel", imgs);
+                        $timeout(function () {
+                            var imgs = scope.images || [];
+                            modifySource(imgs);
+                            view = new buildfire.components.carousel.view("#carousel", imgs);
+                        });
+
                     }
 
-                    function modifySource(arr){
+                    function modifySource(arr) {
                         angular.forEach(arr, function (i) {
                             i.iconUrl = i.imageUrl;
                         });
@@ -120,9 +172,10 @@
 
                     scope.$watch(function () {
                         return scope.images;
-                    },function(newValue,oldValue) {
+                    }, function (newValue, oldValue) {
                         var imgs = angular.copy(newValue);
                         modifySource(imgs);
+                        if(view)
                         view.loadItems(imgs);
                     });
 

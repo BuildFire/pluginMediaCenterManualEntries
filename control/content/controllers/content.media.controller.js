@@ -11,7 +11,7 @@
         .controller('ContentMediaCtrl', ['$scope', '$window', 'Buildfire', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig',
             function ($scope, $window, Buildfire, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig) {
                 /**
-                 * Using Control as syntex this
+                 * Using Control as syntax this
                  */
                 var ContentMedia = this;
                 var tmrDelayForMedia = null;
@@ -148,7 +148,7 @@
                     ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
                     MediaContent.insert(ContentMedia.item.data).then(function (data) {
                         MediaContent.getById(data.id).then(function (item) {
-                            ContentMedia.item = item;
+                            //ContentMedia.item = item;
                             updateMasterItem(item);
                             MediaCenterSettings.content.rankOfLastItem = item.data.rank;
                             MediaCenter.update(appId, MediaCenterSettings).then(function (data) {
@@ -303,6 +303,7 @@
                         id: ContentMedia.item.id || null
                     }
                 });
+
                 /**
                  * Watch on ContentMedia.item to see changes and call updateItemsWithDelay
                  */

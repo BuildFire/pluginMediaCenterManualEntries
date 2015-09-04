@@ -1,8 +1,8 @@
 {
-  "author":"[Your Name here]"
-,"pluginName":"[Your Plugin Name here]"
-,"pluginDescription":"[A short description of what your plugin does]"
-,"supportEmail":"[Your support Email]"
+  "author":"BuildFire"
+,"pluginName":"MediaCenterManualEntriesPlugin"
+,"pluginDescription":"This plugin is used for playing audio and video media files using HTML5 player and Youtube/Vimeo players."
+,"supportEmail":"support@buildfire.com"
 ,"control":{
   "content":{
     "enabled":true
@@ -11,7 +11,7 @@
     "enabled":true
   }
 , "settings":{
-    "enabled":true
+    "enabled":false
   }
 }
 ,"widget":{

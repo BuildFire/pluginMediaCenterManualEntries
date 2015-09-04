@@ -1,12 +1,11 @@
-describe('Unit: mediaCenterWidget: Services', function () {
+describe('mediaCenterServices: Services', function () {
     var COLLECTIONS;
-    beforeEach(module('mediaCenterWidget'));
-
+    beforeEach(module('mediaCenterServices'));
     beforeEach(inject(function ($injector) {
         COLLECTIONS = $injector.get('COLLECTIONS');
     }));
 
-    describe('Unit : Buildfire service', function () {
+    describe('Buildfire service', function () {
         var Buildfire;
         beforeEach(inject(
             function (_Buildfire_) {
@@ -16,8 +15,7 @@ describe('Unit: mediaCenterWidget: Services', function () {
             expect(Buildfire).toBeDefined();
         });
     });
-
-    describe('Unit : MediaCenter service', function () {
+    describe('MediaCenter service', function () {
         var DB, MediaCenter;
         beforeEach(inject(
             function (_DB_) {
@@ -29,16 +27,15 @@ describe('Unit: mediaCenterWidget: Services', function () {
             expect(MediaCenter._tagName).toEqual(COLLECTIONS.MediaCenter);
         });
         it('MediaCenter methods should exists', function () {
-            expect(MediaCenter.get).toBeDefined();
-            expect(MediaCenter.find).toBeDefined();
-            expect(MediaCenter.save).toBeDefined();
-            expect(MediaCenter.update).toBeDefined();
-            expect(MediaCenter.delete).toBeDefined();
-            expect(MediaCenter.insert).toBeDefined();
-        });
+         expect(MediaCenter.get).toBeDefined();
+         expect(MediaCenter.find).toBeDefined();
+         expect(MediaCenter.save).toBeDefined();
+         expect(MediaCenter.update).toBeDefined();
+         expect(MediaCenter.delete).toBeDefined();
+         expect(MediaCenter.insert).toBeDefined();
+         });
     });
-
-    describe('Unit : MediaContent service', function () {
+    describe('MediaContent service', function () {
         var DB, MediaContent;
         beforeEach(inject(
             function (_DB_) {
@@ -58,26 +55,4 @@ describe('Unit: mediaCenterWidget: Services', function () {
             expect(MediaContent.insert).toBeDefined();
         });
     });
-
-
-});
-
-describe('Unit : ImageLib Factory', function () {
-    //var ImageLibrary, Buildfire, STATUS_MESSAGES, STATUS_CODE, q;
-    beforeEach(module('mediaCenterServices'));
-
-    beforeEach(inject(function () {
-        Buildfire = {
-            imageLib: {}
-        };
-        Buildfire.imageLib = jasmine.createSpyObj('Buildfire.imageLib', ['showDialog']);
-    }));
-
-    it('Buildfire should exist and be an object', function () {
-        expect(typeof Buildfire).toEqual('object');
-    });
-    it('Buildfire.imageLib should exist and be an object', function () {
-        expect(typeof Buildfire.imageLib).toEqual('object');
-    });
-
 });

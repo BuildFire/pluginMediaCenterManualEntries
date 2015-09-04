@@ -28,5 +28,6 @@
                     return "";
                 }
             };
-        }]);
+        }])
+        ;
 })(window.angular, window.buildfire, window.location);

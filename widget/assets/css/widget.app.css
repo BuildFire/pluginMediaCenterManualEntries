@@ -1,15 +1,17 @@
 .customBackground {
-    background-position: 50% 0%;
+    background-position: center center !important;
     background-size: initial;
-    background-repeat: repeat;
+    background-repeat: no-repeat !important;
     background-origin: initial;
     background-clip: initial;
     background-attachment: fixed;
     background-color: #010101;
 }
+
 .plugin-banner {
     overflow: hidden;
 }
+
 .owl-theme {
     position: relative;
     overflow: auto;
@@ -22,10 +24,11 @@
     max-height: 380px;
     min-height: 192px;
 }
+
 .plugin-slide {
     position: relative;
     max-height: 380px;
-    min-height: 192px;
+    /*min-height: 192px; commented by Lakshay on 1 Sept; min height gives a blank area if small video is being shown*/
 }
 
 .plugin-slide img {
@@ -78,7 +81,210 @@
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-#scroll-infinite{
+#scroll-infinite {
     overflow-y: auto;
     max-height: 580px;
+}
+
+/*html, body {
+    margin: 0;
+    padding: 0;
+}*/
+
+.videogular-container {
+    width: 100%;
+    /*height: 320px;*/
+    margin: auto;
+    overflow: hidden;
+}
+
+@media (min-width: 1200px) {
+    .videogular-container {
+        width: 1170px;
+        height: 658.125px;
+    }
+
+    .videogular-container.audio {
+        width: 1170px;
+        height: 50px;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .videogular-container {
+        width: 940px;
+        height: 528.75px;
+    }
+
+    .videogular-container.audio {
+        width: 940px;
+        height: 50px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .videogular-container {
+        width: 728px;
+        height: 409.5px;
+    }
+
+    .videogular-container.audio {
+        width: 728px;
+        height: 50px;
+    }
+}
+
+.overlayPlayContainer {
+    margin-left: -160px;
+}
+
+/*# sourceMappingURL=main.css.map */
+
+/*Styles for slider*/
+.playerMP {
+    width: 100%;
+    display: inline-block;
+    padding: 0px;
+    margin: 0px;
+}
+
+.playerMP div {
+    width: 15%;
+    float: left;
+    text-align: center;
+    padding: 0px;
+    margin: 0px;
+    line-height: 36px;
+}
+
+.playerMP div:nth-child(2) {
+    width: 70%;
+}
+
+input[type=range] {
+    -webkit-appearance: none;
+    margin: 18px 0;
+    width: 100%;
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 2px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: #ffffff;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    height: 12px;
+    width: 2px;
+    background: #ffffff;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -5px;
+}
+
+input[type=range]:focus::-webkit-slider-runnable-track {
+    background: #367ebd;
+}
+
+input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 8.4px;
+    cursor: pointer;
+    animate: 0.2s;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+    background: #3071a9;
+    border-radius: 1.3px;
+    border: 0.2px solid #010101;
+}
+
+input[type=range]::-moz-range-thumb {
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+    border: 1px solid #000000;
+    height: 36px;
+    width: 16px;
+    border-radius: 3px;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+input[type=range]::-ms-track {
+    width: 100%;
+    height: 8.4px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: transparent;
+    border-color: transparent;
+    border-width: 16px 0;
+    color: transparent;
+}
+
+input[type=range]::-ms-fill-lower {
+    background: #2a6495;
+    border: 0.2px solid #010101;
+    border-radius: 2.6px;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+
+input[type=range]::-ms-fill-upper {
+    background: #3071a9;
+    border: 0.2px solid #010101;
+    border-radius: 2.6px;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+
+input[type=range]::-ms-thumb {
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+    border: 1px solid #000000;
+    height: 36px;
+    width: 16px;
+    border-radius: 3px;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+input[type=range]:focus::-ms-fill-lower {
+    background: #3071a9;
+}
+
+input[type=range]:focus::-ms-fill-upper {
+    background: #367ebd;
+}
+
+/*style to change the background color*/
+.back-color {
+    filter: blur(6px) brightness(0.2);
+    position: fixed;
+    top: -5%;
+    left: -5%;
+    background-color: black;
+    background-size: cover;
+    height: 110%;
+    width: 110%;
+    z-index: -1;
+    opacity: .85;
+}
+
+
+.layout1 .list-layout .list-item-odd{
+    padding-left:15px;
+    padding-right:1%;
+}
+.layout1 .list-layout .list-item-even{
+    padding-left:1%;
+    padding-right:15px;
+}
+
+.layout4 .list-layout .list-item-odd{
+    padding-left:15px;
+    padding-right:1%;
+}
+.layout4 .list-layout .list-item-even{
+    padding-left:1%;
+    padding-right:15px;
 }

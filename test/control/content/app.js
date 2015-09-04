@@ -1,4 +1,4 @@
-xdescribe('mediaCenterContent', function () {
+describe('mediaCenterContent', function () {
     beforeEach(module('mediaCenterContent'));
     var location, route, rootScope;
     beforeEach(inject(
@@ -39,6 +39,7 @@ xdescribe('mediaCenterContent', function () {
             expect(route.current.controller).toBe('ContentMediaCtrl')
         });
     });
+
     describe('Media Edit route', function() {
         beforeEach(inject(
             function($httpBackend) {

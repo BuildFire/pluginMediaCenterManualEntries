@@ -16,6 +16,7 @@
             'infinite-scroll',
             'bngCsv',
             'ui.tinymce'
+
         ])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component
@@ -53,7 +54,7 @@
                                 });
                             };
                             MediaCenter.get().then(function success(result) {
-                                    if (result && result.data) {
+                                    if (result && result.id && result.data) {
                                         deferred.resolve(result);
                                     }
                                     else {

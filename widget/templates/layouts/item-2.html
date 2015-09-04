@@ -1,12 +1,13 @@
 <div class="holder padding-zero">
     <div class="media-center-plugin layout2">
-        <div class="people-banner border-bottom-grey"
-             style="background:url(http://www.placehold.it/400x400.jpg) no-repeat; background-position:center center; background-size:cover;">
+        <div class="people-banner border-bottom-grey">
             <div class="people-bg padding-top-fifteen padding-bottom-fifteen clearfix">
                 <div class="people-holder clearfix">
-                    <div class="people-media text-center" ng-if="WidgetMedia.item.data.topImage">
-                        <!--<img src="http://www.placehold.it/250x400.jpg">-->
-                        <img ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 250 : 400}}">
+                    <div class="people-media text-center">
+                       <img data-ng-hide="WidgetMedia.item.data.videoUrl || !WidgetMedia.item.data.topImage"
+                             ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 250 : 400}}">
+
+                        <div ng-include="'templates/layouts/videoPlayer.html'"></div>
                     </div>
                     <div class="people-info text-center col-md-12">
                         <h5 class="ellipsis margin-top-fifteen">{{WidgetMedia.item.data.title}}</h5>
@@ -17,9 +18,10 @@
         </div>
         <div class="padded">
             <div class="link-list">
-                <a class="text-primary" ng-if="WidgetMedia.item.data.audioUrl">Listen</a>
-                <a class="text-primary" ng-if="WidgetMedia.item.data.videoUrl">Watch</a>
-                <a class="text-primary" ng-if="WidgetMedia.item.data.srcUrl">View Source</a>
+                <a class="text-primary" ng-if="WidgetMedia.item.data.audioUrl"
+                   href="#/nowplaying/{{WidgetMedia.item.id}}">Listen</a>
+                <a class="text-primary" ng-if="WidgetMedia.item.data.videoUrl" ng-click="WidgetMedia.API.play()">Watch</a>
+                <a class="text-primary" ng-if="WidgetMedia.item.data.srcUrl" href="{{WidgetMedia.item.data.srcUrl}}" target="_blank">View Source</a>
                 <a class="text-primary" ng-if="WidgetMedia.item.data.links.length">Share</a>
             </div>
             <hr class="small">

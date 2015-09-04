@@ -32,5 +32,14 @@
     "angular-route": "~1.4.0",
     "angular-animate": "~1.4.3",
     "angular-ui-tinymce": "~0.0.9"
+  },
+  "resolutions": {
+    "angular": "~1.x"
+  },
+  "dependencies": {
+    "videogular-controls": "~1.2.6",
+    "videogular-overlay-play": "~1.2.6",
+    "ng-videosharing-embed": "~0.3.3",
+    "ngSanitize": "~0.0.2"
   }
 }
