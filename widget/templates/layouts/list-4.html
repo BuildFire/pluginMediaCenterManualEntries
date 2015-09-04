@@ -20,7 +20,7 @@
                             <div class="list-media-holder"
                                  play-btn="{{WidgetHome.items[$index].data.videoUrl.length > 0}}">
                                 <img ng-if="WidgetHome.items[$index].data.topImage"
-                                     ng-src="{{WidgetHome.items[$index].data.topImage | resizeImage:240:160}}">
+                                     ng-src="{{WidgetHome.items[$index].data.topImage | cropImage:154:86}}">
                             </div>
                         </div>
                         <div class="list-item-copy text-left">
@@ -35,7 +35,7 @@
                             <div class="list-media-holder"
                                  play-btn="{{WidgetHome.items[$index+1].data.videoUrl.length > 0}}">
                                 <img ng-if="WidgetHome.items[$index + 1].data.topImage"
-                                     ng-src="{{WidgetHome.items[$index + 1].data.topImage | resizeImage:240:160}}">
+                                     ng-src="{{WidgetHome.items[$index + 1].data.topImage | cropImage:154:86}}">
                             </div>
                         </div>
                         <div class="list-item-copy text-left">
