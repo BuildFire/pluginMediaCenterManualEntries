@@ -11,7 +11,7 @@
                 console.log(WidgetMedia.API);
             };
 
-            WidgetMedia.config = {
+            WidgetMedia.videoPlayerConfig = {
                 autoHide: false,
                 preload: "none",
                 sources: undefined,
