@@ -15,7 +15,7 @@
 
 
                 <div ng-repeat="item in WidgetHome.items" ng-if="$index % 2 == 0" class="row">
-                    <div class="list-item col-xs-6 pull-left">
+                    <div class="list-item-odd col-xs-6 pull-left">
                         <div class="list-item-media text-center border-radius-three overflow-hidden">
                             <div class="list-media-holder"
                                  play-btn="{{WidgetHome.items[$index].data.videoUrl.length > 0}}">
@@ -30,7 +30,7 @@
                             <span class="list-item-date">{{WidgetHome.items[$index].data.dateCreated  | jsDate | date:"MMMM dd, yyyy"}}</span>
                         </div>
                     </div>
-                    <div class="list-item col-xs-6 pull-left" ng-if="WidgetHome.items[$index + 1]">
+                    <div class="list-item-even col-xs-6 pull-left" ng-if="WidgetHome.items[$index + 1]">
                         <div class="list-item-media text-center border-radius-three overflow-hidden">
                             <div class="list-media-holder"
                                  play-btn="{{WidgetHome.items[$index+1].data.videoUrl.length > 0}}">

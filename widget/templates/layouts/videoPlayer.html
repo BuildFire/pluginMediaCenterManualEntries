@@ -2,10 +2,10 @@
     <div ng-show="WidgetMedia.item.data.videoUrl" class="videogular-container">
         <videogular data-ng-hide="WidgetMedia.item.data.videoUrl | isYoutubeVimeoLink" vg-player-ready="WidgetMedia.onPlayerReady($API)"
                     vg-change-source="WidgetMedia.sourceChanged($source)"
-                    vg-theme="WidgetMedia.config.theme.url"
+                    vg-theme="WidgetMedia.videoPlayerConfig.theme.url"
                     vg-error="WidgetMedia.onVideoError($event)">
-            <vg-media vg-src="WidgetMedia.config.sources"
-                      vg-tracks="WidgetMedia.config.tracks"
+            <vg-media vg-src="WidgetMedia.videoPlayerConfig.sources"
+                      vg-tracks="WidgetMedia.videoPlayerConfig.tracks"
                       vg-native-controls="false">
             </vg-media>
             <vg-controls vg-autohide="true">

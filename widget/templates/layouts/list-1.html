@@ -16,7 +16,7 @@
                      infinite-scroll-container='"#scroll-infinite"'
                      infinit-scroll-disabled="WidgetHome.noMore"
                       >
-                    <div class="list-item col-xs-6 pull-left" ng-repeat="item in WidgetHome.items">
+                    <div class="col-xs-6 pull-left" ng-repeat="item in WidgetHome.items" ng-class-odd="list-item-odd" ng-class-even="list-item-even" >
                         <div class="list-item-media text-center border-radius-three overflow-hidden">
                             <div play-btn="{{item.data.videoUrl.length > 0}}" class="list-media-holder"
                                  ng-if="item.data.topImage">

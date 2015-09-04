@@ -7,7 +7,8 @@
             WidgetMedia.onPlayerReady = function ($API) {
                 WidgetMedia.API = $API;
             };
-            WidgetMedia.config = {
+
+            WidgetMedia.videoPlayerConfig = {
                 autoHide: false,
                 preload: "none",
                 sources: undefined,
