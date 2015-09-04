@@ -4,8 +4,10 @@
     <div class="media-center-plugin">
         <div class="media-holder">
             <div class="media-inner text-center">
-                <img class="border-radius-four"
+                <img ng-if="NowPlaying.item.data.image" class="border-radius-four"
                      ng-src="{{NowPlaying.item.data.image}}" height="260px" width="260">
+                <img ng-if="!NowPlaying.item.data.image" class="border-radius-four"
+                     src="assets/images/now-playing.png" height="260px" width="260">
             </div>
         </div>
         <div class="slider margin-top-twenty">
