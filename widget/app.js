@@ -86,7 +86,6 @@
                             if ($route.current.params.mediaId) {
                                 MediaContent.getById($route.current.params.mediaId).then(function success(result) {
                                         if (result && result.data) {
-                                            console.log(result.data);
                                             deferred.resolve(result);
                                         }
                                         else {

@@ -4,10 +4,16 @@
         .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', function ($scope, $routeParams, media, Buildfire) {
             var NowPlaying = this;
             NowPlaying.item = media;
-            NowPlaying.playing=false;
-            NowPlaying.paused=false;
+            NowPlaying.playing = false;
+            NowPlaying.paused = false;
             NowPlaying.track = media.data.audioUrl;
+            /**
+             * audioPlayer is Buildfire.services.media.audioPlayer.
+             */
             var audioPlayer = Buildfire.services.media.audioPlayer;
+            /**
+             * audioPlayer.onEvent callback calls when audioPlayer event fires.
+             */
             audioPlayer.onEvent(function (e) {
                 if (e.event == "timeUpdate") {
                     $scope.currentTime = e.data.currentTime;
@@ -15,37 +21,47 @@
                     $scope.$apply();
                 }
                 else if (e.event == "audioEnded") {
-                    NowPlaying.playing=false;
+                    NowPlaying.playing = false;
                     $scope.$apply();
                 }
-                else if(e.event == "pause"){
-                    NowPlaying.playing=false;
+                else if (e.event == "pause") {
+                    NowPlaying.playing = false;
                     $scope.$apply();
                 }
             });
+            /**
+             * NowPlaying.playAudio() plays audioPlayer service.
+             */
             NowPlaying.playAudio = function () {
-                NowPlaying.playing=true;
+                NowPlaying.playing = true;
                 if (NowPlaying.paused) {
                     audioPlayer.play();
                 }
-                else if(NowPlaying.track) {
+                else if (NowPlaying.track) {
                     audioPlayer.play({url: NowPlaying.track});
                 }
             };
-            NowPlaying.previous = function () {
-                audioPlayer.previous();
-            };
-           /* NowPlaying.skip = function (num) {
-                audioPlayer.skip(num);
-            };*/
             NowPlaying.pause = function () {
-                NowPlaying.paused=true;
+                NowPlaying.paused = true;
                 audioPlayer.pause();
             };
+
+            /*NowPlaying.skip = function (num) {
+                audioPlayer.skip(num);
+            };
+
             NowPlaying.next = function () {
                 audioPlayer.next();
             };
 
+            NowPlaying.previous = function () {
+                audioPlayer.previous();
+            };*/
+
+            /**
+             * slider to show the slider on now-playing page.
+             * @type {*|jQuery|HTMLElement}
+             */
             var slider = $('#slider');
 
             slider.onchange = function () {

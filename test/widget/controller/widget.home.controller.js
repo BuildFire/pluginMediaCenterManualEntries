@@ -40,7 +40,6 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
 
     describe('Unit : units should be Defined', function () {
         it('it should pass if WidgetHome is defined', function () {
-            console.log(WidgetHome);
             expect(WidgetHome).toBeDefined();
         });
         it('it should pass if DB is defined', function () {
