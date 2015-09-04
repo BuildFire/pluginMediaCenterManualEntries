@@ -269,3 +269,22 @@ input[type=range]:focus::-ms-fill-upper {
     z-index: -1;
     opacity: .85;
 }
+
+
+.layout1 .list-layout .list-item-odd{
+    padding-left:15px;
+    padding-right:1%;
+}
+.layout1 .list-layout .list-item-even{
+    padding-left:1%;
+    padding-right:15px;
+}
+
+.layout4 .list-layout .list-item-odd{
+    padding-left:15px;
+    padding-right:1%;
+}
+.layout4 .list-layout .list-item-even{
+    padding-left:1%;
+    padding-right:15px;
+}
