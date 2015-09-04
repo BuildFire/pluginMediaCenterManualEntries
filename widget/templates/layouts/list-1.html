@@ -20,7 +20,7 @@
                         <div class="list-item-media text-center border-radius-three overflow-hidden">
                             <div play-btn="{{item.data.videoUrl.length > 0}}" class="list-media-holder"
                                  ng-if="item.data.topImage">
-                                <img ng-src="{{item.data.topImage | resizeImage:240:160}}">
+                                <img ng-src="{{item.data.topImage | cropImage:153:86}}">
                             </div>
                         </div>
                         <div class="list-item-copy text-left">
