@@ -18,7 +18,6 @@ describe('buildFire-Carousel-Directive', function () {
 
 
     it('should return an empty div with id carousel in case of no images', function () {
-        console.log(el);
         expect(el.html()).toEqual('');
     });
 

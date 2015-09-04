@@ -4,6 +4,10 @@
         .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', '$rootScope', 'Buildfire', 'MediaCenterInfo', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders',
             function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, MediaCenterInfo, AppConfig, Messaging, EVENTS, PATHS, Location, Orders) {
                 var WidgetHome = this;
+                /**
+                 * WidgetHome.media contains MediaCenterInfo.
+                 * @type {MediaCenterInfo|*}
+                 */
                 WidgetHome.media = MediaCenterInfo;
 
                 var _skip = 0,
@@ -13,13 +17,23 @@
                         skip: _skip,
                         limit: _limit + 1 // the plus one is to check if there are any more
                     };
-
+                /**
+                 * WidgetHome.isBusy is used for infinite scroll.
+                 * @type {boolean}
+                 */
                 WidgetHome.isBusy = false;
-
-                var currentBackgroundImage = WidgetHome.media.data.design.backgroundImage;
+                /**
+                 * AppConfig.setSettings() set the Settings.
+                 */
                 AppConfig.setSettings(MediaCenterInfo.data);
-                AppConfig.changeBackgroundTheme(currentBackgroundImage);
-
+                /**
+                 * AppConfig.changeBackgroundTheme() change the background image.
+                 */
+                AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
+                /**
+                 * Messaging.onReceivedMessage is called when any event is fire from Content/design section.
+                 * @param event
+                 */
                 Messaging.onReceivedMessage = function (event) {
                     if (event) {
                         switch (event.name) {
@@ -40,20 +54,13 @@
                                 }
                                 Location.go(url);
                                 break;
-                          /*  case EVENTS.DESIGN_LAYOUT_CHANGE:
-                                WidgetHome.media.data.design.listLayout = event.message.listLayout;
-                                $scope.$digest();
-                                break;
-                            case EVENTS.DESIGN_BGIMAGE_CHANGE:
-                                WidgetHome.media.data.design.backgroundImage = event.message.backgroundImage;
-                                AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
-                                $scope.$apply();
-
-                                break;*/
                         }
                     }
                 };
 
+                /**
+                 * Buildfire.datastore.onUpdate method calls when Data is changed.
+                 */
                 Buildfire.datastore.onUpdate(function (event) {
                     $scope.imagesUpdated = false;
                     MediaCenter.get().then(function success(result) {
@@ -62,13 +69,11 @@
                                 $scope.imagesUpdated = true;
 
                                 /* reset Search options */
-                                WidgetHome.noMore=false;
+                                WidgetHome.noMore = false;
                                 searchOptions.skip = 0;
                                 /* Reset skip to ensure search begins from scratch*/
-
                                 AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
-
-                                WidgetHome.items =[];
+                                WidgetHome.items = [];
                                 WidgetHome.loadMore();
 
                                 $scope.$apply();
@@ -77,32 +82,19 @@
                         function fail(error) {
                         }
                     );
-
-                    /*switch (event.tag) {
-                     case COLLECTIONS.MediaContent:
-                     if (event.data) {
-                     /!**
-                     * condition added to update the background image
-                     *!/
-                     if (event.data.design && event.data.design.backgroundImage && currentBackgroundImage == event.data.design.backgroundImage) {
-                     // do something on same
-                     }
-                     else {
-                     currentBackgroundImage = event.data.design.backgroundImage;
-                     AppConfig.changeBackgroundTheme(currentBackgroundImage);
-                     }
-                     }
-                     break;
-                     }*/
-
                 });
 
+                /**
+                 * Create instance of MediaContent, MediaCenter db collection
+                 * @type {DB}
+                 */
                 var MediaContent = new DB(COLLECTIONS.MediaContent);
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
 
-                var currentItemLayout,
-                    currentListLayout, currentSortOrder, currentBackgroundImage;
-
+                /**
+                 * updateGetOptions method checks whether sort options changed or not.
+                 * @returns {boolean}
+                 */
                 var updateGetOptions = function () {
                     var order = Orders.getOrder(WidgetHome.media.data.content.sortBy || Orders.ordersMap.Default);
                     if (order) {
@@ -115,14 +107,29 @@
                         return false;
                     }
                 };
-
+                /**
+                 * isDefined method checks whether item.imageUrl is defined or not.
+                 * @param item
+                 * @returns {boolean}
+                 */
                 $scope.isDefined = function (item) {
                     return item.imageUrl !== undefined && item.imageUrl !== '';
                 };
 
+                /**
+                 * WidgetHome.items holds the array of items.
+                 * @type {Array}
+                 */
                 WidgetHome.items = [];
+                /**
+                 * WidgetHome.noMore checks for further data
+                 * @type {boolean}
+                 */
                 WidgetHome.noMore = false;
 
+                /**
+                 * loadMore method loads the items in list page.
+                 */
                 WidgetHome.loadMore = function () {
 
                     if (WidgetHome.isBusy && !WidgetHome.noMore) {
@@ -131,9 +138,7 @@
                     updateGetOptions();
                     WidgetHome.isBusy = true;
 
-
                     MediaContent.find(searchOptions).then(function success(result) {
-
                         if (WidgetHome.noMore)
                             return;
 
@@ -150,7 +155,7 @@
                         WidgetHome.isBusy = false;
                     }, function fail() {
                         WidgetHome.isBusy = false;
-                        console.log('error');
+                        console.error('error');
                     });
                 };
 

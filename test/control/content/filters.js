@@ -38,16 +38,22 @@ describe('Unit: cropImage filter', function () {
 });
 describe('Unit: safeHtml filter', function () {
     beforeEach(module('mediaCenterFilters'));
-    var filter;
-    beforeEach(inject(function (_$filter_) {
+    var filter,$sce,$scope;
+    beforeEach(inject(function (_$rootScope_,_$filter_,_$sce_) {
         filter = _$filter_;
+        $sce=_$sce_;
+
+        $scope=_$rootScope_;
     }));
 
-    /*it('it should pass if "safeHtml" filter returns text', function () {
+    it('it should pass if "safeHtml" filter returns text', function () {
      var result;
-     result = filter('safeHtml')('<div>Hello</div>');
-     expect(result).toEqual("Hello");
-     });*/
+        var input='<div>Hello</div>';
+     result = filter('safeHtml')(input);
+        var tempRes=$sce.trustAsHtml(input);
+        $scope.$digest();
+     expect(result).toEqual(tempRes);
+     });
 
     it('it should give black even if parameter is blank', function () {
         var result;

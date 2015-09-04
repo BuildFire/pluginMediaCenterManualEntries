@@ -1,16 +1,12 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce",function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce) {
             var WidgetMedia = this;
-
             WidgetMedia.API = null;
-
             WidgetMedia.onPlayerReady = function ($API) {
                 WidgetMedia.API = $API;
-                console.log(WidgetMedia.API);
             };
-
             WidgetMedia.config = {
                 autoHide: false,
                 preload: "none",
@@ -20,7 +16,6 @@
                     url: "http://www.videogular.com/styles/themes/default/latest/videogular.css"
                 }
             };
-
             WidgetMedia.changeVideoSrc = function () {
                 if (WidgetMedia.item.data.videoUrl)
                     WidgetMedia.config.sources = [{
@@ -28,7 +23,6 @@
                         type: 'video/' + WidgetMedia.item.data.videoUrl.split('.').pop() //"video/mp4"
                     }];
             };
-
             WidgetMedia.media = {
                 data: AppConfig.getSettings()
             };
@@ -36,23 +30,16 @@
             WidgetMedia.sourceChanged = function ($source) {
                 WidgetMedia.API.stop();
             };
-
-
             WidgetMedia.item = {
                 data: {}
             };
-
             if (media) {
                 WidgetMedia.item = media;
                 WidgetMedia.changeVideoSrc();
             }
-
-
             AppConfig.changeBackgroundTheme(WidgetMedia.media.data.design.backgroundImage);
-
-              var currentItemLayout = WidgetMedia.media.data.design.itemLayout;
-
-           Messaging.onReceivedMessage(function (event) {
+            var currentItemLayout = WidgetMedia.media.data.design.itemLayout;
+            Messaging.onReceivedMessage(function (event) {
                 if (event) {
                     switch (event.name) {
                         case EVENTS.ROUTE_CHANGE:
@@ -72,23 +59,9 @@
                             }
                             Location.go("#/media");
                             break;
-                        /*     case EVENTS.DESIGN_LAYOUT_CHANGE:
-                         WidgetMedia.media.data.design.listLayout = event.message.listLayout;
-                         WidgetMedia.media.data.design.itemLayout = event.message.itemLayout;
-                         AppConfig.setSettings(WidgetMedia.media);
-                         $scope.$digest();
-                         break;
-                         case EVENTS.DESIGN_BGIMAGE_CHANGE:
-                         WidgetMedia.media.data.design.backgroundImage = event.message.backgroundImage;
-                         AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
-                         $scope.$apply();
-
-                         break;*/
                     }
                 }
             });
-
-
             Buildfire.datastore.onUpdate(function (event) {
                 switch (event.tag) {
                     case COLLECTIONS.MediaContent:
@@ -104,8 +77,6 @@
                         break;
                 }
             });
-
-
             var initializing = true;
             $scope.$watch(function () {
                 return WidgetMedia.item.data.videoUrl;
@@ -118,7 +89,5 @@
                     WidgetMedia.changeVideoSrc();
                 }
             });
-
-
         }]);
 })(window.angular, window);
