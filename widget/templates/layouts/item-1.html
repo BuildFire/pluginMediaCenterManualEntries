@@ -21,7 +21,7 @@
                 <a class="text-primary" ng-if="WidgetMedia.item.data.audioUrl"
                    href="#/nowplaying/{{WidgetMedia.item.id}}">Listen</a>
                 <a class="text-primary" ng-if="WidgetMedia.item.data.videoUrl">Watch</a>
-                <a class="text-primary" ng-if="WidgetMedia.item.data.srcUrl">View Source</a>
+                <a class="text-primary" ng-if="WidgetMedia.item.data.srcUrl" href="{{WidgetMedia.item.data.srcUrl}}" target="_blank">View Source</a>
                 <a class="text-primary" ng-if="WidgetMedia.item.data.links.length">Share</a>
 
             </div>
