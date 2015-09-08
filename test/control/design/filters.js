@@ -55,3 +55,16 @@ describe('Unit: safeHtml filter', function () {
         expect(result).toEqual("");
     });
 });
+describe('Unit: jsDate filter', function () {
+    beforeEach(module('mediaCenterDesignFilters'));
+    var filter;
+    beforeEach(inject(function (_$filter_) {
+        filter = _$filter_;
+    }));
+
+    /* it('it should pass if "jsDate" filter returns time', function () {
+     var result;
+     result = filter('jsDate')('1441209271403');
+     expect(result).toEqual("Wed Sep 02 2015 21:24:31 GMT+0530 (IST)");
+     });*/
+});

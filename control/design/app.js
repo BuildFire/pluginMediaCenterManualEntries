@@ -5,7 +5,7 @@
         .module('mediaCenterDesign',
         [
             'mediaCenterEnums',
-            'mediaCenterServices',
+            'mediaCenterDesignServices',
             'mediaCenterDesignFilters',
             'ngAnimate',
             'ngRoute'

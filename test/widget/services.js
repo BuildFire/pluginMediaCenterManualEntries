@@ -64,8 +64,7 @@ describe('Unit: mediaCenterWidget: Services', function () {
 
 describe('Unit : ImageLib Factory', function () {
     //var ImageLibrary, Buildfire, STATUS_MESSAGES, STATUS_CODE, q;
-    beforeEach(module('mediaCenterServices'));
-
+    beforeEach(module('mediaCenterWidgetServices'));
     beforeEach(inject(function () {
         Buildfire = {
             imageLib: {}

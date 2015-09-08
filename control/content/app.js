@@ -5,7 +5,7 @@
         .module('mediaCenterContent',
         [
             'mediaCenterEnums',
-            'mediaCenterServices',
+            'mediaCenterContentServices',
             'mediaCenterControlFilters',
             'mediaCenterModals',
             'ngAnimate',

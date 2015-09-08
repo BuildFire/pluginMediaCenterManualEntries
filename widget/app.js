@@ -4,7 +4,7 @@
     angular
         .module('mediaCenterWidget', [
             'mediaCenterEnums',
-            'mediaCenterServices',
+            'mediaCenterWidgetServices',
             'mediaCenterWidgetFilters',
             'ngAnimate',
             'ngRoute',
