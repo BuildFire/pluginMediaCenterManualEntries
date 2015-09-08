@@ -4,11 +4,11 @@ describe('Unit : Controller - ContentMediaCtrl', function () {
     beforeEach(module('mediaCenterContent'));
 
     var
-        ContentMedia,$rootScope, scope, Location, $window, Buildfire, DB, COLLECTIONS, AppConfig, Messaging, EVENTS, PATHS;
+        ContentMedia, $rootScope, scope, Location, $window, Buildfire, DB, COLLECTIONS, AppConfig, Messaging, EVENTS, PATHS;
 
     beforeEach(inject(function ($controller, _$rootScope_, _Location_, _$window_, _Buildfire_, _DB_, _COLLECTIONS_, _AppConfig_, _Messaging_, _EVENTS_, _PATHS_) {
             scope = _$rootScope_.$new();
-            $rootScope=_$rootScope_;
+            $rootScope = _$rootScope_;
             DB = _DB_;
             COLLECTIONS = _COLLECTIONS_;
             AppConfig = _AppConfig_;
@@ -39,73 +39,124 @@ describe('Unit : Controller - ContentMediaCtrl', function () {
         it('it should pass if ContentMedia is defined', function () {
             expect(ContentMedia).not.toBeUndefined();
         });
-         it('it should pass if DB is defined', function () {
-         expect(DB).not.toBeUndefined();
-         });
-         it('it should pass if COLLECTIONS is defined', function () {
-         expect(COLLECTIONS).not.toBeUndefined();
-         });
-         it('it should pass if AppConfig is defined', function () {
-         expect(AppConfig).not.toBeUndefined();
-         });
-         it('it should pass if Messaging function is defined', function () {
-         expect(Messaging).not.toBeUndefined();
-         });
-         it('it should pass if EVENTS function is defined', function () {
-         expect(EVENTS).not.toBeUndefined();
-         });
-         it('it should pass if PATHS function is defined', function () {
-         expect(PATHS).not.toBeUndefined();
-         });
-         it('it should pass if ContentMedia.item is defined', function () {
-         expect(ContentMedia.item).not.toBeUndefined();
-         });
+        it('it should pass if DB is defined', function () {
+            expect(DB).not.toBeUndefined();
+        });
+        it('it should pass if COLLECTIONS is defined', function () {
+            expect(COLLECTIONS).not.toBeUndefined();
+        });
+        it('it should pass if AppConfig is defined', function () {
+            expect(AppConfig).not.toBeUndefined();
+        });
+        it('it should pass if Messaging function is defined', function () {
+            expect(Messaging).not.toBeUndefined();
+        });
+        it('it should pass if EVENTS function is defined', function () {
+            expect(EVENTS).not.toBeUndefined();
+        });
+        it('it should pass if PATHS function is defined', function () {
+            expect(PATHS).not.toBeUndefined();
+        });
+        it('it should pass if ContentMedia.item is defined', function () {
+            expect(ContentMedia.item).not.toBeUndefined();
+        });
         it('it should pass if ContentMedia.linksSortableOptions is defined', function () {
-         expect(ContentMedia.linksSortableOptions).not.toBeUndefined();
-         });
-         it('it should pass if ContentMedia.bodyContentWYSIWYGOptions is defined', function () {
-         expect(ContentMedia.bodyContentWYSIWYGOptions).not.toBeUndefined();
-         });
+            expect(ContentMedia.linksSortableOptions).not.toBeUndefined();
+        });
+        it('it should pass if ContentMedia.bodyContentWYSIWYGOptions is defined', function () {
+            expect(ContentMedia.bodyContentWYSIWYGOptions).not.toBeUndefined();
+        });
         it('it should pass if ContentMedia.selectTopImage function is defined', function () {
-         expect(ContentMedia.selectTopImage).not.toBeUndefined();
-         });
+            expect(ContentMedia.selectTopImage).not.toBeUndefined();
+        });
         it('it should pass if ContentMedia.removeTopImage function is defined', function () {
-         expect(ContentMedia.removeTopImage).not.toBeUndefined();
-         });
+            expect(ContentMedia.removeTopImage).not.toBeUndefined();
+        });
         it('it should pass if ContentMedia.removeTopImage function is executed', function () {
-            ContentMedia.item.data.topImage="demo.png";
+            ContentMedia.item.data.topImage = "demo.png";
             ContentMedia.removeTopImage();
             $rootScope.$digest();
-         expect(ContentMedia.item.data.topImage).toEqual("");
-         });
+            expect(ContentMedia.item.data.topImage).toEqual("");
+        });
         it('it should pass if ContentMedia.selectAudioImage function is defined', function () {
-         expect(ContentMedia.selectAudioImage).not.toBeUndefined();
-         });
+            expect(ContentMedia.selectAudioImage).not.toBeUndefined();
+        });
         it('it should pass if ContentMedia.removeAudioImage function is defined', function () {
-         expect(ContentMedia.removeAudioImage).not.toBeUndefined();
-         });
+            expect(ContentMedia.removeAudioImage).not.toBeUndefined();
+        });
         it('it should pass if ContentMedia.removeAudioImage function is executed', function () {
-            ContentMedia.item.data.image="demo.png";
+            ContentMedia.item.data.image = "demo.png";
             ContentMedia.removeAudioImage();
             $rootScope.$digest();
             expect(ContentMedia.item.data.image).toEqual("");
         });
         it('it should pass if ContentMedia.openAddLinkPopup function is defined', function () {
-         expect(ContentMedia.openAddLinkPopup).not.toBeUndefined();
-         });
+            expect(ContentMedia.openAddLinkPopup).not.toBeUndefined();
+        });
         it('it should pass if ContentMedia.openEditLinkPopup function is defined', function () {
-         expect(ContentMedia.openEditLinkPopup).not.toBeUndefined();
-         });
+            expect(ContentMedia.openEditLinkPopup).not.toBeUndefined();
+        });
         it('it should pass if ContentMedia.removeLink function is defined', function () {
-         expect(ContentMedia.removeLink).not.toBeUndefined();
-         });
+            expect(ContentMedia.removeLink).not.toBeUndefined();
+        });
         it('it should pass if ContentMedia.done function is defined', function () {
-         expect(ContentMedia.done).not.toBeUndefined();
-         });
+            expect(ContentMedia.done).not.toBeUndefined();
+        });
         it('it should pass if ContentMedia.delete function is defined', function () {
-         expect(ContentMedia.delete).not.toBeUndefined();
-         });
+            expect(ContentMedia.delete).not.toBeUndefined();
+        });
+
+
     });
+
+    describe('Units: Methods should be working properly', function () {
+        var spy;
+        beforeEach(inject(function () {
+            spy = spyOn(Location, 'goToHome').and.callFake(function () {
+            });
+        }));
+
+        it('it should pass if ContentMedia.removeLink function remove the link properly', function () {
+            ContentMedia.item = {data: {links: ['a', 'b']}};
+            ContentMedia.removeLink(0);
+            expect(ContentMedia.item.data.links.length).toEqual(1);
+        });
+        it('it should pass if ContentMedia.done function call Location.goToHome', function () {
+            ContentMedia.done();
+            expect(spy).toHaveBeenCalled();
+        });
+        it('it should pass if ContentMedia.delete function does nothing when ContentMedia.item.id is falsy', function () {
+            ContentMedia.item = {id: ''};
+            var MediaContent = {
+                delete: function () {
+                }
+            };
+            var mediaContentSpy = spyOn(MediaContent, 'delete').and.callFake(function () {
+            });
+            expect(mediaContentSpy).not.toHaveBeenCalled();
+        });
+        xit('it should pass if ContentMedia.delete function calls Location.goToHome in success case', function () {
+            ContentMedia.item = {id: true};
+            var MediaContent = {
+                delete: function (a) {
+                    var deferred = $q.defer();
+                    deferred.resolve(['Remote call result']);
+                    return deferred.promise;
+                }
+            };
+            /*  var mediaContentSpy = spyOn(MediaContent,'delete').and.callFake(function() {
+             var deferred = $q.defer();
+             deferred.resolve(['Remote call result']);
+             return deferred.promise;
+             });*/
+            expect(spy).toHaveBeenCalled();
+        });
+
+        xit('it should pass if ContentMedia.selectTopImage changes ContentMedia.item.data.topImage in success case', function () {
+
+        });
+    });
+
 })
 ;
 

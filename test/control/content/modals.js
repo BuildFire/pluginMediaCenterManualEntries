@@ -1,4 +1,3 @@
-/*
 describe('mediaCenterModals: Services', function () {
     var $modal, $q;
     beforeEach(module('mediaCenterModals'));
@@ -7,7 +6,7 @@ describe('mediaCenterModals: Services', function () {
         $q = $injector.get('$q');
     }));
 
-    xdescribe('Modals service', function () {
+    describe('Modals service', function () {
         var Modals;
         beforeEach(inject(
             function (_Modals_) {
@@ -25,13 +24,20 @@ describe('mediaCenterModals: Services', function () {
     });
 
     describe('Modals: CarouselImageCtrl Controllers', function () {
-        var scope, $modalInstance, CarouselImage;
+        var scope, $modalInstance, CarouselImage, modalInstance, spy;
         beforeEach(inject(function ($controller, _$rootScope_, _$modal_) {
                 scope = _$rootScope_.$new();
-                $modalInstance = _$modalInstance_;
+                modalInstance = {                    // Create a mock object using spies
+                    close: jasmine.createSpy('modalInstance.close'),
+                    dismiss: jasmine.createSpy('modalInstance.dismiss'),
+                    result: {
+                        then: jasmine.createSpy('modalInstance.result.then')
+                    }
+                };
+                //$modalInstance = modalInstance;
                 CarouselImage = $controller('CarouselImageCtrl', {
                     $scope: scope,
-                    $modalInstance: _$modal_.op,
+                    $modalInstance: modalInstance,//_$modal_.op,
                     Link: {
                         imageUrl: "",
                         title: "",
@@ -49,8 +55,8 @@ describe('mediaCenterModals: Services', function () {
 
             expect(CarouselImage).toBeDefined();
         });
-       /!* it('CarouselImage.Link should exists', function () {
-            expect(CarouselImage.Link).toBeDefined();
+        it('CarouselImage.link should exists', function () {
+            expect(CarouselImage.link).toBeDefined();
         });
         it('CarouselImage.ok should exists', function () {
             expect(CarouselImage.ok).toBeDefined();
@@ -63,6 +69,66 @@ describe('mediaCenterModals: Services', function () {
         });
         it('CarouselImage.cancel should exists', function () {
             expect(CarouselImage.cancel).toBeDefined();
-        });*!/
+        });
+        it('CarouselImage.cancel should call modalInstance.dismiss', function () {
+            CarouselImage.cancel();
+            expect(modalInstance.dismiss).toHaveBeenCalled();
+        });
+        it('CarouselImage.ok should call modalInstance.close', function () {
+            CarouselImage.link = {imageUrl:'test.test'};
+            CarouselImage.ok();
+            expect(modalInstance.close).toHaveBeenCalled();
+        });
+        it('CarouselImage.ok should do nothing if CarouselImage.link.imageUrl is falsy', function () {
+            CarouselImage.link = {imageUrl:''};
+            CarouselImage.ok();
+            expect(modalInstance.close).not.toHaveBeenCalled();
+        });
+        it('CarouselImage.removeImage should make CarouselImage.link.imageUrl blank', function () {
+            CarouselImage.link = {imageUrl:'test.test'};
+            CarouselImage.removeImage();
+            expect(CarouselImage.link.imageUrl).toEqual('');
+        });
     });
-});*/
+
+    describe('Modals: RemovePopupCtrl Controller', function () {
+        var scope, $modalInstance, Info, spy,RemovePopup;
+        beforeEach(inject(function ($controller, _$rootScope_, _$modal_) {
+                scope = _$rootScope_.$new();
+                modalInstance = {                    // Create a mock object using spies
+                    close: jasmine.createSpy('modalInstance.close'),
+                    dismiss: jasmine.createSpy('modalInstance.dismiss'),
+                    result: {
+                        then: jasmine.createSpy('modalInstance.result.then')
+                    }
+                };
+                Info = {};
+                RemovePopup = $controller('RemovePopupCtrl', {
+                    $scope: scope,
+                    $modalInstance: modalInstance,//_$modal_.op,
+                    Info: Info
+                });
+            })
+        );
+        it('RemovePopup should exists', function () {
+            expect(RemovePopup).toBeDefined();
+        });
+        it('RemovePopup.cancel should exists', function () {
+            expect(RemovePopup.cancel).toBeDefined();
+        });
+        it('CarouselImage.ok should exists', function () {
+            expect(RemovePopup.ok).toBeDefined();
+        });
+        it('RemovePopup.cancel should exists', function () {
+            expect(RemovePopup.cancel).toBeDefined();
+        });
+        it('RemovePopup.ok should close modalInstance', function () {
+            RemovePopup.ok();
+            expect(modalInstance.close).toHaveBeenCalledWith('yes');
+        });
+        it('RemovePopup.ok should dismiss modalInstance', function () {
+            RemovePopup.cancel();
+            expect(modalInstance.dismiss).toHaveBeenCalledWith('no');
+        });
+    });
+});
