@@ -26,14 +26,14 @@ describe('mediaCenterContent: Services', function () {
             expect(MediaCenter).toBeDefined();
             expect(MediaCenter._tagName).toEqual(COLLECTIONS.MediaCenter);
         });
-       /* it('MediaCenter methods should exists', function () {
+        it('MediaCenter methods should exists', function () {
             expect(MediaCenter.get).toBeDefined();
             expect(MediaCenter.find).toBeDefined();
             expect(MediaCenter.save).toBeDefined();
             expect(MediaCenter.update).toBeDefined();
             expect(MediaCenter.delete).toBeDefined();
             expect(MediaCenter.insert).toBeDefined();
-        });*/
+        });
     });
     describe('MediaContent service', function () {
         var DB, MediaContent;

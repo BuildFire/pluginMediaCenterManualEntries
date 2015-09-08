@@ -1,5 +1,5 @@
 describe('Unit: resizeImage filter', function () {
-    beforeEach(module('mediaCenterFilters'));
+    beforeEach(module('mediaCenterDesignFilters'));
     var filter;
     beforeEach(inject(function (_$filter_) {
         filter = _$filter_;
@@ -18,7 +18,7 @@ describe('Unit: resizeImage filter', function () {
     });
 });
 describe('Unit: cropImage filter', function () {
-    beforeEach(module('mediaCenterFilters'));
+    beforeEach(module('mediaCenterDesignFilters'));
     var filter;
     beforeEach(inject(function (_$filter_) {
         filter = _$filter_;
@@ -37,7 +37,7 @@ describe('Unit: cropImage filter', function () {
     });
 });
 describe('Unit: safeHtml filter', function () {
-    beforeEach(module('mediaCenterFilters'));
+    beforeEach(module('mediaCenterDesignFilters'));
     var filter;
     beforeEach(inject(function (_$filter_) {
         filter = _$filter_;
