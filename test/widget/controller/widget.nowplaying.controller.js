@@ -1,7 +1,7 @@
 describe('Unit : mediaCenterPlugin NowPlaying Controller', function () {
     beforeEach(module('mediaCenterWidget'));
 
-    var $controller, $scope, NowPlaying, $routeParams, Buildfire;
+    var $controller, $scope, NowPlaying, $routeParams, Buildfire,rootScope;
 
 
     beforeEach(inject(function (_$controller_, _$routeParams_, _$rootScope_, _Buildfire_) {
@@ -10,6 +10,7 @@ describe('Unit : mediaCenterPlugin NowPlaying Controller', function () {
         $scope = _$rootScope_.$new();
         $routeParams = _$routeParams_;
         Buildfire = _Buildfire_;
+        rootScope=_$rootScope_;
 
         NowPlaying = $controller('NowPlayingCtrl', {
             $scope: $scope,
@@ -42,15 +43,25 @@ describe('Unit : mediaCenterPlugin NowPlaying Controller', function () {
         it('it should pass if NowPlaying.playAudio function is defined', function () {
          expect(NowPlaying.playAudio).not.toBeUndefined();
          });
-        it('it should pass if NowPlaying.previous function is defined', function () {
-         expect(NowPlaying.previous).not.toBeUndefined();
+        it('it should pass if NowPlaying.playAudio function calling', function () {
+            NowPlaying.playAudio();
+            rootScope.$digest();
+            expect(NowPlaying.playing).toEqual(true);
          });
+        /*it('it should pass if NowPlaying.previous function is defined', function () {
+         expect(NowPlaying.previous).not.toBeUndefined();
+         });*/
         it('it should pass if NowPlaying.pause function is defined', function () {
          expect(NowPlaying.pause).not.toBeUndefined();
          });
-        it('it should pass if NowPlaying.next function is defined', function () {
-         expect(NowPlaying.next).not.toBeUndefined();
+        it('it should pass if NowPlaying.pause function call success', function () {
+         NowPlaying.pause();
+            rootScope.$digest();
+            expect(NowPlaying.paused).toEqual(true);
          });
+       /* it('it should pass if NowPlaying.next function is defined', function () {
+         expect(NowPlaying.next).not.toBeUndefined();
+         });*/
     });
 
 });

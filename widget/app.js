@@ -5,7 +5,7 @@
         .module('mediaCenterWidget', [
             'mediaCenterEnums',
             'mediaCenterServices',
-            'mediaCenterFilters',
+            'mediaCenterWidgetFilters',
             'ngAnimate',
             'ngRoute',
             'ui.bootstrap',

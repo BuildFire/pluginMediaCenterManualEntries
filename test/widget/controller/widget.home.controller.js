@@ -1,10 +1,10 @@
 describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
     beforeEach(module('mediaCenterWidget'));
 
-    var $window,$controller,$scope,WidgetHome, COLLECTIONS, DB, Buildfire, MediaCenterInfo, AppConfig, Messaging, EVENTS, PATHS, Location, Orders;
+    var $window, $controller, rootScope, $scope, WidgetHome, COLLECTIONS, DB, Buildfire, MediaCenterInfo, AppConfig, Messaging, EVENTS, PATHS, Location, Orders;
 
 
-    beforeEach(inject(function (_$controller_,_$window_, _DB_, _COLLECTIONS_, _$rootScope_, _Buildfire_, _AppConfig_, _Messaging_, _EVENTS_, _PATHS_, _Location_, _Orders_) {
+    beforeEach(inject(function (_$controller_, _$window_, _DB_, _COLLECTIONS_, _$rootScope_, _Buildfire_, _AppConfig_, _Messaging_, _EVENTS_, _PATHS_, _Location_, _Orders_) {
 
         $controller = _$controller_;
         $scope = _$rootScope_.$new();
@@ -12,30 +12,45 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
         DB = _DB_;
         COLLECTIONS = _COLLECTIONS_;
         Buildfire = _Buildfire_;
-       // MediaCenterInfo = _MediaCenterInfo_;
+        // MediaCenterInfo = _MediaCenterInfo_;
         AppConfig = _AppConfig_;
         Messaging = _Messaging_;
         EVENTS = _EVENTS_;
         PATHS = _PATHS_;
         Location = _Location_;
         Orders = _Orders_;
+        rootScope = _$rootScope_;
 
 
         WidgetHome = $controller('WidgetHomeCtrl', {
             $scope: $scope,
-            $window:$window,
-            Buildfire:Buildfire,
-            MediaCenterInfo: {id: '1', data: {design: {listLayout: 'test', backgroundImage: 'test1'}}},
-            AppConfig:AppConfig,
-            Messaging:Messaging,
-            EVENTS:EVENTS,
-            PATHS:PATHS,
-            Location:Location,
-            Orders:Orders,
-            DB:DB
+            $window: $window,
+            Buildfire: Buildfire,
+            MediaCenterInfo: {
+                id: '1',
+                data: {
+                    design: {
+                        listLayout: 'test',
+                        backgroundImage: 'test1'
+                    },
+                    content: {
+                        images: [],
+                        descriptionHTML: '',
+                        description: '',
+                        sortBy: 'Manual',
+                        rankOfLastItem: 0
+                    }
+                }
+            },
+            AppConfig: AppConfig,
+            Messaging: Messaging,
+            EVENTS: EVENTS,
+            PATHS: PATHS,
+            Location: Location,
+            Orders: Orders,
+            DB: DB
         });
     }));
-
 
 
     describe('Unit : units should be Defined', function () {
@@ -63,6 +78,14 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
         });
         it('it should pass if Location is defined', function () {
             expect(Location).not.toBeUndefined();
+        });
+        it('it should pass if WidgetHome.loadMore() is defined', function () {
+            expect(WidgetHome.loadMore).toBeDefined();
+        });
+        it('it should pass if WidgetHome.loadMore() calling success', function () {
+            WidgetHome.loadMore();
+            rootScope.$digest();
+            expect(WidgetHome.isBusy).toEqual(true);
         });
     });
 

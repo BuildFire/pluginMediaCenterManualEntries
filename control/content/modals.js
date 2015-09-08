@@ -4,7 +4,7 @@
         throw ("buildfire not found");
     }
     angular
-        .module('mediaCenterModals', ['mediaCenterFilters', 'ui.bootstrap'])
+        .module('mediaCenterModals', ['mediaCenterControlFilters', 'ui.bootstrap'])
         .factory('Modals', ['$modal', '$q', function ($modal, $q) {
             return {
                 carouselImageModal: function (link) {

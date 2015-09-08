@@ -107,14 +107,6 @@
                         return false;
                     }
                 };
-                /**
-                 * isDefined method checks whether item.imageUrl is defined or not.
-                 * @param item
-                 * @returns {boolean}
-                 */
-                $scope.isDefined = function (item) {
-                    return item.imageUrl !== undefined && item.imageUrl !== '';
-                };
 
                 /**
                  * WidgetHome.items holds the array of items.
