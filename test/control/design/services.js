@@ -1,6 +1,6 @@
-describe('mediaCenterServices: Services', function () {
+describe('mediaCenterDesignServices: Services', function () {
     var COLLECTIONS;
-    beforeEach(module('mediaCenterServices'));
+    beforeEach(module('mediaCenterDesignServices'));
     beforeEach(inject(function ($injector) {
         COLLECTIONS = $injector.get('COLLECTIONS');
     }));
@@ -55,4 +55,33 @@ describe('mediaCenterServices: Services', function () {
             expect(MediaContent.insert).toBeDefined();
         });
     });
+    describe('Messaging service', function () {
+        var Messaging;
+        beforeEach(inject(
+            function (_Buildfire_) {
+                Messaging = _Buildfire_.messaging;
+            }));
+        it('Messaging should exists', function () {
+            expect(Messaging).toBeDefined();
+        });
+    });
+
+});
+describe('Unit : ImageLib Factory', function () {
+    beforeEach(module('mediaCenterDesignServices'));
+    //var ImageLibrary, Buildfire, STATUS_MESSAGES, STATUS_CODE, q;
+    beforeEach(inject(function () {
+        Buildfire = {
+            imageLib: {}
+        };
+        Buildfire.imageLib = jasmine.createSpyObj('Buildfire.imageLib', ['showDialog']);
+    }));
+
+    it('Buildfire should exist and be an object', function () {
+        expect(typeof Buildfire).toEqual('object');
+    });
+    it('Buildfire.imageLib should exist and be an object', function () {
+        expect(typeof Buildfire.imageLib).toEqual('object');
+    });
+
 });

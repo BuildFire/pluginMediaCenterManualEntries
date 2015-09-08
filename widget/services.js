@@ -17,7 +17,7 @@
         }
     };
     angular
-        .module('mediaCenterServices', ['mediaCenterEnums'])
+        .module('mediaCenterWidgetServices', ['mediaCenterEnums'])
         .provider('Buildfire', [function () {
             this.$get = function () {
                 return buildfire;
