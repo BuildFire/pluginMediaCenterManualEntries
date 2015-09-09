@@ -153,6 +153,16 @@ describe('Unit : Controller - ContentMediaCtrl', function () {
         });
 
         xit('it should pass if ContentMedia.selectTopImage changes ContentMedia.item.data.topImage in success case', function () {
+            Buildfire.imageLib = {
+                showDialog: function (d, func) {
+                    console.log(123);
+                    func(null, {selectedFiles:['test']});
+                }
+            };
+
+
+            ContentMedia.selectTopImage();
+           expect(ContentMedia.item.data.topImage).toEqual('test');
 
         });
     });

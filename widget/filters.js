@@ -34,6 +34,12 @@
                 return new Date(x);
             };
         })
+        .filter("timeCorrect", function () {
+            return function (x) {
+                x = '0' + x.substring(1);
+                return x;
+            };
+        })
         .filter("isYoutubeVimeoLink", function () {
             return function (x) {
                 if (x)

@@ -89,6 +89,21 @@ describe('mediaCenterModals: Services', function () {
             CarouselImage.removeImage();
             expect(CarouselImage.link.imageUrl).toEqual('');
         });
+
+        it('CarouselImage.selectImage should make CarouselImage.link.imageUrl blank', function () {
+            buildfire.imageLib = {
+                showDialog: function (d, func) {
+                    console.log(123);
+                    func(null, {selectedFiles:['test']});
+                }
+            };
+
+
+            CarouselImage.selectImage();
+            expect(CarouselImage.link.imageUrl).toEqual('test');
+        });
+
+
     });
 
     describe('Modals: RemovePopupCtrl Controller', function () {
