@@ -1,0 +1,39 @@
+<div class="header clearfix border-bottom-grey">
+    <h5 class="item-link-header text-center">PlayList</h5>
+</div>
+<div class="modal-body">
+    <div class="overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8);">
+        <div class="overlay-content" style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
+            <div class="media-player-list-layout layout3">
+                <div class="list-layout has-btns">
+                    <div class="list-item ">
+                        <div class="list-item-media now-playing text-left">
+                            <div class="list-media-holder square-icon pull-left">
+                                <img src="http://www.placehold.it/30x30">
+                            </div>
+                            <div class="list-item-copy text-left padding-left-ten padding-right-ten">
+                                <p class="margin-bottom-zero ellipsis margin-top-fifteen">{{PlaylistModal.info.data.audioTitle}}</p>
+                            </div>
+                            <div class="btns text-center">
+                                <a class="icon icon-play-circle "></a>
+                               <!-- <a class="icon icon-pause-circle primaryTheme"></a>-->
+                            </div>
+                            <div class="remove-btn text-center dangerBackgroundTheme" style="background:red;">
+                                <span>Remove</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="bottom border-top-grey clearfix">
+    <div class="col-md-6 pull-left text-center">
+        <a class="text-danger default-background-hover transition-third" ng-click="PlaylistModal.cancel()">Cancel</a>
+    </div>
+    <div class="col-md-6 pull-right text-center border-left-grey">
+        <a class="text-success default-background-hover transition-third"
+           ng-click="PlaylistModal.ok()">Ok</a>
+    </div>
+</div>
