@@ -50,7 +50,9 @@ module.exports = function (config) {
             'widget/**/!(js)/*.js': ['coverage'],
             'widget/*.js': ['coverage'],
             'control/design/**/!(js)/*.js': ['coverage'],
-            'control/content/**/*.js': ['coverage']
+            'control/design/*.js': ['coverage'],
+            'control/content/**/!(js)/*.js': ['coverage'],
+            'control/content/*.js': ['coverage']
         },
 
         plugins: [

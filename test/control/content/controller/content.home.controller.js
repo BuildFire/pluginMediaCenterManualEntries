@@ -102,7 +102,108 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
 
     });
 
+    describe('Unit: ContentHome.removeListItem', function () {
+        var spy,removePopupModal;
+        beforeEach(inject( function(){
 
+
+
+
+            //Modals=jasmine.createSpyObj('Modals',['removePopupModal']);
+            spy = spyOn(Modals,'removePopupModal').and.callFake(function() {
+                var deferred = $q.defer();
+                deferred.resolve('Remote call result');
+                return deferred.promise;
+            });
+
+        }));
+
+        it('it should do nothing if index is invalid', function () {
+            ContentHome.items = ['test'];
+            ContentHome.removeListItem(-1);
+            expect(spy).not.toHaveBeenCalled();
+        });
+
+        it('it should work fine if index is valid', function () {
+            ContentHome.items = ['test'];
+            ContentHome.removeListItem(0);
+            expect(spy).toHaveBeenCalled();//With({title:'test'});
+            //expect(ContentHome.info.data.content.images.length).toEqual(0);
+
+        });
+
+    });
+
+    describe('Unit: ContentHome.searchListItem', function () {
+        var spy,removePopupModal;
+        beforeEach(inject( function(){
+
+            spy = spyOn(ContentHome,'getMore').and.callFake(function() {
+            });
+
+        }));
+
+        it('it should call getMore when called', function () {
+            ContentHome.searchListItem('');
+            expect(spy).toHaveBeenCalled();
+        });
+
+    });
+
+    describe('Unit: ContentHome.toggleSortOrder', function () {
+        var spy,removePopupModal;
+        beforeEach(inject( function(){
+
+            spy = spyOn(ContentHome,'getMore').and.callFake(function() {
+            });
+
+        }));
+
+        it('should be able to call getMore when called with proper arguments', function () {
+            ContentHome.toggleSortOrder('Newest');
+            expect(spy).toHaveBeenCalled();
+        });
+
+        it('should do nothing when arguments is falsy', function () {
+            ContentHome.toggleSortOrder('');
+            expect(spy).not.toHaveBeenCalled();
+        });
+
+
+    });
+
+    describe('Unit: ContentHome.getMore', function () {
+        var spy,removePopupModal, MediaContent  = {find:function(){}};
+        beforeEach(inject( function(){
+
+            spy = spyOn(MediaContent,'find').and.callFake(function() {
+                var deferred = $q.defer();
+                deferred.resolve(['Remote call result']);
+                return deferred.promise;
+            });
+
+        }));
+
+        xit('should be able to call MediaContent.find when called with proper arguments', function () {
+            ContentHome.isBusy = false;
+            ContentHome.getMore();
+            expect(spy).toHaveBeenCalled();
+        });
+
+        it('should do nothing when isBusy(fetching)', function () {
+            ContentHome.isBusy = true;
+            ContentHome.getMore();
+            expect(spy).not.toHaveBeenCalled();
+        });
+
+        it('should do nothing when noMore (all data loaded)', function () {
+            ContentHome.noMore = false;
+            ContentHome.getMore();
+            expect(spy).not.toHaveBeenCalled();
+        });
+
+
+    });
 
 })
 ;

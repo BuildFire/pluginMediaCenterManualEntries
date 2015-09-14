@@ -5,8 +5,8 @@
         .module('mediaCenterContent',
         [
             'mediaCenterEnums',
-            'mediaCenterServices',
-            'mediaCenterFilters',
+            'mediaCenterContentServices',
+            'mediaCenterControlFilters',
             'mediaCenterModals',
             'ngAnimate',
             'ngRoute',

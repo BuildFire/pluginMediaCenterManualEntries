@@ -119,7 +119,7 @@
                  * @returns {*|boolean}
                  */
                 function isUnChanged(item) {
-                    if (item.data.body && angular.equals(tinymce.editors[0].getContent({format: 'text'}).trim(), "")) {
+                    if (item.data.body && tinymce.editors[0] && angular.equals(tinymce.editors[0].getContent({format: 'text'}).trim(), "")) {
                         return angular.equals(filter(item), ContentMedia.masterItem);
                     }
                     else {
@@ -148,7 +148,7 @@
                     ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
                     MediaContent.insert(ContentMedia.item.data).then(function (data) {
                         MediaContent.getById(data.id).then(function (item) {
-                            //ContentMedia.item = item;
+                            ContentMedia.item = item;
                             updateMasterItem(item);
                             MediaCenterSettings.content.rankOfLastItem = item.data.rank;
                             MediaCenter.update(appId, MediaCenterSettings).then(function (data) {

@@ -4,8 +4,9 @@
     angular
         .module('mediaCenterWidget', [
             'mediaCenterEnums',
-            'mediaCenterServices',
-            'mediaCenterFilters',
+            'mediaCenterWidgetServices',
+            'mediaCenterWidgetFilters',
+            'mediaCenterWidgetModals',
             'ngAnimate',
             'ngRoute',
             'ui.bootstrap',

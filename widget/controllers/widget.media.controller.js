@@ -14,12 +14,12 @@
                 sources: undefined,
                 tracks: undefined,
                 theme: {
-                    url: "assets/css/videogular.css"
+                    url: "http://www.videogular.com/styles/themes/default/latest/videogular.css"
                 }
             };
             WidgetMedia.changeVideoSrc = function () {
                 if (WidgetMedia.item.data.videoUrl)
-                    WidgetMedia.config.sources = [{
+                    WidgetMedia.videoPlayerConfig.sources = [{
                         src: $sce.trustAsResourceUrl(WidgetMedia.item.data.videoUrl),
                         type: 'video/' + WidgetMedia.item.data.videoUrl.split('.').pop() //"video/mp4"
                     }];

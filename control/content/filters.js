@@ -2,7 +2,7 @@
     "use strict";
     //created mediaCenterWidget module
     angular
-        .module('mediaCenterFilters', [])
+        .module('mediaCenterControlFilters', [])
         .filter('resizeImage', [function () {
             return function (url, width, height, type) {
                 return buildfire.imageLib.resizeImage(url, {
