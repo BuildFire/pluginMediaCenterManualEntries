@@ -1,13 +1,11 @@
 <div class="holder padding-zero">
     <div class="media-center-plugin layout1">
         <div class="media-center-banner clearfix border-bottom-grey">
-            <div class="plugin-slider text-center">
-                <div ng-style="WidgetMedia.item.data.videoUrl == '' ? {'min-height': '192px'} : {}"  class="plugin-slide">
+            <div ng-class="WidgetMedia.item.data.videoUrl == '' ? '' : 'video-container-background'" class="plugin-slider text-center">
+                <div ng-class="WidgetMedia.item.data.videoUrl == '' ? '' : 'video-container-background'" ng-style="WidgetMedia.item.data.videoUrl == '' ? {'min-height': '192px'} : {}"  class="plugin-slide">
                     <img data-ng-hide="WidgetMedia.item.data.videoUrl || !WidgetMedia.item.data.topImage"
                          ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 300 : 180}}"/>
-
                     <div ng-include="'templates/layouts/videoPlayer.html'"></div>
-
                 </div>
             </div>
         </div>

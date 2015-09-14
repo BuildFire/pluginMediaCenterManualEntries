@@ -36,7 +36,15 @@
         })
         .filter("timeCorrect", function () {
             return function (x) {
-                x = '0' + x.substring(1);
+                if (!x)
+                    return '';
+                var num = Number(x.charAt(0));
+
+                if (isNaN(num))
+                    return '';
+
+                num = num - 3;
+                x = num.toString() + x.substring(1);
                 return x;
             };
         })
