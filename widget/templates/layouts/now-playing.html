@@ -2,6 +2,52 @@
     <a href="#/media/{{NowPlaying.item.id}}"><span class="icon icon-chevron-left" style="margin-left: -282px;"></span></a>
     <div class="back-color"></div>
     <div class="media-center-plugin">
+        <div class="media-header-link">
+            <a ng-click="NowPlaying.openPlaylistPopup()">Playlist</a>
+        </div>
+        <div class="media-holder margin-top-fifteen">
+            <div class="media-inner text-center">
+                <img ng-if="NowPlaying.item.data.image" class="border-radius-two"
+                     ng-src="{{NowPlaying.item.data.image | resizeImage: 260 :260 }}" height="260px" width="260">
+                <img ng-if="!NowPlaying.item.data.image" class="border-radius-two"
+                     src="assets/images/now-playing.png" height="260px" width="260">
+            </div>
+        </div>
+        <div class="media-player-info margin-top-twenty">
+            <h4 class="margin-zero ellipsis">{{NowPlaying.item.data.audioTitle}}</h4>
+            <!--<p class="margin-zero ellipsis">Artist or Album Title</p>-->
+        </div>
+        <div class="slider margin-top-twenty">
+            <div class="playerMP">
+                <div>{{currentTime | number:2}}</div>
+                <div><input id="slider" ng-show="duration" type="range" min="0" max="{{duration}}"
+                            ng-model="currentTime"/></div>
+                <div>{{duration | number:2}}</div>
+            </div>
+        </div>
+        <div class="text-center margin-top-fifteen">
+            <span class="icon icon-dots"></span>
+        </div>
+        <div class="media-player-action-btns margin-top-twenty">
+            <span class="icon icon-volume-high icon-sm"></span>
+            <span class="icon icon-ellipsis icon-sm" ng-click="NowPlaying.openMoreInfoPopup()"></span>
+            <span class="icon icon-cog icon-sm" ng-click="NowPlaying.openSettingsPopup()"></span>
+        </div>
+        <a class="media-player-btns margin-top-ten">
+            <span class="icon icon-shuffle icon-sm"></span>
+            <span class="icon icon-backward-circle" ng-click="NowPlaying.backward()"></span>
+            <span ng-if="!NowPlaying.playing" class="icon icon-play-circle icon-main"
+                  ng-click="NowPlaying.playAudio()"></span>
+            <span ng-if="NowPlaying.playing" class="icon icon-pause-circle icon-main"
+                  ng-click="NowPlaying.pause()"></span>
+            <span class="icon icon-forward-circle" ng-clibk="NowPlaying.forward()"></span>
+            <span class="icon icon-repeat icon-sm"></span>
+            <span class="icon icon-repeat-one icon-sm primaryTheme hidden"></span>
+            <span class="icon icon-repeat icon-sm primaryTheme hidden"></span>
+            </a>
+        </div>
+    </div>
+   <!-- <div class="media-center-plugin">
         <div class="media-holder">
             <div class="media-inner text-center">
                 <img ng-if="NowPlaying.item.data.image" class="border-radius-four"
@@ -33,5 +79,5 @@
                   ng-click="NowPlaying.pause()"></span>
             <span class="icon icon-forward-circle" ng-click="NowPlaying.next()"></span>
         </div>
-    </div>
+    </div>-->
 </div>

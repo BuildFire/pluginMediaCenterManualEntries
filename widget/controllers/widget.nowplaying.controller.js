@@ -1,12 +1,34 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', function ($scope, $routeParams, media, Buildfire) {
+        .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', function ($scope, $routeParams, media, Buildfire, Modals) {
             var NowPlaying = this;
             NowPlaying.item = media;
             NowPlaying.playing = false;
             NowPlaying.paused = false;
             NowPlaying.track = media.data.audioUrl;
+
+            NowPlaying.openPlaylistPopup = function () {
+                Modals.playlistModal(NowPlaying.item).then(function(result){
+                    console.log('Result----',result);
+                },function(err){
+                    console.error('Error===========',err);
+                });
+            };
+            NowPlaying.openSettingsPopup = function () {
+                Modals.audioSettingsModal(NowPlaying.item).then(function(result){
+                    console.log('Result----',result);
+                },function(err){
+                    console.error('Error===========',err);
+                });
+            };
+            NowPlaying.openMoreInfoPopup = function () {
+                Modals.moreInfoModal(NowPlaying.item).then(function(result){
+                    console.log('Result----',result);
+                },function(err){
+                    console.error('Error===========',err);
+                });
+            };
             /**
              * audioPlayer is Buildfire.services.media.audioPlayer.
              */
@@ -15,6 +37,7 @@
              * audioPlayer.onEvent callback calls when audioPlayer event fires.
              */
             audioPlayer.onEvent(function (e) {
+                console.log(e);
                 if (e.event == "timeUpdate") {
                     $scope.currentTime = e.data.currentTime;
                     $scope.duration = e.data.duration;
@@ -46,17 +69,18 @@
                 audioPlayer.pause();
             };
 
-            /*NowPlaying.skip = function (num) {
+            NowPlaying.skip = function (num) {
                 audioPlayer.skip(num);
             };
 
-            NowPlaying.next = function () {
-                audioPlayer.next();
+            NowPlaying.forward = function () {
+                console.log('Method called');
+                audioPlayer.skip(20);
             };
 
-            NowPlaying.previous = function () {
-                audioPlayer.previous();
-            };*/
+            NowPlaying.backward = function () {
+                audioPlayer.setTime(10);
+            };
 
             /**
              * slider to show the slider on now-playing page.
