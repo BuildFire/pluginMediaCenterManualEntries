@@ -7,13 +7,15 @@
             <div class="media-player-more-info">
                 <div class="media-holder margin-top-thirty">
                     <div class="media-inner text-center">
-                        <img class="border-radius-two" src="http://4.bp.blogspot.com/-8bBgFCVGbpE/TvQU6q_f7qI/AAAAAAAAAEk/b2QtDIIbv4I/s1600/Tycho-Dive.png">
+                        <img ng-if="PlaylistModal.info.data.image" class="border-radius-two"
+                             ng-src="{{PlaylistModal.info.data.image}}">
                     </div>
                 </div>
                 <hr class="none">
                 <div class="media-player-info margin-top-twenty">
-                    <h4 class="margin-zero ellipsis">Song or Track Title</h4>
-                    <p class="margin-zero ellipsis">Artist or Album Title</p>
+                    <h4 class="margin-zero ellipsis">{{MoreInfoModal.info.data.artists}}</h4>
+
+                    <p class="margin-zero ellipsis">{{MoreInfoModal.info.data.audioTitle}}</p>
                 </div>
                 <hr class="none">
                 <div class="more-info-list padded">

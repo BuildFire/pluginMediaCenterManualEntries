@@ -58,7 +58,7 @@
                             templateUrl: 'templates/modals/playlist.html',
                             controller: 'PlaylistModalCtrl',
                             controllerAs: 'PlaylistModal',
-                           // size: 'sm',
+                            // size: 'sm',
                             resolve: {
                                 Info: function () {
                                     return info;
@@ -77,7 +77,7 @@
         }])
         .controller('MoreInfoModalCtrl', ['$scope', '$modalInstance', 'Info', function ($scope, $modalInstance, Info) {
             var MoreInfoModal = this;
-            console.log('Info------------',Info);
+            console.log('Info------------', Info);
             MoreInfoModal.info = {};
             if (Info) {
                 MoreInfoModal.info = Info;
@@ -89,14 +89,19 @@
                 $modalInstance.dismiss('no');
             };
         }])
-        .controller('AudioSettingsModalCtrl', ['$scope', '$modalInstance', 'Info', function ($scope, $modalInstance, Info) {
+        .controller('AudioSettingsModalCtrl', ['$scope', '$modalInstance', 'Info', 'Buildfire', function ($scope, $modalInstance, Info, Buildfire) {
             var SettingsModal = this;
+            var audioPlayer=Buildfire.services.media.audioPlayer;
             SettingsModal.info = {};
             if (Info) {
                 SettingsModal.info = Info;
             }
             SettingsModal.ok = function () {
                 $modalInstance.close('yes');
+            };
+            SettingsModal.saveSettings = function () {
+                console.log('saveSettings method called----');
+                audioPlayer.settings.set(SettingsModal.settings);
             };
             SettingsModal.cancel = function () {
                 $modalInstance.dismiss('no');

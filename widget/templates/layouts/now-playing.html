@@ -7,7 +7,10 @@
         </div>
         <div class="media-holder margin-top-fifteen">
             <div class="media-inner text-center">
-                <img class="border-radius-two" src="http://4.bp.blogspot.com/-8bBgFCVGbpE/TvQU6q_f7qI/AAAAAAAAAEk/b2QtDIIbv4I/s1600/Tycho-Dive.png">
+                <img ng-if="NowPlaying.item.data.image" class="border-radius-two"
+                     ng-src="{{NowPlaying.item.data.image | resizeImage: 260 :260 }}" height="260px" width="260">
+                <img ng-if="!NowPlaying.item.data.image" class="border-radius-two"
+                     src="assets/images/now-playing.png" height="260px" width="260">
             </div>
         </div>
         <div class="media-player-info margin-top-twenty">
