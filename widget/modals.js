@@ -91,7 +91,7 @@
         }])
         .controller('AudioSettingsModalCtrl', ['$scope', '$modalInstance', 'Info', 'Buildfire', function ($scope, $modalInstance, Info, Buildfire) {
             var SettingsModal = this;
-            var audioPlayer=Buildfire.services.media.audioPlayer;
+            var audioPlayer = Buildfire.services.media.audioPlayer;
             SettingsModal.info = {};
             if (Info) {
                 SettingsModal.info = Info;
@@ -107,9 +107,21 @@
                 $modalInstance.dismiss('no');
             };
         }])
-        .controller('PlaylistModalCtrl', ['$scope', '$modalInstance', 'Info', function ($scope, $modalInstance, Info) {
+        .controller('PlaylistModalCtrl', ['$scope', '$modalInstance', 'Info', 'Buildfire', function ($scope, $modalInstance, Info, Buildfire) {
             var PlaylistModal = this;
             PlaylistModal.info = {};
+            var audioPlayer = Buildfire.services.media.audioPlayer;
+            audioPlayer.getPlaylist(function (err, playlist) {
+                console.log('err----',err,'playList-------',playlist);
+                if (playlist) {
+                    $scope.playlistTracks = playlist.tracks;
+                    $scope.currentIndex = playlist.lastIndex;
+                    $scope.$apply();
+                }
+                else
+                    console.error(err);
+
+            });
             if (Info) {
                 PlaylistModal.info = Info;
             }
