@@ -1,9 +1,10 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB) {
             var WidgetMedia = this;
             WidgetMedia.API = null;
+            var MediaCenter = new DB(COLLECTIONS.MediaCenter);
             WidgetMedia.onPlayerReady = function ($API) {
                 WidgetMedia.API = $API;
             };
@@ -24,9 +25,25 @@
                         type: 'video/' + WidgetMedia.item.data.videoUrl.split('.').pop() //"video/mp4"
                     }];
             };
-            WidgetMedia.media = {
-                data: AppConfig.getSettings()
-            };
+            if (AppConfig.getSettings()) {
+                WidgetMedia.media = {
+                    data: AppConfig.getSettings()
+                };
+            }
+            else {
+                MediaCenter.get().then(function (data) {
+                    WidgetMedia.media = {
+                        data: data.data
+                    };
+                    console.log('Get Info---', data, 'data---');
+                }, function (err) {
+                    WidgetMedia.media = {
+                        data: {}
+                    };
+                    console.log('Get Error---', err);
+                });
+            }
+
 
             WidgetMedia.sourceChanged = function ($source) {
                 WidgetMedia.API.stop();
@@ -38,8 +55,8 @@
                 WidgetMedia.item = media;
                 WidgetMedia.changeVideoSrc();
             }
-            if (WidgetMedia.media.data && WidgetMedia.media.data.design && WidgetMedia.media.data.design.backgroundImage)
-                AppConfig.changeBackgroundTheme(WidgetMedia.media.data.design.backgroundImage);
+            if (WidgetMedia.media && WidgetMedia.media.data && WidgetMedia.media.data.design && WidgetMedia.media.data.design.backgroundImage)
+            AppConfig.changeBackgroundTheme(WidgetMedia.media.data.design.backgroundImage);
             Messaging.onReceivedMessage(function (event) {
                 if (event) {
                     switch (event.name) {
