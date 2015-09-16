@@ -62,26 +62,17 @@
                  * Buildfire.datastore.onUpdate method calls when Data is changed.
                  */
                 Buildfire.datastore.onUpdate(function (event) {
-                    $scope.imagesUpdated = false;
-                    MediaCenter.get().then(function success(result) {
-                            if (result && result.data) {
-                                WidgetHome.media = result;
-                                $scope.imagesUpdated = true;
-
-                                /* reset Search options */
-                                WidgetHome.noMore = false;
-                                searchOptions.skip = 0;
-                                /* Reset skip to ensure search begins from scratch*/
-                                AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
-                                WidgetHome.items = [];
-                                WidgetHome.loadMore();
-
-                                $scope.$apply();
-                            }
-                        },
-                        function fail(error) {
-                        }
-                    );
+                    if(event.tag == "MediaCenter")
+                    {
+                        WidgetHome.media.data = event.data;
+                        $scope.$digest();
+                    }
+                    else
+                    {
+                        WidgetHome.items = [];
+                        WidgetHome.noMore = false;
+                        WidgetHome.loadMore();
+                    }
                 });
 
                 /**
