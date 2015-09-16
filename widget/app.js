@@ -147,6 +147,13 @@
 
                 .otherwise('/');
         }])
-
+        .run(['Location', function (Location) {
+            buildfire.deeplink.getData(function (data) {
+                if (data) {
+                    console.log('data---',data);
+                    Location.go("#/media/" + JSON.parse(data).id);
+                }
+            });
+        }]);
 
 })(window.angular, window.buildfire);
