@@ -38,8 +38,8 @@
                 WidgetMedia.item = media;
                 WidgetMedia.changeVideoSrc();
             }
-            AppConfig.changeBackgroundTheme(WidgetMedia.media.data.design.backgroundImage);
-            var currentItemLayout = WidgetMedia.media.data.design.itemLayout;
+            if (WidgetMedia.media.data && WidgetMedia.media.data.design && WidgetMedia.media.data.design.backgroundImage)
+                AppConfig.changeBackgroundTheme(WidgetMedia.media.data.design.backgroundImage);
             Messaging.onReceivedMessage(function (event) {
                 if (event) {
                     switch (event.name) {
@@ -63,7 +63,8 @@
                     }
                 }
             });
-            Buildfire.datastore.onUpdate(function (event) {
+            WidgetMedia.onUpdateFn = Buildfire.datastore.onUpdate(function (event) {
+                console.log('event - updated--------', event);
                 switch (event.tag) {
                     case COLLECTIONS.MediaContent:
                         if (event.data) {
@@ -89,6 +90,9 @@
                 } else {
                     WidgetMedia.changeVideoSrc();
                 }
+            });
+            $scope.$on("$destroy", function () {
+                WidgetMedia.onUpdateFn.clear();
             });
         }]);
 })(window.angular, window);
