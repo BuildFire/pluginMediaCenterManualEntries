@@ -18,10 +18,10 @@
         </div>
         <div class="slider margin-top-fifteen">
             <div class="playerMP">
-                <div>{{NowPlaying.currentTime | number:2}}</div>
+                <div>{{NowPlaying.currentTime | number:0}}</div>
                 <div><input ng-show="NowPlaying.duration" type="range" min="0" max="{{NowPlaying.duration}}"
                             ng-model="NowPlaying.currentTime" ng-change="NowPlaying.changeTime(NowPlaying.currentTime)"/></div>
-                <div>{{NowPlaying.duration | number:2}}</div>
+                <div>{{NowPlaying.duration | number:0}}</div>
             </div>
         </div>
         <div class="text-center margin-top-fifteen">
