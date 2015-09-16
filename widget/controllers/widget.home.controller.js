@@ -65,7 +65,8 @@
                     if(event.tag == "MediaCenter")
                     {
                         WidgetHome.media.data = event.data;
-                        $scope.$digest();
+                        AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
+                        $scope.$apply();
                     }
                     else
                     {
