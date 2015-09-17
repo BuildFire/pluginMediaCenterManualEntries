@@ -1,11 +1,11 @@
 <div class="holder padding-zero">
     <div class="media-center-plugin layout1">
-        <div class="media-center-banner clearfix border-bottom-grey">
+        <div class="media-center-banner clearfix">
             <div ng-class="WidgetMedia.item.data.videoUrl == '' ? '' : 'video-container-background'" class="plugin-slider text-center">
                 <div ng-class="WidgetMedia.item.data.videoUrl == '' ? '' : 'video-container-background'" ng-style="WidgetMedia.item.data.videoUrl == '' ? {'min-height': '192px'} : {}"  class="plugin-slide">
                     <img data-ng-hide="WidgetMedia.item.data.videoUrl || !WidgetMedia.item.data.topImage"
                          ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 300 : 180}}"/>
-                    <div ng-include="'templates/layouts/videoPlayer.html'"></div>
+                    <div ng-include="'templates/layouts/video-player.html'"></div>
                 </div>
             </div>
         </div>
@@ -14,7 +14,7 @@
             <h5 class="margin-bottom-zero">{{WidgetMedia.item.data.summary}}</h5>
         </div>
         <div class="padded padding-top-zero">
-            <hr class="small">
+            <hr class="small" ng-if="WidgetMedia.item.data.audioUrl || WidgetMedia.item.data.videoUrl || WidgetMedia.item.data.srcUrl || WidgetMedia.item.data.links.length">
             <div class="link-list">
                 <a class="text-primary" ng-if="WidgetMedia.item.data.audioUrl"
                    href="#/nowplaying/{{WidgetMedia.item.id}}">Listen</a>
@@ -23,11 +23,11 @@
                 <a class="text-primary" ng-if="WidgetMedia.item.data.links.length">Share</a>
 
             </div>
-            <hr class="small">
+            <hr class="small" ng-if="WidgetMedia.item.data.body">
             <p ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
 
 
-            <div class="dynamic-links">
+            <div ng-class="WidgetMedia.item.data.links.length ? 'dynamic-links' : ''">
                 <a class="d-link" ng-repeat="link in WidgetMedia.item.data.links">{{link.title}}</a>
             </div>
         </div>

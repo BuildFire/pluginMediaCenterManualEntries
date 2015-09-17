@@ -288,18 +288,15 @@ input[type=range]:focus::-ms-fill-upper {
     padding-right:15px;
 }
 
-.owl-dots{display: none !important;}
-
-
 videogular vg-controls{
     height:45px !important;
     overflow: hidden;
 }
 videogular, [videogular]{
-    background-color: rgba(0,0,0,0) !important;
+    background-color: transparent !important;
 }
 
 .video-container-background{
-    background-color: #FFFFFF !important;
+    background-color: transparent !important;
 }
 
