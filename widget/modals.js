@@ -83,7 +83,7 @@
                 if (playlist) {
                     MoreInfoModal.playlistTracks = playlist.tracks;
                     MoreInfoModal.currentIndex = playlist.lastIndex;
-                    MoreInfoModal.$apply();
+                    $scope.$apply();
                 }
                 else
                     console.error(err);
@@ -107,7 +107,6 @@
                 console.log(index);
             };
             MoreInfoModal.remove=function(index){
-                audioPlayer.getPl
                 console.log('remove method called');
                 audioPlayer.removeFromPlaylist(index);
             };
