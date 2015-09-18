@@ -1,5 +1,5 @@
 <div class="holder now-playing text-center">
-    <div class="back-color"></div>
+    <div class="bg-blurred-image" ng-style="NowPlaying.item.data.image? {'background':'url({{NowPlaying.item.data.image}}) no-repeat center center'}:{'background':'black'}" ></div>
     <div class="media-center-plugin">
         <div class="media-header-link">
             <a ng-click="NowPlaying.add(NowPlaying.item.data.audioTitle,NowPlaying.item.data.audioUrl,NowPlaying.item.data.image,NowPlaying.item.data.artists)">Add to Playlist</a>
