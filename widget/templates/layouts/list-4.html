@@ -24,7 +24,7 @@
                             </div>
                         </div>
                         <div class="list-item-copy text-left">
-                            <p class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index].data.title}}</p>
+                            <a class="ellipsis margin-zero text-primary" href="#/media/{{item.id}}">{{WidgetHome.items[$index].data.title}}</a>
 
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index].data.summary}}</p>
                             <span class="list-item-date">{{WidgetHome.items[$index].data.dateCreated  | jsDate | date:"MMMM dd, yyyy"}}</span>
@@ -39,7 +39,7 @@
                             </div>
                         </div>
                         <div class="list-item-copy text-left">
-                            <p class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index + 1].data.title}}</p>
+                            <a href="#/media/{{item.id}}" class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index + 1].data.title}}</a>
 
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.summary}}</p>
                             <span class="list-item-date" data-ng-if="item.data.dateCreated">{{WidgetHome.items[$index + 1].data.dateCreated  | jsDate | date:"MMMM dd, yyyy"}}</span>
