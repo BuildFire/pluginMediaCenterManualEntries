@@ -72,6 +72,21 @@
                         playlistDeferred.reject(err);
                     });
                     return playlistDeferred.promise;
+                },
+                confirmationModal: function () {
+                    var confmDeferred = $q.defer();
+                    var confmModal = $modal.open({
+                        templateUrl: 'templates/modals/confirmation.html',
+                        controller: 'ConfmModalCtrl',
+                        controllerAs: 'ConfmModal'
+                    });
+                    confmModal.result.then(function (imageInfo) {
+                        confmDeferred.resolve(imageInfo);
+                    }, function (err) {
+                        //do something on cancel
+                        confmDeferred.reject(err);
+                    });
+                    return confmDeferred.promise;
                 }
             };
         }])
@@ -103,10 +118,10 @@
             MoreInfoModal.add = function (title, url, img, artist) {
                 console.log('added-----------called');
                 var track = new Track(title, url, img, artist);
-                var index=audioPlayer.addToPlaylist(track);
+                var index = audioPlayer.addToPlaylist(track);
                 console.log(index);
             };
-            MoreInfoModal.remove=function(index){
+            MoreInfoModal.remove = function (index) {
                 console.log('remove method called');
                 audioPlayer.removeFromPlaylist(index);
             };
@@ -119,47 +134,57 @@
                 this.lastPosition = 0; // last played to
             }
         }])
-        .controller('AudioSettingsModalCtrl', ['$scope', '$modalInstance', 'Info', 'Buildfire', function ($scope, $modalInstance, Info, Buildfire) {
-            var SettingsModal = this;
-            var audioPlayer = Buildfire.services.media.audioPlayer;
-            SettingsModal.info = {};
-            if (Info) {
-                SettingsModal.info = Info;
-            }
-            SettingsModal.ok = function () {
+        .controller('ConfmModalCtrl', ['$scope', '$modalInstance', function ($scope, $modalInstance) {
+            var ConfmModal = this;
+            ConfmModal.ok = function () {
                 $modalInstance.close('yes');
             };
-            SettingsModal.saveSettings = function () {
-                console.log('saveSettings method called----');
-                audioPlayer.settings.set(SettingsModal.settings);
-            };
-            SettingsModal.cancel = function () {
+            ConfmModal.cancel = function () {
                 $modalInstance.dismiss('no');
             };
         }])
-        .controller('PlaylistModalCtrl', ['$scope', '$modalInstance', 'Info', 'Buildfire', function ($scope, $modalInstance, Info, Buildfire) {
-            var PlaylistModal = this;
-            PlaylistModal.info = {};
-            var audioPlayer = Buildfire.services.media.audioPlayer;
-            audioPlayer.getPlaylist(function (err, playlist) {
-                console.log('err----', err, 'playList-------', playlist);
-                if (playlist) {
-                    $scope.playlistTracks = playlist.tracks;
-                    $scope.currentIndex = playlist.lastIndex;
-                    $scope.$apply();
-                }
-                else
-                    console.error(err);
+    ;
+    /*.controller('AudioSettingsModalCtrl', ['$scope', '$modalInstance', 'Info', 'Buildfire', function ($scope, $modalInstance, Info, Buildfire) {
+     var SettingsModal = this;
+     var audioPlayer = Buildfire.services.media.audioPlayer;
+     SettingsModal.info = {};
+     if (Info) {
+     SettingsModal.info = Info;
+     }
+     SettingsModal.ok = function () {
+     $modalInstance.close('yes');
+     };
+     SettingsModal.saveSettings = function () {
+     console.log('saveSettings method called----');
+     audioPlayer.settings.set(SettingsModal.settings);
+     };
+     SettingsModal.cancel = function () {
+     $modalInstance.dismiss('no');
+     };
+     }])
+     .controller('PlaylistModalCtrl', ['$scope', '$modalInstance', 'Info', 'Buildfire', function ($scope, $modalInstance, Info, Buildfire) {
+     var PlaylistModal = this;
+     PlaylistModal.info = {};
+     var audioPlayer = Buildfire.services.media.audioPlayer;
+     audioPlayer.getPlaylist(function (err, playlist) {
+     console.log('err----', err, 'playList-------', playlist);
+     if (playlist) {
+     $scope.playlistTracks = playlist.tracks;
+     $scope.currentIndex = playlist.lastIndex;
+     $scope.$apply();
+     }
+     else
+     console.error(err);
 
-            });
-            if (Info) {
-                PlaylistModal.info = Info;
-            }
-            PlaylistModal.ok = function () {
-                $modalInstance.close('yes');
-            };
-            PlaylistModal.cancel = function () {
-                $modalInstance.dismiss('no');
-            };
-        }]);
+     });
+     if (Info) {
+     PlaylistModal.info = Info;
+     }
+     PlaylistModal.ok = function () {
+     $modalInstance.close('yes');
+     };
+     PlaylistModal.cancel = function () {
+     $modalInstance.dismiss('no');
+     };
+     }]);*/
 })(window.angular, window.buildfire);
