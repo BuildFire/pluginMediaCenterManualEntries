@@ -135,6 +135,25 @@
                     audioPlayer.setTime(0);
             };
 
+            NowPlaying.remove=function(){
+                console.log('remove method called');
+            };
+
+            NowPlaying.add = function (title, url, img, artist) {
+                console.log('added-----------called');
+                var track = new Track(title, url, img, artist);
+                audioPlayer.addToPlaylist(track);
+            };
+
+            function Track(title, url, image, artist) {
+                this.title = title;
+                this.url = url;
+                this.image = image;
+                this.artist = artist;
+                this.startAt = 0; // where to begin playing
+                this.lastPosition = 0; // last played to
+            }
+
 
             Buildfire.datastore.onUpdate(function (event) {
                 console.log('Events-----------', event);

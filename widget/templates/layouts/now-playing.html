@@ -2,7 +2,7 @@
     <div class="back-color"></div>
     <div class="media-center-plugin">
         <div class="media-header-link">
-            <a ng-click="NowPlaying.openPlaylistPopup()">Playlist</a>
+            <a ng-click="NowPlaying.add(NowPlaying.item.data.audioTitle,NowPlaying.item.data.audioUrl,NowPlaying.item.data.image,NowPlaying.item.data.artists)">Add to Playlist</a>
         </div>
         <div class="media-holder margin-top-fifteen">
             <div class="media-inner text-center">
@@ -28,11 +28,11 @@
             <span class="icon icon-dots"></span>
         </div>
         <div class="media-player-action-btns margin-top-twenty">
-            &nbsp;<input ng-style="NowPlaying.showVolume? {'visibility':'visible'}:{'visibility':'hidden'}"  type="range" min="0" max="1" step="0.1" ng-model="NowPlaying.volume" ng-change="NowPlaying.changeVolume(NowPlaying.volume)" style="width: 15%;margin-left: 35px;margin-bottom: 10px; "/>
+            &nbsp;<input class="rotate-270" ng-style="NowPlaying.showVolume? {'visibility':'visible'}:{'visibility':'hidden'}"  type="range" min="0" max="1" step="0.1" ng-model="NowPlaying.volume" ng-change="NowPlaying.changeVolume(NowPlaying.volume)" style="width: 15%;margin-left: 35px;margin-bottom: 10px; "/>
 
             <span class="icon icon-volume-high icon-sm" ng-click="NowPlaying.showVolume=!NowPlaying.showVolume"></span>
             <span class="icon icon-ellipsis icon-sm" ng-click="NowPlaying.openMoreInfoPopup()"></span>
-            <span class="icon icon-cog icon-sm" ng-click="NowPlaying.openSettingsPopup()"></span>
+            <!--<span class="icon icon-cog icon-sm" ng-click="NowPlaying.openSettingsPopup()"></span>-->
         </div>
         <a class="media-player-btns margin-top-ten">
             <!--<span class="icon icon-shuffle icon-sm" ng-click="NowPlaying.shuffle()"></span>-->

@@ -78,6 +78,16 @@
         .controller('MoreInfoModalCtrl', ['$scope', '$modalInstance', 'Info', 'Buildfire', function ($scope, $modalInstance, Info, Buildfire) {
             var MoreInfoModal = this;
             var audioPlayer = Buildfire.services.media.audioPlayer;
+            audioPlayer.getPlaylist(function (err, playlist) {
+                console.log('err----', err, 'playList-------', playlist);
+                if (playlist) {
+                    MoreInfoModal.playlistTracks = playlist.tracks;
+                    MoreInfoModal.currentIndex = playlist.lastIndex;
+                    MoreInfoModal.$apply();
+                }
+                else
+                    console.error(err);
+            });
             console.log('Info------------', Info);
             MoreInfoModal.info = {};
             if (Info) {
@@ -93,7 +103,13 @@
             MoreInfoModal.add = function (title, url, img, artist) {
                 console.log('added-----------called');
                 var track = new Track(title, url, img, artist);
-                audioPlayer.addToPlaylist(track);
+                var index=audioPlayer.addToPlaylist(track);
+                console.log(index);
+            };
+            MoreInfoModal.remove=function(index){
+                audioPlayer.getPl
+                console.log('remove method called');
+                audioPlayer.removeFromPlaylist(index);
             };
             function Track(title, url, image, artist) {
                 this.title = title;
