@@ -9,7 +9,6 @@
                  * @type {MediaCenterInfo|*}
                  */
                 WidgetHome.media = MediaCenterInfo;
-
                 var _skip = 0,
                     _limit = 5,
                     searchOptions = {
@@ -62,14 +61,15 @@
                  * Buildfire.datastore.onUpdate method calls when Data is changed.
                  */
                 Buildfire.datastore.onUpdate(function (event) {
-                    if(event.tag == "MediaCenter")
-                    {
-                        WidgetHome.media.data = event.data;
-                        AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
-                        $scope.$apply();
+                    if (event.tag == "MediaCenter") {
+                        if (event.data) {
+                            WidgetHome.media.data = event.data;
+                            console.log(WidgetHome.media);
+                            AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
+                            $scope.$apply();
+                        }
                     }
-                    else
-                    {
+                    else {
                         WidgetHome.items = [];
                         WidgetHome.noMore = false;
                         WidgetHome.loadMore();
@@ -81,7 +81,7 @@
                  * @type {DB}
                  */
                 var MediaContent = new DB(COLLECTIONS.MediaContent);
-                var MediaCenter = new DB(COLLECTIONS.MediaCenter);
+                //var MediaCenter = new DB(COLLECTIONS.MediaCenter); // commented bcos its not used
 
                 /**
                  * updateGetOptions method checks whether sort options changed or not.

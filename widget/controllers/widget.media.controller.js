@@ -48,15 +48,30 @@
             WidgetMedia.sourceChanged = function ($source) {
                 WidgetMedia.API.stop();
             };
+
             WidgetMedia.item = {
-                data: {}
+                data: {
+                    audioUrl: "",
+                    body: "",
+                    bodyHTML: "",
+                    deepLinkUrl: "",
+                    image: "",
+                    links: [],
+                    srcUrl: "",
+                    summary: "",
+                    title: "",
+                    topImage: "",
+                    videoUrl: ""
+                }
             };
             if (media) {
                 WidgetMedia.item = media;
+                console.log('initial', WidgetMedia.item);
                 WidgetMedia.changeVideoSrc();
             }
+
             if (WidgetMedia.media && WidgetMedia.media.data && WidgetMedia.media.data.design && WidgetMedia.media.data.design.backgroundImage)
-            AppConfig.changeBackgroundTheme(WidgetMedia.media.data.design.backgroundImage);
+                AppConfig.changeBackgroundTheme(WidgetMedia.media.data.design.backgroundImage);
             Messaging.onReceivedMessage(function (event) {
                 if (event) {
                     switch (event.name) {
@@ -81,12 +96,11 @@
                 }
             });
             WidgetMedia.onUpdateFn = Buildfire.datastore.onUpdate(function (event) {
-                console.log('event - updated--------', event);
                 switch (event.tag) {
                     case COLLECTIONS.MediaContent:
                         if (event.data) {
-
                             WidgetMedia.item = event;
+                            console.log('change', WidgetMedia.item);
                             $scope.$digest();
                         }
                         break;

@@ -4,10 +4,10 @@
             <div class="people-bg padding-top-fifteen padding-bottom-fifteen clearfix">
                 <div class="people-holder clearfix">
                     <div class="people-media text-center">
-                       <img data-ng-hide="WidgetMedia.item.data.videoUrl || !WidgetMedia.item.data.topImage"
+                       <img data-ng-hide="WidgetMedia.item.data.videoUrl"
                              ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 250 : 400}}">
 
-                        <div ng-include="'templates/layouts/videoPlayer.html'"></div>
+                        <div ng-include="'templates/layouts/video-player.html'"></div>
                     </div>
                     <div class="people-info text-center col-md-12">
                         <h5 class="ellipsis margin-top-fifteen">{{WidgetMedia.item.data.title}}</h5>

@@ -6,7 +6,7 @@
             NowPlaying.item = media;
             NowPlaying.playing = false;
             NowPlaying.paused = false;
-            NowPlaying.showVolume=false;
+            NowPlaying.showVolume = false;
 
             NowPlaying.track = media.data.audioUrl;
             /**
@@ -41,13 +41,13 @@
              * audioPlayer is Buildfire.services.media.audioPlayer.
              */
             var audioPlayer = Buildfire.services.media.audioPlayer;
-            audioPlayer.settings.get(function (err,setting) {
-                NowPlaying.volume=setting.volume;
+            audioPlayer.settings.get(function (err, setting) {
+                NowPlaying.volume = setting.volume;
                 console.log(setting)
             });
 
             NowPlaying.changeVolume = function (volume) {
-                audioPlayer.settings.get(function (err,setting) {
+                audioPlayer.settings.get(function (err, setting) {
                     console.log(setting);
                     if (setting) {
                         setting.volume = volume;
@@ -60,10 +60,10 @@
 
             };
             NowPlaying.shuffle = function () {
-                audioPlayer.getPlaylist(function(err,setting){
-                    console.log('err--------',err,setting);
+                audioPlayer.getPlaylist(function (err, setting) {
+                    console.log('err--------', err, setting);
                 });
-                audioPlayer.settings.get(function (err,setting) {
+                audioPlayer.settings.get(function (err, setting) {
                     if (setting) {
                         setting.shufflePlaylist = true;
                         audioPlayer.settings.set(setting);
@@ -134,6 +134,30 @@
                 else
                     audioPlayer.setTime(0);
             };
+
+            NowPlaying.remove = function () {
+                console.log('remove method called');
+            };
+
+            NowPlaying.add = function (title, url, img, artist) {
+                console.log('added-----------called');
+                Modals.confirmationModal().then(function (data) {
+                    var track = new Track(title, url, img, artist);
+                    audioPlayer.addToPlaylist(track);
+                }, function (err) {
+                    // Do somrthing on cancel
+                });
+
+            };
+
+            function Track(title, url, image, artist) {
+                this.title = title;
+                this.url = url;
+                this.image = image;
+                this.artist = artist;
+                this.startAt = 0; // where to begin playing
+                this.lastPosition = 0; // last played to
+            }
 
 
             Buildfire.datastore.onUpdate(function (event) {

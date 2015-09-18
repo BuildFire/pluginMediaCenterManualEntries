@@ -288,18 +288,33 @@ input[type=range]:focus::-ms-fill-upper {
     padding-right:15px;
 }
 
-.owl-dots{display: none !important;}
-
-
 videogular vg-controls{
     height:45px !important;
     overflow: hidden;
 }
 videogular, [videogular]{
-    background-color: rgba(0,0,0,0) !important;
+    background-color: transparent !important;
 }
 
 .video-container-background{
-    background-color: #FFFFFF !important;
+    background-color: transparent !important;
 }
 
+
+/*Styles for Now playing bg img*/
+.holder.now-playing .bg-blurred-image{
+    -o-filter:blur(10px) brightness(0.2);
+    -moz-filter:blur(10px) brightness(0.2);
+    -webkit-filter:blur(10px) brightness(0.2);
+    filter:blur(10px) brightness(0.6);
+    position:fixed;
+    top:-5%;
+    left:-5%;
+    -o-background-size:cover;
+    -moz-background-size:cover;
+    -webkit-background-size:cover;
+    background-size:cover;
+    height:110%;
+    width:110%;
+    z-index:-1;
+}

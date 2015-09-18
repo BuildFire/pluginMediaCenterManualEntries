@@ -1,8 +1,8 @@
 <div class="holder now-playing text-center">
-    <div class="back-color"></div>
+    <div class="bg-blurred-image" ng-style="NowPlaying.item.data.image? {'background':'url({{NowPlaying.item.data.image}}) no-repeat center center'}:{'background':'black'}" ></div>
     <div class="media-center-plugin">
         <div class="media-header-link">
-            <a ng-click="NowPlaying.openPlaylistPopup()">Playlist</a>
+            <a ng-click="NowPlaying.add(NowPlaying.item.data.audioTitle,NowPlaying.item.data.audioUrl,NowPlaying.item.data.image,NowPlaying.item.data.artists)">Add to Playlist</a>
         </div>
         <div class="media-holder margin-top-fifteen">
             <div class="media-inner text-center">
@@ -28,21 +28,21 @@
             <span class="icon icon-dots"></span>
         </div>
         <div class="media-player-action-btns margin-top-twenty">
-            &nbsp;<input ng-style="NowPlaying.showVolume? {'visibility':'visible'}:{'visibility':'hidden'}"  type="range" min="0" max="1" step="0.1" ng-model="NowPlaying.volume" ng-change="NowPlaying.changeVolume(NowPlaying.volume)" style="width: 15%;margin-left: 35px;margin-bottom: 10px; "/>
+            &nbsp;<input class="rotate-270" ng-style="NowPlaying.showVolume? {'visibility':'visible'}:{'visibility':'hidden'}"  type="range" min="0" max="1" step="0.1" ng-model="NowPlaying.volume" ng-change="NowPlaying.changeVolume(NowPlaying.volume)" style="width: 15%;margin-left: 82px;margin-bottom: 30px;margin-top: 39px;"/>
 
             <span class="icon icon-volume-high icon-sm" ng-click="NowPlaying.showVolume=!NowPlaying.showVolume"></span>
             <span class="icon icon-ellipsis icon-sm" ng-click="NowPlaying.openMoreInfoPopup()"></span>
-            <span class="icon icon-cog icon-sm" ng-click="NowPlaying.openSettingsPopup()"></span>
+            <!--<span class="icon icon-cog icon-sm" ng-click="NowPlaying.openSettingsPopup()"></span>-->
         </div>
         <a class="media-player-btns margin-top-ten">
-            <span class="icon icon-shuffle icon-sm" ng-click="NowPlaying.shuffle()"></span>
+            <!--<span class="icon icon-shuffle icon-sm" ng-click="NowPlaying.shuffle()"></span>-->
             <span class="icon icon-backward-circle" ng-click="NowPlaying.backward()"></span>
             <span ng-if="!NowPlaying.playing" class="icon icon-play-circle icon-main"
                   ng-click="NowPlaying.playAudio()"></span>
             <span ng-if="NowPlaying.playing" class="icon icon-pause-circle icon-main"
                   ng-click="NowPlaying.pause()"></span>
-            <span class="icon icon-forward-circle" ng-click="NowPlaying.forward()"></span>
-            <span class="icon icon-repeat icon-sm" ng-click="NowPlaying.repeatTrack()"></span>
+            <!--<span class="icon icon-forward-circle" ng-click="NowPlaying.forward()"></span>-->
+            <!--<span class="icon icon-repeat icon-sm" ng-click="NowPlaying.repeatTrack()"></span>-->
             <span class="icon icon-repeat-one icon-sm primaryTheme hidden"></span>
             <span class="icon icon-repeat icon-sm primaryTheme hidden"></span>
             </a>

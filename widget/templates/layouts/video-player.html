@@ -13,7 +13,7 @@
                 <vg-scrub-bar>
                     <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
                 </vg-scrub-bar>
-                <vg-time-display>{{ timeLeft | date:'mm:ss':'+0530' | timeCorrect }}</vg-time-display>
+                <vg-time-display>{{ timeLeft | date:'mm:ss':'+0000' | timeCorrect }}</vg-time-display>
 
                 <vg-volume>
                     <vg-mute-button></vg-mute-button>
@@ -25,6 +25,6 @@
         </videogular>
 
 
-        <embed-video data-ng-show="WidgetMedia.item.data.videoUrl | isYoutubeVimeoLink" data-ng-href="{{WidgetMedia.item.data.videoUrl}}" controls="0"></embed-video>
+        <embed-video data-ng-if="WidgetMedia.item.data.videoUrl | isYoutubeVimeoLink" data-ng-href="{{WidgetMedia.item.data.videoUrl}}" controls="0"></embed-video>
     </div>
 

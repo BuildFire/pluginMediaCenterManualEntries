@@ -17,7 +17,7 @@
                     </div>
                 </div>
                 <div class="padded text-left">
-                    <a class="text-primary">{{item.data.title}}</a>
+                    <a class="text-primary" href="#/media/{{item.id}}">{{item.data.title}}</a>
                     <p class="margin-bottom-zero">{{item.data.summary}}</p>
                     <span class="list-item-date" data-ng-if="item.data.dateCreated">{{item.data.dateCreated  | jsDate | date:"MMMM dd, yyyy"}}</span>
                 </div>
