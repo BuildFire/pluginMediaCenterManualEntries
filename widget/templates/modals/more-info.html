@@ -1,14 +1,14 @@
 <div class="header clearfix border-bottom-grey">
     <h5 class="item-link-header text-center">More</h5>
 </div>
-<div class="modal-body">
+<div class="modal-body" style="margin-top: 488px;">
     <div class="overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8);">
         <div class="overlay-content" style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
             <div class="media-player-more-info">
                 <div class="media-holder margin-top-thirty">
                     <div class="media-inner text-center">
-                        <img ng-if="PlaylistModal.info.data.image" class="border-radius-two"
-                             ng-src="{{PlaylistModal.info.data.image}}">
+                        <img ng-if="MoreInfoModal.info.data.image" class="border-radius-two"
+                             ng-src="{{MoreInfoModal.info.data.image}}">
                     </div>
                 </div>
                 <hr class="none">
@@ -23,7 +23,7 @@
                         <a>Go to Playlist</a>
                     </div>
                     <div class="text-center item">
-                        <a>Add to Playlist</a>
+                        <a ng-click="MoreInfoModal.add(MoreInfoModal.info.data.audioTitle,MoreInfoModal.info.data.audioUrl,MoreInfoModal.info.data.image,MoreInfoModal.info.data.artists)">Add to Playlist</a>
                     </div>
                     <div class="text-center item">
                         <a>Remove from Playlist</a>

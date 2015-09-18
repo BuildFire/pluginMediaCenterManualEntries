@@ -75,8 +75,9 @@
                 }
             };
         }])
-        .controller('MoreInfoModalCtrl', ['$scope', '$modalInstance', 'Info', function ($scope, $modalInstance, Info) {
+        .controller('MoreInfoModalCtrl', ['$scope', '$modalInstance', 'Info', 'Buildfire', function ($scope, $modalInstance, Info, Buildfire) {
             var MoreInfoModal = this;
+            var audioPlayer = Buildfire.services.media.audioPlayer;
             console.log('Info------------', Info);
             MoreInfoModal.info = {};
             if (Info) {
@@ -88,6 +89,20 @@
             MoreInfoModal.cancel = function () {
                 $modalInstance.dismiss('no');
             };
+
+            MoreInfoModal.add = function (title, url, img, artist) {
+                console.log('added-----------called');
+                var track = new Track(title, url, img, artist);
+                audioPlayer.addToPlaylist(track);
+            };
+            function Track(title, url, image, artist) {
+                this.title = title;
+                this.url = url;
+                this.image = image;
+                this.artist = artist;
+                this.startAt = 0; // where to begin playing
+                this.lastPosition = 0; // last played to
+            }
         }])
         .controller('AudioSettingsModalCtrl', ['$scope', '$modalInstance', 'Info', 'Buildfire', function ($scope, $modalInstance, Info, Buildfire) {
             var SettingsModal = this;
@@ -112,7 +127,7 @@
             PlaylistModal.info = {};
             var audioPlayer = Buildfire.services.media.audioPlayer;
             audioPlayer.getPlaylist(function (err, playlist) {
-                console.log('err----',err,'playList-------',playlist);
+                console.log('err----', err, 'playList-------', playlist);
                 if (playlist) {
                     $scope.playlistTracks = playlist.tracks;
                     $scope.currentIndex = playlist.lastIndex;
