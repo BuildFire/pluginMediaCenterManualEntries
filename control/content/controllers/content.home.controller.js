@@ -2,8 +2,8 @@
     'use strict';
     angular
         .module('mediaCenterContent')
-        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', '$csv',
-            function ($scope, MediaCenterInfo, Modals, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, $csv) {
+        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv',
+            function ($scope, MediaCenterInfo, Modals, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv) {
                 var ContentHome = this;
                 ContentHome.info = MediaCenterInfo;
                 AppConfig.setSettings(MediaCenterInfo.data);
@@ -49,25 +49,39 @@
                 ContentHome.items = [];
                 ContentHome.sortOptions = Orders.options;
 
-                //on remove button click remove carousel Image at the selected index
-                ContentHome.rmCarouselImage = function (index) {
-                    if ("undefined" == typeof index) {
-                        return;
-                    }
-                    var image = ContentHome.info.data.content.images[index];
-                    if ("undefined" !== typeof image) {
-                        Modals.removePopupModal({title: image.title}).then(function (result) {
-                            if (result) {
-                                ContentHome.info.data.content.images.splice(index, 1);
-                            }
-                            else {
-                                console.info('Unable to load data.');
-                            }
-                        }, function (cancelData) {
-                            //do something on cancel
-                        });
-                    }
+                // create a new instance of the buildfire carousel editor
+                var editor = new Buildfire.components.carousel.editor("#carousel");
+                // this method will be called when a new item added to the list
+                editor.onAddItems = function (items) {
+                    if (!ContentHome.info.data.content.images)
+                        ContentHome.info.data.content.images = [];
+                    ContentHome.info.data.content.images.push.apply(ContentHome.info.data.content.images, items);
+                    $scope.$digest();
                 };
+                // this method will be called when an item deleted from the list
+                editor.onDeleteItem = function (item, index) {
+                    ContentHome.info.data.content.images.splice(index, 1);
+                    $scope.$digest();
+                };
+                // this method will be called when you edit item details
+                editor.onItemChange = function (item, index) {
+                    ContentHome.info.data.content.images.splice(index, 1, item);
+                    $scope.$digest();
+                };
+                // this method will be called when you change the order of items
+                editor.onOrderChange = function (item, oldIndex, newIndex) {
+                    var temp = ContentHome.info.data.content.images[oldIndex];
+                    ContentHome.info.data.content.images[oldIndex] = ContentHome.info.data.content.images[newIndex];
+                    ContentHome.info.data.content.images[newIndex] = temp;
+                    $scope.$digest();
+                };
+
+                // initialize carousel data
+                if (!ContentHome.info.data.content.images)
+                    editor.loadItems([]);
+                else
+                    editor.loadItems(ContentHome.info.data.content.images);
+
                 var updateSearchOptions = function () {
                     var order;
                     if (ContentHome.info && ContentHome.info.data && ContentHome.info.data.content)
@@ -82,33 +96,6 @@
                         return false;
                     }
                 };
-                ContentHome.addUpdateCarouselImage = function (index) {
-                    var link = null;
-                    if (typeof index != 'undefined') {
-                        link = ContentHome.info.data.content.images[index];
-                    }
-                    Modals.carouselImageModal(link).then(function (link) {
-                        if (link) {
-                            if (typeof index != 'undefined') {
-                                ContentHome.info.data.content.images[index] = link;
-                            }
-                            else {
-                                if (!ContentHome.info.data.content.images) {
-                                    ContentHome.info.data.content.images = [];
-                                }
-                                ContentHome.info.data.content.images.push(JSON.parse(angular.toJson(link)));
-                            }
-                        } else {
-                            console.info('Unable to load data.');
-                        }
-                    }, function (err) {
-                        //do something on cancel
-                    });
-                };
-                ContentHome.carouselOptions = {
-                    handle: '> .cursor-grab'
-                };
-
                 /**
                  * ContentHome.noMore tells if all data has been loaded
                  */
@@ -346,7 +333,8 @@
                 ContentHome.searchListItem = function (value) {
                     var title = '';
 
-                    searchOptions.skip = 0; /*reset the skip value*/
+                    searchOptions.skip = 0;
+                    /*reset the skip value*/
 
                     ContentHome.isBusy = false;
                     ContentHome.items = [];
