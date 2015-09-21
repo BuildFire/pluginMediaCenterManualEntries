@@ -11,7 +11,7 @@
                     var removePopupDeferred = $q.defer();
                     var removePopupModal = $modal
                         .open({
-                            templateUrl: 'templates/modals/rm-image-link-modal.html',
+                            templateUrl: 'templates/modals/rm-item-modal.html',
                             controller: 'RemovePopupCtrl',
                             controllerAs: 'RemovePopup',
                             size: 'sm',
