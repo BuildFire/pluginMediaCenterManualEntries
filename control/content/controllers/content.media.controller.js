@@ -279,18 +279,6 @@
                     Location.goToHome();
                 };
                 /**
-                 * will delete the current item from MediaContent collection
-                 */
-                ContentMedia.delete = function () {
-                    if (ContentMedia.item.id) {
-                        MediaContent.delete(ContentMedia.item.id).then(function (data) {
-                            Location.goToHome();
-                        }, function (err) {
-                            console.error('Error while deleting an item-----', err);
-                        });
-                    }
-                };
-                /**
                  * Initialize bootstrap data
                  */
                 init();
