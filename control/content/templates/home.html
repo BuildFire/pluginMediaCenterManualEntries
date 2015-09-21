@@ -1,39 +1,5 @@
 <div class="loader-pan" ng-show="ContentHome.loading"></div>
-<div class="item clearfix row">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Image Carousel</span>
-    </div>
-    <div class="main col-md-9 pull-right">
-        <div class="clearfix">
-            <a class="btn btn-success pull-left" ng-click="ContentHome.addUpdateCarouselImage()">Add Image</a>
-        </div>
-        <div class="carousel-items draggable-list-view margin-top-twenty border-radius-four border-grey"
-             ui-sortable="ContentHome.carouselOptions" ng-model="ContentHome.info.data.content.images"
-             data-ng-show="ContentHome.info.data.content.images.length">
-            <div class="d-item" data-ng-repeat="image in ContentHome.info.data.content.images">
-                <span class="icon icon-menu pull-left cursor-grab"></span>
-
-                <div class="media-holder pull-left">
-                    <img ng-src="{{image.imageUrl | resizeImage : 60 :40}}">
-                </div>
-                <div class="copy pull-right">
-                    <span class="title ellipsis">{{image.title}}</span>
-
-                    <div class="pull-right">
-                        <span class="edit_cell glyphicon glyphicon-pencil" aria-hidden="true"
-                              ng-click="ContentHome.addUpdateCarouselImage($index)"></span>
-                        <span class="btn-icon btn-delete-icon btn-danger transition-third"
-                              ng-click="ContentHome.rmCarouselImage($index)"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="well text-center margin-bottom-zero border-none" style="margin-top: 10px"
-             ng-hide="ContentHome.info.data.content.images.length">
-            <p class="margin-zero">No items found.</p>
-        </div>
-    </div>
-</div>
+<div id="carousel"></div>
 <hr>
 <div class="item clearfix row">
     <div class="labels col-md-3 padding-right-zero pull-left">
@@ -92,7 +58,7 @@
 <div class="item clearfix row">
     <div class="main col-md-9 pull-right padding-left-zero row">
         <div class="pull-left inner-main col-md-8 padding-zero">
-            <input type="text" class="form-control" placeholder="Plugin Name" ng-model="search">
+            <input type="text" class="form-control" placeholder="Item Name" ng-model="search">
 
         </div>
         <div class="col-md-4 pull-right">
