@@ -11,45 +11,12 @@
                 link: linker
             };
         })
-        .directive('buildfireCarousel', function ($timeout) {
+        .directive("buildFireCarousel", ["$rootScope", function ($rootScope) {
             return {
-                restrict: 'E',
-                replace: true,
+                restrict: 'A',
                 link: function (scope, elem, attrs) {
-                    var view;
-
-                    function initCarousel() {
-                        $timeout(function () {
-                            var imgs = scope.images || [];
-                            modifySource(imgs);
-                            view = new buildfire.components.carousel.view("#carousel", imgs);
-                        });
-
-                    }
-
-                    function modifySource(arr) {
-                        angular.forEach(arr, function (i) {
-                            i.iconUrl = i.imageUrl;
-                        });
-                    }
-
-                    initCarousel();
-
-
-                    scope.$watch(function () {
-                        return scope.images;
-                    }, function (newValue, oldValue) {
-                        var imgs = angular.copy(newValue);
-                        modifySource(imgs);
-                        if(view)
-                        view.loadItems(imgs);
-                    });
-
-                },
-                template: "<div id='carousel'></div>",
-                scope: {
-                    images: '='
+                    $rootScope.$broadcast("Carousel:LOADED");
                 }
-            }
-        });
+            };
+        }]);
 })(window.angular, undefined);
