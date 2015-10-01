@@ -50,7 +50,7 @@
                                 }).then(function success() {
                                     Location.goToHome();
                                 }, function fail() {
-                                    _bootstrap();
+                                    Location.goToHome();
                                 });
                             };
                             MediaCenter.get().then(function success(result) {
