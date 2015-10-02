@@ -4,13 +4,14 @@
         .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', '$rootScope', 'Buildfire', 'MediaCenterInfo', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders',
             function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, MediaCenterInfo, AppConfig, Messaging, EVENTS, PATHS, Location, Orders) {
                 var WidgetHome = this;
+                var view=null;
                 /**
                  * WidgetHome.media contains MediaCenterInfo.
                  * @type {MediaCenterInfo|*}
                  */
                 WidgetHome.media = MediaCenterInfo;
                 var _skip = 0,
-                    _limit = 5,
+                    _limit = 10,
                     searchOptions = {
                         filter: {"$json.title": {"$regex": '/*'}},
                         skip: _skip,
@@ -67,6 +68,9 @@
                             console.log(WidgetHome.media);
                             AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
                             $scope.$apply();
+                            if(view && event.data.content && event.data.content.images){
+                                view.loadItems(event.data.content.images);
+                            }
                         }
                     }
                     else {
@@ -142,6 +146,15 @@
                         console.error('error');
                     });
                 };
+
+                $rootScope.$on("Carousel:LOADED", function () {
+                    if (WidgetHome.media.data.content && WidgetHome.media.data.content.images) {
+                        view = new Buildfire.components.carousel.view("#carousel", []);
+                        view.loadItems(WidgetHome.media.data.content.images,false);
+                    } else {
+                        view.loadItems([]);
+                    }
+                });
 
             }]);
 })(window.angular, undefined);
