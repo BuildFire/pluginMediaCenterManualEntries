@@ -1,4 +1,4 @@
-# pluginMediaCenterManualEntries
+# pluginMediaCenterManualEntries ![](https://api.travis-ci.org/BuildFire/pluginMediaCenterManualEntries.svg)
 BuildFire Plugin: media center with manual entries 
 
 ##How to run and test
