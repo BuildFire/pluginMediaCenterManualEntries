@@ -249,3 +249,7 @@ videogular, [videogular]{
     width:110%;
     z-index:-1;
 }
+
+.blackBackground{
+    background-color: black !important;
+}
