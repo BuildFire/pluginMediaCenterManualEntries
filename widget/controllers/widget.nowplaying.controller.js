@@ -2,7 +2,7 @@
     angular
         .module('mediaCenterWidget')
         .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', 'COLLECTIONS','$rootScope', function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS,$rootScope) {
-            $rootScope.currentBackgroundImage = {'background-color':'black'}; // give black background to audio player
+            $rootScope.currentBackgroundImage = {'background-color':'black !important'}; // give black background to audio player
             var NowPlaying = this;
             NowPlaying.item = media;
             NowPlaying.playing = false;
