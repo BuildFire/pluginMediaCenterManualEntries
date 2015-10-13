@@ -22,7 +22,7 @@
         //injected ui.bootstrap for angular bootstrap component
         //injected ui.sortable for manual ordering of list
         //ngClipboard to provide copytoclipboard feature
-        .config(['$routeProvider', function ($routeProvider) {
+        .config(['$routeProvider', '$httpProvider', function ($routeProvider, $httpProvider) {
 
             /**
              * Disable the pull down refresh
@@ -119,38 +119,72 @@
                     templateUrl: 'templates/layouts/now-playing.html',
                     controllerAs: 'NowPlaying',
                     controller: 'NowPlayingCtrl',
-                     resolve: {
-                     media: ['$q', 'DB', 'COLLECTIONS', 'Location', '$route', function ($q, DB, COLLECTIONS, Location, $route) {
-                     var deferred = $q.defer();
-                     var MediaContent = new DB(COLLECTIONS.MediaContent);
-                     if ($route.current.params.mediaId) {
-                     MediaContent.getById($route.current.params.mediaId).then(function success(result) {
-                     if (result && result.data) {
-                     deferred.resolve(result);
-                     }
-                     else {
-                     Location.goToHome();
-                     }
-                     },
-                     function fail() {
-                     Location.goToHome();
-                     }
-                     );
-                     }
-                     else {
-                     Location.goToHome();
-                     }
-                     return deferred.promise;
-                     }]
-                     }
+                    resolve: {
+                        media: ['$q', 'DB', 'COLLECTIONS', 'Location', '$route', function ($q, DB, COLLECTIONS, Location, $route) {
+                            var deferred = $q.defer();
+                            var MediaContent = new DB(COLLECTIONS.MediaContent);
+                            if ($route.current.params.mediaId) {
+                                MediaContent.getById($route.current.params.mediaId).then(function success(result) {
+                                        if (result && result.data) {
+                                            deferred.resolve(result);
+                                        }
+                                        else {
+                                            Location.goToHome();
+                                        }
+                                    },
+                                    function fail() {
+                                        Location.goToHome();
+                                    }
+                                );
+                            }
+                            else {
+                                Location.goToHome();
+                            }
+                            return deferred.promise;
+                        }]
+                    }
                 })
 
                 .otherwise('/');
+            var interceptor = ['$q', function ($q) {
+                var counter = 0;
+
+                return {
+
+                    request: function (config) {
+                        buildfire.spinner.show();
+                        //NProgress.start();
+
+                        counter++;
+                        return config;
+                    },
+                    response: function (response) {
+                        counter--;
+                        if (counter === 0) {
+
+                            buildfire.spinner.hide();
+                        }
+                        return response;
+                    },
+                    responseError: function (rejection) {
+                        counter--;
+                        if (counter === 0) {
+
+                            buildfire.spinner.hide();
+                        }
+
+                        return $q.reject(rejection);
+                    }
+                };
+            }];
+
+            $httpProvider.interceptors.push(interceptor);
+
         }])
         .run(['Location', function (Location) {
             buildfire.deeplink.getData(function (data) {
                 if (data) {
-                    console.log('data---',data);
+                    console.log('data---', data);
                     Location.go("#/media/" + JSON.parse(data).id);
                 }
             });

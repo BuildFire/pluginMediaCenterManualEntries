@@ -27,7 +27,7 @@
                             <a class="ellipsis margin-zero text-primary" href="#/media/{{item.id}}">{{WidgetHome.items[$index].data.title}}</a>
 
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index].data.summary}}</p>
-                            <span class="list-item-date">{{WidgetHome.items[$index].data.dateCreated  | jsDate | date:"MMMM dd, yyyy"}}</span>
+                            <span class="list-item-date" data-ng-if="WidgetHome.items[$index].data.mediaDate">{{WidgetHome.items[$index].data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
                         </div>
                     </div>
                     <div class="list-item-even col-xs-6 pull-left" ng-if="WidgetHome.items[$index + 1]">
@@ -42,7 +42,7 @@
                             <a href="#/media/{{item.id}}" class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index + 1].data.title}}</a>
 
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.summary}}</p>
-                            <span class="list-item-date" data-ng-if="item.data.dateCreated">{{WidgetHome.items[$index + 1].data.dateCreated  | jsDate | date:"MMMM dd, yyyy"}}</span>
+                            <span class="list-item-date" data-ng-if="WidgetHome.items[$index + 1].data.mediaDate">{{WidgetHome.items[$index + 1].data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
                         </div>
                     </div>
                 </div>

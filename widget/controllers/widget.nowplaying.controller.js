@@ -1,7 +1,8 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS) {
+        .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', 'COLLECTIONS','$rootScope', function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS,$rootScope) {
+            $rootScope.blackBackground = true;
             var NowPlaying = this;
             NowPlaying.item = media;
             NowPlaying.playing = false;
@@ -118,6 +119,7 @@
                 }
             };
             NowPlaying.pause = function () {
+                NowPlaying.playing = false;
                 NowPlaying.paused = true;
                 audioPlayer.pause();
             };
@@ -171,6 +173,10 @@
                         }
                         break;
                 }
+            });
+
+            $scope.$on('$destroy', function() {
+                $rootScope.blackBackground = false;
             });
         }
         ])

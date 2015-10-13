@@ -22,7 +22,7 @@
         //injected ui.bootstrap for angular bootstrap component
         //injected ui.sortable for manual ordering of list
         //ngClipboard to provide copytoclipboard feature
-        .config(['$routeProvider', 'ngClipProvider', function ($routeProvider, ngClipProvider) {
+        .config(['$routeProvider', 'ngClipProvider', '$httpProvider', function ($routeProvider, ngClipProvider, $httpProvider) {
             ngClipProvider.setPath("//cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.1.6/ZeroClipboard.swf");
             $routeProvider
                 .when('/', {
@@ -110,6 +110,40 @@
                     }
                 })
                 .otherwise('/');
+            var interceptor = ['$q', function ($q) {
+                var counter = 0;
+
+                return {
+
+                    request: function (config) {
+                        buildfire.spinner.show();
+                        //NProgress.start();
+
+                        counter++;
+                        return config;
+                    },
+                    response: function (response) {
+                        counter--;
+                        if (counter === 0) {
+
+                            buildfire.spinner.hide();
+                        }
+                        return response;
+                    },
+                    responseError: function (rejection) {
+                        counter--;
+                        if (counter === 0) {
+
+                            buildfire.spinner.hide();
+                        }
+
+                        return $q.reject(rejection);
+                    }
+                };
+            }];
+
+            $httpProvider.interceptors.push(interceptor);
+
         }]);
 })
 (window.angular, window.buildfire);

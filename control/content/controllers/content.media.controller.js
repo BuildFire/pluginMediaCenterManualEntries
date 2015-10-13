@@ -81,6 +81,8 @@
                      */
                     if (media) {
                         ContentMedia.item = media;
+                        if(media.data.mediaDate)
+                        ContentMedia.item.data.mediaDate = new Date(media.data.mediaDate);
                     }
                     else {
                         ContentMedia.item = {data: data};
@@ -299,5 +301,13 @@
                 $scope.$watch(function () {
                     return ContentMedia.item;
                 }, updateItemsWithDelay, true);
+
+           /*     ContentMedia.datepicker = {};
+                ContentMedia.datepicker.dateOptions = {
+                    formatYear: 'yy',
+                    startingDay: 1
+                };
+                ContentMedia.datepicker.format = ['dd-MMMM-yyyy'];
+                ContentMedia.datepicker.status.opened = false;*/
             }]);
 })(window.angular, window.tinymce);
