@@ -96,6 +96,7 @@
                 }
             });
             WidgetMedia.onUpdateFn = Buildfire.datastore.onUpdate(function (event) {
+                console.log('update called');
                 switch (event.tag) {
                     case COLLECTIONS.MediaContent:
                         if (event.data) {
@@ -106,7 +107,7 @@
                         break;
                     case COLLECTIONS.MediaCenter:
                         WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
-
+                        $scope.$digest();
                         break;
                 }
             });

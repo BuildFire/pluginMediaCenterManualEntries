@@ -3,8 +3,8 @@
         <div class="media-center-banner clearfix">
             <div ng-class="WidgetMedia.item.data.videoUrl == '' ? '' : 'video-container-background'" class="plugin-slider text-center">
                 <div ng-class="WidgetMedia.item.data.videoUrl == '' ? '' : 'video-container-background'" ng-style="WidgetMedia.item.data.videoUrl == '' ? {'min-height': '192px'} : {}"  class="plugin-slide">
-                    <img data-ng-hide="WidgetMedia.item.data.videoUrl || !WidgetMedia.item.data.topImage"
-                         ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 300 : 180}}"/>
+                    <img style="width: 100% !important;" data-ng-hide="WidgetMedia.item.data.videoUrl || !WidgetMedia.item.data.topImage"
+                         ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 342 : 192}}"/>
                     <div ng-include="'templates/layouts/video-player.html'"></div>
                 </div>
             </div>
