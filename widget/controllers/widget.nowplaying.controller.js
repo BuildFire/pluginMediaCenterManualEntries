@@ -119,6 +119,7 @@
                 }
             };
             NowPlaying.pause = function () {
+                NowPlaying.playing = false;
                 NowPlaying.paused = true;
                 audioPlayer.pause();
             };
