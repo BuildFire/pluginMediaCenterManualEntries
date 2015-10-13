@@ -174,6 +174,10 @@
                         break;
                 }
             });
+
+            $scope.$on('$destroy', function() {
+                $rootScope.blackBackground = false;
+            });
         }
         ])
     ;
