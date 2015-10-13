@@ -81,6 +81,7 @@
                      */
                     if (media) {
                         ContentMedia.item = media;
+                        if(media.data.mediaDate)
                         ContentMedia.item.data.mediaDate = new Date(media.data.mediaDate);
                     }
                     else {
