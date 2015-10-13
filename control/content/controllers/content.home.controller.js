@@ -350,7 +350,7 @@
                  * ContentHome.removeListItem() used to delete an item from item list
                  * @param _index tells the index of item to be deleted.
                  */
-                ContentHome.removeListItem = function (index) {
+                ContentHome.removeListItem = function (index, $event) {
 
                     if ("undefined" == typeof index) {
                         return;
@@ -371,6 +371,13 @@
                         }, function (cancelData) {
                             //do something on cancel
                         });
+                        $timeout(function () {
+                            var top = $($event.currentTarget).offset().top;
+                            if (top > 100)
+                                top -= 100;
+                            $('.modal-dialog.modal-sm').offset({top: top, left: 0});
+                        }, 30);
+
                     }
                 };
 
