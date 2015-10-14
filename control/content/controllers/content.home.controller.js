@@ -5,10 +5,37 @@
         .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv',
             function ($scope, MediaCenterInfo, Modals, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv) {
                 var ContentHome = this;
-                ContentHome.info = MediaCenterInfo;
+
+                var _infoData = {
+                    data: {
+                        content: {
+                            images: [],
+                            descriptionHTML: '<p>&nbsp;<br></p>',
+                            description: '',
+                            sortBy: Orders.ordersMap.Newest,
+                            rankOfLastItem: 0
+                        },
+                        design: {
+                            listLayout: "list-1",
+                            itemLayout: "item-1",
+                            backgroundImage: ""
+                        }
+                    }
+                };
+
+                if (MediaCenterInfo) {
+                    updateMasterInfo(MediaCenterInfo);
+                    ContentHome.info = MediaCenterInfo;
+                }
+                else {
+                    MediaCenterInfo = _infoData;
+                    updateMasterInfo(_infoData);
+                    ContentHome.info = _infoData;
+                }
+
                 AppConfig.setSettings(MediaCenterInfo.data);
                 AppConfig.setAppId(MediaCenterInfo.id);
-                updateMasterInfo(ContentHome.info);
+
                 var header = {
                     topImage: 'Top image',
                     title: 'Title',
@@ -388,34 +415,51 @@
                 }
 
                 function resetInfo() {
-                    ContentHome.info = angular.copy(ContentHome.masterInfo);
+                    //ContentHome.info = angular.copy(ContentHome.masterInfo);
                 }
 
                 function isUnchanged(info) {
                     return angular.equals(info, ContentHome.masterInfo);
                 }
 
-                function updateData() {
-                    MediaCenter.update(ContentHome.info.id, ContentHome.info.data).then(function (data) {
-                        updateMasterInfo(data);
-                        AppConfig.setSettings(ContentHome.info.data);
-                    }, function (err) {
-                        resetInfo();
-                        console.error('Error-------', err);
-                    });
+                function updateData(_info) {
+                    if (!_info.id) {
+                        MediaCenter.save(_info.data).then(function (data) {
+                            MediaCenter.get().then(function (getData) {
+                                ContentHome.masterInfo = angular.copy(_info);
+                                _info.id = getData.id;
+                                AppConfig.setSettings(_info.data);
+                            }, function (err) {
+                                console.error(err);
+                            });
+                        }, function (err) {
+                            resetInfo();
+                            console.error('Error-------', err);
+                        });
+                    } else {
+                        MediaCenter.update(_info.id, _info.data).then(function (data) {
+                            updateMasterInfo(data);
+                            AppConfig.setSettings(_info.data);
+                        }, function (err) {
+                            resetInfo();
+                            console.error('Error-------', err);
+                        });
+                    }
                 }
 
-                function saveDataWithDelay() {
+                function saveDataWithDelay(_info) {
                     if (tmrDelayForMedia) {
                         clearTimeout(tmrDelayForMedia);
                     }
-                    if (!isUnchanged(ContentHome.info)) {
+
+                    if (!isUnchanged(_info)) {
                         tmrDelayForMedia = setTimeout(function () {
-                            updateData();
+                            updateData(_info);
                         }, 1000);
                     }
                 }
 
+                //var initInfo = true;
                 $scope.$watch(function () {
                     return ContentHome.info;
                 }, saveDataWithDelay, true);
