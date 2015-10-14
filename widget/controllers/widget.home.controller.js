@@ -4,11 +4,31 @@
         .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', '$rootScope', 'Buildfire', 'MediaCenterInfo', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders',
             function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, MediaCenterInfo, AppConfig, Messaging, EVENTS, PATHS, Location, Orders) {
                 var WidgetHome = this;
-                var view=null;
+                var _infoData = {
+                    data: {
+                        content: {
+                            images: [],
+                            descriptionHTML: '<p>&nbsp;<br></p>',
+                            description: '',
+                            sortBy: Orders.ordersMap.Newest,
+                            rankOfLastItem: 0
+                        },
+                        design: {
+                            listLayout: "list-1",
+                            itemLayout: "item-1",
+                            backgroundImage: ""
+                        }
+                    }
+                };
+                var view = null;
                 /**
                  * WidgetHome.media contains MediaCenterInfo.
                  * @type {MediaCenterInfo|*}
                  */
+
+                if (!MediaCenterInfo)
+                    MediaCenterInfo = _infoData;
+
                 WidgetHome.media = MediaCenterInfo;
                 var _skip = 0,
                     _limit = 10,
@@ -68,7 +88,7 @@
                             console.log(WidgetHome.media);
                             AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
                             $scope.$apply();
-                            if(view && event.data.content && event.data.content.images){
+                            if (view && event.data.content && event.data.content.images) {
                                 view.loadItems(event.data.content.images);
                             }
                         }
@@ -150,7 +170,7 @@
                 $rootScope.$on("Carousel:LOADED", function () {
                     if (WidgetHome.media.data.content && WidgetHome.media.data.content.images) {
                         view = new Buildfire.components.carousel.view("#carousel", []);
-                        view.loadItems(WidgetHome.media.data.content.images,false);
+                        view.loadItems(WidgetHome.media.data.content.images, false);
                     } else {
                         view.loadItems([]);
                     }

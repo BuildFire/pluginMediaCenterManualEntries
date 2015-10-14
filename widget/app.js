@@ -44,7 +44,7 @@
                             function ($q, DB, COLLECTIONS, Orders, Location) {
                                 var deferred = $q.defer();
                                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
-                                var _bootstrap = function () {
+                                /*var _bootstrap = function () {
                                     MediaCenter.save({
                                         content: {
                                             images: [],
@@ -63,18 +63,17 @@
                                     }, function fail(error) {
                                         throw (error);
                                     })
-                                }
+                                }*/
                                 MediaCenter.get().then(function success(result) {
                                         if (result && result.data && result.id) {
                                             deferred.resolve(result);
                                         }
                                         else {
-                                            //error in bootstrapping
-                                            _bootstrap(); //bootstrap again  _bootstrap();
+                                            deferred.resolve(null);
                                         }
                                     },
                                     function fail(error) {
-                                        throw (error);
+                                        deferred.resolve(null);
                                     }
                                 );
                                 return deferred.promise;

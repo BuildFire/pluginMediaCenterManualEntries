@@ -68,13 +68,13 @@
                 DesignHome.mediaInfo.data.design.backgroundImage = null;
             };
 
-   /*         $scope.$watch(function () {
+            $scope.$watch(function () {
                 return DesignHome.mediaInfo;
             }, function () {
                 if (!DesignHome.mediaInfo.id) {
                     MediaCenter.save(DesignHome.mediaInfo.data).then(function (data) {
                         MediaCenter.get().then(function (getData) {
-                            /!* sync lastSaved to latest value *!/
+                            /* sync lastSaved to latest value */
                             DesignHome._lastSaved = angular.copy(DesignHome.mediaInfo);
                             DesignHome._lastSaved.id = getData.id;
                             DesignHome.mediaInfo.id = getData.id;
@@ -83,20 +83,20 @@
                         });
 
                     }, function (err) {
-                        /!* revert to previous value in case of error*!/
+                        /* revert to previous value in case of error*/
                         DesignHome.mediaInfo = angular.copy(DesignHome._lastSaved);
                     });
                 }
                 MediaCenter.update(DesignHome.mediaInfo.id, DesignHome.mediaInfo.data).then(function () {
-                    /!* sync lastSaved to latest value *!/
+                    /* sync lastSaved to latest value */
                     DesignHome._lastSaved = angular.copy(DesignHome.mediaInfo);
                     ///on Control when a user drills to a section reflect the same on the widget
                 }, function () {
-                    /!* revert to previous value in case of error*!/
+                    /* revert to previous value in case of error*/
                     DesignHome.mediaInfo = angular.copy(DesignHome._lastSaved);
                 });
 
-            }, true);*/
+            }, true);
             /*Background image area ends*/
         }]);
 })(window.angular, window);
