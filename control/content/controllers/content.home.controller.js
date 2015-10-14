@@ -24,10 +24,12 @@
                 };
 
                 if (MediaCenterInfo) {
+                    alert('got info');
                     updateMasterInfo(MediaCenterInfo);
                     ContentHome.info = MediaCenterInfo;
                 }
                 else {
+                    alert('no info');
                     MediaCenterInfo = _infoData;
                     updateMasterInfo(_infoData);
                     ContentHome.info = _infoData;
@@ -425,6 +427,7 @@
                 function updateData(_info) {
 
                     MediaCenter.save(_info.data).then(function (data) {
+                        alert('data saved');
                         updateMasterInfo(_info);
                         AppConfig.setSettings(_info.data);
                         if (_info.id)

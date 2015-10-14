@@ -46,13 +46,16 @@
                             };*/
                             MediaCenter.get().then(function success(result) {
                                     if (result && result.data && result.data.content && result.data.design) {
+                                        alert('got data');
                                         deferred.resolve(result);
                                     }
                                     else {
+                                        alert('no data');
                                         deferred.resolve(null);
                                     }
                                 },
                                 function fail() {
+                                    alert('no data');
                                     deferred.resolve(null);
                                 }
                             );
