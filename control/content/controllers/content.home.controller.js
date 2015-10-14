@@ -423,11 +423,13 @@
                 }
 
                 function updateData(_info) {
-                    if (!_info.id) {
+                    //if (!_info.id) {
                         MediaCenter.save(_info.data).then(function (data) {
                             MediaCenter.get().then(function (getData) {
-                                ContentHome.masterInfo = angular.copy(_info);
+                               /* ContentHome.masterInfo = angular.copy(_info);
                                 _info.id = getData.id;
+                                AppConfig.setSettings(_info.data);*/
+                                updateMasterInfo(data);
                                 AppConfig.setSettings(_info.data);
                             }, function (err) {
                                 console.error(err);
@@ -436,7 +438,7 @@
                             resetInfo();
                             console.error('Error-------', err);
                         });
-                    } else {
+                   /* } else {
                         MediaCenter.update(_info.id, _info.data).then(function (data) {
                             updateMasterInfo(data);
                             AppConfig.setSettings(_info.data);
@@ -444,7 +446,7 @@
                             resetInfo();
                             console.error('Error-------', err);
                         });
-                    }
+                    }*/
                 }
 
                 function saveDataWithDelay(_info) {
