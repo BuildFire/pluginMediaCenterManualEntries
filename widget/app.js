@@ -22,7 +22,12 @@
         //injected ui.bootstrap for angular bootstrap component
         //injected ui.sortable for manual ordering of list
         //ngClipboard to provide copytoclipboard feature
-        .config(['$routeProvider', '$httpProvider', function ($routeProvider, $httpProvider) {
+        .config(['$routeProvider', '$httpProvider','$compileProvider', function ($routeProvider, $httpProvider,$compileProvider) {
+
+            /**
+             * To make href urls safe on mobile
+             */
+            $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|cdvfile):/);
 
             /**
              * Disable the pull down refresh
