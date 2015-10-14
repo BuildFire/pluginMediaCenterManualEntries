@@ -423,6 +423,14 @@
                 }
 
                 function updateData(_info) {
+
+                    MediaCenter.save(_info.data).then(function (data) {
+                        updateMasterInfo(_info);
+                        AppConfig.setSettings(_info.data);
+                        if (_info.id)
+                            AppConfig.setSettings(_info.id);
+                    });
+
                     /*//if (!_info.id) {
                         MediaCenter.save(_info.data).then(function (data) {
                             MediaCenter.get().then(function (getData) {
@@ -446,7 +454,7 @@
                             resetInfo();
                             console.error('Error-------', err);
                         });
-                    }*!/*/
+                    }*!/
 
                     MediaCenter.update(_info.id, _info.data).then(function (data) {
                         updateMasterInfo(data);
@@ -454,7 +462,7 @@
                     }, function (err) {
                         resetInfo();
                         console.error('Error-------', err);
-                    });
+                    });*/
                 }
 
                 function saveDataWithDelay(_info) {
