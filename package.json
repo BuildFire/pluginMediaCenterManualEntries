@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "description": "\"media-center-plugin\"",
   "scripts": {
-    "test": "karma start --reporters progress"
+    "postinstall": "./node_modules/.bin/bower install",
+    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
   },
   "keywords": [
     "angularjs",
@@ -15,6 +16,7 @@
   "author": "deepak.m.shrma@gmail.com",
   "license": "ISC",
   "dependencies": {
+    "bower": "^1.5.3",
     "karma-cli": "^0.1.0",
     "karma-coverage": "^0.5.0"
   },
