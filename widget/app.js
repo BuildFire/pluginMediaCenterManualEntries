@@ -181,13 +181,21 @@
             $httpProvider.interceptors.push(interceptor);
 
         }])
-        .run(['Location', function (Location) {
+        .run(['Location','$location', function (Location,$location) {
             buildfire.deeplink.getData(function (data) {
                 if (data) {
                     console.log('data---', data);
                     Location.go("#/media/" + JSON.parse(data).id);
                 }
             });
+
+            buildfire.navigation.onBackButtonClick = function () {
+                var path = $location.path();
+                if (path.indexOf('/media') == 0)
+                    Location.goToHome();
+                else if (path.indexOf('/nowplaying') == 0)
+                    Location.go('#/media/' + path.split('/')[2]);
+            }
         }]);
 
 })(window.angular, window.buildfire);
