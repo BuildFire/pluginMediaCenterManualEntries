@@ -199,6 +199,8 @@
                     Location.goToHome();
                 else if (path.indexOf('/nowplaying') == 0)
                     Location.go('#/media/' + path.split('/')[2]);
+                else
+                    buildfire.navigation.navigateHome();
             }
         }]);
 
