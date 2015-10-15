@@ -21,11 +21,11 @@
         </div>
         <div class="slider margin-top-ten" style="margin-bottom: -70px;">
             <div class="playerMP">
-                <div>{{NowPlaying.currentTime | number:0}}</div>
+                <div ng-if="NowPlaying.currentTime">{{NowPlaying.currentTime | secondsToDateTime | date:'mm:ss'}}</div>
                 <div><input ng-show="NowPlaying.duration" type="range" min="0" max="{{NowPlaying.duration}}"
                             ng-model="NowPlaying.currentTime"
                             ng-change="NowPlaying.changeTime(NowPlaying.currentTime)"/></div>
-                <div>{{NowPlaying.duration | number:0}}</div>
+                <div ng-if="NowPlaying.duration">{{NowPlaying.duration | secondsToDateTime | date:'mm:ss'}}</div>
             </div>
         </div>
         <div class="text-center margin-top-fifteen">
