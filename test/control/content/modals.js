@@ -1,4 +1,4 @@
-describe('mediaCenterModals: Services', function () {
+xdescribe('mediaCenterModals: Services', function () {
     var $modal, $q;
     beforeEach(module('mediaCenterModals'));
     beforeEach(inject(function ($injector) {

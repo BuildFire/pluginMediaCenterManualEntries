@@ -1,7 +1,7 @@
 /**
  * Created by lakshay on 28/8/15.
  */
-describe('Unit: mediaPlugin design app', function () {
+xdescribe('Unit: mediaPlugin design app', function () {
     describe('Unit: app routes', function () {
         beforeEach(module('mediaCenterDesign'));
         var location, route, rootScope;

@@ -1,4 +1,4 @@
-describe('Unit: resizeImage filter', function () {
+xdescribe('Unit: resizeImage filter', function () {
     beforeEach(module('mediaCenterDesignFilters'));
     var filter;
     beforeEach(inject(function (_$filter_) {
@@ -17,7 +17,7 @@ describe('Unit: resizeImage filter', function () {
         expect(result).toEqual("http://s7obnu.cloudimage.io/s/resizenp/88x124/");
     });
 });
-describe('Unit: cropImage filter', function () {
+xdescribe('Unit: cropImage filter', function () {
     beforeEach(module('mediaCenterDesignFilters'));
     var filter;
     beforeEach(inject(function (_$filter_) {
@@ -36,7 +36,7 @@ describe('Unit: cropImage filter', function () {
         expect(result).toEqual("http://s7obnu.cloudimage.io/s/crop/88x124/");
     });
 });
-describe('Unit: safeHtml filter', function () {
+xdescribe('Unit: safeHtml filter', function () {
     beforeEach(module('mediaCenterDesignFilters'));
     var filter;
     beforeEach(inject(function (_$filter_) {
@@ -55,7 +55,7 @@ describe('Unit: safeHtml filter', function () {
         expect(result).toEqual("");
     });
 });
-describe('Unit: jsDate filter', function () {
+xdescribe('Unit: jsDate filter', function () {
     beforeEach(module('mediaCenterDesignFilters'));
     var filter;
     beforeEach(inject(function (_$filter_) {

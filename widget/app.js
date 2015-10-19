@@ -22,7 +22,7 @@
         //injected ui.bootstrap for angular bootstrap component
         //injected ui.sortable for manual ordering of list
         //ngClipboard to provide copytoclipboard feature
-        .config(['$routeProvider', '$httpProvider','$compileProvider', function ($routeProvider, $httpProvider,$compileProvider) {
+        .config(['$routeProvider', '$httpProvider', '$compileProvider', function ($routeProvider, $httpProvider, $compileProvider) {
 
             /**
              * To make href urls safe on mobile
@@ -45,25 +45,25 @@
                                 var deferred = $q.defer();
                                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
                                 /*var _bootstrap = function () {
-                                    MediaCenter.save({
-                                        content: {
-                                            images: [],
-                                            descriptionHTML: '',
-                                            description: '',
-                                            sortBy: Orders.ordersMap.Newest,
-                                            rankOfLastItem: 0
-                                        },
-                                        design: {
-                                            listLayout: "list-1",
-                                            itemLayout: "item-1",
-                                            backgroundImage: ""
-                                        }
-                                    }).then(function success() {
-                                        Location.goToHome();
-                                    }, function fail(error) {
-                                        throw (error);
-                                    })
-                                }*/
+                                 MediaCenter.save({
+                                 content: {
+                                 images: [],
+                                 descriptionHTML: '',
+                                 description: '',
+                                 sortBy: Orders.ordersMap.Newest,
+                                 rankOfLastItem: 0
+                                 },
+                                 design: {
+                                 listLayout: "list-1",
+                                 itemLayout: "item-1",
+                                 backgroundImage: ""
+                                 }
+                                 }).then(function success() {
+                                 Location.goToHome();
+                                 }, function fail(error) {
+                                 throw (error);
+                                 })
+                                 }*/
                                 MediaCenter.get().then(function success(result) {
                                         if (result && result.data && result.id) {
                                             deferred.resolve(result);
@@ -156,7 +156,8 @@
                 return {
 
                     request: function (config) {
-                        buildfire.spinner.show();
+                        if (buildfire.spinner)
+                            buildfire.spinner.show();
                         //NProgress.start();
 
                         counter++;
@@ -185,13 +186,14 @@
             $httpProvider.interceptors.push(interceptor);
 
         }])
-        .run(['Location','$location', function (Location,$location) {
-            buildfire.deeplink.getData(function (data) {
-                if (data) {
-                    console.log('data---', data);
-                    Location.go("#/media/" + JSON.parse(data).id);
-                }
-            });
+        .run(['Location', '$location', function (Location, $location) {
+            if (buildfire.deeplink)
+                buildfire.deeplink.getData(function (data) {
+                    if (data) {
+                        console.log('data---', data);
+                        Location.go("#/media/" + JSON.parse(data).id);
+                    }
+                });
 
             buildfire.navigation.onBackButtonClick = function () {
                 var path = $location.path();
