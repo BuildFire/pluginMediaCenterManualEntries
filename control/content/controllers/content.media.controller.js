@@ -49,7 +49,7 @@
                         audioUrl: '',
                         videoUrl: '',
                         image: '',
-                        dateCreated: '',
+                        mediaDate: new Date(),
                         rank: (MediaCenterSettings.content.rankOfLastItem || 0) + 10,
                         links: [] // this will contain action links
                     };
