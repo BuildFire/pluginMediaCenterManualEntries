@@ -253,3 +253,7 @@ videogular, [videogular]{
 .blackBackground{
     background-color: black !important;
 }
+
+.clickable{
+    cursor: pointer;
+}

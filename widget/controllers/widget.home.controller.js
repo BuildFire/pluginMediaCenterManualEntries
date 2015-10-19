@@ -167,6 +167,10 @@
                     });
                 };
 
+                WidgetHome.goToMedia = function (ind) {
+                  Location.go('#/media/' + WidgetHome.items[ind].id);
+                };
+
                 $rootScope.$on("Carousel:LOADED", function () {
                     if (WidgetHome.media.data.content && WidgetHome.media.data.content.images) {
                         view = new Buildfire.components.carousel.view("#carousel", []);
