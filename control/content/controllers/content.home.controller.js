@@ -403,7 +403,7 @@
                             if (top > 100)
                                 top -= 100;
                             $('.modal-dialog.modal-sm').offset({top: top, left: 0});
-                        }, 30);
+                        }, 500);
 
                     }
                 };
