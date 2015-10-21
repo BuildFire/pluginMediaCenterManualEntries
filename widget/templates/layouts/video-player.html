@@ -1,5 +1,5 @@
 
-    <div ng-show="WidgetMedia.item.data.videoUrl" class="videogular-container">
+    <div ng-show="WidgetMedia.showVideo" class="videogular-container">
         <videogular data-ng-hide="WidgetMedia.item.data.videoUrl | isYoutubeVimeoLink" vg-player-ready="WidgetMedia.onPlayerReady($API)"
                     vg-change-source="WidgetMedia.sourceChanged($source)"
                     vg-theme="WidgetMedia.videoPlayerConfig.theme.url"

@@ -257,3 +257,7 @@ videogular, [videogular]{
 .clickable{
     cursor: pointer;
 }
+
+.audio-temporary-fix{
+    height:50px;
+}
