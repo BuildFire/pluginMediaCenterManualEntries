@@ -253,3 +253,11 @@ videogular, [videogular]{
 .blackBackground{
     background-color: black !important;
 }
+
+.clickable{
+    cursor: pointer;
+}
+
+.audio-temporary-fix{
+    height:50px;
+}

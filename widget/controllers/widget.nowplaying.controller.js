@@ -177,6 +177,7 @@
 
             $scope.$on('$destroy', function() {
                 $rootScope.blackBackground = false;
+                NowPlaying.pause();
             });
         }
         ])

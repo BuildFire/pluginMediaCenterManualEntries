@@ -14,14 +14,14 @@
              infinite-scroll-disabled="WidgetHome.noMore"
              infinite-scroll-container='"#scroll-infinite"'
              infinite-scroll-distance="0">
-            <div class="list-item" ng-repeat="item in WidgetHome.items">
+            <div class="clickable list-item" ng-repeat="item in WidgetHome.items" ng-click="WidgetHome.goToMedia($index)">
                 <div class="list-item-media text-left overflow-hidden">
                     <div class="list-media-holder pull-left" ng-if="item.data.topImage"
                          play-btn="{{item.data.videoUrl.length > 0}}">
                         <img ng-src="{{item.data.topImage | cropImage:110:60}}">
                     </div>
                     <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-                        <p class="ellipsis margin-zero"><a class="text-primary" href="#/media/{{item.id}}">{{item.data.title}}</a></p>
+                        <p class="ellipsis margin-zero"><a class="text-primary">{{item.data.title}}</a></p>
 
                         <p class="summary ellipsis margin-zero">{{item.data.summary}}</p>
                         <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>

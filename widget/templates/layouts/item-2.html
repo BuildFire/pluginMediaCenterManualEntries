@@ -1,10 +1,10 @@
 <div class="holder padding-zero">
-    <div class="media-center-plugin layout2">
+    <div class="media-center-plugin layout2" data-ng-hide="WidgetMedia.showSource">
         <div class="people-banner border-bottom-grey">
             <div class="people-bg padding-top-fifteen padding-bottom-fifteen clearfix">
                 <div class="people-holder clearfix">
                     <div class="people-media text-center">
-                       <img data-ng-hide="WidgetMedia.item.data.videoUrl"
+                       <img data-ng-hide="WidgetMedia.showVideo"
                              ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 250 : 400}}">
 
                         <div ng-include="'templates/layouts/video-player.html'"></div>
@@ -20,8 +20,9 @@
             <div class="link-list">
                 <a class="text-primary" ng-if="WidgetMedia.item.data.audioUrl"
                    href="#/nowplaying/{{WidgetMedia.item.id}}">Listen</a>
-                <a class="text-primary" ng-if="WidgetMedia.item.data.videoUrl" ng-click="WidgetMedia.API.play()">Watch</a>
-                <a class="text-primary" ng-if="WidgetMedia.item.data.srcUrl" href="{{WidgetMedia.item.data.srcUrl}}" target="_blank">View Source</a>
+                <a class="text-primary" ng-if="WidgetMedia.item.data.videoUrl"
+                   ng-click="WidgetMedia.toggleShowVideo();">Watch</a>
+                <a id="sourceToggleButton" class="text-primary" ng-if="WidgetMedia.item.data.srcUrl" ng-click="WidgetMedia.showSourceIframe()">View Source</a>
                 <a class="text-primary" ng-if="WidgetMedia.item.data.links.length">Share</a>
             </div>
             <hr class="small">
@@ -31,5 +32,10 @@
                 <a class="d-link" ng-repeat="link in WidgetMedia.item.data.links">{{link.title}}</a>
             </div>
         </div>
+    </div>
+    <div ng-if="WidgetMedia.showSource">
+        <!--<iframe ng-if="WidgetMedia.iframeSrcUrl" id="sourceIframe" ng-src="WidgetMedia.iframeSrcUrl">-->
+        <iframe style="height: 590px" id="sourceIframe">
+        </iframe>
     </div>
 </div>

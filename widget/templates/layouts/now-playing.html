@@ -22,16 +22,17 @@
         <div class="slider margin-top-ten" style="margin-bottom: -70px;">
             <div class="playerMP">
                 <div ng-if="NowPlaying.currentTime">{{NowPlaying.currentTime | secondsToDateTime | date:'mm:ss'}}</div>
-                <div><input ng-show="NowPlaying.duration" type="range" min="0" max="{{NowPlaying.duration}}"
+                <div><input type="range" min="0" max="{{NowPlaying.duration}}"
                             ng-model="NowPlaying.currentTime"
-                            ng-change="NowPlaying.changeTime(NowPlaying.currentTime)"/></div>
+                            ng-change="NowPlaying.changeTime(NowPlaying.currentTime)"
+                            ng-style="NowPlaying.duration? {'visibility':'visible'}:{'visibility':'hidden'}"/></div>
                 <div ng-if="NowPlaying.duration">{{NowPlaying.duration | secondsToDateTime | date:'mm:ss'}}</div>
             </div>
         </div>
         <div class="text-center margin-top-fifteen">
             <span class="icon icon-dots"></span>
         </div>
-        <div class="media-player-action-btns margin-top-twenty">
+        <div class="media-player-action-btns margin-top-ten audio-temporary-fix">
             &nbsp;<input class="rotate-270"
                          ng-style="NowPlaying.showVolume? {'visibility':'visible'}:{'visibility':'hidden'}" type="range"
                          min="0" max="1" step="0.1" ng-model="NowPlaying.volume"

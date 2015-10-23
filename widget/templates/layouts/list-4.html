@@ -12,10 +12,8 @@
             <div class="list-layout" infinite-scroll="WidgetHome.loadMore()"
                  infinite-scroll-disabled="WidgetHome.noMore"
                  infinite-scroll-container='"#scroll-infinite"'>
-
-
-                <div ng-repeat="item in WidgetHome.items" ng-if="$index % 2 == 0" class="row">
-                    <div class="list-item-odd col-xs-6 pull-left">
+                <div ng-repeat="item in WidgetHome.items" ng-if="$index % 2 == 0" class="row"  ng-click="WidgetHome.goToMedia($index)">
+                    <div class="list-item-odd col-xs-6 pull-left clickable ">
                         <div class="list-item-media text-center border-radius-three overflow-hidden">
                             <div class="list-media-holder"
                                  play-btn="{{WidgetHome.items[$index].data.videoUrl.length > 0}}">
@@ -24,13 +22,13 @@
                             </div>
                         </div>
                         <div class="list-item-copy text-left">
-                            <a class="ellipsis margin-zero text-primary" href="#/media/{{item.id}}">{{WidgetHome.items[$index].data.title}}</a>
+                            <a class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index].data.title}}</a>
 
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index].data.summary}}</p>
                             <span class="list-item-date" data-ng-if="WidgetHome.items[$index].data.mediaDate">{{WidgetHome.items[$index].data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
                         </div>
                     </div>
-                    <div class="list-item-even col-xs-6 pull-left" ng-if="WidgetHome.items[$index + 1]">
+                    <div class="list-item-even col-xs-6 pull-left clickable " ng-if="WidgetHome.items[$index + 1]">
                         <div class="list-item-media text-center border-radius-three overflow-hidden">
                             <div class="list-media-holder"
                                  play-btn="{{WidgetHome.items[$index+1].data.videoUrl.length > 0}}">
@@ -39,7 +37,7 @@
                             </div>
                         </div>
                         <div class="list-item-copy text-left">
-                            <a href="#/media/{{item.id}}" class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index + 1].data.title}}</a>
+                            <a class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index + 1].data.title}}</a>
 
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.summary}}</p>
                             <span class="list-item-date" data-ng-if="WidgetHome.items[$index + 1].data.mediaDate">{{WidgetHome.items[$index + 1].data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>

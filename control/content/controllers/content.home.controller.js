@@ -403,7 +403,7 @@
                             if (top > 100)
                                 top -= 100;
                             $('.modal-dialog.modal-sm').offset({top: top, left: 0});
-                        }, 30);
+                        }, 500);
 
                     }
                 };
@@ -423,15 +423,6 @@
                 }
 
                 function updateData(_info) {
-
-                   /* MediaCenter.save(_info.data).then(function (data) {
-                        //alert('data saved');
-                        updateMasterInfo(_info);
-                        AppConfig.setSettings(_info.data);
-                        if (_info.id)
-                            AppConfig.setSettings(_info.id);
-                    });*/
-
                     if (!_info.id) {
                         MediaCenter.save(_info.data).then(function (data) {
                             MediaCenter.get().then(function (getData) {

@@ -40,6 +40,7 @@
     <script src="assets/js/videogular.min.js"></script>
     <script src="assets/js/vg-controls.min.js"></script>
     <script src="assets/js/vg-overlay-play.min.js"></script>
+    <link rel="stylesheet" href="../../../styles/transitionAnimation.css">
 
     <!-- Audio player-->
     <script src="../../../scripts/buildfire/services/media/audioPlayer.js"></script>
@@ -50,7 +51,7 @@
 <body class="scrollable customBackground" ng-style="currentBackgroundImage" ng-class="blackBackground ? 'blackBackground': ''" >
 <div class="main_view">
 
-    <div class="content" ng-view=""></div>
+    <div class="content slide" ng-view=""></div>
 </div>
 </body>
 </html>

@@ -4,6 +4,8 @@
         .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB) {
             var WidgetMedia = this;
             WidgetMedia.API = null;
+            WidgetMedia.showVideo = false;
+            WidgetMedia.showSource = false;
             var MediaCenter = new DB(COLLECTIONS.MediaCenter);
             WidgetMedia.onPlayerReady = function ($API) {
                 WidgetMedia.API = $API;
@@ -68,6 +70,10 @@
                 WidgetMedia.item = media;
                 console.log('initial', WidgetMedia.item);
                 WidgetMedia.changeVideoSrc();
+                WidgetMedia.iframeSrcUrl = $sce.trustAsUrl(WidgetMedia.item.data.srcUrl);
+            }
+            else {
+                WidgetMedia.iframeSrcUrl = '';
             }
 
             if (WidgetMedia.media && WidgetMedia.media.data && WidgetMedia.media.data.design && WidgetMedia.media.data.design.backgroundImage)
@@ -111,6 +117,24 @@
                         break;
                 }
             });
+
+            WidgetMedia.toggleShowVideo = function () {
+                WidgetMedia.showVideo = !WidgetMedia.showVideo;
+                if (WidgetMedia.showVideo)
+                    WidgetMedia.API.play();
+                else
+                    WidgetMedia.API.pause();
+            };
+
+            WidgetMedia.showSourceIframe = function () {
+                WidgetMedia.showSource = !WidgetMedia.showSource;
+                if (WidgetMedia.showSource) {
+                    $timeout(function () {
+                        angular.element('#sourceIframe').attr('src', WidgetMedia.item.data.srcUrl);
+                    }, 1000);
+                }
+            };
+
             var initializing = true;
             $scope.$watch(function () {
                 return WidgetMedia.item.data.videoUrl;

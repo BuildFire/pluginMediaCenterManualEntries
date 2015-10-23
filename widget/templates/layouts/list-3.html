@@ -10,14 +10,14 @@
              infinite-scroll="WidgetHome.loadMore()"
              infinite-scroll-disabled="WidgetHome.noMore"
              infinite-scroll-container='"#scroll-infinite"'>
-            <div class="" ng-repeat="item in WidgetHome.items">
+            <div class="clickable" ng-repeat="item in WidgetHome.items" ng-click="WidgetHome.goToMedia($index)">
                 <div class="plugin-banner clearfix">
                     <div class="" ng-if="item.data.topImage" play-btn="{{item.data.videoUrl.length > 0}}">
                         <img ng-src="{{item.data.topImage | cropImage:340:190}}">
                     </div>
                 </div>
                 <div class="padded text-left">
-                    <a class="text-primary" href="#/media/{{item.id}}">{{item.data.title}}</a>
+                    <a class="text-primary">{{item.data.title}}</a>
                     <p class="margin-bottom-zero">{{item.data.summary}}</p>
                     <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
                 </div>
