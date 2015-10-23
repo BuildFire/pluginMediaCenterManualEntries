@@ -9,7 +9,7 @@
                 data: {
                     content: {
                         images: [],
-                        descriptionHTML: '',
+                        descriptionHTML: '<p>&nbsp;<br></p>',
                         description: '',
                         sortBy: Orders.ordersMap.Newest,
                         rankOfLastItem: 0
@@ -22,18 +22,14 @@
                 }
             };
 
-            if (MediaCenterInfo) {
-                DesignHome._lastSaved = angular.copy(MediaCenterInfo);
-                /* populate VM with resolve */
-                DesignHome.mediaInfo = MediaCenterInfo;
-            }
-            else {
+            if (!MediaCenterInfo) {
                 MediaCenterInfo = _infoData;
-                DesignHome._lastSaved = angular.copy(_infoData);
-                DesignHome.mediaInfo = _infoData;
             }
 
-
+            DesignHome._lastSaved = angular.copy(MediaCenterInfo);
+            /* populate VM with resolve */
+            DesignHome.mediaInfo = MediaCenterInfo;
+            console.log('mediainfo on init', DesignHome.mediaInfo);
             /*Buildfire DB Service*/
 
             DesignHome._mediaCenter = new DB(COLLECTIONS.MediaCenter);
@@ -68,9 +64,16 @@
                 DesignHome.mediaInfo.data.design.backgroundImage = null;
             };
 
+            function isUnchanged(info) {
+                return angular.equals(info, DesignHome.mediaInfo);
+            }
+
             $scope.$watch(function () {
                 return DesignHome.mediaInfo;
             }, function () {
+
+                if (isUnchanged(DesignHome._lastSaved))
+                    return;
                 if (!DesignHome.mediaInfo.id) {
                     MediaCenter.save(DesignHome.mediaInfo.data).then(function (data) {
                         MediaCenter.get().then(function (getData) {
@@ -78,6 +81,7 @@
                             DesignHome._lastSaved = angular.copy(DesignHome.mediaInfo);
                             DesignHome._lastSaved.id = getData.id;
                             DesignHome.mediaInfo.id = getData.id;
+                            console.log('load edit to medianInfo/', DesignHome.mediaInfo);
                         }, function (err) {
                             console.error(err);
                         });
@@ -87,15 +91,16 @@
                         DesignHome.mediaInfo = angular.copy(DesignHome._lastSaved);
                     });
                 }
-                MediaCenter.update(DesignHome.mediaInfo.id, DesignHome.mediaInfo.data).then(function () {
-                    /* sync lastSaved to latest value */
-                    DesignHome._lastSaved = angular.copy(DesignHome.mediaInfo);
-                    ///on Control when a user drills to a section reflect the same on the widget
-                }, function () {
-                    /* revert to previous value in case of error*/
-                    DesignHome.mediaInfo = angular.copy(DesignHome._lastSaved);
-                });
-
+                else {
+                    MediaCenter.update(DesignHome.mediaInfo.id, DesignHome.mediaInfo.data).then(function () {
+                        /* sync lastSaved to latest value */
+                        DesignHome._lastSaved = angular.copy(DesignHome.mediaInfo);
+                        ///on Control when a user drills to a section reflect the same on the widget
+                    }, function () {
+                        /* revert to previous value in case of error*/
+                        DesignHome.mediaInfo = angular.copy(DesignHome._lastSaved);
+                    });
+                }
             }, true);
             /*Background image area ends*/
         }]);
