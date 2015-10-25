@@ -176,11 +176,21 @@
                             ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({id: item.id});
                             updateMasterItem(item);
                             MediaCenterSettings.content.rankOfLastItem = item.data.rank;
-                            MediaCenter.update(appId, MediaCenterSettings).then(function (data) {
-                                console.info("Updated MediaCenter rank");
-                            }, function (err) {
-                                console.error('Error-------', err);
-                            });
+                            if (appId && MediaCenterSettings) {
+                                MediaCenter.update(appId, MediaCenterSettings).then(function (data) {
+                                    console.info("Updated MediaCenter rank");
+                                }, function (err) {
+                                    console.error('Error-------', err);
+                                });
+                            }
+                            else {
+                                MediaCenter.insert(MediaCenterSettings).then(function (data) {
+                                    console.info("Inserted MediaCenter rank");
+                                }, function (err) {
+                                    console.error('Error-------', err);
+                                });
+                            }
+
                         }, function (err) {
                             resetItem();
                             console.error('Error while getting----------', err);
@@ -188,6 +198,11 @@
                     }, function (err) {
                         console.error('---------------Error while inserting data------------', err);
                     });
+                }
+
+
+                function isValidItem(item) {
+                    return item.title;
                 }
 
                 /**
@@ -198,7 +213,8 @@
                     if (tmrDelayForMedia) {
                         clearTimeout(tmrDelayForMedia);
                     }
-                    if (!isUnChanged(ContentMedia.item)) {
+                    ContentMedia.isItemValid = isValidItem(ContentMedia.item.data);
+                    if (!isUnChanged(ContentMedia.item) && ContentMedia.isItemValid) {
                         tmrDelayForMedia = setTimeout(function () {
                             if (item.id) {
                                 updateItemData();
