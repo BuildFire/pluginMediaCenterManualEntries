@@ -73,7 +73,7 @@
                             throw ("header should be an array of values");
                         }
                         var items = [];
-                        for (var row = 1; row < rows.length; row++) {
+                        for (var row = 0; row < rows.length; row++) {
                             var item = {};
                             for (var col = 0; col < header.length && col < rows[row].length; col++) {
                                 var key = header[col];

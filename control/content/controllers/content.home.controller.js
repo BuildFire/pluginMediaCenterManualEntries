@@ -313,7 +313,25 @@
                 ContentHome.openImportCSVDialog = function () {
                     $csv.import(headerRow).then(function (rows) {
                         ContentHome.loading = true;
-                        if (rows && rows.length) {
+                        if (rows && rows.length > 1) {
+
+                            var columns = rows.shift();
+
+                            for(var _index = 0; _index < headerRow.length; _index++){
+                                if(header[headerRow[_index]] != columns[headerRow[_index]])
+                                {
+                                    ContentHome.loading = false;
+                                    ContentHome.csvDataInvalid = true;
+                                    $timeout(function hideCsvDataError() {
+                                        ContentHome.csvDataInvalid = false;
+                                    }, 2000);
+                                    break;
+                                }
+                            }
+
+                            if(!ContentHome.loading)
+                            return;
+
                             var rank = ContentHome.info.data.content.rankOfLastItem || 0;
                             for (var index = 0; index < rows.length; index++) {
                                 rank += 10;
@@ -344,6 +362,10 @@
                         }
                         else {
                             ContentHome.loading = false;
+                            ContentHome.csvDataInvalid = true;
+                            $timeout(function hideCsvDataError() {
+                                ContentHome.csvDataInvalid = false;
+                            }, 2000);
                             $scope.$apply();
                         }
                     }, function (error) {
