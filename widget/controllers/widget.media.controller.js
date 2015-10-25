@@ -127,12 +127,13 @@
             };
 
             WidgetMedia.showSourceIframe = function () {
-                WidgetMedia.showSource = !WidgetMedia.showSource;
+                $window.open(WidgetMedia.item.data.srcUrl,'_system');
+               /* WidgetMedia.showSource = !WidgetMedia.showSource;
                 if (WidgetMedia.showSource) {
                     $timeout(function () {
                         angular.element('#sourceIframe').attr('src', WidgetMedia.item.data.srcUrl);
                     }, 1000);
-                }
+                }*/
             };
 
             var initializing = true;
