@@ -168,7 +168,7 @@
                 };
 
                 WidgetHome.goToMedia = function (ind) {
-                  Location.go('#/media/' + WidgetHome.items[ind].id);
+                    Location.go('#/media/' + WidgetHome.items[ind].id);
                 };
 
                 $rootScope.$on("Carousel:LOADED", function () {
@@ -177,6 +177,13 @@
                         view.loadItems(WidgetHome.media.data.content.images, false);
                     } else {
                         view.loadItems([]);
+                    }
+                });
+
+                Messaging.sendMessageToControl({
+                    name: EVENTS.ROUTE_CHANGE,
+                    message: {
+                        path: PATHS.HOME
                     }
                 });
 

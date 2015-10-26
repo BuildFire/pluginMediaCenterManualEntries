@@ -33,26 +33,6 @@
                         MediaCenterInfo: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location', function ($q, DB, COLLECTIONS, Orders, Location) {
                             var deferred = $q.defer();
                             var MediaCenter = new DB(COLLECTIONS.MediaCenter);
-                           /* var _bootstrap = function () {
-                                MediaCenter.save({
-                                    content: {
-                                        images: [],
-                                        descriptionHTML: '',
-                                        description: '',
-                                        sortBy: Orders.ordersMap.Newest,
-                                        rankOfLastItem: 0
-                                    },
-                                    design: {
-                                        listLayout: "list-1",
-                                        itemLayout: "item-1",
-                                        backgroundImage: ""
-                                    }
-                                }).then(function success() {
-                                    Location.goToHome();
-                                }, function fail() {
-                                    Location.goToHome();
-                                });
-                            };*/
                             MediaCenter.get().then(function success(result) {
                                     if (result && result.id && result.data) {
                                         deferred.resolve(result);
@@ -143,6 +123,34 @@
 
             $httpProvider.interceptors.push(interceptor);
 
+        }])
+        .run(['Location', 'Messaging', 'EVENTS', 'PATHS', function (Location, Messaging, EVENTS, PATHS) {
+            // Handler to receive message from widget
+            Messaging.onReceivedMessage = function (event) {
+                if (event) {
+                    switch (event.name) {
+                        case EVENTS.ROUTE_CHANGE:
+                            var path = event.message.path,
+                                id = event.message.id;
+                            var url = "#/";
+                            switch (path) {
+                                case PATHS.MEDIA:
+                                    url = url + "media";
+                                    if (id) {
+                                        url = url + "/" + id;
+                                    }
+                                    break;
+                                case PATHS.HOME:
+                                    url = url + "home";
+                                    break;
+                                default :
+                                    break
+                            }
+                            Location.go(url);
+                            break;
+                    }
+                }
+            };
         }]);
 })
 (window.angular, window.buildfire);

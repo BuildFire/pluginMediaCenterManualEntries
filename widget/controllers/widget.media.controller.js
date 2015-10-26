@@ -1,7 +1,7 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'PATHS', function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, PATHS) {
             var WidgetMedia = this;
             WidgetMedia.API = null;
             WidgetMedia.showVideo = false;
@@ -96,7 +96,7 @@
 
                                     break
                             }
-                            Location.go("#/media");
+                            Location.go(url);
                             break;
                     }
                 }
@@ -127,13 +127,13 @@
             };
 
             WidgetMedia.showSourceIframe = function () {
-                $window.open(WidgetMedia.item.data.srcUrl,'_system');
-               /* WidgetMedia.showSource = !WidgetMedia.showSource;
-                if (WidgetMedia.showSource) {
-                    $timeout(function () {
-                        angular.element('#sourceIframe').attr('src', WidgetMedia.item.data.srcUrl);
-                    }, 1000);
-                }*/
+                $window.open(WidgetMedia.item.data.srcUrl, '_system');
+                /* WidgetMedia.showSource = !WidgetMedia.showSource;
+                 if (WidgetMedia.showSource) {
+                 $timeout(function () {
+                 angular.element('#sourceIframe').attr('src', WidgetMedia.item.data.srcUrl);
+                 }, 1000);
+                 }*/
             };
 
             var initializing = true;
@@ -151,5 +151,15 @@
             $scope.$on("$destroy", function () {
                 WidgetMedia.onUpdateFn.clear();
             });
+
+            //Sync with Control section
+            Messaging.sendMessageToControl({
+                name: EVENTS.ROUTE_CHANGE,
+                message: {
+                    path: PATHS.MEDIA,
+                    id: WidgetMedia.item.id || null
+                }
+            });
+
         }]);
 })(window.angular, window);
