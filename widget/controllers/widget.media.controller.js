@@ -127,7 +127,7 @@
             };
 
             WidgetMedia.showSourceIframe = function () {
-                $window.open(WidgetMedia.item.data.srcUrl,'_system');
+                Buildfire.navigation.openWindow(WidgetMedia.item.data.srcUrl,'_system');
                /* WidgetMedia.showSource = !WidgetMedia.showSource;
                 if (WidgetMedia.showSource) {
                     $timeout(function () {

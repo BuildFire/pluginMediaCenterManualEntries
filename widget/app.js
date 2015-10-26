@@ -197,12 +197,8 @@
 
             buildfire.navigation.onBackButtonClick = function () {
                 var path = $location.path();
-                if (path.indexOf('/media') == 0) {
-                    if (angular.element("#sourceIframe").length)
-                        angular.element("#sourceToggleButton").click();
-                    else
-                        Location.goToHome();
-                }
+                if (path.indexOf('/media') == 0)
+                    Location.goToHome();
                 else if (path.indexOf('/nowplaying') == 0)
                     Location.go('#/media/' + path.split('/')[2]);
                 else
