@@ -24,6 +24,22 @@
                 /**
                  * Get the MediaCenter initialized settings
                  */
+                if (!AppConfig.getSettings()) {
+                    AppConfig.setSettings({
+                        content: {
+                            images: [],
+                            descriptionHTML: '<p>&nbsp;<br></p>',
+                            description: '',
+                            sortBy: Orders.ordersMap.Newest,
+                            rankOfLastItem: 0
+                        },
+                        design: {
+                            listLayout: "list-1",
+                            itemLayout: "item-1",
+                            backgroundImage: ""
+                        }
+                    });
+                }
                 var MediaCenterSettings = AppConfig.getSettings();
                 /**
                  * Get the MediaCenter master collection data object id
@@ -81,12 +97,18 @@
                      */
                     if (media) {
                         ContentMedia.item = media;
-                        if(media.data.mediaDate)
-                        ContentMedia.item.data.mediaDate = new Date(media.data.mediaDate);
+                        if (media.data.mediaDate)
+                            ContentMedia.item.data.mediaDate = new Date(media.data.mediaDate);
                     }
                     else {
                         ContentMedia.item = {data: data};
                     }
+
+                    /**
+                     * Initialize the links
+                     */
+                    if (ContentMedia.item.data.links)
+                        ContentMedia.linkEditor.loadItems(ContentMedia.item.data.links);
                 }
 
                 /**
@@ -154,11 +176,21 @@
                             ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({id: item.id});
                             updateMasterItem(item);
                             MediaCenterSettings.content.rankOfLastItem = item.data.rank;
-                            MediaCenter.update(appId, MediaCenterSettings).then(function (data) {
-                                console.info("Updated MediaCenter rank");
-                            }, function (err) {
-                                console.error('Error-------', err);
-                            });
+                            if (appId && MediaCenterSettings) {
+                                MediaCenter.update(appId, MediaCenterSettings).then(function (data) {
+                                    console.info("Updated MediaCenter rank");
+                                }, function (err) {
+                                    console.error('Error-------', err);
+                                });
+                            }
+                            else {
+                                MediaCenter.insert(MediaCenterSettings).then(function (data) {
+                                    console.info("Inserted MediaCenter rank");
+                                }, function (err) {
+                                    console.error('Error-------', err);
+                                });
+                            }
+
                         }, function (err) {
                             resetItem();
                             console.error('Error while getting----------', err);
@@ -166,6 +198,11 @@
                     }, function (err) {
                         console.error('---------------Error while inserting data------------', err);
                     });
+                }
+
+
+                function isValidItem(item) {
+                    return item.title;
                 }
 
                 /**
@@ -176,7 +213,8 @@
                     if (tmrDelayForMedia) {
                         clearTimeout(tmrDelayForMedia);
                     }
-                    if (!isUnChanged(ContentMedia.item)) {
+                    ContentMedia.isItemValid = isValidItem(ContentMedia.item.data);
+                    if (!isUnChanged(ContentMedia.item) && ContentMedia.isItemValid) {
                         tmrDelayForMedia = setTimeout(function () {
                             if (item.id) {
                                 updateItemData();
@@ -230,49 +268,32 @@
                 ContentMedia.removeAudioImage = function () {
                     ContentMedia.item.data.image = '';
                 };
-                /**
-                 * Options for links
-                 * @type {{showIcons: boolean}}
-                 */
-                var linksOptions = {showIcons: false};
-                /**
-                 * Add dynamic link popup
-                 */
-                ContentMedia.openAddLinkPopup = function () {
-                    Buildfire.actionItems.showDialog(null, linksOptions, function addLinkCallback(error, result) {
-                        if (error) {
-                            return console.error('Error:', error);
-                        }
-                        if (!ContentMedia.item.data.links) {
-                            ContentMedia.item.data.links = [];
-                        }
-                        ContentMedia.item.data.links.push(result);
-                        $scope.$digest();
-                    });
-                };
-                /**
-                 * open dynamic link popup in edit mode
-                 */
-                ContentMedia.openEditLinkPopup = function (link, index) {
-                    Buildfire.actionItems.showDialog(link, linksOptions, function editLinkCallback(error, result) {
-                        if (error) {
-                            return console.error('Error:', error);
-                        }
-                        if (!ContentMedia.item.data.links) {
-                            ContentMedia.item.data.links = [];
-                        }
-                        ContentMedia.item.data.links.splice(index, 1, result);
-                        $scope.$digest();
-                    });
-                };
 
-                /**
-                 * remove dynamic link
-                 */
-                ContentMedia.removeLink = function (index) {
-                    if (ContentMedia.item.data && ContentMedia.item.data.links) {
-                        ContentMedia.item.data.links.splice(index, 1);
-                    }
+                // create a new instance of the buildfire action Items
+                ContentMedia.linkEditor = new Buildfire.components.actionItems.sortableList("#actionItems");
+                // this method will be called when a new item added to the list
+                ContentMedia.linkEditor.onAddItems = function (items) {
+                    if (!ContentMedia.item.data.links)
+                        ContentMedia.item.data.links = [];
+                    ContentMedia.item.data.links.push(items);
+                    $scope.$digest();
+                };
+                // this method will be called when an item deleted from the list
+                ContentMedia.linkEditor.onDeleteItem = function (item, index) {
+                    ContentMedia.item.data.links.splice(index, 1);
+                    $scope.$digest();
+                };
+                // this method will be called when you edit item details
+                ContentMedia.linkEditor.onItemChange = function (item, index) {
+                    ContentMedia.item.data.links.splice(index, 1, item);
+                    $scope.$digest();
+                };
+                // this method will be called when you change the order of items
+                ContentMedia.linkEditor.onOrderChange = function (item, oldIndex, newIndex) {
+                    var temp = ContentMedia.item.data.links[oldIndex];
+                    ContentMedia.item.data.links[oldIndex] = ContentMedia.item.data.links[newIndex];
+                    ContentMedia.item.data.links[newIndex] = temp;
+                    $scope.$digest();
                 };
                 /**
                  * done will close the single item view
@@ -302,12 +323,12 @@
                     return ContentMedia.item;
                 }, updateItemsWithDelay, true);
 
-           /*     ContentMedia.datepicker = {};
-                ContentMedia.datepicker.dateOptions = {
-                    formatYear: 'yy',
-                    startingDay: 1
-                };
-                ContentMedia.datepicker.format = ['dd-MMMM-yyyy'];
-                ContentMedia.datepicker.status.opened = false;*/
+                /*     ContentMedia.datepicker = {};
+                 ContentMedia.datepicker.dateOptions = {
+                 formatYear: 'yy',
+                 startingDay: 1
+                 };
+                 ContentMedia.datepicker.format = ['dd-MMMM-yyyy'];
+                 ContentMedia.datepicker.status.opened = false;*/
             }]);
 })(window.angular, window.tinymce);

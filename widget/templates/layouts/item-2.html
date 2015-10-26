@@ -1,5 +1,5 @@
 <div class="holder padding-zero">
-    <div class="media-center-plugin layout2" data-ng-hide="WidgetMedia.showSource">
+    <div class="media-center-plugin layout2">
         <div class="people-banner border-bottom-grey">
             <div class="people-bg padding-top-fifteen padding-bottom-fifteen clearfix">
                 <div class="people-holder clearfix">
@@ -32,10 +32,5 @@
                 <a class="d-link" ng-repeat="link in WidgetMedia.item.data.links">{{link.title}}</a>
             </div>
         </div>
-    </div>
-    <div ng-if="WidgetMedia.showSource">
-        <!--<iframe ng-if="WidgetMedia.iframeSrcUrl" id="sourceIframe" ng-src="WidgetMedia.iframeSrcUrl">-->
-        <iframe style="height: 590px" id="sourceIframe">
-        </iframe>
     </div>
 </div>
