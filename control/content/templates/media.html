@@ -132,51 +132,18 @@
         <span>Media Date</span>
     </div>
     <div class="main col-md-9 pull-right">
-        <input dt="{{ContentMedia.item.data.mediaDate}}" type="date" class="form-control" ng-model="ContentMedia.item.data.mediaDate" />
-    </div>
-</div>
-<hr>
-<div class="item clearfix row">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Links</span>
-    </div>
-    <div class="main col-md-9 pull-right">
-        <div class="col-md-4 row">
-            <a class="btn btn-success stretch" ng-click="ContentMedia.openAddLinkPopup()">Add Link</a>
-        </div>
+        <input dt="{{ContentMedia.item.data.mediaDate}}" type="date" class="form-control"
+               ng-model="ContentMedia.item.data.mediaDate"/>
     </div>
 </div>
 <hr class="none">
-<div class="item clearfix">
-    <div class="draggable-list-view wide-list has-btn links-list" ui-sortable="ContentMedia.linksSortableOptions"
-         ng-model="ContentMedia.item.data.links">
-        <div class="d-item double-line square-icon clearfix" ng-repeat="link in ContentMedia.item.data.links">
-            <span class="icon icon-menu pull-left handle"></span>
-
-            <div class="media-holder pull-left">
-                <img src="http://www.placehold.it/50x50">
-            </div>
-            <div class="copy pull-right">
-                <div class="col-md-4 padding-zero pull-left">
-                    <a class="text-primary" ng-click="ContentMedia.openEditLinkPopup(link,$index)"><span
-                            class="title ellipsis pull-left">{{link.title}}</span></a>
-                    <!--<span class="title ellipsis pull-left">Item Summary Item Summary Item Summary</span>-->
-                </div>
-                <!--<div class="col-md-7 padding-right-zero pull-left">
-                    <span class="content ellipsis">http://www.thelinkgoeshereandifitslongitwillwraparound</span>
-                </div>-->
-                <span class="btn-icon btn-delete-icon btn-danger transition-third pull-right"
-                      ng-click="ContentMedia.removeLink($index)"></span>
-            </div>
-        </div>
-    </div>
-</div>
+<div id="actionItems"></div>
 <hr class="none">
 <div class="item clearfix row">
     <div class="main col-md-9 pull-right">
         <div class="col-md-6 pull-right padding-right-zero padding-left-ten">
             <a class="btn btn-primary pull-right stretch" ng-click="ContentMedia.done()"
-               href="javaScript:void(0);">Done</a>
+               ng-disabled="ContentPeopleContentMedia.unchangedData || !ContentMedia.isItemValid" href="javaScript:void(0);">Done</a>
         </div>
     </div>
 </div>

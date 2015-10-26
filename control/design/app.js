@@ -24,26 +24,6 @@
                         MediaCenterInfo: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location', function ($q, DB, COLLECTIONS, Orders, Location) {
                             var deferred = $q.defer();
                             var MediaCenter = new DB(COLLECTIONS.MediaCenter);
-                         /*   var _bootstrap = function () {
-                                MediaCenter.save({
-                                    content: {
-                                        images: [],
-                                        descriptionHTML: '',
-                                        description: '',
-                                        sortBy: Orders.ordersMap.Newest,
-                                        rankOfLastItem: ''
-                                    },
-                                    design: {
-                                        listLayout: "list-1",
-                                        itemLayout: "item-1",
-                                        backgroundImage: ""
-                                    }
-                                }).then(function success() {
-                                    Location.go("/");
-                                }, function fail() {
-                                    _bootstrap();
-                                });
-                            };*/
                             MediaCenter.get().then(function success(result) {
                                     if (result && result.data && result.data.content && result.data.design) {
                                         deferred.resolve(result);

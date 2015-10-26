@@ -44,26 +44,6 @@
                             function ($q, DB, COLLECTIONS, Orders, Location) {
                                 var deferred = $q.defer();
                                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
-                                /*var _bootstrap = function () {
-                                 MediaCenter.save({
-                                 content: {
-                                 images: [],
-                                 descriptionHTML: '',
-                                 description: '',
-                                 sortBy: Orders.ordersMap.Newest,
-                                 rankOfLastItem: 0
-                                 },
-                                 design: {
-                                 listLayout: "list-1",
-                                 itemLayout: "item-1",
-                                 backgroundImage: ""
-                                 }
-                                 }).then(function success() {
-                                 Location.goToHome();
-                                 }, function fail(error) {
-                                 throw (error);
-                                 })
-                                 }*/
                                 MediaCenter.get().then(function success(result) {
                                         if (result && result.data && result.id) {
                                             deferred.resolve(result);
