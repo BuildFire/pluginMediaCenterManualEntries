@@ -44,24 +44,20 @@
                     DesignHome.mediaInfo.data.design[type + "Layout"] = layoutName;
                 }
             };
+            var background = new Buildfire.components.images.thumbnail("#background");
 
-            var callback = function (error, result) {
-                if (error) {
-                    console.error('Error:', error);
-                } else {
-                    DesignHome.mediaInfo.data.design.backgroundImage = result.selectedFiles && result.selectedFiles[0] || null;
-                    $scope.$digest();
+            background.onChange = function (url) {
+                DesignHome.mediaInfo.data.design.backgroundImage = url;
+                if (!$scope.$$phase && !$scope.$root.$$phase) {
+                    $scope.$apply();
                 }
             };
 
-            DesignHome._callback = callback;
-
-            var options = {showIcons: false, multiSelection: false};
-            DesignHome.addBackgroundImage = function () {
-                Buildfire.imageLib.showDialog(options, callback);
-            };
-            DesignHome.removeBackgroundImage = function () {
-                DesignHome.mediaInfo.data.design.backgroundImage = null;
+            background.onDelete = function (url) {
+                DesignHome.mediaInfo.data.design.backgroundImage = "";
+                if (!$scope.$$phase && !$scope.$root.$$phase) {
+                    $scope.$apply();
+                }
             };
 
             function isUnchanged(info) {

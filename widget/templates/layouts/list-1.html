@@ -1,24 +1,26 @@
 <div class="holder padding-zero">
-    <div id="scroll-infinite" class="media-center-plugin layout1">
+    <div id="scroll-infinite" class="media-center-plugin layout1 text-overlay">
         <div class="plugin-banner clearfix border-bottom-grey">
             <div id="carousel" build-fire-carousel=""></div>
         </div>
-        <div class="text-left padded padding-bottom-zero clearfix">
+        <div class="text-left padded padding-bottom-zero clearfix text-overlay">
             <p ng-if="WidgetHome.media.data.content.descriptionHTML"
                ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">
                 {{WidgetHome.media.data.content.descriptionHTML}}</p>
         </div>
-        <div class="padded padding-top-zero">
+        <div class="padded padding-top-zero text-overlay">
             <div class="list-layout">
                 <div class="row"
                      infinite-scroll-distance="0"
                      infinite-scroll="WidgetHome.loadMore()"
                      infinite-scroll-container='"#scroll-infinite"'
                      infinit-scroll-disabled="WidgetHome.noMore"
-                      >
-                    <div class="clickable col-xs-6 pull-left" ng-repeat="item in WidgetHome.items" ng-click="WidgetHome.goToMedia($index)" ng-class-odd="list-item-odd" ng-class-even="list-item-even" >
-                        <div class="list-item-media text-center border-radius-three overflow-hidden">
-                            <div play-btn="{{item.data.videoUrl.length > 0}}" class="list-media-holder"
+                        >
+                    <div class="clickable col-xs-6 pull-left text-overlay" ng-repeat="item in WidgetHome.items"
+                         ng-click="WidgetHome.goToMedia($index)" ng-class-odd="list-item-odd"
+                         ng-class-even="list-item-even">
+                        <div class="list-item-media text-center border-radius-three overflow-hidden text-overlay">
+                            <div play-btn="{{item.data.videoUrl.length > 0}}" class="list-media-holder text-overlay"
                                  ng-if="item.data.topImage">
                                 <img ng-src="{{item.data.topImage | cropImage:153:86}}">
                             </div>

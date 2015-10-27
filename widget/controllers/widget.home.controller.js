@@ -49,7 +49,29 @@
                 /**
                  * AppConfig.changeBackgroundTheme() change the background image.
                  */
-                AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
+                /*AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);*/
+
+                /*declare the device width heights*/
+                WidgetHome.deviceHeight = window.innerHeight;
+                WidgetHome.deviceWidth = window.innerWidth;
+
+                /*initialize the device width heights*/
+                var initDeviceSize = function(callback) {
+                    WidgetHome.deviceHeight = window.innerHeight;
+                    WidgetHome.deviceWidth = window.innerWidth;
+                    if (callback) {
+                        if (WidgetHome.deviceWidth == 0 || WidgetHome.deviceHeight == 0) {
+                            setTimeout(function () {
+                                initDeviceSize(callback);
+                            }, 500);
+                        } else {
+                            callback();
+                            if (!$scope.$$phase && !$scope.$root.$$phase) {
+                                $scope.$apply();
+                            }
+                        }
+                    }
+                };
                 /**
                  * Messaging.onReceivedMessage is called when any event is fire from Content/design section.
                  * @param event
@@ -86,7 +108,6 @@
                         if (event.data) {
                             WidgetHome.media.data = event.data;
                             console.log(WidgetHome.media);
-                            AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);
                             $scope.$apply();
                             if (view && event.data.content && event.data.content.images) {
                                 view.loadItems(event.data.content.images);

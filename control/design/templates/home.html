@@ -7,11 +7,13 @@
             <div class="screen layouticon pull-left">
                 <a class="border-grey border-radius-three default-background-hover text-center">
                     <img
-                            ng-src="assets/images/{{DesignHome.mediaInfo.data.design.listLayout}}.png" />
+                            ng-src="assets/images/{{DesignHome.mediaInfo.data.design.listLayout}}.png"/>
                 </a>
             </div>
             <div class="screen layoutgrid pull-right margin-left-zero border-grey border-radius-three">
-                <a ng-repeat="layout in DesignHome.layouts.listLayouts" class="layouticon border-grey border-radius-three default-background-hover text-center" ng-click="DesignHome.changeLayout(layout.name,'list')">
+                <a ng-repeat="layout in DesignHome.layouts.listLayouts"
+                   class="layouticon border-grey border-radius-three default-background-hover text-center"
+                   ng-click="DesignHome.changeLayout(layout.name,'list')">
                     <img ng-src="assets/images/{{layout.name}}.png">
                 </a>
             </div>
@@ -28,11 +30,13 @@
             <div class="screen layouticon pull-left">
                 <a class="border-grey border-radius-three default-background-hover text-center">
                     <img
-                            ng-src="assets/images/{{DesignHome.mediaInfo.data.design.itemLayout }}.png" />
+                            ng-src="assets/images/{{DesignHome.mediaInfo.data.design.itemLayout }}.png"/>
                 </a>
             </div>
             <div class="screen layoutgrid pull-right margin-left-zero border-grey border-radius-three">
-                <a ng-repeat="layout in DesignHome.layouts.itemLayouts" class="layouticon border-grey border-radius-three default-background-hover text-center" ng-click="DesignHome.changeLayout(layout.name,'item')">
+                <a ng-repeat="layout in DesignHome.layouts.itemLayouts"
+                   class="layouticon border-grey border-radius-three default-background-hover text-center"
+                   ng-click="DesignHome.changeLayout(layout.name,'item')">
                     <img ng-src="assets/images/{{layout.name}}.png">
                 </a>
             </div>
@@ -41,40 +45,4 @@
 </div>
 
 <hr>
-<div class="item row clearfix margin-top-thirty">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Item List Background Image</span>
-    </div>
-    <div class="main col-md-9 pull-right">
-        <div class="screens clearfix">
-            <div class="screen text-center layouticon pull-left">
-                <a class="border-grey border-radius-three default-background-hover" ng-click="DesignHome.addBackgroundImage()">
-                    <span class="add-icon" ng-hide="DesignHome.peopleInfo.design.backgroundImage">+</span>
-                    <img
-                            ng-show="DesignHome.mediaInfo.data.design.backgroundImage" ng-src="{{DesignHome.mediaInfo.data.design.backgroundImage | resizeImage : 80 :106}}">
-
-                </a>
-                <span ng-show="DesignHome.mediaInfo.data.design.backgroundImage" class="icon btn-icon btn-delete-icon btn-danger btn-close transition-third" ng-click="DesignHome.removeBackgroundImage()"></span>
-            </div>
-        </div>
-    </div>
-</div>
-<!--
-<hr>
-<h4>Manual Item Entry Details Design</h4><br>
-<div class="item row clearfix">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Background Image</span>
-    </div>
-    <div class="main col-md-9 pull-right">
-        <div class="screens clearfix">
-            <div class="screen text-center layouticon pull-left">
-                <a class="border-grey border-radius-three default-background-hover text-center" onclick="alert('Open Media Library');">
-                    <span class="add-icon hidden">+</span>
-                    <img src="http://www.placehold.it/133x101">
-                </a>
-                <label class="secondary">750x1334</label>
-            </div>
-        </div>
-    </div>
-</div>-->
+<div id="background"></div>

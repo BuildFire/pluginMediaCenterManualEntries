@@ -1,207 +1,32 @@
 <!DOCTYPE html>
 <html ng-app="mediaCenterDesign">
 <head lang="en">
-	<!-- CSS -->
-	<link href="../../../../styles/helper.css" rel="stylesheet">
-	<link href="../../../../styles/siteIcons.css" rel="stylesheet">
+    <!-- CSS -->
+    <link href="../../../../styles/helper.css" rel="stylesheet">
+    <link href="../../../../styles/siteIcons.css" rel="stylesheet">
 
-	<!--SDK js-->
-	<script src="../../../../scripts/buildfire.js"></script>
-	<script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
-	<script src="../../../../scripts/angular/angular.min.js"></script>
-	<script src="../../../../scripts/angular/angular-route.min.js"></script>
-	<script src="../../../../scripts/angular/angular-animate.min.js"></script>
+    <!--SDK js-->
+    <script src="../../../../scripts/buildfire.js"></script>
+    <script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+    <script src="../../../../scripts/angular/angular.min.js"></script>
+    <script src="../../../../scripts/angular/angular-route.min.js"></script>
+    <script src="../../../../scripts/angular/angular-animate.min.js"></script>
+    <script src="../../../../scripts/buildfire/components/images/thumbnail.js"></script>
 
-	<!-- JS -->
-	<script src="assets/js/jquery-ui.min.js"></script>
-	<script src="app.js"></script>
-	<script src="enums.js"></script>
-	<script src="services.js"></script>
-	<script src="filters.js"></script>
-	<!-- Controllers -->
-	<script src="controllers/design.home.controller.js"></script>
-	<meta charset="UTF-8">
+
+    <!-- JS -->
+    <script src="assets/js/jquery-ui.min.js"></script>
+    <script src="app.js"></script>
+    <script src="enums.js"></script>
+    <script src="services.js"></script>
+    <script src="filters.js"></script>
+    <!-- Controllers -->
+    <script src="controllers/design.home.controller.js"></script>
+    <meta charset="UTF-8">
 </head>
 <body>
 <div class="main_view">
-	<div class="content" ng-view=""></div>
+    <div class="content" ng-view=""></div>
 </div>
 </body>
 </html>
-
-
-
-<!--
-<!DOCTYPE html>
-<html ng-app="mediaCenterManualEntriesPlugin">
-<head lang="en">
-	&lt;!&ndash; CSS &ndash;&gt;
-    <link href="../../../../styles/helper.css" rel="stylesheet">
-    <link href="../../../../styles/siteIcons.css" rel="stylesheet">
-    
-	&lt;!&ndash; JS &ndash;&gt;
-    <script src="../../../../scripts/buildfire.js"></script>
-    <script src="../../../../scripts/angular/angular.min.js"></script>
-    <script src="../../../../scripts/angular/angular.min.js"></script>
-    <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
-    <script src="../../../../scripts/tinymce/tinymce.min.js"></script>
-    <script src="../../../../scripts/tinymce/ui-tinymce.js"></script>
-
-    <meta charset="UTF-8">
-</head>
-<body ng-controller="mediaCenterManualEntriesPluginCtrl">
-	
-	<div class="item row clearfix">
-		<div class="labels col-md-3 padding-right-zero pull-left">
-			<span>List Layout</span>
-		</div>
-		<div class="main col-md-9 pull-right">
-			<div class="screens clearfix">
-				<div class="screen layouticon pull-left">
-					<a class="border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/31x33">
-					</a>
-				</div>
-				<div class="screen layoutgrid pull-right margin-left-zero border-grey border-radius-three">
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/53x63">
-					</a>
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/33x11">
-					</a>
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/133x63">
-					</a>
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/53x131">
-					</a>
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/53x24">
-					</a>
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/33x63">
-					</a>
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/13x32">
-					</a>
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/33x44">
-					</a>
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/25x50">
-					</a>
-				</div>
-			</div>
-		</div>
-	</div>
-	<hr>
-	<div class="item row clearfix margin-top-thirty">
-		<div class="labels col-md-3 padding-right-zero pull-left">
-			<span>Item Layout</span>
-		</div>
-		<div class="main col-md-9 pull-right">
-			<div class="screens clearfix">
-				<div class="screen layouticon pull-left">
-					<a class="border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/31x33">
-					</a>
-				</div>
-				<div class="screen layoutgrid pull-right margin-left-zero border-grey border-radius-three">
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/53x63">
-					</a>
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/33x11">
-					</a>
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/133x63">
-					</a>
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/53x131">
-					</a>
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/53x24">
-					</a>
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/33x63">
-					</a>
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/13x32">
-					</a>
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/33x44">
-					</a>
-					<a class="layouticon border-grey border-radius-three default-background-hover text-center">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/25x50">
-					</a>
-				</div>
-			</div>
-		</div>
-	</div>
-	<hr>
-	<div class="item row clearfix margin-top-thirty">
-		<div class="labels col-md-3 padding-right-zero pull-left">
-			<span>Item List Background Image</span>
-		</div>
-		<div class="main col-md-9 pull-right">
-			<div class="screens clearfix">
-				<div class="screen text-center layouticon pull-left">
-					<a class="border-grey border-radius-three default-background-hover text-center" onclick="alert('Open Media Library');">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/133x101">
-					</a>
-					<label class="secondary">750x1334</label>
-				</div>
-			</div>
-		</div>
-	</div>
-	<hr>
-	<h4>Manual Item Entry Details Design</h4><br>
-	<div class="item row clearfix">
-		<div class="labels col-md-3 padding-right-zero pull-left">
-			<span>Background Image</span>
-		</div>
-		<div class="main col-md-9 pull-right">
-			<div class="screens clearfix">
-				<div class="screen text-center layouticon pull-left">
-					<a class="border-grey border-radius-three default-background-hover text-center" onclick="alert('Open Media Library');">
-						<span class="add-icon hidden">+</span>
-						<img src="http://www.placehold.it/133x101">
-					</a>
-					<label class="secondary">750x1334</label>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-<script>
-    var mediaCenterManualEntriesPluginApp = angular.module('mediaCenterManualEntriesPlugin');
-
-    mediaCenterManualEntriesPluginApp.controller('mediaCenterManualEntriesPluginCtrl', ['$scope', function ($scope) {
-
-
-    }]);
-    
-</script>
-</body>
-</html>-->

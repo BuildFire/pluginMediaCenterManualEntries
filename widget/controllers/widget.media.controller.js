@@ -76,8 +76,28 @@
                 WidgetMedia.iframeSrcUrl = '';
             }
 
-            if (WidgetMedia.media && WidgetMedia.media.data && WidgetMedia.media.data.design && WidgetMedia.media.data.design.backgroundImage)
-                AppConfig.changeBackgroundTheme(WidgetMedia.media.data.design.backgroundImage);
+            /*declare the device width heights*/
+            WidgetMedia.deviceHeight = window.innerHeight;
+            WidgetMedia.deviceWidth = window.innerWidth;
+
+            /*initialize the device width heights*/
+            var initDeviceSize = function (callback) {
+                WidgetMedia.deviceHeight = window.innerHeight;
+                WidgetMedia.deviceWidth = window.innerWidth;
+                if (callback) {
+                    if (WidgetMedia.deviceWidth == 0 || WidgetMedia.deviceHeight == 0) {
+                        setTimeout(function () {
+                            initDeviceSize(callback);
+                        }, 500);
+                    } else {
+                        callback();
+                        if (!$scope.$$phase && !$scope.$root.$$phase) {
+                            $scope.$apply();
+                        }
+                    }
+                }
+            };
+
             Messaging.onReceivedMessage(function (event) {
                 if (event) {
                     switch (event.name) {
@@ -112,6 +132,7 @@
                         }
                         break;
                     case COLLECTIONS.MediaCenter:
+                        WidgetMedia.media = event;
                         WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
                         $scope.$digest();
                         break;

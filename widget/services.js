@@ -1,5 +1,5 @@
 (function (angular, buildfire, location) {
-'use strict';
+    'use strict';
     //created mediaCenterWidget module
     var settings, appId;
     var Settings = {
@@ -230,14 +230,6 @@
                     return Settings.getAppId();
                 },
                 changeBackgroundTheme: function (url) {
-                    if (url) {
-                        $rootScope.currentBackgroundImage = {
-                            "background-image": "url(" + url + ")"
-                        };
-                        return;
-                    } else {
-                        $rootScope.currentBackgroundImage = "";
-                    }
                 }
             };
         }]);
