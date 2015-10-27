@@ -4,7 +4,7 @@
         .module('mediaCenterDesign')
         .controller('DesignHomeCtrl', ['$scope', 'COLLECTIONS', 'DB', 'MediaCenterInfo', '$timeout', 'Buildfire', 'EVENTS', 'Messaging', 'Orders', function ($scope, COLLECTIONS, DB, MediaCenterInfo, $timeout, Buildfire, EVENTS, Messaging, Orders) {
             var DesignHome = this;
-
+            var background = new Buildfire.components.images.thumbnail("#background");
             var _infoData = {
                 data: {
                     content: {
@@ -29,6 +29,9 @@
             DesignHome._lastSaved = angular.copy(MediaCenterInfo);
             /* populate VM with resolve */
             DesignHome.mediaInfo = MediaCenterInfo;
+            if (DesignHome.mediaInfo.data && DesignHome.mediaInfo.data.design && DesignHome.mediaInfo.data.design.backgroundImage) {
+                background.loadbackground(DesignHome.mediaInfo.data.design.backgroundImage);
+            }
             console.log('mediainfo on init', DesignHome.mediaInfo);
             /*Buildfire DB Service*/
 
@@ -44,7 +47,6 @@
                     DesignHome.mediaInfo.data.design[type + "Layout"] = layoutName;
                 }
             };
-            var background = new Buildfire.components.images.thumbnail("#background");
 
             background.onChange = function (url) {
                 DesignHome.mediaInfo.data.design.backgroundImage = url;
