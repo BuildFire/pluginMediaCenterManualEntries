@@ -46,10 +46,6 @@
                  * AppConfig.setSettings() set the Settings.
                  */
                 AppConfig.setSettings(MediaCenterInfo.data);
-                /**
-                 * AppConfig.changeBackgroundTheme() change the background image.
-                 */
-                /*AppConfig.changeBackgroundTheme(WidgetHome.media.data.design.backgroundImage);*/
 
                 /*declare the device width heights*/
                 WidgetHome.deviceHeight = window.innerHeight;
