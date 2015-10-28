@@ -44,26 +44,6 @@
                             function ($q, DB, COLLECTIONS, Orders, Location) {
                                 var deferred = $q.defer();
                                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
-                                /*var _bootstrap = function () {
-                                 MediaCenter.save({
-                                 content: {
-                                 images: [],
-                                 descriptionHTML: '',
-                                 description: '',
-                                 sortBy: Orders.ordersMap.Newest,
-                                 rankOfLastItem: 0
-                                 },
-                                 design: {
-                                 listLayout: "list-1",
-                                 itemLayout: "item-1",
-                                 backgroundImage: ""
-                                 }
-                                 }).then(function success() {
-                                 Location.goToHome();
-                                 }, function fail(error) {
-                                 throw (error);
-                                 })
-                                 }*/
                                 MediaCenter.get().then(function success(result) {
                                         if (result && result.data && result.id) {
                                             deferred.resolve(result);
@@ -197,12 +177,8 @@
 
             buildfire.navigation.onBackButtonClick = function () {
                 var path = $location.path();
-                if (path.indexOf('/media') == 0) {
-                    if (angular.element("#sourceIframe").length)
-                        angular.element("#sourceToggleButton").click();
-                    else
-                        Location.goToHome();
-                }
+                if (path.indexOf('/media') == 0)
+                    Location.goToHome();
                 else if (path.indexOf('/nowplaying') == 0)
                     Location.go('#/media/' + path.split('/')[2]);
                 else

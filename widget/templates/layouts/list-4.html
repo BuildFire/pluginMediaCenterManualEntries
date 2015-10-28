@@ -1,42 +1,44 @@
 <div class="holder padding-zero">
-    <div id="scroll-infinite" class="media-center-plugin list-layout layout4">
-        <div class="media-center-banner clearfix border-bottom-grey">
+    <div id="scroll-infinite" class="media-center-plugin list-layout layout4 text-overlay">
+        <div class="media-center-banner clearfix border-bottom-grey text-overlay">
             <div id="carousel" build-fire-carousel=""></div>
         </div>
-        <div class="text-left padded padding-bottom-zero clearfix">
+        <div class="text-left padded padding-bottom-zero clearfix text-overlay">
             <p ng-if="WidgetHome.media.data.content.descriptionHTML"
                ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">
                 {{WidgetHome.media.data.content.descriptionHTML}}</p>
         </div>
-        <div class="padded padding-top-zero">
+        <div class="padded padding-top-zero text-overlay">
             <div class="list-layout" infinite-scroll="WidgetHome.loadMore()"
                  infinite-scroll-disabled="WidgetHome.noMore"
                  infinite-scroll-container='"#scroll-infinite"'>
-                <div ng-repeat="item in WidgetHome.items" ng-if="$index % 2 == 0" class="row"  ng-click="WidgetHome.goToMedia($index)">
+                <div ng-repeat="item in WidgetHome.items" ng-if="$index % 2 == 0" class="row text-overlay"
+                     ng-click="WidgetHome.goToMedia($index)">
                     <div class="list-item-odd col-xs-6 pull-left clickable ">
-                        <div class="list-item-media text-center border-radius-three overflow-hidden">
-                            <div class="list-media-holder"
+                        <div class="list-item-media text-center border-radius-three overflow-hidden text-overlay">
+                            <div class="list-media-holder text-overlay"
                                  play-btn="{{WidgetHome.items[$index].data.videoUrl.length > 0}}">
                                 <img ng-if="WidgetHome.items[$index].data.topImage"
                                      ng-src="{{WidgetHome.items[$index].data.topImage | cropImage:154:86}}">
                             </div>
                         </div>
-                        <div class="list-item-copy text-left">
+                        <div class="list-item-copy text-left text-overlay">
                             <a class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index].data.title}}</a>
 
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index].data.summary}}</p>
                             <span class="list-item-date" data-ng-if="WidgetHome.items[$index].data.mediaDate">{{WidgetHome.items[$index].data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
                         </div>
                     </div>
-                    <div class="list-item-even col-xs-6 pull-left clickable " ng-if="WidgetHome.items[$index + 1]">
-                        <div class="list-item-media text-center border-radius-three overflow-hidden">
-                            <div class="list-media-holder"
+                    <div class="list-item-even col-xs-6 pull-left clickable text-overlay "
+                         ng-if="WidgetHome.items[$index + 1]">
+                        <div class="list-item-media text-center border-radius-three overflow-hidden text-overlay">
+                            <div class="list-media-holder text-overlay"
                                  play-btn="{{WidgetHome.items[$index+1].data.videoUrl.length > 0}}">
                                 <img ng-if="WidgetHome.items[$index + 1].data.topImage"
                                      ng-src="{{WidgetHome.items[$index + 1].data.topImage | cropImage:154:86}}">
                             </div>
                         </div>
-                        <div class="list-item-copy text-left">
+                        <div class="list-item-copy text-left text-overlay">
                             <a class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index + 1].data.title}}</a>
 
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.summary}}</p>

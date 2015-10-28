@@ -4,7 +4,7 @@
         .module('mediaCenterDesign')
         .controller('DesignHomeCtrl', ['$scope', 'COLLECTIONS', 'DB', 'MediaCenterInfo', '$timeout', 'Buildfire', 'EVENTS', 'Messaging', 'Orders', function ($scope, COLLECTIONS, DB, MediaCenterInfo, $timeout, Buildfire, EVENTS, Messaging, Orders) {
             var DesignHome = this;
-
+            var background = new Buildfire.components.images.thumbnail("#background");
             var _infoData = {
                 data: {
                     content: {
@@ -29,6 +29,9 @@
             DesignHome._lastSaved = angular.copy(MediaCenterInfo);
             /* populate VM with resolve */
             DesignHome.mediaInfo = MediaCenterInfo;
+            if (DesignHome.mediaInfo.data && DesignHome.mediaInfo.data.design && DesignHome.mediaInfo.data.design.backgroundImage) {
+                background.loadbackground(DesignHome.mediaInfo.data.design.backgroundImage);
+            }
             console.log('mediainfo on init', DesignHome.mediaInfo);
             /*Buildfire DB Service*/
 
@@ -45,23 +48,18 @@
                 }
             };
 
-            var callback = function (error, result) {
-                if (error) {
-                    console.error('Error:', error);
-                } else {
-                    DesignHome.mediaInfo.data.design.backgroundImage = result.selectedFiles && result.selectedFiles[0] || null;
-                    $scope.$digest();
+            background.onChange = function (url) {
+                DesignHome.mediaInfo.data.design.backgroundImage = url;
+                if (!$scope.$$phase && !$scope.$root.$$phase) {
+                    $scope.$apply();
                 }
             };
 
-            DesignHome._callback = callback;
-
-            var options = {showIcons: false, multiSelection: false};
-            DesignHome.addBackgroundImage = function () {
-                Buildfire.imageLib.showDialog(options, callback);
-            };
-            DesignHome.removeBackgroundImage = function () {
-                DesignHome.mediaInfo.data.design.backgroundImage = null;
+            background.onDelete = function (url) {
+                DesignHome.mediaInfo.data.design.backgroundImage = "";
+                if (!$scope.$$phase && !$scope.$root.$$phase) {
+                    $scope.$apply();
+                }
             };
 
             function isUnchanged(info) {

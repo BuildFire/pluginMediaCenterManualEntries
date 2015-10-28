@@ -200,64 +200,78 @@ input[type=range]:focus::-ms-fill-upper {
     opacity: .85;
 }
 
-
-.layout1 .list-layout .list-item-odd{
-    padding-left:15px;
-    padding-right:1%;
-}
-.layout1 .list-layout .list-item-even{
-    padding-left:1%;
-    padding-right:15px;
+.layout1 .list-layout .list-item-odd {
+    padding-left: 15px;
+    padding-right: 1%;
 }
 
-.layout4 .list-layout .list-item-odd{
-    padding-left:15px;
-    padding-right:1%;
-}
-.layout4 .list-layout .list-item-even{
-    padding-left:1%;
-    padding-right:15px;
+.layout1 .list-layout .list-item-even {
+    padding-left: 1%;
+    padding-right: 15px;
 }
 
-videogular vg-controls{
-    height:56px !important;
+.layout4 .list-layout .list-item-odd {
+    padding-left: 15px;
+    padding-right: 1%;
+}
+
+.layout4 .list-layout .list-item-even {
+    padding-left: 1%;
+    padding-right: 15px;
+}
+
+videogular vg-controls {
+    height: 56px !important;
     overflow: hidden;
 }
-videogular, [videogular]{
+
+videogular, [videogular] {
     background-color: transparent !important;
 }
 
-.video-container-background{
+.video-container-background {
     background-color: transparent !important;
 }
-
 
 /*Styles for Now playing bg img*/
-.holder.now-playing .bg-blurred-image{
-    -o-filter:blur(10px) brightness(0.2);
-    -moz-filter:blur(10px) brightness(0.2);
-    -webkit-filter:blur(10px) brightness(0.2);
-    filter:blur(10px) brightness(0.6);
-    position:fixed;
-    top:-5%;
-    left:-5%;
-    -o-background-size:cover;
-    -moz-background-size:cover;
-    -webkit-background-size:cover;
-    background-size:cover;
-    height:110%;
-    width:110%;
-    z-index:-1;
+.holder.now-playing .bg-blurred-image {
+    -o-filter: blur(10px) brightness(0.2);
+    -moz-filter: blur(10px) brightness(0.2);
+    -webkit-filter: blur(10px) brightness(0.2);
+    filter: blur(10px) brightness(0.6);
+    position: fixed;
+    top: -5%;
+    left: -5%;
+    -o-background-size: cover;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    background-size: cover;
+    height: 110%;
+    width: 110%;
+    z-index: -1;
 }
 
-.blackBackground{
+.blackBackground {
     background-color: black !important;
 }
 
-.clickable{
+.clickable {
     cursor: pointer;
 }
 
-.audio-temporary-fix{
-    height:50px;
+.audio-temporary-fix {
+    height: 50px;
+}
+
+/*background image css class*/
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+/* To overlay texts on background */
+.text-overlay {
+    position: relative
 }

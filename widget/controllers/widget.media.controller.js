@@ -1,7 +1,7 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'PATHS', function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, PATHS) {
             var WidgetMedia = this;
             WidgetMedia.API = null;
             WidgetMedia.showVideo = false;
@@ -76,8 +76,28 @@
                 WidgetMedia.iframeSrcUrl = '';
             }
 
-            if (WidgetMedia.media && WidgetMedia.media.data && WidgetMedia.media.data.design && WidgetMedia.media.data.design.backgroundImage)
-                AppConfig.changeBackgroundTheme(WidgetMedia.media.data.design.backgroundImage);
+            /*declare the device width heights*/
+            WidgetMedia.deviceHeight = window.innerHeight;
+            WidgetMedia.deviceWidth = window.innerWidth;
+
+            /*initialize the device width heights*/
+            var initDeviceSize = function (callback) {
+                WidgetMedia.deviceHeight = window.innerHeight;
+                WidgetMedia.deviceWidth = window.innerWidth;
+                if (callback) {
+                    if (WidgetMedia.deviceWidth == 0 || WidgetMedia.deviceHeight == 0) {
+                        setTimeout(function () {
+                            initDeviceSize(callback);
+                        }, 500);
+                    } else {
+                        callback();
+                        if (!$scope.$$phase && !$scope.$root.$$phase) {
+                            $scope.$apply();
+                        }
+                    }
+                }
+            };
+
             Messaging.onReceivedMessage(function (event) {
                 if (event) {
                     switch (event.name) {
@@ -96,7 +116,7 @@
 
                                     break
                             }
-                            Location.go("#/media");
+                            Location.go(url);
                             break;
                     }
                 }
@@ -112,6 +132,7 @@
                         }
                         break;
                     case COLLECTIONS.MediaCenter:
+                        WidgetMedia.media = event;
                         WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
                         $scope.$digest();
                         break;
@@ -127,13 +148,13 @@
             };
 
             WidgetMedia.showSourceIframe = function () {
-                $window.open(WidgetMedia.item.data.srcUrl,'_system');
-               /* WidgetMedia.showSource = !WidgetMedia.showSource;
-                if (WidgetMedia.showSource) {
-                    $timeout(function () {
-                        angular.element('#sourceIframe').attr('src', WidgetMedia.item.data.srcUrl);
-                    }, 1000);
-                }*/
+                Buildfire.navigation.openWindow(WidgetMedia.item.data.srcUrl, '_system');
+                /* WidgetMedia.showSource = !WidgetMedia.showSource;
+                 if (WidgetMedia.showSource) {
+                 $timeout(function () {
+                 angular.element('#sourceIframe').attr('src', WidgetMedia.item.data.srcUrl);
+                 }, 1000);
+                 }*/
             };
 
             var initializing = true;
@@ -151,5 +172,15 @@
             $scope.$on("$destroy", function () {
                 WidgetMedia.onUpdateFn.clear();
             });
+
+            //Sync with Control section
+            Messaging.sendMessageToControl({
+                name: EVENTS.ROUTE_CHANGE,
+                message: {
+                    path: PATHS.MEDIA,
+                    id: WidgetMedia.item.id || null
+                }
+            });
+
         }]);
 })(window.angular, window);
