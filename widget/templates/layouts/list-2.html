@@ -4,9 +4,9 @@
             <div id="carousel" build-fire-carousel=""></div>
         </div>
         <div class="text-left padded padding-bottom-zero clearfix text-overlay">
-            <p ng-if="WidgetHome.media.data.content.descriptionHTML"
+            <p ng-if="WidgetHome.showDescription()"
                ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">
-                {{WidgetHome.media.data.content.descriptionHTML}}</p>
+            </p>
         </div>
 
         <div class="list-layout"
