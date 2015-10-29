@@ -37,7 +37,7 @@
                          ng-style="NowPlaying.showVolume? {'visibility':'visible'}:{'visibility':'hidden'}" type="range"
                          min="0" max="1" step="0.1" ng-model="NowPlaying.volume"
                          ng-change="NowPlaying.changeVolume(NowPlaying.volume)"
-                         style=""/>
+                         style="width:15%;visibility: visible;margin-top:40px;margin-left:80px"/>
 
             <span class="icon icon-volume-high icon-sm" ng-click="NowPlaying.showVolume=!NowPlaying.showVolume"></span>
             <span class="icon icon-ellipsis icon-sm" ng-click="NowPlaying.openMoreInfoPopup()"></span>
