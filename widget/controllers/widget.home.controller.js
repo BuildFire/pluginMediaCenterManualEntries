@@ -52,7 +52,7 @@
                 WidgetHome.deviceWidth = window.innerWidth;
 
                 /*initialize the device width heights*/
-                var initDeviceSize = function(callback) {
+                var initDeviceSize = function (callback) {
                     WidgetHome.deviceHeight = window.innerHeight;
                     WidgetHome.deviceWidth = window.innerWidth;
                     if (callback) {
@@ -139,6 +139,14 @@
                     else {
                         return false;
                     }
+                };
+
+                // ShowDescription only when it have content
+                WidgetHome.showDescription = function () {
+                    if (WidgetHome.media.data.content.descriptionHTML == '<p>&nbsp;<br></p>' || WidgetHome.media.data.content.descriptionHTML == '<p><br data-mce-bogus="1"></p>')
+                        return false;
+                    else
+                        return true;
                 };
 
                 /**

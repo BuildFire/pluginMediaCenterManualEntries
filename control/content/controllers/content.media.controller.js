@@ -86,10 +86,6 @@
                         trusted: true,
                         theme: 'modern'
                     };
-                    /**
-                     * Update master data once it data is loaded
-                     */
-                    updateMasterItem({data: data});
 
                     /**
                      * if controller is for opened in edit mode, Load media data
@@ -99,9 +95,13 @@
                         ContentMedia.item = media;
                         if (media.data.mediaDate)
                             ContentMedia.item.data.mediaDate = new Date(media.data.mediaDate);
+                        updateMasterItem(ContentMedia.item);
+
                     }
                     else {
                         ContentMedia.item = {data: data};
+                        updateMasterItem(ContentMedia.item);
+
                     }
 
                     /**
@@ -315,20 +315,11 @@
                         id: ContentMedia.item.id || null
                     }
                 });
-
                 /**
                  * Watch on ContentMedia.item to see changes and call updateItemsWithDelay
                  */
                 $scope.$watch(function () {
                     return ContentMedia.item;
                 }, updateItemsWithDelay, true);
-
-                /*     ContentMedia.datepicker = {};
-                 ContentMedia.datepicker.dateOptions = {
-                 formatYear: 'yy',
-                 startingDay: 1
-                 };
-                 ContentMedia.datepicker.format = ['dd-MMMM-yyyy'];
-                 ContentMedia.datepicker.status.opened = false;*/
             }]);
 })(window.angular, window.tinymce);
