@@ -165,7 +165,7 @@
                  */
                 WidgetHome.loadMore = function () {
 
-                    if (WidgetHome.isBusy && !WidgetHome.noMore) {
+                    if (WidgetHome.isBusy || WidgetHome.noMore) {
                         return;
                     }
                     updateGetOptions();
