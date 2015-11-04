@@ -1,5 +1,5 @@
 <div class="holder padding-zero">
-    <div id="scroll-infinite" class="media-center-plugin list-layout layout4 text-overlay">
+    <div class="media-center-plugin list-layout layout4 text-overlay">
         <div class="media-center-banner clearfix border-bottom-grey text-overlay">
             <div id="carousel" build-fire-carousel=""></div>
         </div>
@@ -9,8 +9,7 @@
         </div>
         <div class="padded padding-top-zero text-overlay">
             <div class="list-layout" infinite-scroll="WidgetHome.loadMore()"
-                 infinite-scroll-disabled="WidgetHome.noMore"
-                 infinite-scroll-container='"#scroll-infinite"'>
+                 infinite-scroll-disabled="WidgetHome.noMore">
                 <div ng-repeat="item in WidgetHome.items" ng-if="$index % 2 == 0" class="row text-overlay"
                      ng-click="WidgetHome.goToMedia($index)">
                     <div class="list-item-odd col-xs-6 pull-left clickable ">
