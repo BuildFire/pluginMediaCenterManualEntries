@@ -4,8 +4,9 @@
             <div ng-class="WidgetMedia.showVideo == false ? '' : 'video-container-background'"
                  class="plugin-slider text-center">
                 <div ng-class="WidgetMedia.showVideo == false ? '' : 'video-container-background'"
-                     ng-style="WidgetMedia.showVideo == false ? {'min-height': '192px'} : {}"
+
                      class="plugin-slide">
+                    <!--ng-style="WidgetMedia.showVideo == false ? {'min-height': '192px'} : {}"-->
                     <img style="width: 100% !important;"
                          data-ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage"
                          ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 342 : 192}}"/>
