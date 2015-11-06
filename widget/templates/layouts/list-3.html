@@ -8,8 +8,9 @@
                ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">
             </p>
         </div>
-        <div infinite-scroll-distance="0"
-             infinite-scroll="WidgetHome.loadMore()"
+        <div infinite-scroll="WidgetHome.loadMore()"
+             infinite-scroll-distance="1"
+             data-infinite-container=".infinite-scroll-parent"
              infinite-scroll-disabled="WidgetHome.noMore">
             <div class="clickable text-overlay" ng-repeat="item in WidgetHome.items"
                  ng-click="WidgetHome.goToMedia($index)">

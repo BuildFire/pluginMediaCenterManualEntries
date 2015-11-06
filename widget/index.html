@@ -18,7 +18,7 @@
     <script src="../../../scripts/angular/ui-bootstrap.min.js"></script>
     <script src="../../../scripts/owlCarousel/owlCarousel.js"></script>
     <!-- JS -->
-    <script src="assets/js/ng-infinite-scroll.js"></script>
+    <script src="assets/js/ng-infinite-scroll.custom.js"></script>
     <!--app js-->
     <script src="app.js"></script>
     <script src="enums.js"></script>
@@ -49,7 +49,7 @@
 <body class="scrollable customBackground" ng-style="currentBackgroundImage" ng-class="blackBackground ? 'blackBackground': ''" >
 <div class="">
 
-    <div class="content slide" ng-view=""></div>
+    <div class="content slide infinite-scroll-parent" ng-view=""></div>
 </div>
 </body>
 </html>
