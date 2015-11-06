@@ -86,6 +86,7 @@
 
                     <div class="media-holder pull-left">
                         <img ng-src="{{item.data.topImage | resizeImage : 50:50}}" ng-if="item.data.topImage">
+                        <img src="assets/images/1x1.png" ng-if="!item.data.topImage">
                     </div>
                     <div class="copy pull-right">
                         <a class="text-primary" href="#/media/{{item.id}}"><span
