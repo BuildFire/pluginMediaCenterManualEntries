@@ -9,6 +9,7 @@
     <link href="../../../styles/siteIcons.css" rel="stylesheet">
     <link href="../../../scripts/owlCarousel/owlCarousel.css" rel="stylesheet">
     <link href="assets/css/widget.app.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../../styles/appStyle.css">
     <!--SDK js-->
     <script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
     <script src="../../../scripts/buildfire.js"></script>
@@ -31,7 +32,7 @@
     <script src="controllers/widget.media.controller.js"></script>
     <script src="controllers/widget.nowplaying.controller.js"></script>
 
-<!--carousel-->
+    <!--carousel-->
     <script src="../../../scripts/buildfire/components/carousel/carousel.js"></script>
 
     <script src="assets/js/angular-sanitize.min.js"></script>
@@ -46,10 +47,18 @@
     <!--Video Embeder for Vimeo Youtube-->
     <script src="assets/js/ng-videosharing-embed.min.js"></script>
 </head>
-<body class="scrollable customBackground" ng-style="currentBackgroundImage" ng-class="blackBackground ? 'blackBackground': ''" >
-<div class="">
-
-    <div class="content slide" ng-view=""></div>
+<!--<body class="scrollable customBackground" ng-style="currentBackgroundImage"
+      ng-class="blackBackground ? 'blackBackground': ''">-->
+<body class="body-scroll">
+<div class="main_view">
+    <div class="content slide " ng-show="showFeed">
+        <div ng-controller="WidgetHomeCtrl as WidgetHome">
+            <div ng-include="'templates/home.html'">
+            </div>
+        </div>
+    </div>
+    <div ng-view="" class="slide content" ng-if="!showFeed"></div>
+    <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>
 </div>
 </body>
 </html>

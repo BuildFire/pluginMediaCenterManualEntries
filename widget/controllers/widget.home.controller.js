@@ -1,8 +1,9 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', '$rootScope', 'Buildfire', 'MediaCenterInfo', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders',
-            function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, MediaCenterInfo, AppConfig, Messaging, EVENTS, PATHS, Location, Orders) {
+        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', '$rootScope', 'Buildfire', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders',
+            function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, AppConfig, Messaging, EVENTS, PATHS, Location, Orders) {
+                $rootScope.showFeed = true;
                 var WidgetHome = this;
                 var _infoData = {
                     data: {
@@ -21,15 +22,41 @@
                     }
                 };
                 var view = null;
+
+                /**
+                 * Create instance of MediaContent, MediaCenter db collection
+                 * @type {DB}
+                 */
+                var MediaContent = new DB(COLLECTIONS.MediaContent),
+                    MediaCenter = new DB(COLLECTIONS.MediaCenter);
+
                 /**
                  * WidgetHome.media contains MediaCenterInfo.
                  * @type {MediaCenterInfo|*}
                  */
+                var MediaCenterInfo = null;
+                MediaCenter.get().then(function success(result) {
+                        if (result && result.data && result.id) {
+                            MediaCenterInfo = result;
+                        }
+                        else {
+                            MediaCenterInfo = _infoData;
+                        }
+                        WidgetHome.media = MediaCenterInfo;
+                        AppConfig.setSettings(MediaCenterInfo.data);
+                    },
+                    function fail() {
+                        MediaCenterInfo = _infoData;
+                        WidgetHome.media = MediaCenterInfo;
+                        AppConfig.setSettings(MediaCenterInfo.data);
+                    }
+                );
 
-                if (!MediaCenterInfo)
-                    MediaCenterInfo = _infoData;
+                /*  if (!MediaCenterInfo)
+                 MediaCenterInfo = _infoData;
 
-                WidgetHome.media = MediaCenterInfo;
+                 WidgetHome.media = MediaCenterInfo;*/
+
                 var _skip = 0,
                     _limit = 10,
                     searchOptions = {
@@ -42,10 +69,7 @@
                  * @type {boolean}
                  */
                 WidgetHome.isBusy = false;
-                /**
-                 * AppConfig.setSettings() set the Settings.
-                 */
-                AppConfig.setSettings(MediaCenterInfo.data);
+
 
                 /*declare the device width heights*/
                 WidgetHome.deviceHeight = window.innerHeight;
@@ -117,12 +141,6 @@
                     }
                 });
 
-                /**
-                 * Create instance of MediaContent, MediaCenter db collection
-                 * @type {DB}
-                 */
-                var MediaContent = new DB(COLLECTIONS.MediaContent);
-                //var MediaCenter = new DB(COLLECTIONS.MediaCenter); // commented bcos its not used
 
                 /**
                  * updateGetOptions method checks whether sort options changed or not.
@@ -193,6 +211,7 @@
                 };
 
                 WidgetHome.goToMedia = function (ind) {
+                    $rootScope.showFeed = false;
                     Location.go('#/media/' + WidgetHome.items[ind].id);
                 };
 

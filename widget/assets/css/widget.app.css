@@ -270,6 +270,19 @@ videogular, [videogular] {
     left: 0;
     width: 100%;
 }
+.overlay.background {
+    position: fixed;
+    height: 100%;
+    z-index:0;
+}
+.overlay.background img {
+    height: 105%;
+    width:105%;
+    max-width:105%;
+    left:-2.5%;
+    top:-2.5%;
+    position:absolute;
+}
 
 /* To overlay texts on background */
 .text-overlay {
@@ -279,4 +292,8 @@ videogular, [videogular] {
 .layout1 .list-layout .list-item-copy,
 .layout4 .list-layout .list-item-copy {
     min-height: 80px;
+}
+
+.body-scroll {
+    height: auto !important;
 }

@@ -1,7 +1,9 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'PATHS', function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, PATHS) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'PATHS',
+            function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, PATHS) {
+
             var WidgetMedia = this;
             WidgetMedia.API = null;
             WidgetMedia.showVideo = false;
@@ -67,12 +69,16 @@
                 }
             };
             if (media) {
+                /*$rootScope.showFeed = false;
+                $scope.$apply();*/
                 WidgetMedia.item = media;
                 console.log('initial', WidgetMedia.item);
                 WidgetMedia.changeVideoSrc();
                 WidgetMedia.iframeSrcUrl = $sce.trustAsUrl(WidgetMedia.item.data.srcUrl);
             }
             else {
+              /*  $rootScope.showFeed = false;
+                $scope.$apply();*/
                 WidgetMedia.iframeSrcUrl = '';
             }
 
