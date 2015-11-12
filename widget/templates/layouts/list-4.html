@@ -9,6 +9,8 @@
         </div>
         <div class="padded padding-top-zero text-overlay">
             <div class="list-layout" infinite-scroll="WidgetHome.loadMore()"
+                 infinite-scroll-distance="1"
+                 data-infinite-container=".infinite-scroll-parent"
                  infinite-scroll-disabled="WidgetHome.noMore">
                 <div ng-repeat="item in WidgetHome.items" ng-if="$index % 2 == 0" class="row text-overlay"
                      ng-click="WidgetHome.goToMedia($index)">

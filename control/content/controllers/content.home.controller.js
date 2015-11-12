@@ -322,9 +322,9 @@
                                 {
                                     ContentHome.loading = false;
                                     ContentHome.csvDataInvalid = true;
-                                    $timeout(function hideCsvDataError() {
+                                   /* $timeout(function hideCsvDataError() {
                                         ContentHome.csvDataInvalid = false;
-                                    }, 2000);
+                                    }, 2000);*/
                                     break;
                                 }
                             }
@@ -362,10 +362,10 @@
                         }
                         else {
                             ContentHome.loading = false;
-                            ContentHome.csvDataInvalid = true;
+                            ContentHome.csvDataInvalid = true;/*
                             $timeout(function hideCsvDataError() {
                                 ContentHome.csvDataInvalid = false;
-                            }, 2000);
+                            }, 2000);*/
                             $scope.$apply();
                         }
                     }, function (error) {

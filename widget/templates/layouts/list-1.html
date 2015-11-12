@@ -10,10 +10,10 @@
         </div>
         <div class="padded padding-top-zero text-overlay">
             <div class="list-layout">
-                <div class="row"
-                     infinite-scroll-distance="0"
-                     infinite-scroll="WidgetHome.loadMore()"
-                     infinit-scroll-disabled="WidgetHome.noMore"
+                <div class="row" infinite-scroll="WidgetHome.loadMore()"
+                     infinite-scroll-distance="1"
+                     data-infinite-container=".infinite-scroll-parent"
+                     infinite-scroll-disabled="WidgetHome.noMore"
                         >
                     <div class="clickable col-xs-6 pull-left text-overlay" ng-repeat="item in WidgetHome.items"
                          ng-click="WidgetHome.goToMedia($index)" ng-class-odd="list-item-odd"
@@ -25,7 +25,8 @@
                             </div>
                         </div>
                         <div class="list-item-copy text-left">
-                            <p class="ellipsis margin-zero text-primary"><a class="text-primary">{{item.data.title}}</a></p>
+                            <p class="ellipsis margin-zero text-primary"><a class="text-primary">{{item.data.title}}</a>
+                            </p>
 
                             <p class="summary ellipsis margin-zero">{{item.data.summary}}</p>
                             <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
