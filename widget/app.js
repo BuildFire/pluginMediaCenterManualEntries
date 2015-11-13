@@ -69,6 +69,7 @@
                     controller: 'WidgetMediaCtrl',
                     resolve: {
                         media: ['$q', 'DB', 'COLLECTIONS', 'Location', '$route', function ($q, DB, COLLECTIONS, Location, $route) {
+
                             var deferred = $q.defer();
                             var MediaContent = new DB(COLLECTIONS.MediaContent);
                             if ($route.current.params.mediaId) {
@@ -169,7 +170,7 @@
             $httpProvider.interceptors.push(interceptor);
 
         }])
-        .run(['Location', '$location', function (Location, $location) {
+        .run(['Location', '$location','$rootScope', function (Location, $location,$rootScope) {
             if (buildfire.deeplink)
                 buildfire.deeplink.getData(function (data) {
                     if (data) {
@@ -180,8 +181,10 @@
 
             buildfire.navigation.onBackButtonClick = function () {
                 var path = $location.path();
-                if (path.indexOf('/media') == 0)
+                if (path.indexOf('/media') == 0) {
                     $("#showFeedBtn").click();
+                    //$rootScope.$broadcast('ROUTE_CHANGED',$rootScope.design);
+                }
                 else if (path.indexOf('/nowplaying') == 0)
                     Location.go('#/media/' + path.split('/')[2]);
                 else

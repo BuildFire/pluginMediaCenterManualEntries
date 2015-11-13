@@ -112,18 +112,25 @@
                                         break;
                                     default :
 
-                                        break
+                                        break;
                                 }
                                 Location.go(url);
+                                if (id) {
+                                    $rootScope.showFeed = false;
+                                }
+                                else {
+                                    $rootScope.showFeed = true;
+                                }
+                                $scope.$apply();
+                                break;
+                            case EVENTS.ITEMS_CHANGE:
+                                WidgetHome.refreshItems();
                                 break;
                         }
                     }
                 };
 
-                /**
-                 * Buildfire.datastore.onUpdate method calls when Data is changed.
-                 */
-                Buildfire.datastore.onUpdate(function (event) {
+                var onUpdateCallback = function (event) {
                     if (event.tag == "MediaCenter") {
                         if (event.data) {
                             WidgetHome.media.data = event.data;
@@ -132,14 +139,18 @@
                             if (view && event.data.content && event.data.content.images) {
                                 view.loadItems(event.data.content.images);
                             }
+                            WidgetHome.refreshItems();
                         }
                     }
                     else {
-                        WidgetHome.items = [];
-                        WidgetHome.noMore = false;
-                        WidgetHome.loadMore();
+                        WidgetHome.refreshItems();
                     }
-                });
+                };
+
+                /**
+                 * Buildfire.datastore.onUpdate method calls when Data is changed.
+                 */
+                var listener = Buildfire.datastore.onUpdate(onUpdateCallback);
 
 
                 /**
@@ -210,6 +221,12 @@
                     });
                 };
 
+                WidgetHome.refreshItems = function () {
+                    WidgetHome.items = [];
+                    WidgetHome.noMore = false;
+                    WidgetHome.loadMore();
+                };
+
                 WidgetHome.goToMedia = function (ind) {
                     $rootScope.showFeed = false;
                     Location.go('#/media/' + WidgetHome.items[ind].id);
@@ -231,5 +248,33 @@
                     }
                 });
 
+                $rootScope.$watch('showFeed', function () {
+                    if ($rootScope.showFeed) {
+                        listener.clear();
+                        listener = Buildfire.datastore.onUpdate(onUpdateCallback);
+
+                        MediaCenter.get().then(function success(result) {
+                                WidgetHome.media = result;
+                                AppConfig.setSettings(MediaCenterInfo.data);
+                            },
+                            function fail() {
+                                WidgetHome.media = _infoData;
+                                AppConfig.setSettings(_infoData.data);
+                            }
+                        );
+                    }
+                });
+
+                /* $rootScope.$on("ROUTE_CHANGED", function (e, design) {
+                 if (design) {
+                 WidgetHome.media.data.design = design;
+                 console.log('WidgetHome.media.data.design>>', WidgetHome.media.data.design);
+                 $scope.$apply();
+                 }
+                 listener.clear();
+                 listener = Buildfire.datastore.onUpdate(onUpdateCallback);
+                 });*/
+
+
             }]);
-})(window.angular, undefined);
+})(window.angular);

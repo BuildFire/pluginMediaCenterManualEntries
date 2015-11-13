@@ -158,6 +158,10 @@
                     ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
                     MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then(function (data) {
                         updateMasterItem(ContentMedia.item);
+                        Messaging.sendMessageToWidget({
+                            name: EVENTS.ITEMS_CHANGE,
+                            message: {}
+                        });
                     }, function (err) {
                         resetItem();
                         console.error('Error-------', err);
@@ -190,6 +194,10 @@
                                     console.error('Error-------', err);
                                 });
                             }
+                            Messaging.sendMessageToWidget({
+                                name: EVENTS.ITEMS_CHANGE,
+                                message: {}
+                            });
 
                         }, function (err) {
                             resetItem();
@@ -223,6 +231,7 @@
                                 ContentMedia.item.data.dateCreated = +new Date();
                                 addNewItem();
                             }
+
 
                         }, 1000);
                     }

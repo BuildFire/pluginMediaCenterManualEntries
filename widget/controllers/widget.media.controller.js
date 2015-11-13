@@ -1,8 +1,8 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'PATHS',
-            function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, PATHS) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'PATHS','$rootScope',
+            function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, PATHS,$rootScope) {
 
             var WidgetMedia = this;
             WidgetMedia.API = null;
@@ -29,7 +29,8 @@
                         type: 'video/' + WidgetMedia.item.data.videoUrl.split('.').pop() //"video/mp4"
                     }];
             };
-            if (AppConfig.getSettings()) {
+            //if (AppConfig.getSettings()) {
+            if (false) {
                 WidgetMedia.media = {
                     data: AppConfig.getSettings()
                 };
@@ -140,6 +141,7 @@
                     case COLLECTIONS.MediaCenter:
                         WidgetMedia.media = event;
                         WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
+                        $rootScope.design = event.data.design;
                         $scope.$digest();
                         break;
                 }
@@ -177,6 +179,7 @@
             });
             $scope.$on("$destroy", function () {
                 WidgetMedia.onUpdateFn.clear();
+                //$rootScope.$broadcast('ROUTE_CHANGED', WidgetMedia.data.design.listLayout);
             });
 
             //Sync with Control section

@@ -1,7 +1,8 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', 'COLLECTIONS','$rootScope', function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS,$rootScope) {
+        .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', 'COLLECTIONS','$rootScope',
+            function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS,$rootScope) {
             $rootScope.blackBackground = true;
             $rootScope.showFeed = false;
             var NowPlaying = this;
@@ -171,6 +172,11 @@
 
                             NowPlaying.item = event;
                             $scope.$digest();
+                        }
+                        break;
+                    case COLLECTIONS.MediaCenter:
+                        if (event.data) {
+                            $rootScope.design = event.data.design;
                         }
                         break;
                 }
