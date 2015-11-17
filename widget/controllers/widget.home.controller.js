@@ -135,6 +135,7 @@
                     if (event.tag == "MediaCenter") {
                         if (event.data) {
                             WidgetHome.media.data = event.data;
+                            $rootScope.backgroundImage = WidgetHome.media.data.design.backgroundImage;
                             console.log(WidgetHome.media);
                             $scope.$apply();
                             if (view && event.data.content && event.data.content.images) {

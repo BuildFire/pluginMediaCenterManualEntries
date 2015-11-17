@@ -40,6 +40,7 @@
                         WidgetMedia.media = {
                             data: data.data
                         };
+                        $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
                         console.log('Get Info---', data, 'data---');
                     }, function (err) {
                         WidgetMedia.media = {
@@ -141,8 +142,8 @@
                         case COLLECTIONS.MediaCenter:
                             WidgetMedia.media = event;
                             WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
-                            $rootScope.design = event.data.design;
-                            $scope.$digest();
+                            $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
+                            $scope.$apply();
                             break;
                     }
                 });

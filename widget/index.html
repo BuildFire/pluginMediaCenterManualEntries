@@ -49,7 +49,7 @@
 </head>
 <!--<body class="scrollable customBackground" ng-style="currentBackgroundImage"
       ng-class="blackBackground ? 'blackBackground': ''">-->
-<body class="body-scroll" data-ng-attr-style="background:url({{ backgroundImage}}) !important; background-size:cover;">
+<body class="body-scroll" data-ng-attr-style="background:url({{ backgroundImage | cropImage:deviceWidth:deviceHeight:true}}) !important; background-size:cover;">
 <div class="main_view">
     <div class="content slide infinite-scroll-parent relative  no-background" ng-show="showFeed">
         <div ng-controller="WidgetHomeCtrl as WidgetHome">
