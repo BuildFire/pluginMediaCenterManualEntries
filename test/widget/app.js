@@ -9,7 +9,7 @@ describe('Unit: mediaPlugin widget app', function () {
                 rootScope = _$rootScope_;
             }));
 
-        describe('Home route', function () {
+        xdescribe('Home route', function () {
             beforeEach(inject(
                 function ($httpBackend) {
                     $httpBackend.expectGET('templates/home.html')

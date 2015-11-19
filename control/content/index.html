@@ -22,7 +22,7 @@
     <!-- JS -->
     <script src="assets/js/jquery-ui.min.js"></script>
     <script src="assets/js/sortable.js"></script>
-    <script src="assets/js/ng-infinite-scroll.js"></script>
+    <script src="assets/js/ng-infinite-scroll.custom.js"></script>
     <script src="assets/js/angular-csv.js"></script>
     <script src="assets/js/ng-clip.min.js"></script>
     <script src="assets/js/ZeroClipboard.min.js"></script>
@@ -41,7 +41,7 @@
 </head>
 <body>
 <div class="main_view">
-    <div class="content slide" ng-view=""></div>
+    <div class="content slide infinite-scroll-parent" ng-view=""></div>
 </div>
 </body>
 </html>

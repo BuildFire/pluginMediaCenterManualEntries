@@ -35,30 +35,33 @@
                 //buildfire.datastore.disableRefresh();
 
             $routeProvider
+                /* .when('/', {
+                 templateUrl: 'templates/home.html',
+                 controllerAs: 'WidgetHome',
+                 controller: 'WidgetHomeCtrl',
+                 resolve: {
+                 MediaCenterInfo: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location',
+                 function ($q, DB, COLLECTIONS, Orders, Location) {
+                 var deferred = $q.defer();
+                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
+                 MediaCenter.get().then(function success(result) {
+                 if (result && result.data && result.id) {
+                 deferred.resolve(result);
+                 }
+                 else {
+                 deferred.resolve(null);
+                 }
+                 },
+                 function fail(error) {
+                 deferred.resolve(null);
+                 }
+                 );
+                 return deferred.promise;
+                 }]
+                 }
+                 })*/
                 .when('/', {
-                    templateUrl: 'templates/home.html',
-                    controllerAs: 'WidgetHome',
-                    controller: 'WidgetHomeCtrl',
-                    resolve: {
-                        MediaCenterInfo: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location',
-                            function ($q, DB, COLLECTIONS, Orders, Location) {
-                                var deferred = $q.defer();
-                                var MediaCenter = new DB(COLLECTIONS.MediaCenter);
-                                MediaCenter.get().then(function success(result) {
-                                        if (result && result.data && result.id) {
-                                            deferred.resolve(result);
-                                        }
-                                        else {
-                                            deferred.resolve(null);
-                                        }
-                                    },
-                                    function fail(error) {
-                                        deferred.resolve(null);
-                                    }
-                                );
-                                return deferred.promise;
-                            }]
-                    }
+                    template: '<div></div>'
                 })
                 .when('/media/:mediaId', {
                     templateUrl: 'templates/media.html',
@@ -66,6 +69,7 @@
                     controller: 'WidgetMediaCtrl',
                     resolve: {
                         media: ['$q', 'DB', 'COLLECTIONS', 'Location', '$route', function ($q, DB, COLLECTIONS, Location, $route) {
+
                             var deferred = $q.defer();
                             var MediaContent = new DB(COLLECTIONS.MediaContent);
                             if ($route.current.params.mediaId) {
@@ -166,7 +170,7 @@
             $httpProvider.interceptors.push(interceptor);
 
         }])
-        .run(['Location', '$location', function (Location, $location) {
+        .run(['Location', '$location','$rootScope', function (Location, $location,$rootScope) {
             if (buildfire.deeplink)
                 buildfire.deeplink.getData(function (data) {
                     if (data) {
@@ -177,8 +181,10 @@
 
             buildfire.navigation.onBackButtonClick = function () {
                 var path = $location.path();
-                if (path.indexOf('/media') == 0)
-                    Location.goToHome();
+                if (path.indexOf('/media') == 0) {
+                    $("#showFeedBtn").click();
+                    //$rootScope.$broadcast('ROUTE_CHANGED',$rootScope.design);
+                }
                 else if (path.indexOf('/nowplaying') == 0)
                     Location.go('#/media/' + path.split('/')[2]);
                 else

@@ -1,8 +1,9 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', '$rootScope', 'Buildfire', 'MediaCenterInfo', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders',
-            function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, MediaCenterInfo, AppConfig, Messaging, EVENTS, PATHS, Location, Orders) {
+        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', '$rootScope', 'Buildfire', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders',
+            function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, AppConfig, Messaging, EVENTS, PATHS, Location, Orders) {
+                $rootScope.showFeed = true;
                 var WidgetHome = this;
                 var _infoData = {
                     data: {
@@ -21,15 +22,42 @@
                     }
                 };
                 var view = null;
+
+                /**
+                 * Create instance of MediaContent, MediaCenter db collection
+                 * @type {DB}
+                 */
+                var MediaContent = new DB(COLLECTIONS.MediaContent),
+                    MediaCenter = new DB(COLLECTIONS.MediaCenter);
+
                 /**
                  * WidgetHome.media contains MediaCenterInfo.
                  * @type {MediaCenterInfo|*}
                  */
+                var MediaCenterInfo = null;
+                MediaCenter.get().then(function success(result) {
+                        if (result && result.data && result.id) {
+                            MediaCenterInfo = result;
+                        }
+                        else {
+                            MediaCenterInfo = _infoData;
+                        }
+                        WidgetHome.media = MediaCenterInfo;
+                        $rootScope.backgroundImage = MediaCenterInfo.data.design.backgroundImage;
+                        AppConfig.setSettings(MediaCenterInfo.data);
+                    },
+                    function fail() {
+                        MediaCenterInfo = _infoData;
+                        WidgetHome.media = MediaCenterInfo;
+                        AppConfig.setSettings(MediaCenterInfo.data);
+                    }
+                );
 
-                if (!MediaCenterInfo)
-                    MediaCenterInfo = _infoData;
+                /*  if (!MediaCenterInfo)
+                 MediaCenterInfo = _infoData;
 
-                WidgetHome.media = MediaCenterInfo;
+                 WidgetHome.media = MediaCenterInfo;*/
+
                 var _skip = 0,
                     _limit = 10,
                     searchOptions = {
@@ -42,14 +70,11 @@
                  * @type {boolean}
                  */
                 WidgetHome.isBusy = false;
-                /**
-                 * AppConfig.setSettings() set the Settings.
-                 */
-                AppConfig.setSettings(MediaCenterInfo.data);
+
 
                 /*declare the device width heights*/
-                WidgetHome.deviceHeight = window.innerHeight;
-                WidgetHome.deviceWidth = window.innerWidth;
+                $rootScope.deviceHeight = WidgetHome.deviceHeight = window.innerHeight;
+                $rootScope.deviceWidth = WidgetHome.deviceWidth = window.innerWidth;
 
                 /*initialize the device width heights*/
                 var initDeviceSize = function (callback) {
@@ -88,41 +113,47 @@
                                         break;
                                     default :
 
-                                        break
+                                        break;
                                 }
                                 Location.go(url);
+                                if (id) {
+                                    $rootScope.showFeed = false;
+                                }
+                                else {
+                                    $rootScope.showFeed = true;
+                                }
+                                $scope.$apply();
+                                break;
+                            case EVENTS.ITEMS_CHANGE:
+                                WidgetHome.refreshItems();
                                 break;
                         }
+                    }
+                };
+
+                var onUpdateCallback = function (event) {
+                    if (event.tag == "MediaCenter") {
+                        if (event.data) {
+                            WidgetHome.media.data = event.data;
+                            $rootScope.backgroundImage = WidgetHome.media.data.design.backgroundImage;
+                            console.log(WidgetHome.media);
+                            $scope.$apply();
+                            if (view && event.data.content && event.data.content.images) {
+                                view.loadItems(event.data.content.images);
+                            }
+                            WidgetHome.refreshItems();
+                        }
+                    }
+                    else {
+                        WidgetHome.refreshItems();
                     }
                 };
 
                 /**
                  * Buildfire.datastore.onUpdate method calls when Data is changed.
                  */
-                Buildfire.datastore.onUpdate(function (event) {
-                    if (event.tag == "MediaCenter") {
-                        if (event.data) {
-                            WidgetHome.media.data = event.data;
-                            console.log(WidgetHome.media);
-                            $scope.$apply();
-                            if (view && event.data.content && event.data.content.images) {
-                                view.loadItems(event.data.content.images);
-                            }
-                        }
-                    }
-                    else {
-                        WidgetHome.items = [];
-                        WidgetHome.noMore = false;
-                        WidgetHome.loadMore();
-                    }
-                });
+                var listener = Buildfire.datastore.onUpdate(onUpdateCallback);
 
-                /**
-                 * Create instance of MediaContent, MediaCenter db collection
-                 * @type {DB}
-                 */
-                var MediaContent = new DB(COLLECTIONS.MediaContent);
-                //var MediaCenter = new DB(COLLECTIONS.MediaCenter); // commented bcos its not used
 
                 /**
                  * updateGetOptions method checks whether sort options changed or not.
@@ -165,7 +196,7 @@
                  */
                 WidgetHome.loadMore = function () {
 
-                    if (WidgetHome.isBusy && !WidgetHome.noMore) {
+                    if (WidgetHome.isBusy || WidgetHome.noMore) {
                         return;
                     }
                     updateGetOptions();
@@ -192,7 +223,14 @@
                     });
                 };
 
+                WidgetHome.refreshItems = function () {
+                    WidgetHome.items = [];
+                    WidgetHome.noMore = false;
+                    WidgetHome.loadMore();
+                };
+
                 WidgetHome.goToMedia = function (ind) {
+                    $rootScope.showFeed = false;
                     Location.go('#/media/' + WidgetHome.items[ind].id);
                 };
 
@@ -212,5 +250,33 @@
                     }
                 });
 
+                $rootScope.$watch('showFeed', function () {
+                    if ($rootScope.showFeed) {
+                        listener.clear();
+                        listener = Buildfire.datastore.onUpdate(onUpdateCallback);
+
+                        MediaCenter.get().then(function success(result) {
+                                WidgetHome.media = result;
+                                AppConfig.setSettings(MediaCenterInfo.data);
+                            },
+                            function fail() {
+                                WidgetHome.media = _infoData;
+                                AppConfig.setSettings(_infoData.data);
+                            }
+                        );
+                    }
+                });
+
+                /* $rootScope.$on("ROUTE_CHANGED", function (e, design) {
+                 if (design) {
+                 WidgetHome.media.data.design = design;
+                 console.log('WidgetHome.media.data.design>>', WidgetHome.media.data.design);
+                 $scope.$apply();
+                 }
+                 listener.clear();
+                 listener = Buildfire.datastore.onUpdate(onUpdateCallback);
+                 });*/
+
+
             }]);
-})(window.angular, undefined);
+})(window.angular);
