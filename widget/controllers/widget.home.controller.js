@@ -43,6 +43,7 @@
                             MediaCenterInfo = _infoData;
                         }
                         WidgetHome.media = MediaCenterInfo;
+                        $rootScope.backgroundImage = MediaCenterInfo.data.design.backgroundImage;
                         AppConfig.setSettings(MediaCenterInfo.data);
                     },
                     function fail() {
@@ -72,8 +73,8 @@
 
 
                 /*declare the device width heights*/
-                WidgetHome.deviceHeight = window.innerHeight;
-                WidgetHome.deviceWidth = window.innerWidth;
+                $rootScope.deviceHeight = WidgetHome.deviceHeight = window.innerHeight;
+                $rootScope.deviceWidth = WidgetHome.deviceWidth = window.innerWidth;
 
                 /*initialize the device width heights*/
                 var initDeviceSize = function (callback) {
@@ -134,6 +135,7 @@
                     if (event.tag == "MediaCenter") {
                         if (event.data) {
                             WidgetHome.media.data = event.data;
+                            $rootScope.backgroundImage = WidgetHome.media.data.design.backgroundImage;
                             console.log(WidgetHome.media);
                             $scope.$apply();
                             if (view && event.data.content && event.data.content.images) {
