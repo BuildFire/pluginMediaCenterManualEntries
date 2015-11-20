@@ -1,6 +1,21 @@
 <div class="holder now-playing text-center">
-    <div style="height:544px;position: inherit;" class="bg-blurred-image"
-         ng-style="NowPlaying.item.data.image? {'background':'url(' + NowPlaying.item.data.image + ') no-repeat center center'}:{'background':'black'}"></div>
+    // need to refactor this.
+    <div ng-style="NowPlaying.item.data.image? {'background':'url(' + NowPlaying.item.data.image + ') no-repeat center center fixed' ,
+          '-o-filter': 'blur(10px) brightness(0.2)',
+    '-moz-filter': 'blur(10px) brightness(0.2)',
+    '-webkit-filter': 'blur(10px) brightness(0.2)',
+    'filter': 'blur(10px) brightness(0.2)',
+    'position': 'absolute',
+    'top': '-5%',
+    'left': '-5%',
+    '-o-background-size': 'cover',
+    '-moz-background-size': 'cover',
+    '-webkit-background-size': 'cover',
+    'background-size': 'cover',
+    'height': '110%',
+    'width': '110%',
+    'z-index': '0'
+         }:{'background':'black'}"></div>
     <div class="media-center-plugin">
         <div class="media-header-link">
             <a ng-click="NowPlaying.add(NowPlaying.item.data.audioTitle,NowPlaying.item.data.audioUrl,NowPlaying.item.data.image,NowPlaying.item.data.artists)">Add
