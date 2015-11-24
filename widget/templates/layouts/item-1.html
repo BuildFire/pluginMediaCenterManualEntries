@@ -7,7 +7,7 @@
 
                      class="plugin-slide">
                     <!--ng-style="WidgetMedia.showVideo == false ? {'min-height': '192px'} : {}"-->
-                    <img style="width: 100% !important;"
+                    <img style="width: 100% !important;max-height:192px !important"
                          data-ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage"
                          ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 342 : 192}}"/>
 
