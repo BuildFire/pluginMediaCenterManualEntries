@@ -57,7 +57,7 @@
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
 
                 var _skip = 0,
-                    _limit = 5,
+                    _limit = 10,
                     _maxLimit = 19,
                     searchOptions = {
                         filter: {"$json.title": {"$regex": '/*'}},

@@ -51,6 +51,8 @@
                  */
                 var selectImageOptions = {showIcons: false, multiSelection: false};
 
+                var updating = false;
+
                 /**
                  * Init bootstrapping data
                  */
@@ -155,9 +157,11 @@
                  * This updateItemData method will call the Builfire update method to update the ContentMedia.item
                  */
                 function updateItemData() {
+                    updating = true;
                     ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
                     MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then(function (data) {
                         updateMasterItem(ContentMedia.item);
+                        updating = false;
                         Messaging.sendMessageToWidget({
                             name: EVENTS.ITEMS_CHANGE,
                             message: {}
@@ -173,12 +177,14 @@
                  */
 
                 function addNewItem() {
+                    updating = true;
                     ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
                     MediaContent.insert(ContentMedia.item.data).then(function (data) {
                         MediaContent.getById(data.id).then(function (item) {
                             ContentMedia.item = item;
                             ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({id: item.id});
                             updateMasterItem(item);
+                            updating = false;
                             MediaCenterSettings.content.rankOfLastItem = item.data.rank;
                             if (appId && MediaCenterSettings) {
                                 MediaCenter.update(appId, MediaCenterSettings).then(function (data) {
@@ -218,11 +224,16 @@
                  * @param item
                  */
                 function updateItemsWithDelay(item) {
+                    if (updating) {
+                    console.log(' came but updating is going on');
+                    return;
+                }
                     if (tmrDelayForMedia) {
                         clearTimeout(tmrDelayForMedia);
                     }
                     ContentMedia.isItemValid = isValidItem(ContentMedia.item.data);
                     if (!isUnChanged(ContentMedia.item) && ContentMedia.isItemValid) {
+
                         tmrDelayForMedia = setTimeout(function () {
                             if (item.id) {
                                 updateItemData();
@@ -231,8 +242,6 @@
                                 ContentMedia.item.data.dateCreated = +new Date();
                                 addNewItem();
                             }
-
-
                         }, 1000);
                     }
                 }
