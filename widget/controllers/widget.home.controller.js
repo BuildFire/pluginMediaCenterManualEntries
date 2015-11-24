@@ -224,6 +224,7 @@
                 };
 
                 WidgetHome.refreshItems = function () {
+                    searchOptions.skip = 0;
                     WidgetHome.items = [];
                     WidgetHome.noMore = false;
                     WidgetHome.loadMore();
