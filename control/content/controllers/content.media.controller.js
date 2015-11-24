@@ -157,6 +157,7 @@
                  * This updateItemData method will call the Builfire update method to update the ContentMedia.item
                  */
                 function updateItemData() {
+                    updating = true;
                     ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
                     MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then(function (data) {
                         updateMasterItem(ContentMedia.item);
@@ -176,6 +177,7 @@
                  */
 
                 function addNewItem() {
+                    updating = true;
                     ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
                     MediaContent.insert(ContentMedia.item.data).then(function (data) {
                         MediaContent.getById(data.id).then(function (item) {
@@ -231,7 +233,7 @@
                     }
                     ContentMedia.isItemValid = isValidItem(ContentMedia.item.data);
                     if (!isUnChanged(ContentMedia.item) && ContentMedia.isItemValid) {
-                        updating = true;
+
                         tmrDelayForMedia = setTimeout(function () {
                             if (item.id) {
                                 updateItemData();
