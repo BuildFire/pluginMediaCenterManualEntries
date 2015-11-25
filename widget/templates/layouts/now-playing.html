@@ -54,16 +54,17 @@
                          ng-change="NowPlaying.changeVolume(NowPlaying.volume)"
                          style="width:15%;visibility: visible;margin-top:40px;margin-left:80px"/>
 
-            <span class="icon icon-volume-high icon-sm audio-player-icon" ng-click="NowPlaying.showVolume=!NowPlaying.showVolume"></span>
-            <span class="icon icon-ellipsis icon-sm audio-player-icon" ng-click="NowPlaying.openMoreInfoPopup()"></span>
+            <span class="audio-player-icon icon icon-volume-high icon-sm"
+                  ng-click="NowPlaying.showVolume=!NowPlaying.showVolume"></span>
+            <span class="audio-player-icon icon icon-ellipsis icon-sm" ng-click="NowPlaying.openMoreInfoPopup()"></span>
             <!--<span class="icon icon-cog icon-sm" ng-click="NowPlaying.openSettingsPopup()"></span>-->
         </div>
         <a class="media-player-btns margin-top-ten">
             <!--<span class="icon icon-shuffle icon-sm" ng-click="NowPlaying.shuffle()"></span>-->
-            <span class="icon icon-backward-circle audio-player-icon" ng-click="NowPlaying.backward()"></span>
-            <span ng-if="!NowPlaying.playing" class="icon icon-play-circle icon-main audio-player-icon"
+            <span class="audio-player-icon icon icon-backward-circle " ng-click="NowPlaying.backward()"></span>
+            <span ng-if="!NowPlaying.playing" class="audio-player-icon icon icon-play-circle icon-main "
                   ng-click="NowPlaying.playAudio()"></span>
-            <span ng-if="NowPlaying.playing" class="icon icon-pause-circle icon-main audio-player-icon"
+            <span ng-if="NowPlaying.playing" class="audio-player-icon icon icon-pause-circle icon-main "
                   ng-click="NowPlaying.pause()"></span>
             <!--<span class="icon icon-forward-circle" ng-click="NowPlaying.forward()"></span>-->
             <!--<span class="icon icon-repeat icon-sm" ng-click="NowPlaying.repeatTrack()"></span>-->
