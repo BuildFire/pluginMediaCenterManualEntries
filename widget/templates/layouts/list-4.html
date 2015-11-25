@@ -15,7 +15,7 @@
                 <div ng-repeat="item in WidgetHome.items" ng-if="$index % 2 == 0" class="row text-overlay"
                      ng-click="WidgetHome.goToMedia($index)">
                     <div class="list-item-odd col-xs-6 pull-left clickable ">
-                        <div class="list-item-media text-center border-radius-three overflow-hidden text-overlay">
+                        <div class="list-item-media text-center overflow-hidden text-overlay">
                             <div class="list-media-holder text-overlay"
                                  play-btn="{{WidgetHome.items[$index].data.videoUrl.length > 0}}">
                                 <img ng-if="WidgetHome.items[$index].data.topImage"
@@ -31,7 +31,7 @@
                     </div>
                     <div class="list-item-even col-xs-6 pull-left clickable text-overlay "
                          ng-if="WidgetHome.items[$index + 1]">
-                        <div class="list-item-media text-center border-radius-three overflow-hidden text-overlay">
+                        <div class="list-item-media text-center overflow-hidden text-overlay">
                             <div class="list-media-holder text-overlay"
                                  play-btn="{{WidgetHome.items[$index+1].data.videoUrl.length > 0}}">
                                 <img ng-if="WidgetHome.items[$index + 1].data.topImage"
