@@ -305,6 +305,6 @@ videogular, [videogular] {
     height: 100%;
 }
 
-.audio-player-icon{
-    color: white!important;
+.holder.now-playing .audio-player-icon{
+    color: white !important;
 }
