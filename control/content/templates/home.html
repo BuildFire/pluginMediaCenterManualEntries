@@ -70,10 +70,10 @@
 </div>
 <hr>
 <div class="item clearfix">
-    <div class="tab-order draggable-list-view wide-list has-btn-link border-grey border-radius-four no-max-height">
+    <div class="tab-order draggable-list-view wide-list has-btn-link border-grey border-radius-four lazy-load-scroller">
         <div infinite-scroll="ContentHome.getMore()"
              infinite-scroll-distance="1"
-             data-infinite-container=".infinite-scroll-parent"
+             data-infinite-container=".lazy-load-scroller"
              infinite-scroll-disabled="ContentHome.noMore">
             <div ui-sortable="ContentHome.itemSortableOptions" ng-model="ContentHome.items">
                 <div class="well text-center margin-bottom-zero border-none" ng-if="ContentHome.items.length <1">
