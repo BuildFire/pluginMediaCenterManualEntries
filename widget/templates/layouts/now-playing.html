@@ -24,7 +24,7 @@
         <div class="media-holder margin-top-fifteen">
             <div class="media-inner text-center">
                 <img ng-if="NowPlaying.item.data.image" class="border-radius-two"
-                     ng-src="{{NowPlaying.item.data.image | resizeImage: 260 :260 }}" height="260px" width="260">
+                     ng-src="{{NowPlaying.item.data.image | cropImage: 260 :260 }}" height="260px" width="260">
                 <img ng-if="!NowPlaying.item.data.image" class="border-radius-two"
                      src="assets/images/now-playing.png" height="260px" width="260">
             </div>
