@@ -34,3 +34,7 @@ Style for loader
 .infinite-scroll-parent{
     height:1000px !important;
 }
+
+.no-max-height{
+    max-height: none !important;
+}
