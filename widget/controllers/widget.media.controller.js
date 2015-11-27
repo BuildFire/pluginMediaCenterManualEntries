@@ -166,6 +166,10 @@
                      }*/
                 };
 
+                WidgetMedia.executeAction = function (actionItem) {
+                    Buildfire.actionItems.execute(actionItem);
+                };
+
                 var initializing = true;
                 $scope.$watch(function () {
                     return WidgetMedia.item.data.videoUrl;
