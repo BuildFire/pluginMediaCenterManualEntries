@@ -20,8 +20,9 @@
                     </div>
                 </div>
                 <div class="padded text-left text-overlay">
-                    <a class="text-primary">{{item.data.title}}</a>
-
+                    <p class="text-primary ellipsis">
+                        <a class="text-primary">{{item.data.title}}</a>
+                    </p>
                     <p class="margin-bottom-zero">{{item.data.summary}}</p>
                     <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
                 </div>

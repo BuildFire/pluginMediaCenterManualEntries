@@ -29,7 +29,7 @@
             <p ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
 
             <div class="dynamic-links">
-                <a class="d-link" ng-repeat="link in WidgetMedia.item.data.links">{{link.title}}</a>
+                <a ng-click="WidgetMedia.executeAction(link)" class="d-link" ng-repeat="link in WidgetMedia.item.data.links">{{link.title}}</a>
             </div>
         </div>
     </div>

@@ -31,6 +31,11 @@ Style for loader
     color: #8a6d3b;
 }
 
+/*
 .infinite-scroll-parent{
-    height:1000px !important;
+    height:1400px !important;
 }
+
+.no-max-height{
+    max-height: none !important;
+}*/

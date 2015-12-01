@@ -15,15 +15,19 @@
                 <div ng-repeat="item in WidgetHome.items" ng-if="$index % 2 == 0" class="row text-overlay"
                      ng-click="WidgetHome.goToMedia($index)">
                     <div class="list-item-odd col-xs-6 pull-left clickable ">
-                        <div class="list-item-media text-center border-radius-three overflow-hidden text-overlay">
+                        <div class="list-item-media text-center overflow-hidden text-overlay">
                             <div class="list-media-holder text-overlay"
                                  play-btn="{{WidgetHome.items[$index].data.videoUrl.length > 0}}">
                                 <img ng-if="WidgetHome.items[$index].data.topImage"
                                      ng-src="{{WidgetHome.items[$index].data.topImage | cropImage:200:200}}">
+                                <img ng-if="!WidgetHome.items[$index].data.topImage"
+                                     src="assets/images/placeholder200x200.png">
                             </div>
                         </div>
                         <div class="list-item-copy text-left text-overlay">
-                            <a class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index].data.title}}</a>
+                            <p class="text-primary ellipsis">
+                                <a class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index].data.title}}</a>
+                            </p>
 
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index].data.summary}}</p>
                             <span class="list-item-date" data-ng-if="WidgetHome.items[$index].data.mediaDate">{{WidgetHome.items[$index].data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
@@ -31,16 +35,20 @@
                     </div>
                     <div class="list-item-even col-xs-6 pull-left clickable text-overlay "
                          ng-if="WidgetHome.items[$index + 1]">
-                        <div class="list-item-media text-center border-radius-three overflow-hidden text-overlay">
+                        <div class="list-item-media text-center overflow-hidden text-overlay">
                             <div class="list-media-holder text-overlay"
                                  play-btn="{{WidgetHome.items[$index+1].data.videoUrl.length > 0}}">
                                 <img ng-if="WidgetHome.items[$index + 1].data.topImage"
                                      ng-src="{{WidgetHome.items[$index + 1].data.topImage | cropImage:200:200}}">
+                                <img ng-if="!WidgetHome.items[$index + 1].data.topImage"
+                                     src="assets/images/placeholder200x200.png">
                             </div>
                         </div>
                         <div class="list-item-copy text-left text-overlay">
-                            <a class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index + 1].data.title}}</a>
-
+                            <p class="text-primary ellipsis">
+                                <a class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index +
+                                    1].data.title}}</a>
+                            </p>
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.summary}}</p>
                             <span class="list-item-date" data-ng-if="WidgetHome.items[$index + 1].data.mediaDate">{{WidgetHome.items[$index + 1].data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
                         </div>

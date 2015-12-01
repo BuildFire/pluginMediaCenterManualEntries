@@ -38,7 +38,7 @@
 
 
             <div ng-class="WidgetMedia.item.data.links.length ? 'dynamic-links' : ''">
-                <a class="d-link" ng-repeat="link in WidgetMedia.item.data.links">{{link.title}}</a>
+                <a ng-click="WidgetMedia.executeAction(link)" class="d-link" ng-repeat="link in WidgetMedia.item.data.links">{{link.title}}</a>
             </div>
         </div>
     </div>
