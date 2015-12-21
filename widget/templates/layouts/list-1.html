@@ -3,9 +3,8 @@
         <div class="plugin-banner clearfix border-bottom-grey">
             <div id="carousel" build-fire-carousel=""></div>
         </div>
-        <div class="text-left padded padding-bottom-zero clearfix text-overlay">
-            <p ng-if="WidgetHome.showDescription()"
-               ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">
+        <div class="text-left padded padding-bottom-zero clearfix text-overlay" ng-if="WidgetHome.showDescription()">
+            <p ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">
             </p>
         </div>
         <div class="padded padding-top-zero text-overlay">
