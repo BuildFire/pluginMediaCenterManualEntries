@@ -4,6 +4,9 @@
         .module('mediaCenterContent')
         .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv',
             function ($scope, MediaCenterInfo, Modals, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv) {
+
+                //scroll current view to top when loaded.
+                Buildfire.navigation.scrollTop();
                 var ContentHome = this;
 
                 var _infoData = {
