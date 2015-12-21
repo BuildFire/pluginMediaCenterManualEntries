@@ -186,9 +186,9 @@
                     NowPlaying.pause();
                 });
 
-                $timeout(function () {
+                /*$timeout(function () {
                     NowPlaying.playAudio();
-                }, 1500);
+                }, 1500);*/
             }
         ])
     ;
