@@ -1,5 +1,5 @@
 <div class="holder now-playing text-center audio-player">
-    // need to refactor this.
+    <!--// need to refactor this.-->
     <div ng-style="NowPlaying.item.data.image? {'background':'url(' + NowPlaying.item.data.image + ') no-repeat center center' ,
           '-o-filter': 'blur(10px) brightness(0.2)',
     '-moz-filter': 'blur(10px) brightness(0.2)',
@@ -66,7 +66,7 @@
                   ng-click="NowPlaying.playAudio()"></span>
             <span ng-if="NowPlaying.playing" class="audio-player-icon icon icon-pause-circle icon-main "
                   ng-click="NowPlaying.pause()"></span>
-            <!--<span class="icon icon-forward-circle" ng-click="NowPlaying.forward()"></span>-->
+            <span class="audio-player-icon icon icon-forward-circle" ng-click="NowPlaying.forward()"></span>
             <!--<span class="icon icon-repeat icon-sm" ng-click="NowPlaying.repeatTrack()"></span>-->
             <span class="icon icon-repeat-one icon-sm primaryTheme hidden"></span>
             <span class="icon icon-repeat icon-sm primaryTheme hidden"></span>

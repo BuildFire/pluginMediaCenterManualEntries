@@ -10,6 +10,8 @@
      */
         .controller('ContentMediaCtrl', ['$scope', '$window', 'Buildfire', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig',
             function ($scope, $window, Buildfire, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig) {
+                //scroll current view to top when loaded.
+                Buildfire.navigation.scrollTop();
                 /**
                  * Using Control as syntax this
                  */
