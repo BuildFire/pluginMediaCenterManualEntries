@@ -57,7 +57,7 @@
             </div>
         </div>
     </div>
-    <div ng-view="" class="slide content" ng-if="!showFeed"></div>
+    <div data-ng-attr-style="background:url({{ backgroundImage | cropImage:deviceWidth:deviceHeight:true}}) !important; background-size:cover;" ng-view="" class="slide content" ng-if="!showFeed"></div>
     <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>
 </div>
 </body>
