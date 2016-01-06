@@ -6,7 +6,6 @@
         [
             'mediaCenterEnums',
             'mediaCenterDesignServices',
-            'mediaCenterDesignFilters',
             'ngAnimate',
             'ngRoute'
         ])

@@ -1,4 +1,4 @@
-xdescribe('Unit : mediaCenterPlugin NowPlaying Controller', function () {
+describe('Unit : mediaCenterPlugin NowPlaying Controller', function () {
     beforeEach(module('mediaCenterWidget'));
 
     var $controller, $scope, NowPlaying, $routeParams, Buildfire,rootScope;
