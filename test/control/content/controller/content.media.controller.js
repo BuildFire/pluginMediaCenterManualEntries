@@ -1,4 +1,4 @@
-xdescribe('Unit : Controller - ContentMediaCtrl', function () {
+describe('Unit : Controller - ContentMediaCtrl', function () {
 
 // load the controller's module
     beforeEach(module('mediaCenterContent'));
@@ -16,12 +16,28 @@ xdescribe('Unit : Controller - ContentMediaCtrl', function () {
             EVENTS = _EVENTS_;
             PATHS = _PATHS_;
             $window = _$window_;
-            Buildfire = _Buildfire_;
+            Buildfire = {
+                navigation:{
+                    scrollTop:function(){}
+                },
+                components:{
+                    actionItems:{
+
+                    }
+                }
+            };
+            Buildfire.components.actionItems = jasmine.createSpyObj('Buildfire.components.actionItems', ['sortableList', '', '']);
+            Buildfire.components.actionItems.sortableList.and.callFake(function () {
+                return {
+                    sortableList: function () {
+                        console.log("actionItems.sortableList hasbeen called");
+                    }
+                };
+            });
             Location = _Location_;
             ContentMedia = $controller('ContentMediaCtrl', {
                 $scope: scope,
                 $window: $window,
-                Buildfire: Buildfire,
                 DB: DB,
                 COLLECTIONS: COLLECTIONS,
                 Location: Location,
@@ -29,7 +45,8 @@ xdescribe('Unit : Controller - ContentMediaCtrl', function () {
                 Messaging: Messaging,
                 EVENTS: EVENTS,
                 PATHS: PATHS,
-                AppConfig: AppConfig
+                AppConfig: AppConfig,
+                Buildfire:Buildfire
             });
         })
     )
@@ -90,19 +107,10 @@ xdescribe('Unit : Controller - ContentMediaCtrl', function () {
             $rootScope.$digest();
             expect(ContentMedia.item.data.image).toEqual("");
         });
-        it('it should pass if ContentMedia.openAddLinkPopup function is defined', function () {
-            expect(ContentMedia.openAddLinkPopup).not.toBeUndefined();
-        });
-        it('it should pass if ContentMedia.openEditLinkPopup function is defined', function () {
-            expect(ContentMedia.openEditLinkPopup).not.toBeUndefined();
-        });
-        it('it should pass if ContentMedia.removeLink function is defined', function () {
-            expect(ContentMedia.removeLink).not.toBeUndefined();
-        });
         it('it should pass if ContentMedia.done function is defined', function () {
             expect(ContentMedia.done).not.toBeUndefined();
         });
-        it('it should pass if ContentMedia.delete function is defined', function () {
+        xit('it should pass if ContentMedia.delete function is defined', function () {
             expect(ContentMedia.delete).not.toBeUndefined();
         });
 
@@ -115,12 +123,6 @@ xdescribe('Unit : Controller - ContentMediaCtrl', function () {
             spy = spyOn(Location, 'goToHome').and.callFake(function () {
             });
         }));
-
-        it('it should pass if ContentMedia.removeLink function remove the link properly', function () {
-            ContentMedia.item = {data: {links: ['a', 'b']}};
-            ContentMedia.removeLink(0);
-            expect(ContentMedia.item.data.links.length).toEqual(1);
-        });
         it('it should pass if ContentMedia.done function call Location.goToHome', function () {
             ContentMedia.done();
             expect(spy).toHaveBeenCalled();
@@ -135,32 +137,13 @@ xdescribe('Unit : Controller - ContentMediaCtrl', function () {
             });
             expect(mediaContentSpy).not.toHaveBeenCalled();
         });
-        xit('it should pass if ContentMedia.delete function calls Location.goToHome in success case', function () {
-            ContentMedia.item = {id: true};
-            var MediaContent = {
-                delete: function (a) {
-                    var deferred = $q.defer();
-                    deferred.resolve(['Remote call result']);
-                    return deferred.promise;
-                }
-            };
-            /*  var mediaContentSpy = spyOn(MediaContent,'delete').and.callFake(function() {
-             var deferred = $q.defer();
-             deferred.resolve(['Remote call result']);
-             return deferred.promise;
-             });*/
-            expect(spy).toHaveBeenCalled();
-        });
-
-        xit('it should pass if ContentMedia.selectTopImage changes ContentMedia.item.data.topImage in success case', function () {
+        it('it should pass if ContentMedia.selectTopImage changes ContentMedia.item.data.topImage in success case', function () {
             Buildfire.imageLib = {
                 showDialog: function (d, func) {
                     console.log(123);
                     func(null, {selectedFiles:['test']});
                 }
             };
-
-
             ContentMedia.selectTopImage();
            expect(ContentMedia.item.data.topImage).toEqual('test');
 

@@ -1,5 +1,4 @@
-/*
-describe("DesignHomeCtrl", function () {
+xdescribe("DesignHomeCtrl", function () {
 
     var $rootScope,
         $scope,
@@ -21,6 +20,13 @@ describe("DesignHomeCtrl", function () {
                     imageLib: {
                         showDialog: function (options, callback) {
                             controller._callback(null, {selectedFiles: ['test']});
+                        }
+                    },
+                    components:{
+                        images:{
+                            thumbnail:function(id){
+                                controller._callback(null,{});
+                            }
                         }
                     }
                 }
@@ -131,4 +137,4 @@ describe("DesignHomeCtrl", function () {
         });
     });
 
-});*/
+});
