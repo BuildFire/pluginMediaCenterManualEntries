@@ -105,38 +105,6 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
         });
     });
 
-    xdescribe('Unit: ContentHome.rmCarouselImage', function () {
-        var spy, removePopupModal;
-        beforeEach(inject(function () {
-
-
-
-
-            //Modals=jasmine.createSpyObj('Modals',['removePopupModal']);
-            spy = spyOn(Modals, 'removePopupModal').and.callFake(function () {
-                var deferred = $q.defer();
-                deferred.resolve('Remote call result');
-                return deferred.promise;
-            });
-
-        }));
-
-        it('it should do nothing if index is invalid', function () {
-            ContentHome.info.data.content.images = [];
-            ContentHome.rmCarouselImage(-1);
-            expect(spy).not.toHaveBeenCalled();
-        });
-
-        it('it should work fine if index is valid', function () {
-            ContentHome.info.data.content.images = ['test'];
-            ContentHome.rmCarouselImage(0);
-            expect(spy).toHaveBeenCalled();//With({title:'test'});
-            //expect(ContentHome.info.data.content.images.length).toEqual(0);
-
-        });
-
-    });
-
     describe('Unit: ContentHome.removeListItem', function () {
         var spy, removePopupModal;
         beforeEach(inject(function () {
@@ -222,11 +190,11 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
 
         }));
 
-        xit('should be able to call MediaContent.find when called with proper arguments', function () {
+        /*it('should be able to call MediaContent.find when called with proper arguments', function () {
             ContentHome.isBusy = false;
             ContentHome.getMore();
             expect(spy).toHaveBeenCalled();
-        });
+        });*/
 
         it('should do nothing when isBusy(fetching)', function () {
             ContentHome.isBusy = true;
@@ -239,9 +207,5 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
             ContentHome.getMore();
             expect(spy).not.toHaveBeenCalled();
         });
-
-
     });
-
-})
-;
+});

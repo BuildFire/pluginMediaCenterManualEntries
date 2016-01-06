@@ -4,7 +4,30 @@ xdescribe("DesignHomeCtrl", function () {
         $scope,
         controller,
         mediaCenterSpy,
+        Buildfire,
         q;
+    Buildfire={
+        imageLib: {
+            showDialog: function (options, callback) {
+                controller._callback(null, {selectedFiles: ['test']});
+            }
+        },
+        components:{
+            images:{
+                thumbnail:function(id){
+                    this.id=id;
+                }
+            }
+        }
+    };
+   /* Buildfire.components = jasmine.createSpyObj('Buildfire.components.images', ['images', '', '']);
+    Buildfire.components.images.and.callFake(function () {
+        return {
+            thumbnail: function () {
+                console.log("thumbnail hasbeen called");
+            }
+        };
+    });*/
 
 
     beforeEach(function () {
@@ -16,20 +39,7 @@ xdescribe("DesignHomeCtrl", function () {
             controller = $injector.get('$controller')('DesignHomeCtrl', {
                 $scope: $scope,
                 MediaCenterInfo: {id: '1', data: {design: {listLayout: 'test', backgroundImage: 'test1'}}},
-                Buildfire: {
-                    imageLib: {
-                        showDialog: function (options, callback) {
-                            controller._callback(null, {selectedFiles: ['test']});
-                        }
-                    },
-                    components:{
-                        images:{
-                            thumbnail:function(id){
-                                controller._callback(null,{});
-                            }
-                        }
-                    }
-                }
+                Buildfire: Buildfire
             });
             q = $q;
         });
@@ -136,5 +146,4 @@ xdescribe("DesignHomeCtrl", function () {
             expect(controller.mediaInfo.data.design.backgroundImage).toEqual('test1');
         });
     });
-
 });
