@@ -5,6 +5,26 @@ describe('mediaCenterDesignServices: Services', function () {
         COLLECTIONS = $injector.get('COLLECTIONS');
     }));
 
+    describe('ImageLib service', function () {
+        var ImageLib;
+        beforeEach(inject(
+            function (_ImageLib_) {
+                ImageLib = _ImageLib_;
+            }));
+        it('ImageLib should exists', function () {
+            expect(ImageLib).toBeDefined();
+        });
+    });
+    describe('Location service', function () {
+        var Location;
+        beforeEach(inject(
+            function (_Location_) {
+                Location = _Location_;
+            }));
+        it('Location should exists', function () {
+            expect(Location).toBeDefined();
+        });
+    });
     describe('Buildfire service', function () {
         var Buildfire;
         beforeEach(inject(
@@ -28,7 +48,9 @@ describe('mediaCenterDesignServices: Services', function () {
         });
         it('MediaCenter methods should exists', function () {
          expect(MediaCenter.get).toBeDefined();
+         expect(typeof MediaCenter.get).toEqual('function');
          expect(MediaCenter.find).toBeDefined();
+         expect(typeof MediaCenter.find).toEqual('function');
          expect(MediaCenter.save).toBeDefined();
          expect(MediaCenter.update).toBeDefined();
          expect(MediaCenter.delete).toBeDefined();

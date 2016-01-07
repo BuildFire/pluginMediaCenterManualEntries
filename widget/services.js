@@ -13,11 +13,6 @@
                 return buildfire.messaging;
             };
         }])
-        .provider('ImageLib', [function () {
-            this.$get = function () {
-                return buildfire.imageLib;
-            };
-        }])
         .factory('Location', [function () {
             var _location = location;
             return {
