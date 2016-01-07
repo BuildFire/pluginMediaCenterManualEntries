@@ -110,11 +110,6 @@ describe('Unit : Controller - ContentMediaCtrl', function () {
         it('it should pass if ContentMedia.done function is defined', function () {
             expect(ContentMedia.done).not.toBeUndefined();
         });
-        xit('it should pass if ContentMedia.delete function is defined', function () {
-            expect(ContentMedia.delete).not.toBeUndefined();
-        });
-
-
     });
 
     describe('Units: Methods should be working properly', function () {

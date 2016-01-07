@@ -1,4 +1,4 @@
-xdescribe("DesignHomeCtrl", function () {
+describe("DesignHomeCtrl", function () {
 
     var $rootScope,
         $scope,
@@ -7,27 +7,23 @@ xdescribe("DesignHomeCtrl", function () {
         Buildfire,
         q;
     Buildfire={
-        imageLib: {
-            showDialog: function (options, callback) {
-                controller._callback(null, {selectedFiles: ['test']});
-            }
-        },
         components:{
             images:{
                 thumbnail:function(id){
                     this.id=id;
+                    this.loadbackground=function(url){
+                        console.log('Load background method called');
+                    };
+                    this.onChange=function(){
+                        console.log('onChange called');
+                    };
+                    this.onDelete=function(){
+                        console.log('on Delete called');
+                    };
                 }
             }
         }
     };
-   /* Buildfire.components = jasmine.createSpyObj('Buildfire.components.images', ['images', '', '']);
-    Buildfire.components.images.and.callFake(function () {
-        return {
-            thumbnail: function () {
-                console.log("thumbnail hasbeen called");
-            }
-        };
-    });*/
 
 
     beforeEach(function () {
@@ -91,32 +87,25 @@ xdescribe("DesignHomeCtrl", function () {
             controller.changeLayout('test', 'item');
             expect(controller.mediaInfo.data.design).toBeNull();
         });
-    });
-
-    describe('removeBackgroundImage', function () {
-        it('should make the background image property null', function () {
-            controller.removeBackgroundImage();
-            expect(controller.mediaInfo.data.design.backgroundImage).toBeNull();
-        });
-    });
-
-    describe('addBackgroundImage', function () {
-
-        beforeEach(function () {
-            controller._mediaCenter.update = function () {
-                var deferred = q.defer();
-                deferred.resolve('Remote call result');
-                return deferred.promise;
+        it('should do nothing if onChange called', function () {
+            var background=new Buildfire.components.images.thumbnail('id');
+            background.onChange=function(url){
+                controller.mediaInfo.data.design.backgroundImage=url;
             };
+            background.onChange('test1');
+            $rootScope.$apply();
+            expect(controller.mediaInfo.data.design.backgroundImage).toEqual('test1');
         });
-
-        it('should make the background image property null', function () {
-            controller.removeBackgroundImage();
-            controller.addBackgroundImage();
-            expect(controller.mediaInfo.data.design.backgroundImage).toEqual('test');
+        it('should do nothing if onDelete called', function () {
+            var background=new Buildfire.components.images.thumbnail('id');
+            background.onDelete=function(url){
+                controller.mediaInfo.data.design.backgroundImage='';
+            };
+            background.onDelete('test1');
+            $rootScope.$apply();
+            expect(controller.mediaInfo.data.design.backgroundImage).toEqual('');
         });
     });
-
     describe('watcher of controller.mediaInfo', function () {
 
         it('should change the lastSaved when mediainfo is changed succesfully on db', function () {
@@ -128,7 +117,6 @@ xdescribe("DesignHomeCtrl", function () {
             };
             //controller.mediaInfo = {};
             controller.mediaInfo.data.design.backgroundImage = 'test';
-            controller.removeBackgroundImage();
             $scope.$digest();
             expect(controller._lastSaved).not.toBeNull();
         });
@@ -141,9 +129,49 @@ xdescribe("DesignHomeCtrl", function () {
                 return deferred.promise;
             };
 
-            controller.removeBackgroundImage();
             $scope.$digest();
             expect(controller.mediaInfo.data.design.backgroundImage).toEqual('test1');
+        });
+    });
+});
+
+// Empty case
+describe("DesignHomeCtrl", function () {
+    var $rootScope,
+        $scope,
+        controller,
+        mediaCenterSpy,
+        Buildfire,
+        q;
+    Buildfire={
+        components:{
+            images:{
+                thumbnail:function(id){
+                    this.id=id;
+                    this.loadbackground=function(url){
+                        console.log('Load background method called');
+                    };
+                }
+            }
+        }
+    };
+
+    beforeEach(function () {
+        module('mediaCenterDesign');
+        inject(function ($injector, $q) {
+            $rootScope = $injector.get('$rootScope');
+            $scope = $rootScope.$new();
+            controller = $injector.get('$controller')('DesignHomeCtrl', {
+                $scope: $scope,
+                MediaCenterInfo: null,
+                Buildfire: Buildfire
+            });
+            q = $q;
+        });
+    });
+    describe('Initialization with empty', function () {
+        it('should initialize the listLayouts to the default value', function () {
+            expect(controller.layouts.listLayouts.length).toEqual(4);
         });
     });
 });
