@@ -185,10 +185,6 @@
                     $rootScope.blackBackground = false;
                     NowPlaying.pause();
                 });
-
-                /*$timeout(function () {
-                    NowPlaying.playAudio();
-                }, 1500);*/
             }
         ])
     ;

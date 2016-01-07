@@ -71,16 +71,12 @@
                     }
                 };
                 if (media) {
-                    /*$rootScope.showFeed = false;
-                     $scope.$apply();*/
                     WidgetMedia.item = media;
                     console.log('initial', WidgetMedia.item);
                     WidgetMedia.changeVideoSrc();
                     WidgetMedia.iframeSrcUrl = $sce.trustAsUrl(WidgetMedia.item.data.srcUrl);
                 }
                 else {
-                    /*  $rootScope.showFeed = false;
-                     $scope.$apply();*/
                     WidgetMedia.iframeSrcUrl = '';
                 }
 
@@ -158,12 +154,6 @@
 
                 WidgetMedia.showSourceIframe = function () {
                     Buildfire.navigation.openWindow(WidgetMedia.item.data.srcUrl, '_system');
-                    /* WidgetMedia.showSource = !WidgetMedia.showSource;
-                     if (WidgetMedia.showSource) {
-                     $timeout(function () {
-                     angular.element('#sourceIframe').attr('src', WidgetMedia.item.data.srcUrl);
-                     }, 1000);
-                     }*/
                 };
 
                 WidgetMedia.executeAction = function (actionItem) {
@@ -184,7 +174,6 @@
                 });
                 $scope.$on("$destroy", function () {
                     WidgetMedia.onUpdateFn.clear();
-                    //$rootScope.$broadcast('ROUTE_CHANGED', WidgetMedia.data.design.listLayout);
                 });
 
                 //Sync with Control section

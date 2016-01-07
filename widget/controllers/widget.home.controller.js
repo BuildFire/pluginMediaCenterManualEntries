@@ -52,12 +52,6 @@
                         AppConfig.setSettings(MediaCenterInfo.data);
                     }
                 );
-
-                /*  if (!MediaCenterInfo)
-                 MediaCenterInfo = _infoData;
-
-                 WidgetHome.media = MediaCenterInfo;*/
-
                 var _skip = 0,
                     _limit = 10,
                     searchOptions = {
@@ -267,17 +261,5 @@
                         );
                     }
                 });
-
-                /* $rootScope.$on("ROUTE_CHANGED", function (e, design) {
-                 if (design) {
-                 WidgetHome.media.data.design = design;
-                 console.log('WidgetHome.media.data.design>>', WidgetHome.media.data.design);
-                 $scope.$apply();
-                 }
-                 listener.clear();
-                 listener = Buildfire.datastore.onUpdate(onUpdateCallback);
-                 });*/
-
-
             }]);
 })(window.angular);

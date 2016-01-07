@@ -228,7 +228,7 @@
                 },
                 getAppId: function () {
                     return Settings.getAppId();
-                },
+                }/*,
                 changeBackgroundTheme: function (url) {
                     if (url) {
                         $rootScope.currentBackgroundImage = {
@@ -241,7 +241,7 @@
                     } else {
                         $rootScope.currentBackgroundImage = "";
                     }
-                }
+                }*/
             };
         }]);
 })(window.angular, window.buildfire, window.location);

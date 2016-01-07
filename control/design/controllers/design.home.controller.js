@@ -32,7 +32,6 @@
             if (DesignHome.mediaInfo.data && DesignHome.mediaInfo.data.design && DesignHome.mediaInfo.data.design.backgroundImage) {
                 background.loadbackground(DesignHome.mediaInfo.data.design.backgroundImage);
             }
-            console.log('mediainfo on init', DesignHome.mediaInfo);
             /*Buildfire DB Service*/
 
             DesignHome._mediaCenter = new DB(COLLECTIONS.MediaCenter);
