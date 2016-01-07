@@ -228,20 +228,7 @@
                 },
                 getAppId: function () {
                     return Settings.getAppId();
-                }/*,
-                changeBackgroundTheme: function (url) {
-                    if (url) {
-                        $rootScope.currentBackgroundImage = {
-                            "background-image": "url(" + Buildfire.imageLib.resizeImage(url, {
-                                width: 342,
-                                height: 770
-                            }) + ")"
-                        };
-                        return;
-                    } else {
-                        $rootScope.currentBackgroundImage = "";
-                    }
-                }*/
+                }
             };
         }]);
 })(window.angular, window.buildfire, window.location);
