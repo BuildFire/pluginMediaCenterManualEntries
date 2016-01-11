@@ -51,7 +51,7 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
             DB: DB
         });
     }));
-    xdescribe('Unit : units should be Defined', function () {
+    describe('Unit : units should be Defined', function () {
         it('it should pass if WidgetHome is defined', function () {
             expect(WidgetHome).toBeDefined();
         });
