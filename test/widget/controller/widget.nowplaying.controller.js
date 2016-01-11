@@ -1,4 +1,4 @@
-xdescribe('Unit : mediaCenterPlugin NowPlaying Controller', function () {
+describe('Unit : mediaCenterPlugin NowPlaying Controller', function () {
     beforeEach(module('mediaCenterWidget'));
 
     var $controller, $scope, NowPlaying, $routeParams, Buildfire,rootScope;
@@ -21,7 +21,7 @@ xdescribe('Unit : mediaCenterPlugin NowPlaying Controller', function () {
     }));
 
 
-    describe('Unit : units should be Defined', function () {
+    xdescribe('Unit : units should be Defined', function () {
        it('it should pass if NowPlaying is defined', function () {
             expect(NowPlaying).not.toBeUndefined();
         });

@@ -157,7 +157,11 @@
                 };
 
                 WidgetMedia.showSourceIframe = function () {
-                    Buildfire.navigation.openWindow(WidgetMedia.item.data.srcUrl, '_system');
+                    var link = WidgetMedia.item.data.srcUrl;
+                    if (!/^(?:f|ht)tps?\:\/\//.test(link)) {
+                        link = "http://" + link;
+                    }
+                    Buildfire.navigation.openWindow(link, '_system');
                     /* WidgetMedia.showSource = !WidgetMedia.showSource;
                      if (WidgetMedia.showSource) {
                      $timeout(function () {
