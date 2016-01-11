@@ -9,26 +9,6 @@ describe('Unit: mediaPlugin widget app', function () {
                 rootScope = _$rootScope_;
             }));
 
-        xdescribe('Home route', function () {
-            beforeEach(inject(
-                function ($httpBackend) {
-                    $httpBackend.expectGET('templates/home.html')
-                        .respond(200);
-                    $httpBackend.expectGET('/')
-                        .respond(200);
-                }));
-
-            it('should load the home page on successful load of /', function () {
-                location.path('/');
-                rootScope.$digest();
-                expect(route.current.controller).toBe('WidgetHomeCtrl')
-            });
-
-            it('should resolve initial values for my Controller', function () {
-                expect(route.routes['/'].resolve.MediaCenterInfo).toBeDefined();
-            });
-        });
-
         describe('Media route', function () {
             beforeEach(inject(
                 function ($httpBackend) {

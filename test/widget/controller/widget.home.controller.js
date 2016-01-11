@@ -51,8 +51,6 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
             DB: DB
         });
     }));
-
-
     describe('Unit : units should be Defined', function () {
         it('it should pass if WidgetHome is defined', function () {
             expect(WidgetHome).toBeDefined();
@@ -82,11 +80,6 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
         it('it should pass if WidgetHome.loadMore() is defined', function () {
             expect(WidgetHome.loadMore).toBeDefined();
         });
-        xit('it should pass if WidgetHome.loadMore() calling success', function () {
-            WidgetHome.loadMore();
-            rootScope.$digest();
-            expect(WidgetHome.isBusy).toEqual(true);
-        });
     });
 
     describe('WidgetHome.loadMore', function () {
@@ -97,6 +90,4 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
             expect(WidgetHome.items.length).toEqual(0);
         });
     });
-
-
 });

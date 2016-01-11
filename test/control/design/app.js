@@ -1,7 +1,7 @@
 /**
  * Created by lakshay on 28/8/15.
  */
-xdescribe('Unit: mediaPlugin design app', function () {
+describe('Unit: mediaPlugin design app', function () {
     describe('Unit: app routes', function () {
         beforeEach(module('mediaCenterDesign'));
         var location, route, rootScope;
@@ -32,5 +32,4 @@ xdescribe('Unit: mediaPlugin design app', function () {
             });
         });
     });
-
 });
