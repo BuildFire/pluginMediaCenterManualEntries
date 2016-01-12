@@ -21,7 +21,7 @@ describe('Unit : mediaCenterPlugin NowPlaying Controller', function () {
     }));
 
 
-    xdescribe('Unit : units should be Defined', function () {
+    describe('Unit : units should be Defined', function () {
        it('it should pass if NowPlaying is defined', function () {
             expect(NowPlaying).not.toBeUndefined();
         });
