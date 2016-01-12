@@ -1,8 +1,8 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', '$rootScope', 'Buildfire', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders',
-            function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, AppConfig, Messaging, EVENTS, PATHS, Location, Orders) {
+        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders',
+            function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders) {
                 $rootScope.showFeed = true;
                 var WidgetHome = this;
                 var _infoData = {
@@ -44,20 +44,13 @@
                         }
                         WidgetHome.media = MediaCenterInfo;
                         $rootScope.backgroundImage = MediaCenterInfo.data.design.backgroundImage;
-                        AppConfig.setSettings(MediaCenterInfo.data);
+
                     },
                     function fail() {
                         MediaCenterInfo = _infoData;
                         WidgetHome.media = MediaCenterInfo;
-                        AppConfig.setSettings(MediaCenterInfo.data);
                     }
                 );
-
-                /*  if (!MediaCenterInfo)
-                 MediaCenterInfo = _infoData;
-
-                 WidgetHome.media = MediaCenterInfo;*/
-
                 var _skip = 0,
                     _limit = 10,
                     searchOptions = {
@@ -258,26 +251,12 @@
 
                         MediaCenter.get().then(function success(result) {
                                 WidgetHome.media = result;
-                                AppConfig.setSettings(MediaCenterInfo.data);
                             },
                             function fail() {
                                 WidgetHome.media = _infoData;
-                                AppConfig.setSettings(_infoData.data);
                             }
                         );
                     }
                 });
-
-                /* $rootScope.$on("ROUTE_CHANGED", function (e, design) {
-                 if (design) {
-                 WidgetHome.media.data.design = design;
-                 console.log('WidgetHome.media.data.design>>', WidgetHome.media.data.design);
-                 $scope.$apply();
-                 }
-                 listener.clear();
-                 listener = Buildfire.datastore.onUpdate(onUpdateCallback);
-                 });*/
-
-
             }]);
 })(window.angular);

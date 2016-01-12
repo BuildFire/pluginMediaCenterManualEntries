@@ -1,10 +1,10 @@
 describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
     beforeEach(module('mediaCenterWidget'));
 
-    var $window, $controller, rootScope, $scope, WidgetHome, COLLECTIONS, DB, Buildfire, MediaCenterInfo, AppConfig, Messaging, EVENTS, PATHS, Location, Orders;
+    var $window, $controller, rootScope, $scope, WidgetHome, COLLECTIONS, DB, Buildfire, MediaCenterInfo, Messaging, EVENTS, PATHS, Location, Orders;
 
 
-    beforeEach(inject(function (_$controller_, _$window_, _DB_, _COLLECTIONS_, _$rootScope_, _Buildfire_, _AppConfig_, _Messaging_, _EVENTS_, _PATHS_, _Location_, _Orders_) {
+    beforeEach(inject(function (_$controller_, _$window_, _DB_, _COLLECTIONS_, _$rootScope_, _Buildfire_, _Messaging_, _EVENTS_, _PATHS_, _Location_, _Orders_) {
 
         $controller = _$controller_;
         $scope = _$rootScope_.$new();
@@ -12,8 +12,6 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
         DB = _DB_;
         COLLECTIONS = _COLLECTIONS_;
         Buildfire = _Buildfire_;
-        // MediaCenterInfo = _MediaCenterInfo_;
-        AppConfig = _AppConfig_;
         Messaging = _Messaging_;
         EVENTS = _EVENTS_;
         PATHS = _PATHS_;
@@ -42,7 +40,6 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
                     }
                 }
             },
-            AppConfig: AppConfig,
             Messaging: Messaging,
             EVENTS: EVENTS,
             PATHS: PATHS,
@@ -64,9 +61,6 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
 
         it('it should pass if Messaging is defined', function () {
             expect(Messaging).not.toBeUndefined();
-        });
-        it('it should pass if AppConfig is defined', function () {
-            expect(AppConfig).not.toBeUndefined();
         });
         it('it should pass if EVENTS is defined', function () {
             expect(EVENTS).not.toBeUndefined();
