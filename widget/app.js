@@ -156,7 +156,7 @@
             buildfire.navigation.onBackButtonClick = function () {
                 var path = $location.path();
                 if (path.indexOf('/media') == 0) {
-                    if ($("#feedView").hasClass('ng-hide')){
+                    if ($("#feedView").hasClass('notshowing')){
                         Messaging.sendMessageToControl({
                             name: EVENTS.ROUTE_CHANGE,
                             message: {
