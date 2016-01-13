@@ -1,8 +1,8 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'PATHS', '$rootScope',
-            function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, PATHS, $rootScope) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'PATHS', '$rootScope',
+            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, PATHS, $rootScope) {
 
                 var WidgetMedia = this;
                 WidgetMedia.API = null;
@@ -29,26 +29,18 @@
                             type: 'video/' + WidgetMedia.item.data.videoUrl.split('.').pop() //"video/mp4"
                         }];
                 };
-                //if (AppConfig.getSettings()) {
-                if (false) {
+                MediaCenter.get().then(function (data) {
                     WidgetMedia.media = {
-                        data: AppConfig.getSettings()
+                        data: data.data
                     };
-                }
-                else {
-                    MediaCenter.get().then(function (data) {
-                        WidgetMedia.media = {
-                            data: data.data
-                        };
-                        $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
-                        console.log('Get Info---', data, 'data---');
-                    }, function (err) {
-                        WidgetMedia.media = {
-                            data: {}
-                        };
-                        console.log('Get Error---', err);
-                    });
-                }
+                    $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
+                    console.log('Get Info---', data, 'data---');
+                }, function (err) {
+                    WidgetMedia.media = {
+                        data: {}
+                    };
+                    console.log('Get Error---', err);
+                });
 
 
                 WidgetMedia.sourceChanged = function ($source) {
@@ -71,16 +63,12 @@
                     }
                 };
                 if (media) {
-                    /*$rootScope.showFeed = false;
-                     $scope.$apply();*/
                     WidgetMedia.item = media;
                     console.log('initial', WidgetMedia.item);
                     WidgetMedia.changeVideoSrc();
                     WidgetMedia.iframeSrcUrl = $sce.trustAsUrl(WidgetMedia.item.data.srcUrl);
                 }
                 else {
-                    /*  $rootScope.showFeed = false;
-                     $scope.$apply();*/
                     WidgetMedia.iframeSrcUrl = '';
                 }
 
@@ -188,7 +176,6 @@
                 });
                 $scope.$on("$destroy", function () {
                     WidgetMedia.onUpdateFn.clear();
-                    //$rootScope.$broadcast('ROUTE_CHANGED', WidgetMedia.data.design.listLayout);
                 });
 
                 //Sync with Control section
