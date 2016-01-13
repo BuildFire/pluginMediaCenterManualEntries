@@ -21,11 +21,11 @@ describe('mediaCenterWidgetModals: Services', function () {
         });
     });
 
-    xdescribe('Modals: MoreInfoModalCtrl Controller', function () {
-        var scope, modalInstance, Info, spy,MoreInfoModal,Buildfire;
-        beforeEach(inject(function ($controller, _$rootScope_,_Buildfire_) {
+    describe('Modals: MoreInfoModalCtrl Controller', function () {
+        var scope, modalInstance, Info, spy, MoreInfoModal, Buildfire, $rootScope;
+        beforeEach(inject(function ($controller, _$rootScope_) {
                 scope = _$rootScope_.$new();
-                Buildfire=_Buildfire_;
+                $rootScope = _$rootScope_;
                 modalInstance = {                    // Create a mock object using spies
                     close: jasmine.createSpy('modalInstance.close'),
                     dismiss: jasmine.createSpy('modalInstance.dismiss'),
@@ -34,18 +34,36 @@ describe('mediaCenterWidgetModals: Services', function () {
                     }
                 };
                 Info = {};
+                Buildfire = {
+                    services: {
+                        media: {
+                            audioPlayer: {
+                                getPlaylist: function (cb) {
+                                    console.log("getPlaylist hasbeen called");
+                                    cb(null, [{title: 'title'}]);
+                                },
+                                addToPlaylist: function () {
+                                    console.log("addToPlaylist hasbeen called");
+                                },
+                                removeFromPlaylist: function (index) {
+                                    console.log("removeFromPlaylist hasbeen called");
+                                }
+                            }
+                        }
+                    }
+                };
                 MoreInfoModal = $controller('MoreInfoModalCtrl', {
                     $scope: scope,
                     $modalInstance: modalInstance,//_$modal_.op,
                     Info: Info,
-                    Buildfire:Buildfire
+                    Buildfire: Buildfire
                 });
             })
         );
         it('MoreInfoModal should exists', function () {
             expect(MoreInfoModal).toBeDefined();
         });
-       /* it('MoreInfoModal.ok should exists', function () {
+        it('MoreInfoModal.ok should exists', function () {
             expect(MoreInfoModal.ok).toBeDefined();
         });
         it('MoreInfoModal.cancel should exists', function () {
@@ -58,6 +76,59 @@ describe('mediaCenterWidgetModals: Services', function () {
         it('MoreInfoModal.ok should dismiss modalInstance', function () {
             MoreInfoModal.cancel();
             expect(modalInstance.dismiss).toHaveBeenCalledWith('no');
-        });*/
+        });
+        it('MoreInfoModal.add should call addToPlaylist', function () {
+            MoreInfoModal.add('title', 'url', 'image.png', 'artist');
+            $rootScope.$apply();
+            //expect(Buildfire.services.media.audioPlayer.addToPlaylist).toHaveBeenCalledWith('no');
+        });
+        it('MoreInfoModal.remove should call removeFromPlaylist', function () {
+            MoreInfoModal.remove(1);
+            $rootScope.$apply();
+            //expect(Buildfire.services.media.audioPlayer.addToPlaylist).toHaveBeenCalledWith('no');
+        });
+    });
+    describe('Modals: MoreInfoModalCtrl Controller Error ', function () {
+        var scope, modalInstance, Info, spy, MoreInfoModal, Buildfire, $rootScope;
+        beforeEach(inject(function ($controller, _$rootScope_) {
+                scope = _$rootScope_.$new();
+                $rootScope = _$rootScope_;
+                modalInstance = {                    // Create a mock object using spies
+                    close: jasmine.createSpy('modalInstance.close'),
+                    dismiss: jasmine.createSpy('modalInstance.dismiss'),
+                    result: {
+                        then: jasmine.createSpy('modalInstance.result.then')
+                    }
+                };
+                Info = {};
+                Buildfire = {
+                    services: {
+                        media: {
+                            audioPlayer: {
+                                getPlaylist: function (cb) {
+                                    console.log("getPlaylist hasbeen called");
+                                    cb({}, null);
+                                },
+                                addToPlaylist: function () {
+                                    console.log("addToPlaylist hasbeen called");
+                                },
+                                removeFromPlaylist: function (index) {
+                                    console.log("removeFromPlaylist hasbeen called");
+                                }
+                            }
+                        }
+                    }
+                };
+                MoreInfoModal = $controller('MoreInfoModalCtrl', {
+                    $scope: scope,
+                    $modalInstance: modalInstance,//_$modal_.op,
+                    Info: Info,
+                    Buildfire: Buildfire
+                });
+            })
+        );
+        it('MoreInfoModal should exists', function () {
+            expect(MoreInfoModal).toBeDefined();
+        });
     });
 });
