@@ -1,10 +1,10 @@
 describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
     beforeEach(module('mediaCenterWidget'));
 
-    var $window, $controller, rootScope, $scope, WidgetHome, COLLECTIONS, DB, Buildfire, MediaCenterInfo, AppConfig, Messaging, EVENTS, PATHS, Location, Orders;
+    var $window, $controller, rootScope, $scope, WidgetHome, COLLECTIONS, DB, Buildfire, MediaCenterInfo, Messaging, EVENTS, PATHS, Location, Orders;
 
 
-    beforeEach(inject(function (_$controller_, _$window_, _DB_, _COLLECTIONS_, _$rootScope_, _Buildfire_, _AppConfig_, _Messaging_, _EVENTS_, _PATHS_, _Location_, _Orders_) {
+    beforeEach(inject(function (_$controller_, _$window_, _DB_, _COLLECTIONS_, _$rootScope_, _Buildfire_, _Messaging_, _EVENTS_, _PATHS_, _Location_, _Orders_) {
 
         $controller = _$controller_;
         $scope = _$rootScope_.$new();
@@ -12,8 +12,6 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
         DB = _DB_;
         COLLECTIONS = _COLLECTIONS_;
         Buildfire = _Buildfire_;
-        // MediaCenterInfo = _MediaCenterInfo_;
-        AppConfig = _AppConfig_;
         Messaging = _Messaging_;
         EVENTS = _EVENTS_;
         PATHS = _PATHS_;
@@ -42,7 +40,6 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
                     }
                 }
             },
-            AppConfig: AppConfig,
             Messaging: Messaging,
             EVENTS: EVENTS,
             PATHS: PATHS,
@@ -51,8 +48,6 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
             DB: DB
         });
     }));
-
-
     describe('Unit : units should be Defined', function () {
         it('it should pass if WidgetHome is defined', function () {
             expect(WidgetHome).toBeDefined();
@@ -67,9 +62,6 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
         it('it should pass if Messaging is defined', function () {
             expect(Messaging).not.toBeUndefined();
         });
-        it('it should pass if AppConfig is defined', function () {
-            expect(AppConfig).not.toBeUndefined();
-        });
         it('it should pass if EVENTS is defined', function () {
             expect(EVENTS).not.toBeUndefined();
         });
@@ -82,11 +74,6 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
         it('it should pass if WidgetHome.loadMore() is defined', function () {
             expect(WidgetHome.loadMore).toBeDefined();
         });
-        xit('it should pass if WidgetHome.loadMore() calling success', function () {
-            WidgetHome.loadMore();
-            rootScope.$digest();
-            expect(WidgetHome.isBusy).toEqual(true);
-        });
     });
 
     describe('WidgetHome.loadMore', function () {
@@ -94,9 +81,29 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
             WidgetHome.isBusy = true;
             WidgetHome.items = [];
             WidgetHome.loadMore();
+            WidgetHome.refreshItems();
+            //Messaging.onReceivedMessage({name:'CHANGE_ROUTE',message:{id:'id1',path:'url'}});
             expect(WidgetHome.items.length).toEqual(0);
         });
     });
-
-
+    describe('WidgetHome.goToMedia', function () {
+        it('should not change WidgetHome.goToMedia when isBusy is true (data is begin fetched)', function () {
+            WidgetHome.items=[{id:'id1'}]
+            WidgetHome.goToMedia(0);
+        });
+    });
+    describe('WidgetHome.showDescription', function () {
+        it('should not change WidgetHome.items when isBusy is true (data is begin fetched)', function () {
+            WidgetHome.media={data:{content:{descriptionHTML:'<p>&nbsp;<br></p>'}}};
+            WidgetHome.showDescription();
+        });
+        it('should not change WidgetHome.items when isBusy is true (data is begin fetched)', function () {
+            WidgetHome.media={data:{content:{descriptionHTML:'<p><br data-mce-bogus="1"></p>'}}};
+            WidgetHome.showDescription();
+        });
+        it('should not change WidgetHome.items when isBusy is true (data is begin fetched)', function () {
+            WidgetHome.media={data:{content:{descriptionHTML:'<p>Hello</p>'}}};
+            WidgetHome.showDescription();
+        });
+    });
 });

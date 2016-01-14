@@ -35,31 +35,6 @@
                 //buildfire.datastore.disableRefresh();
 
             $routeProvider
-                /* .when('/', {
-                 templateUrl: 'templates/home.html',
-                 controllerAs: 'WidgetHome',
-                 controller: 'WidgetHomeCtrl',
-                 resolve: {
-                 MediaCenterInfo: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location',
-                 function ($q, DB, COLLECTIONS, Orders, Location) {
-                 var deferred = $q.defer();
-                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
-                 MediaCenter.get().then(function success(result) {
-                 if (result && result.data && result.id) {
-                 deferred.resolve(result);
-                 }
-                 else {
-                 deferred.resolve(null);
-                 }
-                 },
-                 function fail(error) {
-                 deferred.resolve(null);
-                 }
-                 );
-                 return deferred.promise;
-                 }]
-                 }
-                 })*/
                 .when('/', {
                     template: '<div></div>'
                 })
@@ -170,11 +145,10 @@
             $httpProvider.interceptors.push(interceptor);
 
         }])
-        .run(['Location', '$location', '$rootScope','Messaging','EVENTS','PATHS', function (Location, $location, $rootScope,Messaging,EVENTS,PATHS) {
+        .run(['Location', '$location', '$rootScope', 'Messaging', 'EVENTS', 'PATHS', function (Location, $location, $rootScope, Messaging, EVENTS, PATHS) {
             if (buildfire.deeplink)
                 buildfire.deeplink.getData(function (data) {
                     if (data) {
-                        console.log('data---', data);
                         Location.go("#/media/" + JSON.parse(data).id);
                     }
                 });
@@ -182,7 +156,8 @@
             buildfire.navigation.onBackButtonClick = function () {
                 var path = $location.path();
                 if (path.indexOf('/media') == 0) {
-                    if ($("#feedView").hasClass('ng-hide')){
+
+                    if ($("#feedView").hasClass('notshowing')) {
                         Messaging.sendMessageToControl({
                             name: EVENTS.ROUTE_CHANGE,
                             message: {

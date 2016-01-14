@@ -1,4 +1,4 @@
-xdescribe('mediaCenterContent', function () {
+describe('mediaCenterContent', function () {
     beforeEach(module('mediaCenterContent'));
     var location, route, rootScope;
     beforeEach(inject(
