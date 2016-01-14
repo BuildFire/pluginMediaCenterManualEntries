@@ -158,19 +158,13 @@
                 if (path.indexOf('/media') == 0) {
 
                     if ($("#feedView").hasClass('notshowing')) {
-
-                        if ($("iframe.player").hasClass('playing')) {
-                            $( 'iframe.player' ).remove();
-                        }
-                        else{
-
                         Messaging.sendMessageToControl({
                             name: EVENTS.ROUTE_CHANGE,
                             message: {
                                 path: PATHS.HOME
                             }
                         });
-                        $("#showFeedBtn").click();}
+                        $("#showFeedBtn").click();
                     }
                     else
                         buildfire.navigation.navigateHome();
