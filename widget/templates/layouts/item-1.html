@@ -43,16 +43,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    var monitor = setInterval(function(){
-        var elem = document.activeElement;
-
-        if(elem && elem.tagName == 'IFRAME' && elem.id == 'player'){
-            $("iframe.player").addClass('playing');
-            var audioPlayer = window.buildfire.services.media.audioPlayer;
-            audioPlayer.pause();
-            clearInterval(monitor);
-        }
-    }, 100);
-</script>
