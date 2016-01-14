@@ -57,6 +57,24 @@ describe('Unit: mediaCenterWidget: Services', function () {
             expect(MediaContent.delete).toBeDefined();
             expect(MediaContent.insert).toBeDefined();
         });
+        it('MediaCenter methods should exists', function () {
+            Buildfire={datastore:{get:function(tagName,cb){
+                cb(null,{});
+            }}};
+            MediaContent.insert([]);
+            MediaContent.insert('asads');
+            MediaContent.getById('id1');
+            MediaContent.insert();
+            MediaContent.find();
+            MediaContent.find({});
+            MediaContent.update('id',{});
+            MediaContent.update();
+            MediaContent.update('id');
+            MediaContent.save({});
+            MediaContent.save();
+            MediaContent.delete();
+            MediaContent.delete('id');
+        });
     });
 
 
@@ -74,6 +92,9 @@ describe('Unit : ImageLib Factory', function () {
 
     it('Buildfire should exist and be an object', function () {
         expect(typeof Buildfire).toEqual('object');
+    });
+    it('Buildfire.imageLib should exist and be an object', function () {
+        expect(typeof Buildfire.imageLib).toEqual('object');
     });
     it('Buildfire.imageLib should exist and be an object', function () {
         expect(typeof Buildfire.imageLib).toEqual('object');

@@ -18,8 +18,9 @@
          }"></div>
     <div class="media-center-plugin">
         <div class="media-header-link">
-            <a ng-click="NowPlaying.add(NowPlaying.item.data.audioTitle,NowPlaying.item.data.audioUrl,NowPlaying.item.data.image,NowPlaying.item.data.artists)">Add
-                to Playlist</a>
+            <!--<a ng-click="NowPlaying.add(NowPlaying.item.data.audioTitle,NowPlaying.item.data.audioUrl,NowPlaying.item.data.image,NowPlaying.item.data.artists)">Add
+                to Playlist</a>-->
+            Now Playing
         </div>
         <div class="media-holder margin-top-fifteen">
             <div class="media-inner text-center">
@@ -30,9 +31,9 @@
             </div>
         </div>
         <div class="media-player-info margin-top-fifteen">
-            <h4 class="margin-zero ellipsis">{{NowPlaying.item.data.audioTitle}}</h4>
+            <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.item.data.audioTitle}}</h4>
 
-            <p class="margin-zero ellipsis">{{NowPlaying.item.data.artists}}</p>
+            <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.item.data.artists}}</p>
         </div>
         <div class="slider margin-top-ten" style="margin-bottom: -70px;">
             <div class="playerMP">
@@ -71,6 +72,49 @@
             <span class="icon icon-repeat-one icon-sm primaryTheme hidden"></span>
             <span class="icon icon-repeat icon-sm primaryTheme hidden"></span>
         </a>
+    </div>
+    <div ng-if="NowPlaying.showMoreInfo" class="overlay"
+         style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8);">
+        <div class="overlay-content" style="postiion:absolute; top:0; left:0; height:110%; width: 100%; overflow:auto;">
+            <div class="media-player-more-info">
+                <div class="media-holder margin-top-thirty">
+                    <div class="media-inner text-center">
+                        <img ng-if="!NowPlaying.item.data.image" class="border-radius-two"
+                             src="http://s3-us-west-2.amazonaws.com/pluginserver.prod/plugins/d575ea0d-ba73-4edd-9c3d-37e49e44ac4f/widget/assets/images/now-playing.png">
+                        <img ng-if="NowPlaying.item.data.image" class="border-radius-two"
+                             ng-src="{{NowPlaying.item.data.image | cropImage :140:140}}">
+                    </div>
+                </div>
+                <hr class="none">
+                <div class="media-player-info margin-top-twenty">
+                    <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.item.data.audioTitle}}</h4>
+
+                    <h5 class="margin-zero ellipsis whiteTheme">{{NowPlaying.item.data.artists}}</h5>
+                </div>
+                <hr class="none">
+                <div class="more-info-list padded">
+                    <div class="text-center item">
+                        <a class="whiteTheme">Go to Playlist</a>
+                    </div>
+                    <div class="text-center item">
+                        <a class="whiteTheme">Add to Playlist</a>
+                    </div>
+                    <div class="text-center item">
+                        <a class="whiteTheme">Remove from Playlist</a>
+                    </div>
+                    <div class="text-center item">
+                        <a class="whiteTheme">Purchase</a>
+                    </div>
+                    <div class="text-center item">
+                        <a class="whiteTheme">Share</a>
+                    </div>
+                    <div class="text-center item">
+                        <a ng-click="NowPlaying.hideMoreInfo()" class="whiteTheme">Cancel</a>
+                    </div>
+                </div>
+                <hr class="none">
+            </div>
+        </div>
     </div>
 </div>
 </div>

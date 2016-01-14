@@ -145,7 +145,7 @@
             $httpProvider.interceptors.push(interceptor);
 
         }])
-        .run(['Location', '$location', '$rootScope','Messaging','EVENTS','PATHS', function (Location, $location, $rootScope,Messaging,EVENTS,PATHS) {
+        .run(['Location', '$location', '$rootScope', 'Messaging', 'EVENTS', 'PATHS', function (Location, $location, $rootScope, Messaging, EVENTS, PATHS) {
             if (buildfire.deeplink)
                 buildfire.deeplink.getData(function (data) {
                     if (data) {
@@ -156,7 +156,8 @@
             buildfire.navigation.onBackButtonClick = function () {
                 var path = $location.path();
                 if (path.indexOf('/media') == 0) {
-                    if ($("#feedView").hasClass('notshowing')){
+
+                    if ($("#feedView").hasClass('notshowing')) {
                         Messaging.sendMessageToControl({
                             name: EVENTS.ROUTE_CHANGE,
                             message: {
