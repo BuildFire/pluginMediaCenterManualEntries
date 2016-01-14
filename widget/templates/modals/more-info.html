@@ -5,20 +5,20 @@
     <div class="overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8);">
         <div class="overlay-content" style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
             <div class="media-player-more-info">
-                <div class="media-holder margin-top-thirty">
+                <div class="media-holder margin-top-ten">
                     <div class="media-inner text-center">
-                        <img style="margin-left: 90px;margin-top: 30px;" ng-if="MoreInfoModal.info.data.image" class="border-radius-two"
+                        <img style="max-height:100%; width:auto;" ng-if="MoreInfoModal.info.data.image" class="border-radius-two"
                              ng-src="{{MoreInfoModal.info.data.image}}">
                     </div>
                 </div>
                 <hr class="none">
-                <div class="media-player-info margin-top-twenty">
+                <div class="media-player-info margin-top-fifteen">
                     <h4 class="margin-zero ellipsis text-center">{{MoreInfoModal.info.data.artists}}</h4>
 
                     <p class="margin-zero ellipsis text-center">{{MoreInfoModal.info.data.audioTitle}}</p>
                 </div>
                 <hr class="none">
-                <div class="more-info-list padded">
+                <div class="more-info-list padded padding-top-zero padding-bottom-zero">
                     <!--<div class="text-center item">
                         <a>Go to Playlist</a>
                     </div>-->

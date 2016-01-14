@@ -1,6 +1,6 @@
 <div class="holder padding-zero">
     <div class="media-center-plugin list-layout layout4 text-overlay">
-        <div class="media-center-banner clearfix border-bottom-grey text-overlay">
+        <div class="media-center-banner clearfix text-overlay">
             <div id="carousel" build-fire-carousel=""></div>
         </div>
         <div class="text-left padded padding-bottom-zero clearfix text-overlay" >
@@ -24,10 +24,9 @@
                             </div>
                         </div>
                         <div class="list-item-copy text-left text-overlay">
-                            <p class="text-primary ellipsis">
+                            <p class="text-primary ellipsis margin-zero">
                                 <a class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index].data.title}}</a>
                             </p>
-
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index].data.summary}}</p>
                             <span class="list-item-date" data-ng-if="WidgetHome.items[$index].data.mediaDate">{{WidgetHome.items[$index].data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
                         </div>
@@ -44,7 +43,7 @@
                             </div>
                         </div>
                         <div class="list-item-copy text-left text-overlay">
-                            <p class="text-primary ellipsis">
+                            <p class="text-primary margin-zero ellipsis">
                                 <a class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index +
                                     1].data.title}}</a>
                             </p>

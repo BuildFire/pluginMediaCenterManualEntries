@@ -1,6 +1,6 @@
 <div class="holder padding-zero">
     <div class="media-center-plugin layout3 text-overlay">
-        <div class="plugin-banner clearfix border-bottom-grey text-overlay">
+        <div class="plugin-banner clearfix text-overlay">
             <div id="carousel" build-fire-carousel=""></div>
         </div>
         <div class="padded text-left text-overlay" ng-if="WidgetHome.showDescription()">
@@ -20,11 +20,11 @@
                     </div>
                 </div>
                 <div class="padded text-left text-overlay">
-                    <p class="text-primary ellipsis">
+                    <p class="text-primary ellipsis margin-zero">
                         <a class="text-primary">{{item.data.title}}</a>
                     </p>
-                    <p class="margin-bottom-zero">{{item.data.summary}}</p>
-                    <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
+                    <p class="margin-bottom-zero" style="font-size:13px;">{{item.data.summary}}</p>
+                    <span class="list-item-date" data-ng-if="item.data.mediaDate" style="font-size:11px; font-style:italic; margin-top:-4px;">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
                 </div>
             </div>
         </div>
