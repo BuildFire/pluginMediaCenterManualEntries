@@ -81,7 +81,29 @@ describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
             WidgetHome.isBusy = true;
             WidgetHome.items = [];
             WidgetHome.loadMore();
+            WidgetHome.refreshItems();
+            //Messaging.onReceivedMessage({name:'CHANGE_ROUTE',message:{id:'id1',path:'url'}});
             expect(WidgetHome.items.length).toEqual(0);
+        });
+    });
+    describe('WidgetHome.goToMedia', function () {
+        it('should not change WidgetHome.goToMedia when isBusy is true (data is begin fetched)', function () {
+            WidgetHome.items=[{id:'id1'}]
+            WidgetHome.goToMedia(0);
+        });
+    });
+    describe('WidgetHome.showDescription', function () {
+        it('should not change WidgetHome.items when isBusy is true (data is begin fetched)', function () {
+            WidgetHome.media={data:{content:{descriptionHTML:'<p>&nbsp;<br></p>'}}};
+            WidgetHome.showDescription();
+        });
+        it('should not change WidgetHome.items when isBusy is true (data is begin fetched)', function () {
+            WidgetHome.media={data:{content:{descriptionHTML:'<p><br data-mce-bogus="1"></p>'}}};
+            WidgetHome.showDescription();
+        });
+        it('should not change WidgetHome.items when isBusy is true (data is begin fetched)', function () {
+            WidgetHome.media={data:{content:{descriptionHTML:'<p>Hello</p>'}}};
+            WidgetHome.showDescription();
         });
     });
 });
