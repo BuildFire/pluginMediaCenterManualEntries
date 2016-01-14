@@ -145,7 +145,7 @@
             $httpProvider.interceptors.push(interceptor);
 
         }])
-        .run(['Location', '$location', '$rootScope','Messaging','EVENTS','PATHS', function (Location, $location, $rootScope,Messaging,EVENTS,PATHS) {
+        .run(['Location', '$location', '$rootScope', 'Messaging', 'EVENTS', 'PATHS', function (Location, $location, $rootScope, Messaging, EVENTS, PATHS) {
             if (buildfire.deeplink)
                 buildfire.deeplink.getData(function (data) {
                     if (data) {
@@ -156,14 +156,21 @@
             buildfire.navigation.onBackButtonClick = function () {
                 var path = $location.path();
                 if (path.indexOf('/media') == 0) {
-                    if ($("#feedView").hasClass('notshowing')){
+
+                    if ($("#feedView").hasClass('notshowing')) {
+
+                        if ($("iframe.player").hasClass('playing')) {
+                            $( 'iframe.player' ).attr( 'src', function ( i, val ) { return val; });
+                        }
+                        else{
+
                         Messaging.sendMessageToControl({
                             name: EVENTS.ROUTE_CHANGE,
                             message: {
                                 path: PATHS.HOME
                             }
                         });
-                        $("#showFeedBtn").click();
+                        $("#showFeedBtn").click();}
                     }
                     else
                         buildfire.navigation.navigateHome();
