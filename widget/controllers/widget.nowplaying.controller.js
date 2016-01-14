@@ -34,11 +34,20 @@
                     });
                 };
                 NowPlaying.openMoreInfoPopup = function () {
-                    Modals.moreInfoModal(NowPlaying.item).then(function (result) {
+                    NowPlaying.showMoreInfo=true;
+                   /* Modals.moreInfoModal(NowPlaying.item).then(function (result) {
                         console.log('Result----', result);
                     }, function (err) {
                         console.error('Error===========', err);
-                    });
+                    });*/
+                };
+                NowPlaying.hideMoreInfo = function () {
+                    NowPlaying.showMoreInfo=false;
+                   /* Modals.moreInfoModal(NowPlaying.item).then(function (result) {
+                        console.log('Result----', result);
+                    }, function (err) {
+                        console.error('Error===========', err);
+                    });*/
                 };
                 /**
                  * audioPlayer is Buildfire.services.media.audioPlayer.
