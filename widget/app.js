@@ -160,7 +160,7 @@
                     if ($("#feedView").hasClass('notshowing')) {
 
                         if ($("iframe.player").hasClass('playing')) {
-                            $( 'iframe.player' ).attr( 'src', function ( i, val ) { return val; });
+                            $( 'iframe.player' ).remove();
                         }
                         else{
 
