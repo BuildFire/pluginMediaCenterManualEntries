@@ -231,6 +231,7 @@ videogular, [videogular] {
 
 .video-container-background {
     background-color: transparent !important;
+    max-height: none !important;
 }
 
 /*Styles for Now playing bg img*/
