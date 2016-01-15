@@ -35,13 +35,14 @@
 
             <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.item.data.artists}}</p>
         </div>
-        <div class="slider margin-top-ten" style="margin-bottom: -70px;">
+        <div class="slider margin-top-ten" style="margin-bottom: -80px;">
             <div class="playerMP">
                 <div ng-if="NowPlaying.currentTime">{{NowPlaying.currentTime | secondsToDateTime | date:'mm:ss'}}</div>
                 <div><input type="range" min="0" max="{{NowPlaying.duration}}"
                             ng-model="NowPlaying.currentTime"
                             ng-change="NowPlaying.changeTime(NowPlaying.currentTime)"
-                            ng-style="NowPlaying.duration? {'visibility':'visible'}:{'visibility':'hidden'}"/></div>
+                            ng-style="NowPlaying.duration? {'visibility':'visible'}:{'visibility':'hidden'}"
+							class="whiteBackgroundTheme" style="height:2px; border-radius:4px;"/></div>
                 <div ng-if="NowPlaying.duration">{{NowPlaying.duration | secondsToDateTime | date:'mm:ss'}}</div>
             </div>
         </div>
@@ -49,12 +50,11 @@
             <span class="icon icon-dots"></span>
         </div>
         <div class="media-player-action-btns margin-top-ten">
-            &nbsp;<input class=""
+            &nbsp;<input class="whiteBackgroundTheme"
                          ng-style="NowPlaying.showVolume? {'visibility':'visible'}:{'visibility':'hidden'}" type="range"
                          min="0" max="1" step="0.1" ng-model="NowPlaying.volume"
                          ng-change="NowPlaying.changeVolume(NowPlaying.volume)"
-                         style="width:70%;visibility: visible;margin-top:40px;margin-left:46px"/>
-
+                         style="width:120px; height:7px; border-radius:4px; position:relative; top:-54px; visibility: visible;margin-top:40px;margin-left:43px; transform:rotate(-90deg);"/>
             <span class="audio-player-icon icon icon-volume-high icon-sm"
                   ng-click="NowPlaying.showVolume=!NowPlaying.showVolume"></span>
             <span class="audio-player-icon icon icon-ellipsis icon-sm" ng-click="NowPlaying.openMoreInfoPopup()"></span>
@@ -74,8 +74,8 @@
         </a>
     </div>
     <div ng-if="NowPlaying.showMoreInfo" class="overlay"
-         style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8);">
-        <div class="overlay-content" style="postiion:absolute; top:0; left:0; height:110%; width: 100%; overflow:auto;">
+         style="position:fixed; top:0; left:0; width:100%; background:rgba(0,0,0,0.8);">
+        <div class="overlay-content" style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
             <div class="media-player-more-info">
                 <div class="media-holder margin-top-thirty">
                     <div class="media-inner text-center">
@@ -86,12 +86,11 @@
                     </div>
                 </div>
                 <hr class="none">
-                <div class="media-player-info margin-top-twenty">
+                <div class="media-player-info margin-top-fifteen">
                     <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.item.data.audioTitle}}</h4>
 
-                    <h5 class="margin-zero ellipsis whiteTheme">{{NowPlaying.item.data.artists}}</h5>
+                    <h5 class="margin-top-five margin-bottom-zero ellipsis whiteTheme">{{NowPlaying.item.data.artists}}</h5>
                 </div>
-                <hr class="none">
                 <div class="more-info-list padded">
                     <div class="text-center item">
                         <a class="whiteTheme">Go to Playlist</a>
@@ -112,7 +111,6 @@
                         <a ng-click="NowPlaying.hideMoreInfo()" class="whiteTheme">Cancel</a>
                     </div>
                 </div>
-                <hr class="none">
             </div>
         </div>
     </div>
