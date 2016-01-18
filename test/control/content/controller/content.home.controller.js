@@ -208,4 +208,40 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
             expect(spy).not.toHaveBeenCalled();
         });
     });
+
+
+    describe('Unit: ContentHome.getTemplate', function () {
+        var spy;
+        beforeEach(inject(function () {
+
+            spy = spyOn($csv, 'download').and.callFake(function () {
+            });
+
+        }));
+
+        it('should be able to call csv.download', function () {
+            ContentHome.getTemplate();
+            expect(spy).toHaveBeenCalled();
+        });
+
+    });
+
+    describe('Unit: ContentHome.openImportCSVDialog', function () {
+        var spy;
+        beforeEach(inject(function () {
+
+            spy = spyOn($csv, 'import').and.callFake(function () {
+                var deferred = $q.defer();
+                deferred.resolve([]);
+                return deferred.promise;
+            });
+
+        }));
+
+        it('should be able to call csv.import', function () {
+            ContentHome.openImportCSVDialog();
+            expect(spy).toHaveBeenCalled();
+        });
+
+    });
 });

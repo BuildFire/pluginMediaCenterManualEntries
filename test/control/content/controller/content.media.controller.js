@@ -24,6 +24,9 @@ describe('Unit : Controller - ContentMediaCtrl', function () {
                     actionItems:{
 
                     }
+                },
+                imageLib:{
+                    showDialog:jasmine.createSpy()
                 }
             };
             Buildfire.components.actionItems = jasmine.createSpyObj('Buildfire.components.actionItems', ['sortableList', '', '']);
@@ -144,6 +147,60 @@ describe('Unit : Controller - ContentMediaCtrl', function () {
 
         });
     });
+
+
+    describe('Unit: ContentMedia.selectAudioImage', function () {
+
+        it('it should call Buildfire.imageLib.showDialog', function () {
+            ContentMedia.selectAudioImage('');
+            expect(Buildfire.imageLib.showDialog).toHaveBeenCalled();
+        });
+
+    });
+
+    describe('Unit: ContentMedia.linkEditor.onAddItems', function () {
+
+        it('it should call data links', function () {
+            ContentMedia.item.data.links = [];
+            ContentMedia.linkEditor.onAddItems({a:1});
+            expect(ContentMedia.item.data.links.length).toEqual(1);
+        });
+
+
+        it('it should call assign data links if it is null', function () {
+            ContentMedia.item.data.links = null;
+            ContentMedia.linkEditor.onAddItems({a:1});
+            expect(ContentMedia.item.data.links.length).toEqual(1);
+        });
+
+    });
+
+    describe('Unit: ContentMedia.linkEditor.onDeleteItem', function () {
+
+        it('it should call data links', function () {
+            ContentMedia.item.data.links = [{a:1}];
+            ContentMedia.linkEditor.onDeleteItem({a:1},0);
+            expect(ContentMedia.item.data.links.length).toEqual(0);
+        });
+    });
+    describe('Unit: ContentMedia.linkEditor.onItemChange', function () {
+
+        it('it should call data links', function () {
+            ContentMedia.item.data.links = [{a:1}];
+            ContentMedia.linkEditor.onItemChange({a:2},0);
+            expect(ContentMedia.item.data.links[0].a).toEqual(2);
+        });
+    });
+
+    describe('Unit: ContentMedia.linkEditor.onOrderChange', function () {
+
+        it('it should call data links', function () {
+            ContentMedia.item.data.links = [{a:1},{a:2}];
+            ContentMedia.linkEditor.onOrderChange({a:1},0,1);
+            expect(ContentMedia.item.data.links[0].a).toEqual(2);
+        });
+    });
+
 
 })
 ;
