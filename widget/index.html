@@ -50,7 +50,7 @@
       ng-class="blackBackground ? 'blackBackground': ''">-->
 <body class="body-scroll">
 <div class="main_view">
-    <div ng-class="showFeed ? 'showing' : 'notshowing'" data-ng-attr-style="background:url({{ backgroundImage | cropImage:deviceWidth:deviceHeight:true}}) !important; background-size:cover;" id="feedView" class="content slide infinite-scroll-parent" >
+    <div ng-class="showFeed ? 'showing' : 'notshowing'" data-ng-attr-style="background:url({{ backgroundImage | cropImage:deviceWidth:deviceHeight:true}}) !important; background-size:cover !important;" id="feedView" class="content slide infinite-scroll-parent" >
         <div ng-controller="WidgetHomeCtrl as WidgetHome">
             <div ng-include="'templates/home.html'">
             </div>
