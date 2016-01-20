@@ -55,7 +55,7 @@
                 var audioPlayer = Buildfire.services.media.audioPlayer;
                 audioPlayer.settings.get(function (err, setting) {
                     NowPlaying.volume = setting.volume;
-                    console.log(setting)
+                    console.log('settings------------------------------------'.setting)
                 });
 
                 NowPlaying.changeVolume = function (volume) {
