@@ -36,12 +36,7 @@
             ];
             return {
                 ordersMap: ordersMap,
-                options: orders,
-                getOrder: function (name) {
-                    return orders.filter(function (order) {
-                        return order.name === name;
-                    })[0];
-                }
+                options: orders
             };
         }])
         .factory("DB", ['Buildfire', '$q', 'MESSAGES', 'CODES', function (Buildfire, $q, MESSAGES, CODES) {
