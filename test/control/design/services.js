@@ -49,12 +49,8 @@ describe('mediaCenterDesignServices: Services', function () {
         it('MediaCenter methods should exists', function () {
          expect(MediaCenter.get).toBeDefined();
          expect(typeof MediaCenter.get).toEqual('function');
-         expect(MediaCenter.find).toBeDefined();
-         expect(typeof MediaCenter.find).toEqual('function');
          expect(MediaCenter.save).toBeDefined();
          expect(MediaCenter.update).toBeDefined();
-         expect(MediaCenter.delete).toBeDefined();
-         expect(MediaCenter.insert).toBeDefined();
          });
     });
     describe('MediaContent service', function () {
@@ -70,11 +66,8 @@ describe('mediaCenterDesignServices: Services', function () {
         });
         it('MediaCenter methods should exists', function () {
             expect(MediaContent.get).toBeDefined();
-            expect(MediaContent.find).toBeDefined();
             expect(MediaContent.save).toBeDefined();
             expect(MediaContent.update).toBeDefined();
-            expect(MediaContent.delete).toBeDefined();
-            expect(MediaContent.insert).toBeDefined();
         });
     });
     describe('Messaging service', function () {
