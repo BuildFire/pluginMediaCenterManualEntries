@@ -55,9 +55,9 @@
                          ng-change="NowPlaying.changeVolume(NowPlaying.volume)"
                          style="width:70%;visibility: visible;margin-top:40px;margin-left:46px"/>
 
-            <span class="audio-player-icon icon icon-volume-high icon-sm"
+            <!--<span class="audio-player-icon icon icon-volume-high icon-sm"
                   ng-click="NowPlaying.showVolume=!NowPlaying.showVolume"></span>
-            <span class="audio-player-icon icon icon-ellipsis icon-sm" ng-click="NowPlaying.openMoreInfoPopup()"></span>
+            <span class="audio-player-icon icon icon-ellipsis icon-sm" ng-click="NowPlaying.openMoreInfoPopup()"></span>-->
             <!--<span class="icon icon-cog icon-sm" ng-click="NowPlaying.openSettingsPopup()"></span>-->
         </div>
         <a class="media-player-btns margin-top-ten">
@@ -73,7 +73,7 @@
             <span class="icon icon-repeat icon-sm primaryTheme hidden"></span>
         </a>
     </div>
-    <div ng-if="NowPlaying.showMoreInfo" class="overlay"
+   <!-- <div ng-if="NowPlaying.showMoreInfo" class="overlay"
          style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8);">
         <div class="overlay-content" style="postiion:absolute; top:0; left:0; height:110%; width: 100%; overflow:auto;">
             <div class="media-player-more-info">
@@ -115,6 +115,137 @@
                 <hr class="none">
             </div>
         </div>
+    </div>-->
+    <!-- Playlist Overlay -->
+    <div ng-if="NowPlaying.openPlaylist" class="overlay"
+         style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8);">
+        <div class="overlay-content" style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
+            <div class="media-player-list-layout layout3">
+                <div class="list-layout has-btns">
+                    <div class="list-item overflow-hidden"
+                         ng-swipe-right="WidgetHome.addEvents($event, $index, false)"
+                         ng-swipe-left="WidgetHome.addEvents($event, $index, true)"
+                         ng-repeat="track in WidgetHome.playList">
+                        <div class="list-item-media text-left" ng-class="{'edit' : WidgetHome.swiped[$index]}">
+                            <div class="list-media-holder square-icon pull-left">
+                                <img ng-if="track.image" ng-src="{{track.image | cropImage : 55 :22}}">
+                            </div>
+                            <div class="list-item-copy text-left padding-left-ten padding-right-ten">
+                                <p class="margin-bottom-zero ellipsis margin-top-twenty">{{track.title}}</p>
+                            </div>
+                            <div class="btns text-center">
+                                <a ng-if="!track.playing" class="icon icon-play-circle" ng-click="WidgetHome.playlistPlay(track)"></a>
+                                <a ng-if="track.playing" class="icon icon-pause-circle primaryTheme" ng-click="WidgetHome.playlistPause(track)"></a>
+                            </div>
+                            <div class="remove-btn text-center dangerBackgroundTheme" style="background:red;" ng-click="WidgetHome.removeTrackFromPlayList($index)">
+                                <span>Remove</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a ng-click="WidgetHome.closePlayListOverlay()">Done</a>
+        </div>
     </div>
-</div>
+
+    <!-- More Info Overlay -->
+    <div ng-if="NowPlaying.openMoreInfo" class="overlay"
+         style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8);">
+        <div class="overlay-content" style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
+            <div class="media-player-more-info">
+                <div class="media-holder margin-top-thirty">
+                    <div class="media-inner text-center">
+                        <img class="border-radius-two"
+                             ng-src="{{WidgetHome.currentTrack.artwork_url}}">
+                    </div>
+                </div>
+                <hr class="none">
+                <div class="media-player-info margin-top-twenty">
+                    <h4 class="margin-zero ellipsis">{{WidgetHome.currentTrack.title}}</h4>
+                    <p class="margin-zero ellipsis whiteTheme">{{WidgetHome.currentTrack.user.username}}</p>
+                </div>
+                <hr class="none">
+                <div class="more-info-list padded">
+                    <div class="text-center item">
+                        <a ng-click="WidgetHome.getFromPlaylist()">Go to Playlist</a>
+                    </div>
+                    <div class="text-center item">
+                        <a ng-click="WidgetHome.addToPlaylist(WidgetHome.currentTrack)">Add to Playlist</a>
+                    </div>
+                    <div class="text-center item">
+                        <a ng-click="WidgetHome.removeFromPlaylist(WidgetHome.currentTrack)">Remove from Playlist</a>
+                    </div>
+                    <!--<div class="text-center item">
+                        <a>Purchase</a>
+                    </div>
+                    <div class="text-center item">
+                        <a>Share</a>
+                    </div>-->
+                    <div class="text-center item">
+                        <a ng-click="WidgetHome.closeMoreInfoOverlay()">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Overlay -->
+    <div ng-if="NowPlaying.openSettings" class="overlay"
+         style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8);">
+        <div class="overlay-content" style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
+            <div class="media-player-settings">
+                <div class="settings-list padded padding-top-zero">
+                    <div class="item clearfix row">
+                        <div class="col-md-10 pull-left text-left">
+                            <span class="whiteTheme">Automatically play next track</span>
+                        </div>
+                        <div class="col-md-2 pull-right text-right">
+                            <div class="checkbox checkbox-primary checked no-label margin-zero">
+                                <input type="checkbox" id="playnext" ng-model="WidgetHome.settings.autoPlayNext"
+                                       ng-change="WidgetHome.setSettings(WidgetHome.settings)">
+                                <label for="playnext"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item clearfix row">
+                        <div class="col-md-10 pull-left text-left">
+                            <span class="whiteTheme">Loop playlist</span>
+                        </div>
+                        <div class="col-md-2 pull-right text-right">
+                            <div class="checkbox checkbox-primary checked no-label margin-zero">
+                                <input type="checkbox" id="loop" ng-model="WidgetHome.settings.loopPlaylist"
+                                       ng-change="WidgetHome.setSettings(WidgetHome.settings)">
+                                <label for="loop"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item clearfix row">
+                        <div class="col-md-10 pull-left text-left">
+                            <span class="whiteTheme">Auto Jump To LastPosition</span>
+                        </div>
+                        <div class="col-md-2 pull-right text-right">
+                            <div class="checkbox checkbox-primary checked no-label margin-zero">
+                                <input type="checkbox" id="repeat" ng-model="WidgetHome.settings.autoJumpToLastPosition"
+                                       ng-change="WidgetHome.setSettings(WidgetHome.settings)">
+                                <label for="repeat"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item clearfix row">
+                        <div class="col-md-10 pull-left text-left">
+                            <span class="whiteTheme">Shuffle Playlist</span>
+                        </div>
+                        <div class="col-md-2 pull-right text-right">
+                            <div class="checkbox checkbox-primary checked no-label margin-zero">
+                                <input type="checkbox" id="playfromLast" ng-model="WidgetHome.settings.shufflePlaylist"
+                                       ng-change="WidgetHome.setSettings(WidgetHome.settings)">
+                                <label for="playfromLast"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a ng-click="WidgetHome.closeSettingsOverlay()">Done</a>
+        </div>
+    </div>
 </div>
