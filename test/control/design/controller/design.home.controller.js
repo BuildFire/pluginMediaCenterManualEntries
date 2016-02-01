@@ -15,7 +15,7 @@ describe("DesignHomeCtrl", function () {
                     controller._callback(null, {selectedFiles: ['test']});
                 }
             };
-            this.datastore = jasmine.createSpyObj('datastore', ['get', 'save','update']);
+            this.datastore = jasmine.createSpyObj('datastore', ['get', 'save', 'update']);
             this.datastore.get.and.callFake(function (_tagName, callback) {
                 if (_tagName) {
                     callback(null, {
@@ -33,7 +33,7 @@ describe("DesignHomeCtrl", function () {
                     callback('Error', null);
                 }
             });
-            this.datastore.update.and.callFake(function (_tagName,id,data, callback) {
+            this.datastore.update.and.callFake(function (_tagName, id, data, callback) {
                 if (_tagName) {
                     callback(null, {
                         data: {
@@ -209,30 +209,52 @@ describe("DesignHomeCtrl", function () {
 });
 
 // Empty case
-describe("DesignHomeCtrl", function () {
+describe("DesignHomeCtrl Error case", function () {
     var $rootScope,
         $scope,
         controller,
-        mediaCenterSpy,
         Buildfire,
         q;
-    Buildfire = {
-        components: {
-            images: {
-                thumbnail: function (id) {
-                    this.id = id;
-                    this.loadbackground = function (url) {
-                        console.log('Load background method called');
-                    };
+    beforeEach(module('mediaCenterDesign', function ($provide) {
+        $provide.service('Buildfire', function () {
+            this.imageLib = {
+                showDialog: function (options, callback) {
+                    controller._callback(null, {selectedFiles: ['test']});
                 }
-            }
-        }
-    };
+            };
+            this.datastore = jasmine.createSpyObj('datastore', ['get', 'save', 'update']);
+            this.datastore.get.and.callFake(function (_tagName, callback) {
+                callback('Error', null);
+            });
+            this.datastore.update.and.callFake(function (_tagName, id, data, callback) {
+                callback('Error', null);
+            });
+            this.datastore.save.and.callFake(function (options, _tagName, callback) {
+                callback('Error', null);
+            });
+            this.components = {
+                images: {
+                    thumbnail: function () {
+                        this.loadbackground = function (url) {
+                        };
+                        this.onChange = function (url) {
+                        };
+                        this.onDelete = function (url) {
+                        };
+                        return this;
+
+                    }
+                }
+            };
+        });
+    }));
+
 
     beforeEach(function () {
         module('mediaCenterDesign');
         inject(function ($injector, $q) {
             $rootScope = $injector.get('$rootScope');
+            Buildfire = $injector.get('Buildfire');
             $scope = $rootScope.$new();
             controller = $injector.get('$controller')('DesignHomeCtrl', {
                 $scope: $scope,
@@ -245,6 +267,16 @@ describe("DesignHomeCtrl", function () {
     describe('Initialization with empty', function () {
         it('should initialize the listLayouts to the default value', function () {
             expect(controller.layouts.listLayouts.length).toEqual(4);
+        });
+    });
+    describe('Watcher error case', function () {
+        it('$watcher', function () {
+            controller.mediaInfo = {
+                data: {design: {backgroundImage: 'image'}}
+            };
+            $rootScope.$digest();
+            controller.mediaInfo ={id:'123',data:{}};
+            $rootScope.$digest();
         });
     });
 });

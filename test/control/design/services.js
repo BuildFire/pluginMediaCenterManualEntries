@@ -15,16 +15,6 @@ describe('mediaCenterDesignServices: Services', function () {
             expect(ImageLib).toBeDefined();
         });
     });
-    describe('Location service', function () {
-        var Location;
-        beforeEach(inject(
-            function (_Location_) {
-                Location = _Location_;
-            }));
-        it('Location should exists', function () {
-            expect(Location).toBeDefined();
-        });
-    });
     describe('Buildfire service', function () {
         var Buildfire;
         beforeEach(inject(
