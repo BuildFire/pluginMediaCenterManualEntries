@@ -18,9 +18,7 @@
          }"></div>
     <div class="media-center-plugin">
         <div class="media-header-link">
-            <!--<a ng-click="NowPlaying.add(NowPlaying.item.data.audioTitle,NowPlaying.item.data.audioUrl,NowPlaying.item.data.image,NowPlaying.item.data.artists)">Add
-                to Playlist</a>-->
-            Now Playing
+                <a ng-click="NowPlaying.getFromPlaylist()">Playlist</a>
         </div>
         <div class="media-holder margin-top-fifteen">
             <div class="media-inner text-center">
@@ -113,13 +111,13 @@
                 <div class="media-holder margin-top-thirty">
                     <div class="media-inner text-center">
                         <img class="border-radius-two"
-                             ng-src="{{NowPlaying.currentTrack.artwork_url}}">
+                             ng-src="{{NowPlaying.currentTrack.image}}">
                     </div>
                 </div>
                 <hr class="none">
                 <div class="media-player-info margin-top-twenty">
                     <h4 class="margin-zero ellipsis">{{NowPlaying.currentTrack.title}}</h4>
-                    <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.user.username}}</p>
+                    <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.artist}}</p>
                 </div>
                 <hr class="none">
                 <div class="more-info-list padded">
