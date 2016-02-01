@@ -6,24 +6,83 @@ describe("DesignHomeCtrl", function () {
         mediaCenterSpy,
         Buildfire,
         q;
-    Buildfire={
-        components:{
-            images:{
-                thumbnail:function(id){
-                    this.id=id;
-                    this.loadbackground=function(url){
-                        console.log('Load background method called');
-                    };
-                    this.onChange=function(){
-                        console.log('onChange called');
-                    };
-                    this.onDelete=function(){
-                        console.log('on Delete called');
-                    };
+    Buildfire;
+
+    beforeEach(module('mediaCenterDesign', function ($provide) {
+        $provide.service('Buildfire', function () {
+            this.imageLib = {
+                showDialog: function (options, callback) {
+                    controller._callback(null, {selectedFiles: ['test']});
                 }
-            }
-        }
-    };
+            };
+            this.datastore = jasmine.createSpyObj('datastore', ['get', 'save','update']);
+            this.datastore.get.and.callFake(function (_tagName, callback) {
+                if (_tagName) {
+                    callback(null, {
+                        data: {
+                            design: {
+                                itemListLayout: 'layout1',
+                                bgImage: ''
+                            },
+                            content: {
+                                images: [{title: 'bg1.png'}]
+                            }
+                        }
+                    });
+                } else {
+                    callback('Error', null);
+                }
+            });
+            this.datastore.update.and.callFake(function (_tagName,id,data, callback) {
+                if (_tagName) {
+                    callback(null, {
+                        data: {
+                            design: {
+                                itemListLayout: 'layout1',
+                                bgImage: ''
+                            },
+                            content: {
+                                images: [{title: 'bg1.png'}]
+                            }
+                        }
+                    });
+                } else {
+                    callback('Error', null);
+                }
+            });
+            this.datastore.save.and.callFake(function (options, _tagName, callback) {
+                if (_tagName) {
+                    callback(null, [{
+                        data: {
+                            design: {
+                                itemListLayout: 'layout1',
+                                bgImage: ''
+                            },
+                            content: {
+                                images: [{title: 'bg1.png'}]
+                            }
+                        }
+                    }]);
+                } else {
+                    callback('Error', null);
+                }
+            });
+            this.components = {
+                images: {
+                    thumbnail: function () {
+                        this.loadbackground = function (url) {
+                        };
+                        this.onChange = function (url) {
+                        };
+                        this.onDelete = function (url) {
+                        };
+                        return this;
+
+                    }
+                }
+            };
+        });
+    }));
 
 
     beforeEach(function () {
@@ -31,6 +90,7 @@ describe("DesignHomeCtrl", function () {
 
         inject(function ($injector, $q) {
             $rootScope = $injector.get('$rootScope');
+            Buildfire = $injector.get('Buildfire');
             $scope = $rootScope.$new();
             controller = $injector.get('$controller')('DesignHomeCtrl', {
                 $scope: $scope,
@@ -88,18 +148,18 @@ describe("DesignHomeCtrl", function () {
             expect(controller.mediaInfo.data.design).toBeNull();
         });
         it('should do nothing if onChange called', function () {
-            var background=new Buildfire.components.images.thumbnail('id');
-            background.onChange=function(url){
-                controller.mediaInfo.data.design.backgroundImage=url;
+            var background = new Buildfire.components.images.thumbnail('id');
+            background.onChange = function (url) {
+                controller.mediaInfo.data.design.backgroundImage = url;
             };
             background.onChange('test1');
             $rootScope.$apply();
             expect(controller.mediaInfo.data.design.backgroundImage).toEqual('test1');
         });
         it('should do nothing if onDelete called', function () {
-            var background=new Buildfire.components.images.thumbnail('id');
-            background.onDelete=function(url){
-                controller.mediaInfo.data.design.backgroundImage='';
+            var background = new Buildfire.components.images.thumbnail('id');
+            background.onDelete = function (url) {
+                controller.mediaInfo.data.design.backgroundImage = '';
             };
             background.onDelete('test1');
             $rootScope.$apply();
@@ -132,6 +192,19 @@ describe("DesignHomeCtrl", function () {
             $scope.$digest();
             expect(controller.mediaInfo.data.design.backgroundImage).toEqual('test1');
         });
+        it('$watcher', function () {
+            controller.mediaInfo = {
+                data: {design: {backgroundImage: 'image'}}
+            };
+            $rootScope.$digest();
+        });
+        it('$watcher id is there', function () {
+            controller.mediaInfo = {
+                id: '123',
+                data: {design: {backgroundImage: 'image'}}
+            };
+            $rootScope.$digest();
+        });
     });
 });
 
@@ -143,12 +216,12 @@ describe("DesignHomeCtrl", function () {
         mediaCenterSpy,
         Buildfire,
         q;
-    Buildfire={
-        components:{
-            images:{
-                thumbnail:function(id){
-                    this.id=id;
-                    this.loadbackground=function(url){
+    Buildfire = {
+        components: {
+            images: {
+                thumbnail: function (id) {
+                    this.id = id;
+                    this.loadbackground = function (url) {
                         console.log('Load background method called');
                     };
                 }

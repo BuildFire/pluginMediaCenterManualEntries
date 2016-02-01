@@ -1,4 +1,4 @@
-(function (angular, window) {
+(function (angular) {
     angular
         .module('mediaCenterWidget')
         .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', '$timeout',
@@ -293,4 +293,4 @@
             }
         ])
     ;
-})(window.angular, undefined);
+})(window.angular);
