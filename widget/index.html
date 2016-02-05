@@ -8,7 +8,6 @@
     <link href="../../../styles/helper.css" rel="stylesheet">
     <link href="../../../styles/siteIcons.css" rel="stylesheet">
     <link href="../../../scripts/owlCarousel/owlCarousel.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../../styles/appStyle.css">
     <link rel="stylesheet" href="../../../styles/transitionAnimation.css">
     <link href="assets/css/widget.app.css" rel="stylesheet">
     <!--SDK js-->
@@ -52,7 +51,7 @@
       ng-class="blackBackground ? 'blackBackground': ''">-->
 <body class="body-scroll">
 <div class="main_view">
-    <div ng-class="showFeed ? 'showing' : 'notshowing'" data-ng-attr-style="background:url({{ backgroundImage | cropImage:deviceWidth:deviceHeight:true}}) !important; background-size:cover;" id="feedView" class="content slide infinite-scroll-parent" >
+    <div ng-class="showFeed ? 'showing' : 'notshowing'" data-ng-attr-style="background:url({{ backgroundImage | cropImage:deviceWidth:deviceHeight:true}}) !important; background-size:cover !important;" id="feedView" class="content slide infinite-scroll-parent" >
         <div ng-controller="WidgetHomeCtrl as WidgetHome">
             <div ng-include="'templates/home.html'">
             </div>
