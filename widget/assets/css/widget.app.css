@@ -315,59 +315,57 @@
     width: 70%;
 }
 
-input[type=range] {
+.audio-plyer input[type=range] {
     -webkit-appearance: none;
-    margin: 10px 0;
+    margin: 13px 0;
     width: 100%;
 }
 
-input[type=range]:focus {
+.audio-plyer input[type=range]:focus {
     outline: none;
 }
 
-input[type=range]::-webkit-slider-runnable-track {
+.audio-plyer input[type=range]::-webkit-slider-runnable-track {
     width: 100%;
-    height: 5px;
+    height: 10px;
     cursor: pointer;
     animate: 0.2s;
     background: #ffffff;
 }
 
-input[type=range]::-webkit-slider-thumb {
-    height: 16px;
-    width: 7px;
+.audio-plyer input[type=range]::-webkit-slider-thumb {
+    height: 20px;
+    width: 20px;
     background: #ffffff;
     cursor: pointer;
     -webkit-appearance: none;
-    margin-top: -7px;
+    margin-top: -5px;
+    border-radius: 10px;
 }
 
-input[type=range]:focus::-webkit-slider-runnable-track {
+.audio-plyer input[type=range]:focus::-webkit-slider-runnable-track {
     background: #367ebd;
 }
 
-input[type=range]::-moz-range-track {
-    height: 12px;
-    width: 7px;
+.audio-plyer input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 10px;
     cursor: pointer;
     animate: 0.2s;
-    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-    background: #3071a9;
-    border-radius: 1.3px;
-    border: 0.2px solid #010101;
+    background: #ffffff;
 }
 
-input[type=range]::-moz-range-thumb {
-    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-    border: 1px solid #000000;
-    height: 16px;
-    width: 7px;
-    border-radius: 3px;
+.audio-plyer input[type=range]::-moz-range-thumb {
+    height: 20px;
+    width: 20px;
     background: #ffffff;
     cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -5px;
+    border-radius: 10px;
 }
 
-input[type=range]::-ms-track {
+.audio-plyer input[type=range]::-ms-track {
     width: 100%;
     height: 8.4px;
     cursor: pointer;
@@ -378,21 +376,21 @@ input[type=range]::-ms-track {
     color: transparent;
 }
 
-input[type=range]::-ms-fill-lower {
+.audio-plyer input[type=range]::-ms-fill-lower {
     background: #2a6495;
     border: 0.2px solid #010101;
     border-radius: 2.6px;
     box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
 }
 
-input[type=range]::-ms-fill-upper {
+.audio-plyer input[type=range]::-ms-fill-upper {
     background: #3071a9;
     border: 0.2px solid #010101;
     border-radius: 2.6px;
     box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
 }
 
-input[type=range]::-ms-thumb {
+.audio-plyer input[type=range]::-ms-thumb {
     box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
     border: 1px solid #000000;
     height: 36px;
@@ -402,11 +400,11 @@ input[type=range]::-ms-thumb {
     cursor: pointer;
 }
 
-input[type=range]:focus::-ms-fill-lower {
+.audio-plyer input[type=range]:focus::-ms-fill-lower {
     background: #3071a9;
 }
 
-input[type=range]:focus::-ms-fill-upper {
+.audio-plyer input[type=range]:focus::-ms-fill-upper {
     background: #367ebd;
 }
 

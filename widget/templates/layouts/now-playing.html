@@ -36,7 +36,7 @@
         <div class="slider margin-top-ten" style="margin-bottom: -80px;">
             <div class="playerMP">
                 <div ng-if="NowPlaying.currentTime">{{NowPlaying.currentTime | secondsToDateTime | date:'mm:ss'}}</div>
-                <div><input type="range" min="0" max="{{NowPlaying.duration}}"
+                <div class="audio-plyer"><input type="range" min="0" max="{{NowPlaying.duration}}"
                             ng-model="NowPlaying.currentTime"
                             ng-change="NowPlaying.changeTime(NowPlaying.currentTime)"
                             ng-style="NowPlaying.duration? {'visibility':'visible'}:{'visibility':'hidden'}"
@@ -60,14 +60,14 @@
             <span class="audio-player-icon icon icon-cog icon-sm" ng-click="NowPlaying.getSettings()"></span>
         </div>
         <a class="media-player-btns margin-top-ten">
-            <span class="audio-player-icon icon icon-shuffle icon-sm" ng-click="NowPlaying.shufflePlaylist()"></span>
+            <span ng-class="(NowPlaying.settings && NowPlaying.settings.shufflePlaylist) ? 'primaryTheme bold' : 'whiteTheme'" class="icon icon-shuffle icon-sm" ng-click="NowPlaying.shufflePlaylist()"></span>
             <span class="audio-player-icon icon icon-backward-circle " ng-click="NowPlaying.backward()"></span>
             <span ng-if="!NowPlaying.playing" class="audio-player-icon icon icon-play-circle icon-main "
                   ng-click="NowPlaying.playTrack()"></span>
             <span ng-if="NowPlaying.playing" class="audio-player-icon icon icon-pause-circle icon-main "
                   ng-click="NowPlaying.pauseTrack()"></span>
             <span class="audio-player-icon icon icon-forward-circle" ng-click="NowPlaying.forward()"></span>
-            <span class="audio-player-icon icon icon-repeat icon-sm" ng-click="NowPlaying.loopPlaylist()"></span>
+            <span ng-class="(NowPlaying.settings && NowPlaying.settings.loopPlaylist) ? 'primaryTheme bold' : 'whiteTheme'" class="icon icon-repeat icon-sm" ng-click="NowPlaying.loopPlaylist()"></span>
             <span class="icon icon-repeat-one icon-sm primaryTheme hidden"></span>
             <span class="icon icon-repeat icon-sm primaryTheme hidden"></span>
         </a>
