@@ -18,7 +18,8 @@ describe('WidgetMedia Controller', function () {
                 },
                 datastore: {
                     onUpdate: function () {
-                    }
+                    },
+                    disableRefresh:function(){}
                 },
                 actionItems: {execute: jasmine.createSpy()}
             };
