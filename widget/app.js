@@ -154,6 +154,7 @@
                     }
                 });
 
+
             buildfire.navigation.onBackButtonClick = function () {
                 var path = $location.path();
                 if (path.indexOf('/media') == 0) {
