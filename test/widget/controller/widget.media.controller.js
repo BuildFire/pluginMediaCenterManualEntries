@@ -19,7 +19,8 @@ describe('WidgetMedia Controller', function () {
                 datastore: {
                     onUpdate: function () {
                     },
-                    disableRefresh:function(){}
+                    onRefresh: function () {
+                    }
                 },
                 actionItems: {execute: jasmine.createSpy()}
             };
@@ -121,8 +122,8 @@ describe('WidgetMedia Controller', function () {
 
     describe('WidgetMedia.onPlayerReady', function () {
         it('should add make the API equal to the input', function () {
-            WidgetMedia.API= {};
-            WidgetMedia.onPlayerReady({a:1});
+            WidgetMedia.API = {};
+            WidgetMedia.onPlayerReady({a: 1});
 
             expect(WidgetMedia.API.a).toEqual(1);
         });
@@ -140,11 +141,11 @@ describe('WidgetMedia Controller', function () {
     });
 
     describe('WidgetMedia.sourceChanged', function () {
-        
+
         beforeEach(function () {
-            WidgetMedia.API = { stop:jasmine.createSpy()};
+            WidgetMedia.API = {stop: jasmine.createSpy()};
         });
-        
+
         it('should assign value to WidgetMedia.videoPlayerConfig.sources', function () {
             WidgetMedia.sourceChanged();
             expect(WidgetMedia.API.stop).toHaveBeenCalled();
