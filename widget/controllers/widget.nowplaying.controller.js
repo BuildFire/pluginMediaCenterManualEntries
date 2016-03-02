@@ -290,6 +290,11 @@
                     $rootScope.blackBackground = false;
                     NowPlaying.pause();
                 });
+
+                /**
+                 * Disable the pull down refresh
+                 */
+                Buildfire.datastore.disableRefresh();
             }
         ])
     ;

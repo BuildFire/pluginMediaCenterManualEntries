@@ -154,13 +154,6 @@
                     }
                 });
 
-            /**
-             * Implementation of pull down to refresh
-             */
-            buildfire.datastore.onRefresh(function(){
-                Location.goToHome();
-            });
-
 
             buildfire.navigation.onBackButtonClick = function () {
                 var path = $location.path();

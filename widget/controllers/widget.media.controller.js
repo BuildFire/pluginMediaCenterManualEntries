@@ -187,5 +187,10 @@
                     }
                 });
 
+                /**
+                 * Disable the pull down refresh
+                 */
+                Buildfire.datastore.disableRefresh();
+
             }]);
 })(window.angular, window);

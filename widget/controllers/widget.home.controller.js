@@ -258,5 +258,11 @@
                         );
                     }
                 });
+                /**
+                 * Implementation of pull down to refresh
+                 */
+                Buildfire.datastore.onRefresh(function(){
+                    Location.goToHome();
+                });
             }]);
 })(window.angular);
