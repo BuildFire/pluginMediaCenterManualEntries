@@ -7,10 +7,7 @@
                 $rootScope.showFeed = false;
                 var NowPlaying = this;
                 NowPlaying.swiped=[];
-                console.log('new item---------------------------------', media);
-                //NowPlaying.currentTrack = media && media.data;
                 NowPlaying.currentTrack = new Track(media.data);
-                console.log('New Track--------NowPlaying-----------', NowPlaying.currentTrack);
                 NowPlaying.item = media;
                 NowPlaying.playing = false;
                 NowPlaying.paused = false;
@@ -31,7 +28,6 @@
                 audioPlayer.settings.get(function (err, setting) {
                     NowPlaying.settings=setting;
                     NowPlaying.volume = setting.volume;
-                    console.log('settings------------------------------------------------------', setting);
                 });
 
                 NowPlaying.changeVolume = function (volume) {
@@ -52,7 +48,6 @@
                  * audioPlayer.onEvent callback calls when audioPlayer event fires.
                  */
                 audioPlayer.onEvent(function (e) {
-                    console.log('Audio Player On Event callback Method--------------------------------------', e);
                     switch (e.event) {
                         case 'timeUpdate':
                             NowPlaying.currentTime = e.data.currentTime;
@@ -72,7 +67,6 @@
                         case 'removeFromPlaylist':
                             Modals.removeTrackModal();
                             NowPlaying.playList = e.data && e.data.newPlaylist && e.data.newPlaylist.tracks;
-                            console.log('WidgetHome.playList---------------------in removeFromPlaylist---', NowPlaying.playList);
                             break;
 
                     }
@@ -83,7 +77,6 @@
                  * Player related method and variables
                  */
                 NowPlaying.playTrack = function () {
-                    console.log('Widget HOme url------current track details-------------------------', NowPlaying.currentTrack);
                     NowPlaying.playing = true;
                     if (NowPlaying.paused) {
                         audioPlayer.play();
@@ -92,7 +85,6 @@
                     }
                 };
                 NowPlaying.playlistPlay = function (track) {
-                    console.log('PlayList Play ---------------', track);
                     NowPlaying.playing = true;
                     if (track) {
                         audioPlayer.play({url: track.url});
@@ -127,17 +119,14 @@
                         audioPlayer.setTime(0);
                 };
                 NowPlaying.shufflePlaylist = function () {
-                    console.log('WidgetHome settings in shuffle---------------------', NowPlaying.settings);
                     if (NowPlaying.settings) {
                         NowPlaying.settings.shufflePlaylist = NowPlaying.settings.shufflePlaylist ? false : true;
                     }
                     audioPlayer.settings.set(NowPlaying.settings);
                 };
                 NowPlaying.changeVolume = function (volume) {
-                    console.log('Volume----------------------', volume);
                     //audioPlayer.setVolume(volume);
                     audioPlayer.settings.get(function (err, setting) {
-                        console.log('Settings------------------', setting);
                         if (setting) {
                             setting.volume = volume;
                             audioPlayer.settings.set(setting);
@@ -149,19 +138,16 @@
 
                 };
                 NowPlaying.loopPlaylist = function () {
-                    console.log('WidgetHome settings in Loop Playlist---------------------', NowPlaying.settings);
                     if (NowPlaying.settings) {
                         NowPlaying.settings.loopPlaylist = NowPlaying.settings.loopPlaylist ? false : true;
                     }
                     audioPlayer.settings.set(NowPlaying.settings);
                 };
                 NowPlaying.addToPlaylist = function (track) {
-                    console.log('AddToPlaylist called---------------------------------', track);
                     if (track)
                         audioPlayer.addToPlaylist(track);
                 };
                 NowPlaying.removeFromPlaylist = function (track) {
-                    console.log('removeFromPlaylist called---------------------------------',track);
                     if (NowPlaying.playList) {
                         NowPlaying.playList.filter(function (val, index) {
                             if (val.url == track.url)
@@ -169,17 +155,14 @@
                             return index;
 
                         });
-                        console.log('indexes------------track Index----------------------track==========', trackIndex);
                     }
                 };
                 NowPlaying.removeTrackFromPlayList = function (index) {
-                    console.log('Track removed from playlist -------------using index----', index);
                         audioPlayer.removeFromPlaylist(index);
 
                 };
                 NowPlaying.getFromPlaylist = function () {
                     audioPlayer.getPlaylist(function (err, data) {
-                        console.log('Callback---------getList--------------', err, data);
                         if (data && data.tracks) {
                             NowPlaying.playList = data.tracks;
                             $scope.$digest();
@@ -189,13 +172,11 @@
                     NowPlaying.openPlaylist = true;
                 };
                 NowPlaying.changeTime = function (time) {
-                    console.log('Change time method called---------------------------------', time);
                     audioPlayer.setTime(time);
                 };
                 NowPlaying.getSettings = function () {
                     NowPlaying.openSettings = true;
                     audioPlayer.settings.get(function (err, data) {
-                        console.log('Got player settings-----------------------', err, data);
                         if (data) {
                             NowPlaying.settings = data;
                             if (!$scope.$$phase) {
@@ -205,13 +186,10 @@
                     });
                 };
                 NowPlaying.setSettings = function (settings) {
-                    console.log('Set settings called----------------------', settings);
-                    console.log('WidgetHome-------------settings------', NowPlaying.settings);
                     var newSettings = new AudioSettings(settings);
                     audioPlayer.settings.set(newSettings);
                 };
                 NowPlaying.addEvents = function (e, i, toggle) {
-                    console.log('addEvent class-------------------calles', e, i, toggle);
                     toggle ? NowPlaying.swiped[i] = true : NowPlaying.swiped[i] = false;
                 };
                 NowPlaying.openMoreInfoOverlay = function () {
@@ -228,7 +206,6 @@
                 };
 
                 NowPlaying.addEvents = function (e, i, toggle) {
-                    console.log('addEvent class-------------------calles', e, i, toggle);
                     toggle ? NowPlaying.swiped[i] = true : NowPlaying.swiped[i] = false;
                 };
 
@@ -269,7 +246,6 @@
 
 
                 Buildfire.datastore.onUpdate(function (event) {
-                    console.log('Events-----------', event);
                     switch (event.tag) {
                         case COLLECTIONS.MediaContent:
                             if (event.data) {
@@ -290,7 +266,6 @@
                  * Implementation of pull down to refresh
                  */
                 var onRefresh=Buildfire.datastore.onRefresh(function(){
-                    console.log('onRefresh binded ------------------on unload of media controller---------');
                 });
 
                 /**

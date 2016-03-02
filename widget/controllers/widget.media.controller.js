@@ -34,12 +34,11 @@
                         data: data.data
                     };
                     $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
-                    console.log('Get Info---', data, 'data---');
                 }, function (err) {
                     WidgetMedia.media = {
                         data: {}
                     };
-                    console.log('Get Error---', err);
+                    console.error('Get Error---', err);
                 });
 
 
@@ -64,7 +63,6 @@
                 };
                 if (media) {
                     WidgetMedia.item = media;
-                    console.log('initial', WidgetMedia.item);
                     WidgetMedia.changeVideoSrc();
                     WidgetMedia.iframeSrcUrl = $sce.trustAsUrl(WidgetMedia.item.data.srcUrl);
                 }
@@ -118,12 +116,10 @@
                     }
                 });
                 WidgetMedia.onUpdateFn = Buildfire.datastore.onUpdate(function (event) {
-                    console.log('update called');
                     switch (event.tag) {
                         case COLLECTIONS.MediaContent:
                             if (event.data) {
                                 WidgetMedia.item = event;
-                                console.log('change', WidgetMedia.item);
                                 $scope.$digest();
                             }
                             break;
@@ -191,7 +187,6 @@
                  * Implementation of pull down to refresh
                  */
                 var onRefresh=Buildfire.datastore.onRefresh(function(){
-                    console.log('onRefresh binded ------------------on unload of media controller---------');
                 });
 
                 /**
