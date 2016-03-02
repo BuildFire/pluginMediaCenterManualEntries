@@ -3,6 +3,7 @@
         .module('mediaCenterWidget')
         .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders',
             function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders) {
+                console.log('Controller loaded home-----------------------------------------------------');
                 $rootScope.showFeed = true;
                 var WidgetHome = this;
                 var _infoData = {
@@ -261,8 +262,10 @@
                 /**
                  * Implementation of pull down to refresh
                  */
-                Buildfire.datastore.onRefresh(function(){
+                var onRefresh=Buildfire.datastore.onRefresh(function(){
                     Location.goToHome();
                 });
+
+
             }]);
 })(window.angular);

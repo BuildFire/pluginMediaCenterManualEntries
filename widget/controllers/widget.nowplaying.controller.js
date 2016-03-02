@@ -1,8 +1,8 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', '$timeout',
-            function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS, $rootScope, $timeout) {
+        .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', '$timeout','Location',
+            function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS, $rootScope, $timeout,Location) {
                 $rootScope.blackBackground = true;
                 $rootScope.showFeed = false;
                 var NowPlaying = this;
@@ -286,15 +286,23 @@
                     }
                 });
 
-                $scope.$on('$destroy', function () {
-                    $rootScope.blackBackground = false;
-                    NowPlaying.pause();
+                /**
+                 * Implementation of pull down to refresh
+                 */
+                var onRefresh=Buildfire.datastore.onRefresh(function(){
+                    console.log('onRefresh binded ------------------on unload of media controller---------');
                 });
 
                 /**
-                 * Disable the pull down refresh
+                 * Unbind the onRefresh
                  */
-                Buildfire.datastore.disableRefresh();
+                $scope.$on('$destroy', function () {
+                    $rootScope.blackBackground = false;
+                    onRefresh.clear();
+                    Buildfire.datastore.onRefresh(function(){
+                        Location.goToHome();
+                    });
+                });
             }
         ])
     ;

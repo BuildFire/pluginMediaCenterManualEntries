@@ -1,8 +1,8 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'PATHS', '$rootScope',
-            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, PATHS, $rootScope) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'PATHS', '$rootScope','Location',
+            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, PATHS, $rootScope,Location) {
 
                 var WidgetMedia = this;
                 WidgetMedia.API = null;
@@ -188,9 +188,21 @@
                 });
 
                 /**
-                 * Disable the pull down refresh
+                 * Implementation of pull down to refresh
                  */
-                Buildfire.datastore.disableRefresh();
+                var onRefresh=Buildfire.datastore.onRefresh(function(){
+                    console.log('onRefresh binded ------------------on unload of media controller---------');
+                });
+
+                /**
+                 * Unbind the onRefresh
+                 */
+                $scope.$on('$destroy', function () {
+                    onRefresh.clear();
+                    Buildfire.datastore.onRefresh(function(){
+                        Location.goToHome();
+                    });
+                });
 
             }]);
 })(window.angular, window);
