@@ -278,6 +278,13 @@
                         Location.goToHome();
                     });
                 });
+
+                /**
+                 * Auto play the track
+                 */
+                $timeout(function () {
+                 NowPlaying.playTrack();
+                 }, 1000);
             }
         ])
     ;
