@@ -81,6 +81,15 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
                     callback('Error', null);
                 }
             });
+            this.history = {
+                push: function (label, id) {
+                },
+                onPop: function (data) {
+                },
+                pop: function () {
+
+                }
+            };
             this.components = {
                 images: {
                     thumbnail: function () {

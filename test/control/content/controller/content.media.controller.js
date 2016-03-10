@@ -4,7 +4,7 @@ describe('Unit : Controller - ContentMediaCtrl', function () {
     beforeEach(module('mediaCenterContent'));
 
     var
-        ContentMedia, $rootScope, scope, $timeout,Location, $window, Buildfire, DB, COLLECTIONS, AppConfig, Messaging, EVENTS, PATHS;
+        ContentMedia, $rootScope, scope, $timeout, Location, $window, Buildfire, DB, COLLECTIONS, AppConfig, Messaging, EVENTS, PATHS;
     beforeEach(module('mediaCenterContent', function ($provide) {
         $provide.service('Buildfire', function () {
             this.imageLib = jasmine.createSpyObj('imageLib', ['showDialog']);
@@ -81,6 +81,15 @@ describe('Unit : Controller - ContentMediaCtrl', function () {
                 scrollTop: function () {
                 }
             };
+            this.history = {
+                push: function (label, id) {
+                },
+                onPop: function (data) {
+                },
+                pop: function () {
+
+                }
+            };
             this.components.actionItems = jasmine.createSpyObj('Buildfire.components.actionItems', ['sortableList', '', '']);
             this.components.actionItems.sortableList.and.callFake(function () {
                 return {
@@ -88,7 +97,8 @@ describe('Unit : Controller - ContentMediaCtrl', function () {
                         console.log("actionItems.sor" +
                             "tableList hasbeen called");
                         return {
-                            'loadItems':function (items) {}
+                            'loadItems': function (items) {
+                            }
                         };
                     }
                 };
@@ -96,9 +106,9 @@ describe('Unit : Controller - ContentMediaCtrl', function () {
         });
     }));
 
-    beforeEach(inject(function ($controller, _$rootScope_,_$timeout_, _Location_, _$window_, _Buildfire_, _DB_, _COLLECTIONS_, _AppConfig_, _Messaging_, _EVENTS_, _PATHS_) {
+    beforeEach(inject(function ($controller, _$rootScope_, _$timeout_, _Location_, _$window_, _Buildfire_, _DB_, _COLLECTIONS_, _AppConfig_, _Messaging_, _EVENTS_, _PATHS_) {
             scope = _$rootScope_.$new();
-            $timeout=_$timeout_;
+            $timeout = _$timeout_;
             $rootScope = _$rootScope_;
             DB = _DB_;
             COLLECTIONS = _COLLECTIONS_;
@@ -121,7 +131,7 @@ describe('Unit : Controller - ContentMediaCtrl', function () {
                 PATHS: PATHS,
                 AppConfig: AppConfig,
                 Buildfire: Buildfire,
-                $timeout:$timeout
+                $timeout: $timeout
             });
         })
     )
@@ -324,6 +334,15 @@ describe('Unit : Controller - ContentMediaCtrl Null case', function () {
                     callback('Error', null);
                 }
             });
+            this.history = {
+                push: function (label, id) {
+                },
+                onPop: function (data) {
+                },
+                pop: function () {
+                    
+                }
+            };
             this.datastore.update.and.callFake(function (_tagName, id, data, callback) {
                 if (_tagName) {
                     callback(null, {
@@ -371,12 +390,12 @@ describe('Unit : Controller - ContentMediaCtrl Null case', function () {
 
                     }
                 },
-                actionItems:{
+                actionItems: {
                     sortableList: function (id) {
                         console.log("actionItems.sor" +
                             "tableList hasbeen called????????????????????????????????????????");
                         return {
-                            'loadItems':function (items) {
+                            'loadItems': function (items) {
                                 console.log('Items----------------*************************************----in LinkEditor');
                             }
                         };
@@ -388,19 +407,19 @@ describe('Unit : Controller - ContentMediaCtrl Null case', function () {
                 }
             };
             /*this.components.actionItems = jasmine.createSpyObj('Buildfire.components.actionItems', ['sortableList', '', '']);
-            this.components.actionItems.sortableList.and.callFake(function () {
-                return {
-                    sortableList: function (id) {
-                        console.log("actionItems.sor" +
-                            "tableList hasbeen called????????????????????????????????????????");
-                        return {
-                            'loadItems':function (items) {
-                                console.log('Items----------------*************************************----in LinkEditor');
-                            }
-                        };
-                    }
-                };
-            });*/
+             this.components.actionItems.sortableList.and.callFake(function () {
+             return {
+             sortableList: function (id) {
+             console.log("actionItems.sor" +
+             "tableList hasbeen called????????????????????????????????????????");
+             return {
+             'loadItems':function (items) {
+             console.log('Items----------------*************************************----in LinkEditor');
+             }
+             };
+             }
+             };
+             });*/
         });
     }));
 
