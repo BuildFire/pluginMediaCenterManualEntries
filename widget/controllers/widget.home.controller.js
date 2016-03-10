@@ -109,7 +109,7 @@
                                         break;
                                 }
                                 Location.go(url);
-                                if (id) {
+                                if (path==PATHS.MEDIA) {
                                     $rootScope.showFeed = false;
                                 }
                                 else {

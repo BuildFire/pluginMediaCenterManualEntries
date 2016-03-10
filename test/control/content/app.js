@@ -26,6 +26,15 @@ describe('mediaCenterContent', function () {
                     callback('Error', null);
                 }
             });
+            this.history = {
+                push: function (label, id) {
+                },
+                onPop: function (data) {
+                },
+                pop: function () {
+
+                }
+            };
             this.datastore.getById.and.callFake(function (_tagName, id, callback) {
                 if (_tagName) {
                     callback(null, {
@@ -116,6 +125,15 @@ describe('mediaCenterContent', function () {
             this.datastore.getById.and.callFake(function (_tagName, id, callback) {
                     callback(null, {data:{}});
             });
+            this.history = {
+                push: function (label, id) {
+                },
+                onPop: function (data) {
+                },
+                pop: function () {
+
+                }
+            };
         });
     }));
     beforeEach(inject(
