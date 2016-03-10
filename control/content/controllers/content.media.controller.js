@@ -10,7 +10,20 @@
      */
         .controller('ContentMediaCtrl', ['$scope', '$window', 'Buildfire', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig', 'Orders',
             function ($scope, $window, Buildfire, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig, Orders) {
-                Buildfire.history.push('Media', {id: 'itemId'});
+                /**
+                 * Breadcrumbs  related implementation
+                 */
+                Buildfire.history.get({},function(err,data){
+                    console.log('Get Buildfire.history.get- In media-------------------------------',data,err,data[data.length-1]);
+                    if(data && data.length && data.length>1){
+                        if(data[data.length-1].label!='Media')
+                            Buildfire.history.push('Media', {id: 'itemId'});
+                    }
+                    else{
+                        Buildfire.history.push('Media', {id: 'itemId'});
+
+                    }
+                });
                 //scroll current view to top when loaded.
                 Buildfire.navigation.scrollTop();
                 /**
@@ -320,6 +333,8 @@
                  * done will close the single item view
                  */
                 ContentMedia.done = function () {
+                    console.log('Done called------------------------------------------------------------------------');
+                    Buildfire.history.pop();
                     Location.goToHome();
                 };
                 /**
@@ -342,12 +357,5 @@
                 $scope.$watch(function () {
                     return ContentMedia.item;
                 }, updateItemsWithDelay, true);
-
-                /**
-                 * Pop the Label
-                 */
-                $scope.$on('$destroy', function () {
-                    Buildfire.history.pop();
-                });
             }]);
 })(window.angular, window.tinymce);

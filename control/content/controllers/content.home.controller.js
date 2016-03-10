@@ -9,7 +9,7 @@
                  */
                 Buildfire.history.get({},function(err,data){
                     console.log('Get Buildfire.history.get--------------------------------',data,err);
-                    if(data && data.length){
+                    if(data && data.length && data.length>1){
                         if(!data[data.length-1].label=='Home')
                             Buildfire.history.push('Home',{id:'home'});
                     }

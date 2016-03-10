@@ -141,6 +141,7 @@
                                     }
                                     break;
                                 case PATHS.HOME:
+                                    Buildfire.history.pop();
                                     url = url + "home";
                                     break;
                                 default :
