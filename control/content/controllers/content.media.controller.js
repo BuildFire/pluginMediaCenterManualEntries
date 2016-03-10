@@ -13,17 +13,7 @@
                 /**
                  * Breadcrumbs  related implementation
                  */
-                Buildfire.history.get({},function(err,data){
-                    console.log('Get Buildfire.history.get- In media-------------------------------',data,err,data[data.length-1]);
-                    if(data && data.length && data.length>1){
-                        if(data[data.length-1].label!='Media')
-                            Buildfire.history.push('Media', {id: 'itemId'});
-                    }
-                    else{
-                        Buildfire.history.push('Media', {id: 'itemId'});
-
-                    }
-                });
+                Buildfire.history.push('Media', {id: 'itemId'});
                 //scroll current view to top when loaded.
                 Buildfire.navigation.scrollTop();
                 /**
