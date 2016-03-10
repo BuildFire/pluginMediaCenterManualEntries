@@ -124,7 +124,7 @@
             $httpProvider.interceptors.push(interceptor);
 
         }])
-        .run(['Location', 'Messaging', 'EVENTS', 'PATHS', function (Location, Messaging, EVENTS, PATHS) {
+        .run(['Location', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', function (Location, Messaging, EVENTS, PATHS, Buildfire) {
             // Handler to receive message from widget
             Messaging.onReceivedMessage = function (event) {
                 if (event) {
@@ -151,6 +151,11 @@
                     }
                 }
             };
+            Buildfire.history.onPop(function(data,err){
+                if(data && data.label=='Home')
+                Location.goToHome();
+                console.log('Buildfire.history.onPop called--------------------------------------------',data,err);
+            });
         }]);
 })
 (window.angular, window.buildfire);
