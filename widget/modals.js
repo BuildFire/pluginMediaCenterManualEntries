@@ -87,6 +87,15 @@
                         confmDeferred.reject(err);
                     });
                     return confmDeferred.promise;
+                },
+                removeTrackModal: function () {
+                    $modal
+                        .open({
+                            templateUrl: 'templates/modals/remove-track-modal.html',
+                            controller: 'RemoveTrackModalPopupCtrl',
+                            controllerAs: 'RemoveTrackPopup',
+                            size: 'sm'
+                        });
                 }
             };
         }])
@@ -141,6 +150,13 @@
             };
             ConfmModal.cancel = function () {
                 $modalInstance.dismiss('no');
+            };
+        }])
+        .controller('RemoveTrackModalPopupCtrl', ['$scope', '$modalInstance', function ($scope, $modalInstance) {
+            console.log('RemoveTrackModalPopupCtrl Controller called-----');
+            var RemoveTrackPopup = this;
+            RemoveTrackPopup.ok = function () {
+                $modalInstance.close();
             };
         }])
     ;

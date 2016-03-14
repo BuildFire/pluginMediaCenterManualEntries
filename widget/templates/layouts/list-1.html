@@ -1,6 +1,6 @@
 <div class="holder padding-zero">
     <div class="media-center-plugin layout1 text-overlay">
-        <div class="plugin-banner clearfix border-bottom-grey">
+        <div class="plugin-banner clearfix">
             <div id="carousel" build-fire-carousel=""></div>
         </div>
         <div class="text-left padded padding-bottom-zero clearfix text-overlay" >
@@ -20,7 +20,7 @@
                         <div class="list-item-media text-center border-radius-three overflow-hidden text-overlay">
                             <div play-btn="{{item.data.videoUrl.length > 0}}" class="list-media-holder text-overlay">
                                 <img ng-if="item.data.topImage" ng-src="{{item.data.topImage | cropImage:240:135}}">
-                                <img ng-if="!item.data.topImage" src="assets/images/placeholder16x9.png">
+                                <img ng-if="!item.data.topImage" src="assets/.images/placeholder16x9.png">
                             </div>
                         </div>
                         <div class="list-item-copy text-left">

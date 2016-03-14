@@ -1,5 +1,5 @@
 /**
- * Create self executing funton to avoid global scope creation
+ * Create self executing function to avoid global scope creation
  */
 (function (angular, tinymce) {
     'use strict';
@@ -8,8 +8,12 @@
     /**
      * Inject dependency
      */
-        .controller('ContentMediaCtrl', ['$scope', '$window', 'Buildfire', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig',
-            function ($scope, $window, Buildfire, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig) {
+        .controller('ContentMediaCtrl', ['$scope', '$window', 'Buildfire', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig', 'Orders',
+            function ($scope, $window, Buildfire, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig, Orders) {
+                /**
+                 * Breadcrumbs  related implementation
+                 */
+                Buildfire.history.push('Media', {id: 'itemId'});
                 //scroll current view to top when loaded.
                 Buildfire.navigation.scrollTop();
                 /**
@@ -227,9 +231,9 @@
                  */
                 function updateItemsWithDelay(item) {
                     if (updating) {
-                    console.log(' came but updating is going on');
-                    return;
-                }
+                        console.log(' came but updating is going on');
+                        return;
+                    }
                     if (tmrDelayForMedia) {
                         clearTimeout(tmrDelayForMedia);
                     }
@@ -319,6 +323,8 @@
                  * done will close the single item view
                  */
                 ContentMedia.done = function () {
+                    console.log('Done called------------------------------------------------------------------------');
+                    Buildfire.history.pop();
                     Location.goToHome();
                 };
                 /**

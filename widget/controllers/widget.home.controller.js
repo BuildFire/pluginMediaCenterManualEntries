@@ -109,7 +109,7 @@
                                         break;
                                 }
                                 Location.go(url);
-                                if (id) {
+                                if (path==PATHS.MEDIA) {
                                     $rootScope.showFeed = false;
                                 }
                                 else {
@@ -167,7 +167,7 @@
 
                 // ShowDescription only when it have content
                 WidgetHome.showDescription = function () {
-                    if (WidgetHome.media.data.content.descriptionHTML == '<p>&nbsp;<br></p>' || WidgetHome.media.data.content.descriptionHTML == '<p><br data-mce-bogus="1"></p>')
+                    if (WidgetHome.media.data.content.descriptionHTML == '<p>&nbsp;<br></p>' || WidgetHome.media.data.content.descriptionHTML == '<p><br data-mce-bogus="1"></p>'|| WidgetHome.media.data.content.descriptionHTML == '')
                         return false;
                     else
                         return true;
@@ -258,5 +258,13 @@
                         );
                     }
                 });
+                /**
+                 * Implementation of pull down to refresh
+                 */
+                var onRefresh=Buildfire.datastore.onRefresh(function(){
+                    Location.goToHome();
+                });
+
+
             }]);
 })(window.angular);

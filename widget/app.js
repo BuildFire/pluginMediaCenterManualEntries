@@ -16,7 +16,8 @@
             //"info.vietnamcode.nampnq.videogular.plugins.youtube",
             "com.2fdevs.videogular.plugins.controls",
             "com.2fdevs.videogular.plugins.overlayplay",
-            "videosharing-embed"
+            "videosharing-embed",
+            "ngTouch"
         ])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component
@@ -153,32 +154,27 @@
                     }
                 });
 
+
             buildfire.navigation.onBackButtonClick = function () {
                 var path = $location.path();
                 if (path.indexOf('/media') == 0) {
 
                     if ($("#feedView").hasClass('notshowing')) {
-
-                        if ($("iframe.player").hasClass('playing')) {
-                            $( 'iframe.player' ).attr( 'src', function ( i, val ) { return val; });
-                        }
-                        else{
-
                         Messaging.sendMessageToControl({
                             name: EVENTS.ROUTE_CHANGE,
                             message: {
                                 path: PATHS.HOME
                             }
                         });
-                        $("#showFeedBtn").click();}
+                        $("#showFeedBtn").click();
                     }
                     else
-                        buildfire.navigation.navigateHome();
+                        buildfire.navigation._goBackOne();
                 }
                 else if (path.indexOf('/nowplaying') == 0)
                     Location.go('#/media/' + path.split('/')[2]);
                 else
-                    buildfire.navigation.navigateHome();
+                    buildfire.navigation._goBackOne();
             }
         }]);
 

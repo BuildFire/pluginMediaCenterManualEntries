@@ -1,6 +1,6 @@
 <div class="holder now-playing text-center audio-player">
     <!--// need to refactor this.-->
-    <div ng-style="{'background':'url(' + (NowPlaying.item.data.image? NowPlaying.item.data.image : 'http://s3-us-west-2.amazonaws.com/pluginserver.prod/plugins/d575ea0d-ba73-4edd-9c3d-37e49e44ac4f/widget/assets/images/now-playing.png') + ') no-repeat center center' ,
+    <div ng-style="{'background':'url(' + (NowPlaying.currentTrack.image? (NowPlaying.currentTrack.image | cropImage : deviceWidth : deviceHeight) : 'assets/.images/now-playing.png') + ') no-repeat center center' ,
           '-o-filter': 'blur(10px) brightness(0.2)',
     '-moz-filter': 'blur(10px) brightness(0.2)',
     '-webkit-filter': 'blur(10px) brightness(0.2)',
@@ -18,30 +18,29 @@
          }"></div>
     <div class="media-center-plugin">
         <div class="media-header-link">
-            <!--<a ng-click="NowPlaying.add(NowPlaying.item.data.audioTitle,NowPlaying.item.data.audioUrl,NowPlaying.item.data.image,NowPlaying.item.data.artists)">Add
-                to Playlist</a>-->
-            Now Playing
+            <a ng-click="NowPlaying.getFromPlaylist()">Playlist</a>
         </div>
         <div class="media-holder margin-top-fifteen">
             <div class="media-inner text-center">
-                <img ng-if="NowPlaying.item.data.image" class="border-radius-two"
-                     ng-src="{{NowPlaying.item.data.image | cropImage: 260 :260 }}" height="260px" width="260">
-                <img ng-if="!NowPlaying.item.data.image" class="border-radius-two"
-                     src="assets/images/now-playing.png" height="260px" width="260">
+                <img ng-if="NowPlaying.currentTrack.image" class="border-radius-two"
+                     ng-src="{{NowPlaying.currentTrack.image | cropImage: 260 :260 }}" height="260px" width="260">
+                <img ng-if="!NowPlaying.currentTrack.image" class="border-radius-two"
+                     src="assets/.images/now-playing.png" height="260px" width="260">
             </div>
         </div>
         <div class="media-player-info margin-top-fifteen">
-            <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.item.data.audioTitle}}</h4>
+            <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title}}</h4>
 
-            <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.item.data.artists}}</p>
+            <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.artist}}</p>
         </div>
-        <div class="slider margin-top-ten" style="margin-bottom: -70px;">
+        <div class="slider margin-top-ten" style="margin-bottom: -80px;">
             <div class="playerMP">
                 <div ng-if="NowPlaying.currentTime">{{NowPlaying.currentTime | secondsToDateTime | date:'mm:ss'}}</div>
-                <div><input type="range" min="0" max="{{NowPlaying.duration}}"
+                <div class="audio-plyer"><input type="range" min="0" max="{{NowPlaying.duration}}"
                             ng-model="NowPlaying.currentTime"
                             ng-change="NowPlaying.changeTime(NowPlaying.currentTime)"
-                            ng-style="NowPlaying.duration? {'visibility':'visible'}:{'visibility':'hidden'}"/></div>
+                            ng-style="NowPlaying.duration? {'visibility':'visible'}:{'visibility':'hidden'}"
+                            class="whiteBackgroundTheme" style="height:2px; border-radius:4px;"/></div>
                 <div ng-if="NowPlaying.duration">{{NowPlaying.duration | secondsToDateTime | date:'mm:ss'}}</div>
             </div>
         </div>
@@ -49,72 +48,179 @@
             <span class="icon icon-dots"></span>
         </div>
         <div class="media-player-action-btns margin-top-ten">
-            &nbsp;<input class=""
+            &nbsp;<input class="whiteBackgroundTheme"
                          ng-style="NowPlaying.showVolume? {'visibility':'visible'}:{'visibility':'hidden'}" type="range"
                          min="0" max="1" step="0.1" ng-model="NowPlaying.volume"
                          ng-change="NowPlaying.changeVolume(NowPlaying.volume)"
-                         style="width:70%;visibility: visible;margin-top:40px;margin-left:46px"/>
-
-            <span class="audio-player-icon icon icon-volume-high icon-sm"
-                  ng-click="NowPlaying.showVolume=!NowPlaying.showVolume"></span>
-            <span class="audio-player-icon icon icon-ellipsis icon-sm" ng-click="NowPlaying.openMoreInfoPopup()"></span>
-            <!--<span class="icon icon-cog icon-sm" ng-click="NowPlaying.openSettingsPopup()"></span>-->
+                         style="width:120px; height:7px; border-radius:4px; position:relative; top:-54px; visibility: visible;margin-top:40px;margin-left:43px; transform:rotate(-90deg);"/>
+            <!--<span class="audio-player-icon icon icon-volume-high icon-sm"
+                  ng-click="NowPlaying.showVolume=!NowPlaying.showVolume"></span>-->
+            <span class="audio-player-icon icon icon-ellipsis icon-sm"
+                  ng-click="NowPlaying.openMoreInfoOverlay()"></span>
+            <span class="audio-player-icon icon icon-cog icon-sm" ng-click="NowPlaying.getSettings()"></span>
         </div>
         <a class="media-player-btns margin-top-ten">
-            <!--<span class="icon icon-shuffle icon-sm" ng-click="NowPlaying.shuffle()"></span>-->
+            <span ng-class="(NowPlaying.settings && NowPlaying.settings.shufflePlaylist) ? 'primaryTheme bold' : 'whiteTheme'" class="icon icon-shuffle icon-sm" ng-click="NowPlaying.shufflePlaylist()"></span>
             <span class="audio-player-icon icon icon-backward-circle " ng-click="NowPlaying.backward()"></span>
             <span ng-if="!NowPlaying.playing" class="audio-player-icon icon icon-play-circle icon-main "
-                  ng-click="NowPlaying.playAudio()"></span>
+                  ng-click="NowPlaying.playTrack()"></span>
             <span ng-if="NowPlaying.playing" class="audio-player-icon icon icon-pause-circle icon-main "
-                  ng-click="NowPlaying.pause()"></span>
+                  ng-click="NowPlaying.pauseTrack()"></span>
             <span class="audio-player-icon icon icon-forward-circle" ng-click="NowPlaying.forward()"></span>
-            <!--<span class="icon icon-repeat icon-sm" ng-click="NowPlaying.repeatTrack()"></span>-->
+            <span ng-class="(NowPlaying.settings && NowPlaying.settings.loopPlaylist) ? 'primaryTheme bold' : 'whiteTheme'" class="icon icon-repeat icon-sm" ng-click="NowPlaying.loopPlaylist()"></span>
             <span class="icon icon-repeat-one icon-sm primaryTheme hidden"></span>
             <span class="icon icon-repeat icon-sm primaryTheme hidden"></span>
         </a>
     </div>
-    <div ng-if="NowPlaying.showMoreInfo" class="overlay"
+    <!-- Playlist Overlay -->
+    <div ng-if="NowPlaying.openPlaylist" class="overlay"
          style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8);">
-        <div class="overlay-content" style="postiion:absolute; top:0; left:0; height:110%; width: 100%; overflow:auto;">
+        <div class="overlay-content"
+             style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
+            <div class="media-player-list-layout layout3">
+                <div class="list-layout has-btns">
+                    <div class="list-item overflow-hidden"
+                         ng-swipe-right="NowPlaying.addEvents($event, $index, false)"
+                         ng-swipe-left="NowPlaying.addEvents($event, $index, true)"
+                         ng-repeat="track in NowPlaying.playList">
+                        <div class="list-item-media text-left" ng-class="{'edit' : NowPlaying.swiped[$index]}">
+                            <div class="list-media-holder square-icon pull-left">
+                                <img ng-if="track.image" ng-src="{{track.image | cropImage : 55 :22}}">
+                            </div>
+                            <div class="list-item-copy text-left padding-left-ten padding-right-ten">
+                                <p class="margin-bottom-zero ellipsis margin-top-twenty">{{track.title}}</p>
+                            </div>
+                            <div class="btns text-center">
+                                <a ng-if="!track.playing" class="icon icon-play-circle"
+                                   ng-click="NowPlaying.playlistPlay(track)"></a>
+                                <a ng-if="track.playing" class="icon icon-pause-circle primaryTheme"
+                                   ng-click="NowPlaying.playlistPause(track)"></a>
+                            </div>
+                            <div class="remove-btn text-center dangerBackgroundTheme" style="background:red;"
+                                 ng-click="NowPlaying.removeTrackFromPlayList($index)">
+                                <span>Remove</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a ng-click="NowPlaying.closePlayListOverlay()">Done</a>
+        </div>
+    </div>
+
+    <!-- More Info Overlay -->
+    <div ng-if="NowPlaying.openMoreInfo" class="overlay"
+         style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8);">
+        <div class="overlay-content"
+             style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
             <div class="media-player-more-info">
                 <div class="media-holder margin-top-thirty">
                     <div class="media-inner text-center">
-                        <img ng-if="!NowPlaying.item.data.image" class="border-radius-two"
+                        <img ng-if="!NowPlaying.currentTrack.image" class="border-radius-two"
                              src="http://s3-us-west-2.amazonaws.com/pluginserver.prod/plugins/d575ea0d-ba73-4edd-9c3d-37e49e44ac4f/widget/assets/images/now-playing.png">
-                        <img ng-if="NowPlaying.item.data.image" class="border-radius-two"
-                             ng-src="{{NowPlaying.item.data.image | cropImage :140:140}}">
+                        <img ng-if="NowPlaying.currentTrack.image" class="border-radius-two"
+                             ng-src="{{NowPlaying.currentTrack.image | cropImage :140:140}}">
                     </div>
                 </div>
                 <hr class="none">
-                <div class="media-player-info margin-top-twenty">
+                <div class="media-player-info margin-top-fifteen">
                     <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.item.data.audioTitle}}</h4>
 
-                    <h5 class="margin-zero ellipsis whiteTheme">{{NowPlaying.item.data.artists}}</h5>
+                    <h5 class="margin-top-five margin-bottom-zero ellipsis whiteTheme">
+                        {{NowPlaying.item.data.artists}}</h5>
+
+                    <div class="media-player-info margin-top-twenty">
+                        <h4 class="margin-zero ellipsis">{{NowPlaying.currentTrack.title}}</h4>
+
+                        <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.artist}}</p>
+                    </div>
+                    <div class="more-info-list padded">
+                        <div class="text-center item">
+                            <a ng-click="NowPlaying.getFromPlaylist()">Go to Playlist</a>
+                        </div>
+                        <div class="text-center item">
+                            <a ng-click="NowPlaying.addToPlaylist(NowPlaying.currentTrack)">Add to Playlist</a>
+                        </div>
+                        <div class="text-center item">
+                            <a ng-click="NowPlaying.removeFromPlaylist(NowPlaying.currentTrack)">Remove from
+                                Playlist</a>
+                        </div>
+                        <!--<div class="text-center item">
+                            <a>Purchase</a>
+                        </div>
+                        <div class="text-center item">
+                            <a>Share</a>
+                        </div>-->
+                        <div class="text-center item">
+                            <a ng-click="NowPlaying.closeMoreInfoOverlay()">Cancel</a>
+                        </div>
+                    </div>
                 </div>
-                <hr class="none">
-                <div class="more-info-list padded">
-                    <div class="text-center item">
-                        <a class="whiteTheme">Go to Playlist</a>
-                    </div>
-                    <div class="text-center item">
-                        <a class="whiteTheme">Add to Playlist</a>
-                    </div>
-                    <div class="text-center item">
-                        <a class="whiteTheme">Remove from Playlist</a>
-                    </div>
-                    <div class="text-center item">
-                        <a class="whiteTheme">Purchase</a>
-                    </div>
-                    <div class="text-center item">
-                        <a class="whiteTheme">Share</a>
-                    </div>
-                    <div class="text-center item">
-                        <a ng-click="NowPlaying.hideMoreInfo()" class="whiteTheme">Cancel</a>
-                    </div>
-                </div>
-                <hr class="none">
             </div>
         </div>
     </div>
-</div>
-</div>
+
+    <!-- Settings Overlay -->
+    <div ng-if="NowPlaying.openSettings" class="overlay"
+         style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8);">
+        <div class="overlay-content"
+             style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
+            <div class="media-player-settings">
+                <div class="settings-list padded padding-top-zero">
+                    <div class="item clearfix row">
+                        <div class="col-md-10 pull-left text-left">
+                            <span class="whiteTheme">Automatically play next track</span>
+                        </div>
+                        <div class="col-md-2 pull-right text-right">
+                            <div class="checkbox checkbox-primary checked no-label margin-zero">
+                                <input type="checkbox" id="playnext"
+                                       ng-model="NowPlaying.settings.autoPlayNext"
+                                       ng-change="NowPlaying.setSettings(NowPlaying.settings)">
+                                <label for="playnext"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item clearfix row">
+                        <div class="col-md-10 pull-left text-left">
+                            <span class="whiteTheme">Loop playlist</span>
+                        </div>
+                        <div class="col-md-2 pull-right text-right">
+                            <div class="checkbox checkbox-primary checked no-label margin-zero">
+                                <input type="checkbox" id="loop" ng-model="NowPlaying.settings.loopPlaylist"
+                                       ng-change="NowPlaying.setSettings(NowPlaying.settings)">
+                                <label for="loop"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item clearfix row">
+                        <div class="col-md-10 pull-left text-left">
+                            <span class="whiteTheme">Auto Jump To LastPosition</span>
+                        </div>
+                        <div class="col-md-2 pull-right text-right">
+                            <div class="checkbox checkbox-primary checked no-label margin-zero">
+                                <input type="checkbox" id="repeat"
+                                       ng-model="NowPlaying.settings.autoJumpToLastPosition"
+                                       ng-change="NowPlaying.setSettings(NowPlaying.settings)">
+                                <label for="repeat"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item clearfix row">
+                        <div class="col-md-10 pull-left text-left">
+                            <span class="whiteTheme">Shuffle Playlist</span>
+                        </div>
+                        <div class="col-md-2 pull-right text-right">
+                            <div class="checkbox checkbox-primary checked no-label margin-zero">
+                                <input type="checkbox" id="playfromLast"
+                                       ng-model="NowPlaying.settings.shufflePlaylist"
+                                       ng-change="NowPlaying.setSettings(NowPlaying.settings)">
+                                <label for="playfromLast"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a ng-click="NowPlaying.closeSettingsOverlay()">Done</a>
+        </div>
+    </div>
+    </div>

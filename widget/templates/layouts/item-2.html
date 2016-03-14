@@ -1,7 +1,7 @@
 <div class="holder padding-zero text-overlay">
     <div class="media-center-plugin layout2">
-        <div class="people-banner border-bottom-grey">
-            <div class="people-bg padding-top-fifteen padding-bottom-fifteen clearfix">
+        <div class="people-banner">
+            <div class="people-bg clearfix">
                 <div class="people-holder clearfix">
                     <div class="people-media text-center">
                        <img data-ng-hide="WidgetMedia.showVideo"
@@ -10,13 +10,14 @@
                         <div ng-include="'templates/layouts/video-player.html'"></div>
                     </div>
                     <div class="people-info text-center col-md-12">
-                        <h5 class="ellipsis margin-top-fifteen">{{WidgetMedia.item.data.title}}</h5>
+                        <h5 class="ellipsis margin-top-fifteen" style="font-size: 16px;">{{WidgetMedia.item.data.title}}</h5>
                         <h5 class="margin-bottom-zero">{{WidgetMedia.item.data.summary}}</h5>
                     </div>
                 </div>
             </div>
         </div>
         <div class="padded">
+			<hr class="small margin-top-zero">
             <div class="link-list">
                 <a class="text-primary" ng-if="WidgetMedia.item.data.audioUrl"
                    href="#/nowplaying/{{WidgetMedia.item.id}}">Listen</a>
