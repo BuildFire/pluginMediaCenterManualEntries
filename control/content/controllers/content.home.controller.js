@@ -23,7 +23,7 @@
                     data: {
                         content: {
                             images: [],
-                            descriptionHTML: '<p>&nbsp;<br></p>',
+                            descriptionHTML: '',
                             description: '',
                             sortBy: Orders.ordersMap.Newest,
                             rankOfLastItem: 0
