@@ -11,7 +11,7 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
             this.imageLib.showDialog.and.callFake(function (options, callback) {
                 callback(null, {selectedFiles: ['test']});
             });
-            this.datastore = jasmine.createSpyObj('datastore', ['get', 'save', 'update','search']);
+            this.datastore = jasmine.createSpyObj('datastore', ['get', 'save', 'update', 'search']);
             this.datastore.get.and.callFake(function (_tagName, callback) {
                 if (_tagName) {
                     callback(null, {
@@ -56,7 +56,7 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
                             },
                             content: {
                                 images: [{title: 'bg1.png'}],
-                                rankOfLastItem:10
+                                rankOfLastItem: 10
                             }
                         }
                     }]);
@@ -111,7 +111,7 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
                 scrollTop: function () {
                 }
             };
-            this.spinner={
+            this.spinner = {
                 show: function () {
                     return true
                 },
@@ -126,7 +126,8 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
                         console.log("actionItems.sor" +
                             "tableList hasbeen called");
                         return {
-                            'loadItems':function (items) {}
+                            'loadItems': function (items) {
+                            }
                         };
                     }
                 };
@@ -142,7 +143,7 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
         });
     }));
 
-    beforeEach(inject(function ($controller,_Buildfire_, _$rootScope_, _Modals_, _DB_, _$timeout_, _COLLECTIONS_, _Orders_, _AppConfig_, _Messaging_, _EVENTS_, _PATHS_, _$csv_, _$q_) {
+    beforeEach(inject(function ($controller, _Buildfire_, _$rootScope_, _Modals_, _DB_, _$timeout_, _COLLECTIONS_, _Orders_, _AppConfig_, _Messaging_, _EVENTS_, _PATHS_, _$csv_, _$q_) {
             scope = _$rootScope_.$new();
             Modals = _Modals_;
             DB = _DB_;
@@ -154,34 +155,34 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
             EVENTS = _EVENTS_;
             PATHS = _PATHS_;
             $csv = _$csv_;
-            Buildfire=_Buildfire_;
-           /* Buildfire = {
-                spinner: {
-                    show: function () {
-                        return true
-                    },
-                    hide: function () {
-                        return true
-                    }
-                },
-                components: {
-                    carousel: {
-                        editor: {}
-                    }
-                },
-                navigation: {
-                    scrollTop: function () {
-                    }
-                }
-            };
-            Buildfire.components.carousel = jasmine.createSpyObj('Buildfire.components.carousel', ['editor', '', '']);
-            Buildfire.components.carousel.editor.and.callFake(function () {
-                return {
-                    loadItems: function () {
-                        console.log("editor.loadItems hasbeen called");
-                    }
-                };
-            });*/
+            Buildfire = _Buildfire_;
+            /* Buildfire = {
+             spinner: {
+             show: function () {
+             return true
+             },
+             hide: function () {
+             return true
+             }
+             },
+             components: {
+             carousel: {
+             editor: {}
+             }
+             },
+             navigation: {
+             scrollTop: function () {
+             }
+             }
+             };
+             Buildfire.components.carousel = jasmine.createSpyObj('Buildfire.components.carousel', ['editor', '', '']);
+             Buildfire.components.carousel.editor.and.callFake(function () {
+             return {
+             loadItems: function () {
+             console.log("editor.loadItems hasbeen called");
+             }
+             };
+             });*/
             /*Buildfire.navigation = jasmine.createSpyObj('Buildfire.navigation', ['scrollTop', '', '']);
              Buildfire.navigation.scrollTop.and.callFake(function () {
              return {
@@ -243,8 +244,8 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
         });
         xit('it should pass if ContentHome.itemSortableOptions is defined', function () {
             expect(ContentHome.itemSortableOptions).not.toBeUndefined();
-            ContentHome.items=[{title:'item10'},{title:'item11'},{title:'item12'}];
-            ContentHome.itemSortableOptions.stop({},{item:{sortable:{dropIndex:1}}});
+            ContentHome.items = [{title: 'item10'}, {title: 'item11'}, {title: 'item12'}];
+            ContentHome.itemSortableOptions.stop({}, {item: {sortable: {dropIndex: 1}}});
         });
         describe('Function called ContentHome.itemSortableOptions.stop when next and pre available', function () {
             it('it should pass if ContentHome.itemSortableOptions.stop calls has been called', function () {
@@ -272,7 +273,7 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
                         },
                         links: [],
                         backgroundImage: '',
-                        rank:20
+                        rank: 20
                     }
                 }, {
                     data: {
@@ -291,7 +292,7 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
                         },
                         links: [],
                         backgroundImage: '',
-                        rank:30
+                        rank: 30
                     }
                 }, {
                     data: {
@@ -310,20 +311,21 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
                         },
                         links: [],
                         backgroundImage: '',
-                        rank:40
+                        rank: 40
                     }
                 }];
-                ContentHome.Items={update:function(id,data){
-                    var deferred = $q.defer();
-                    deferred.resolve({id:id,data:data});
-                    return deferred.promise;
-                }};
+                ContentHome.Items = {
+                    update: function (id, data) {
+                        var deferred = $q.defer();
+                        deferred.resolve({id: id, data: data});
+                        return deferred.promise;
+                    }
+                };
                 ContentHome.itemSortableOptions.stop({}, ui);
                 //expect(ContentHome.itemSortableOptions.stop).toHaveBeenCalled();
             });
         });
-        describe('Function called ContentHome.itemSortableOptions.stop when pre available', function ()
-        {
+        describe('Function called ContentHome.itemSortableOptions.stop when pre available', function () {
             it('it should pass if ContentHome.itemSortableOptions.stop calls has been called', function () {
                 var ui = {
                     item: {
@@ -349,7 +351,7 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
                         },
                         links: [],
                         backgroundImage: '',
-                        rank:20
+                        rank: 20
                     }
                 }, {
                     data: {
@@ -368,20 +370,21 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
                         },
                         links: [],
                         backgroundImage: '',
-                        rank:30
+                        rank: 30
                     }
                 }];
-                ContentHome.Items={update:function(id,data){
-                    var deferred = $q.defer();
-                    deferred.resolve({id:id,data:data});
-                    return deferred.promise;
-                }};
+                ContentHome.Items = {
+                    update: function (id, data) {
+                        var deferred = $q.defer();
+                        deferred.resolve({id: id, data: data});
+                        return deferred.promise;
+                    }
+                };
                 ContentHome.itemSortableOptions.stop({}, ui);
                 //expect(ContentHome.itemSortableOptions.stop).toHaveBeenCalled();
             });
         });
-        describe('Function called ContentHome.itemSortableOptions.stop when next available', function ()
-        {
+        describe('Function called ContentHome.itemSortableOptions.stop when next available', function () {
             it('it should pass if ContentHome.itemSortableOptions.stop calls has been called', function () {
                 var ui = {
                     item: {
@@ -407,7 +410,7 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
                         },
                         links: [],
                         backgroundImage: '',
-                        rank:20
+                        rank: 20
                     }
                 }, {
                     data: {
@@ -426,14 +429,16 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
                         },
                         links: [],
                         backgroundImage: '',
-                        rank:30
+                        rank: 30
                     }
                 }];
-                ContentHome.Items={update:function(id,data){
-                    var deferred = $q.defer();
-                    deferred.resolve({id:id,data:data});
-                    return deferred.promise;
-                }};
+                ContentHome.Items = {
+                    update: function (id, data) {
+                        var deferred = $q.defer();
+                        deferred.resolve({id: id, data: data});
+                        return deferred.promise;
+                    }
+                };
                 ContentHome.itemSortableOptions.stop({}, ui);
                 //expect(ContentHome.itemSortableOptions.stop).toHaveBeenCalled();
             });
@@ -594,6 +599,15 @@ describe('Unit : Controller - ContentHomeCtrl', function () {
                 },
                 navigation: {
                     scrollTop: function () {
+                    }
+                },
+                history: {
+                    push: function (label, id) {
+                    },
+                    onPop: function (data) {
+                    },
+                    pop: function () {
+
                     }
                 }
             };
