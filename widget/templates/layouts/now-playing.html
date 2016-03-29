@@ -18,7 +18,7 @@
          }"></div>
     <div class="media-center-plugin">
         <div class="media-header-link">
-            <a ng-click="NowPlaying.getFromPlaylist()">Playlist</a>
+            <a ng-click="NowPlaying.getFromPlaylist()" class="whiteTheme">Go to your playlist</a>
         </div>
         <div class="media-holder margin-top-fifteen">
             <div class="media-inner text-center">
@@ -104,7 +104,7 @@
                     </div>
                 </div>
             </div>
-            <a ng-click="NowPlaying.closePlayListOverlay()">Done</a>
+            <a ng-click="NowPlaying.closePlayListOverlay()" class="whiteTheme">Done</a>
         </div>
     </div>
 
@@ -130,19 +130,19 @@
                         {{NowPlaying.item.data.artists}}</h5>
 
                     <div class="media-player-info margin-top-twenty">
-                        <h4 class="margin-zero ellipsis">{{NowPlaying.currentTrack.title}}</h4>
+                        <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title}}</h4>
 
                         <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.artist}}</p>
                     </div>
                     <div class="more-info-list padded">
                         <div class="text-center item">
-                            <a ng-click="NowPlaying.getFromPlaylist()">Go to Playlist</a>
+                            <a ng-click="NowPlaying.getFromPlaylist()" class="whiteTheme">Go to Playlist</a>
                         </div>
                         <div class="text-center item">
-                            <a ng-click="NowPlaying.addToPlaylist(NowPlaying.currentTrack)">Add to Playlist</a>
+                            <a ng-click="NowPlaying.addToPlaylist(NowPlaying.currentTrack)" class="whiteTheme">Add to Playlist</a>
                         </div>
                         <div class="text-center item">
-                            <a ng-click="NowPlaying.removeFromPlaylist(NowPlaying.currentTrack)">Remove from
+                            <a ng-click="NowPlaying.removeFromPlaylist(NowPlaying.currentTrack)" class="whiteTheme">Remove from
                                 Playlist</a>
                         </div>
                         <!--<div class="text-center item">
@@ -152,7 +152,7 @@
                             <a>Share</a>
                         </div>-->
                         <div class="text-center item">
-                            <a ng-click="NowPlaying.closeMoreInfoOverlay()">Cancel</a>
+                            <a ng-click="NowPlaying.closeMoreInfoOverlay()" class="whiteTheme">Cancel</a>
                         </div>
                     </div>
                 </div>
@@ -220,7 +220,7 @@
                     </div>
                 </div>
             </div>
-            <a ng-click="NowPlaying.closeSettingsOverlay()">Done</a>
+            <a ng-click="NowPlaying.closeSettingsOverlay()" class="whiteTheme">Done</a>
         </div>
     </div>
     </div>
