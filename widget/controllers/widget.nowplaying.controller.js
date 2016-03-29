@@ -65,7 +65,6 @@
                             NowPlaying.playing = true;
                             break;
                         case 'removeFromPlaylist':
-                            Modals.removeTrackModal();
                             NowPlaying.playList = e.data && e.data.newPlaylist && e.data.newPlaylist.tracks;
                             break;
 
@@ -148,17 +147,28 @@
                         audioPlayer.addToPlaylist(track);
                 };
                 NowPlaying.removeFromPlaylist = function (track) {
-                    if (NowPlaying.playList) {
-                        NowPlaying.playList.filter(function (val, index) {
-                            if (val.url == track.url)
-                                audioPlayer.removeFromPlaylist(index);
-                            return index;
+                    Modals.removeTrackModal().then(function (data) {
+                            if (NowPlaying.playList) {
+                                NowPlaying.playList.filter(function (val, index) {
+                                    if (val.url == track.url)
+                                        audioPlayer.removeFromPlaylist(index);
+                                    return index;
 
+                                });
+                            }
+                        },
+                        function (err) {
+                            // Do something on error
                         });
-                    }
+
                 };
                 NowPlaying.removeTrackFromPlayList = function (index) {
+                    Modals.removeTrackModal().then(function (data) {
                         audioPlayer.removeFromPlaylist(index);
+                    },
+                        function (err) {
+                            // Do something on error
+                        });
 
                 };
                 NowPlaying.getFromPlaylist = function () {
