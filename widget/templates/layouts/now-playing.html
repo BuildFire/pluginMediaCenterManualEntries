@@ -80,10 +80,10 @@
             <div class="media-player-list-layout layout3">
                 <div class="list-layout has-btns">
                     <div class="list-item overflow-hidden"
-                         ng-swipe-right="NowPlaying.addEvents($event, $index, false)"
-                         ng-swipe-left="NowPlaying.addEvents($event, $index, true)"
+                         ng-swipe-right="NowPlaying.addEvents($event, $index, false,track)"
+                         ng-swipe-left="NowPlaying.addEvents($event, $index, true,track)"
                          ng-repeat="track in NowPlaying.playList">
-                        <div class="list-item-media text-left" ng-class="{'edit' : NowPlaying.swiped[$index]}">
+                        <div class="list-item-media text-left" ng-class="{'edit' : track.swiped}">
                             <div class="list-media-holder square-icon pull-left">
                                 <img ng-if="track.image" ng-src="{{track.image | cropImage : 55 :22}}">
                             </div>
