@@ -18,7 +18,7 @@
          }"></div>
     <div class="media-center-plugin">
         <div class="media-header-link">
-            <a ng-click="NowPlaying.getFromPlaylist()" class="whiteTheme">Go to your playlist</a>
+            <a ng-click="NowPlaying.getFromPlaylist()" class="whiteTheme">Open Playlist</a>
         </div>
         <div class="media-holder margin-top-fifteen">
             <div class="media-inner text-center">
@@ -33,15 +33,15 @@
 
             <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.artist}}</p>
         </div>
-        <div class="slider margin-top-ten" style="margin-bottom: -80px;">
-            <div class="playerMP">
-                <div ng-if="NowPlaying.currentTime">{{NowPlaying.currentTime | secondsToDateTime | date:'mm:ss'}}</div>
+        <div class="slider margin-top-ten" style="margin-bottom: -30px;">
+            <div>
                 <div class="audio-plyer"><input type="range" min="0" max="{{NowPlaying.duration}}"
                             ng-model="NowPlaying.currentTime"
                             ng-change="NowPlaying.changeTime(NowPlaying.currentTime)"
                             ng-style="NowPlaying.duration? {'visibility':'visible'}:{'visibility':'hidden'}"
-                            class="whiteBackgroundTheme" style="height:2px; border-radius:4px;"/></div>
-                <div ng-if="NowPlaying.duration">{{NowPlaying.duration | secondsToDateTime | date:'mm:ss'}}</div>
+                            class="whiteBackgroundTheme" style="height:30px; border-radius:4px;background-color: transparent !important;"/></div>
+                <div ng-if="NowPlaying.currentTime" style="float: left">{{NowPlaying.currentTime | secondsToDateTime | date:'mm:ss'}}</div>
+                <div ng-if="NowPlaying.duration" style="float: right">{{NowPlaying.duration | secondsToDateTime | date:'mm:ss'}}</div>
             </div>
         </div>
         <div class="text-center margin-top-fifteen">
@@ -80,10 +80,10 @@
             <div class="media-player-list-layout layout3">
                 <div class="list-layout has-btns">
                     <div class="list-item overflow-hidden"
-                         ng-swipe-right="NowPlaying.addEvents($event, $index, false)"
-                         ng-swipe-left="NowPlaying.addEvents($event, $index, true)"
+                         ng-swipe-right="NowPlaying.addEvents($event, $index, false,track)"
+                         ng-swipe-left="NowPlaying.addEvents($event, $index, true,track)"
                          ng-repeat="track in NowPlaying.playList">
-                        <div class="list-item-media text-left" ng-class="{'edit' : NowPlaying.swiped[$index]}">
+                        <div class="list-item-media text-left" ng-class="{'edit' : track.swiped}">
                             <div class="list-media-holder square-icon pull-left">
                                 <img ng-if="track.image" ng-src="{{track.image | cropImage : 55 :22}}">
                             </div>

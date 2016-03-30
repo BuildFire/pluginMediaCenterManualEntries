@@ -215,8 +215,8 @@
                     NowPlaying.openMoreInfo = false;
                 };
 
-                NowPlaying.addEvents = function (e, i, toggle) {
-                    toggle ? NowPlaying.swiped[i] = true : NowPlaying.swiped[i] = false;
+                NowPlaying.addEvents = function (e, i, toggle,track) {
+                    toggle ? track.swiped = true : track.swiped = false;
                 };
 
                 /**
