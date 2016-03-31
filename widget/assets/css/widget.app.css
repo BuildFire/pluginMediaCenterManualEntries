@@ -759,3 +759,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
     font-size:24px;
     color:#fff;
 }
+.time-indicator{
+    margin-top: -25px !important;
+    opacity: 0.6 !important;
+}
