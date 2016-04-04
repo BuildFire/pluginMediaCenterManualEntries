@@ -29,7 +29,7 @@
             </div>
         </div>
         <div class="media-player-info margin-top-fifteen">
-            <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title}}</h4>
+            <h4 class="margin-zero ellipsis whiteTheme" style="font-size: 16px!important;">{{NowPlaying.currentTrack.title}}</h4>
 
             <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.artist}}</p>
         </div>
@@ -40,8 +40,8 @@
                             ng-change="NowPlaying.changeTime(NowPlaying.currentTime)"
                             ng-style="NowPlaying.duration? {'visibility':'visible'}:{'visibility':'hidden'}"
                             class="whiteBackgroundTheme" style="height:30px; border-radius:4px;background-color: transparent !important;"/></div>
-                <div ng-if="NowPlaying.currentTime" style="float: left">{{NowPlaying.currentTime | secondsToDateTime | date:'mm:ss'}}</div>
-                <div ng-if="NowPlaying.duration" style="float: right">{{NowPlaying.duration | secondsToDateTime | date:'mm:ss'}}</div>
+                <div ng-if="NowPlaying.currentTime" class="time-indicator" style="float: left">{{NowPlaying.currentTime | secondsToDateTime | date:'mm:ss'}}</div>
+                <div ng-if="NowPlaying.duration" class="time-indicator" style="float: right">{{NowPlaying.duration | secondsToDateTime | date:'mm:ss'}}</div>
             </div>
         </div>
         <div class="text-center margin-top-fifteen">
@@ -88,7 +88,7 @@
                                 <img ng-if="track.image" ng-src="{{track.image | cropImage : 55 :22}}">
                             </div>
                             <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-                                <p class="margin-bottom-zero ellipsis margin-top-twenty">{{track.title}}</p>
+                                <p class="margin-bottom-zero ellipsis margin-top-twenty text-primary">{{track.title}}</p>
                             </div>
                             <div class="btns text-center">
                                 <a ng-if="!track.playing" class="icon icon-play-circle"
