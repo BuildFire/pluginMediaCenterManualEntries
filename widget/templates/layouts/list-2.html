@@ -1,7 +1,7 @@
 <div class="holder padding-zero">
     <div class="media-center-plugin layout3 text-overlay">
         <div class="media-center-banner clearfix">
-            <div id="carousel" build-fire-carousel=""></div>
+            <div ng-style="WidgetHome.data.content.images.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}" id="carousel" build-fire-carousel=""></div>
         </div>
         <div class="text-left padded padding-bottom-zero clearfix text-overlay" ng-if="WidgetHome.showDescription()">
             <p ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">

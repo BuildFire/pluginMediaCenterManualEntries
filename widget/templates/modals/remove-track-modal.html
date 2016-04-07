@@ -1,6 +1,13 @@
-<div class="padded clearfix">
+<div class="padded clearfix" style="background-color: rgba(0, 0, 0, 0.8) !important;">
     <div class="content text-center">
-        <p>This track has been removed from playlist.</p>
-        <a class="margin-zero" ng-click="RemoveTrackPopup.ok()">Ok</a>
+        <p class="whiteTheme">Are you sure you want to remove this track from playlist?</p>
+    </div>
+    <div class="bottom border-top-grey clearfix">
+        <div class="col-md-6 pull-left text-center">
+            <a class="text-primary default-background-hover transition-third whiteTheme" ng-click="RemoveTrackPopup.cancel()">Cancel</a>
+        </div>
+        <div class="col-md-6 pull-right text-center">
+            <a class="text-danger default-background-hover transition-third whiteTheme" ng-click="RemoveTrackPopup.ok()">Remove</a>
+        </div>
     </div>
 </div>

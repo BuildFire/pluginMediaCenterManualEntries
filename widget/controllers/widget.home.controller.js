@@ -230,8 +230,8 @@
 
                 $rootScope.$on("Carousel:LOADED", function () {
                     if (WidgetHome.media.data.content && WidgetHome.media.data.content.images) {
-                        view = new Buildfire.components.carousel.view("#carousel", []);
-                        view.loadItems(WidgetHome.media.data.content.images, false);
+                        view = new Buildfire.components.carousel.view("#carousel", WidgetHome.media.data.content.images);
+                        //view.loadItems(WidgetHome.media.data.content.images, false);
                     } else {
                         view.loadItems([]);
                     }

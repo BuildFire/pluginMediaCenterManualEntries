@@ -7,13 +7,7 @@
                 /**
                  * Breadcrumbs  related implementation
                  */
-               /* Buildfire.history.get({},function(err,data){
-                    console.log('Get Buildfire.history.get--------------------------------',data,err);
-                    if(data && data.length && data.length){
-                        if(!data[data.length-1].label=='Home')
-                            Buildfire.history.push('Home',{id:'home'});
-                    }
-                });*/
+                Buildfire.history.pop();
 
                 //scroll current view to top when loaded.
                 Buildfire.navigation.scrollTop();
@@ -23,7 +17,7 @@
                     data: {
                         content: {
                             images: [],
-                            descriptionHTML: '<p>&nbsp;<br></p>',
+                            descriptionHTML: '',
                             description: '',
                             sortBy: Orders.ordersMap.Newest,
                             rankOfLastItem: 0
@@ -330,20 +324,19 @@
 
                             var columns = rows.shift();
 
-                            for(var _index = 0; _index < headerRow.length; _index++){
-                                if(header[headerRow[_index]] != columns[headerRow[_index]])
-                                {
+                            for (var _index = 0; _index < headerRow.length; _index++) {
+                                if (header[headerRow[_index]] != columns[headerRow[_index]]) {
                                     ContentHome.loading = false;
                                     ContentHome.csvDataInvalid = true;
-                                   /* $timeout(function hideCsvDataError() {
-                                        ContentHome.csvDataInvalid = false;
-                                    }, 2000);*/
+                                    /* $timeout(function hideCsvDataError() {
+                                     ContentHome.csvDataInvalid = false;
+                                     }, 2000);*/
                                     break;
                                 }
                             }
 
-                            if(!ContentHome.loading)
-                            return;
+                            if (!ContentHome.loading)
+                                return;
 
                             var rank = ContentHome.info.data.content.rankOfLastItem || 0;
                             for (var index = 0; index < rows.length; index++) {
@@ -375,10 +368,11 @@
                         }
                         else {
                             ContentHome.loading = false;
-                            ContentHome.csvDataInvalid = true;/*
-                            $timeout(function hideCsvDataError() {
-                                ContentHome.csvDataInvalid = false;
-                            }, 2000);*/
+                            ContentHome.csvDataInvalid = true;
+                            /*
+                             $timeout(function hideCsvDataError() {
+                             ContentHome.csvDataInvalid = false;
+                             }, 2000);*/
                             $scope.$apply();
                         }
                     }, function (error) {
@@ -461,9 +455,9 @@
                     if (!_info.id) {
                         MediaCenter.save(_info.data).then(function (data) {
                             MediaCenter.get().then(function (getData) {
-                               /* ContentHome.masterInfo = angular.copy(_info);
-                                _info.id = getData.id;
-                                AppConfig.setSettings(_info.data);*/
+                                /* ContentHome.masterInfo = angular.copy(_info);
+                                 _info.id = getData.id;
+                                 AppConfig.setSettings(_info.data);*/
                                 updateMasterInfo(data);
                                 AppConfig.setSettings(_info.data);
                             }, function (err) {
