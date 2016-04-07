@@ -18,7 +18,7 @@
                 <div class="list-item-media text-left overflow-hidden">
                     <div class="list-media-holder pull-left text-overlay" ng-if="item.data.topImage"
                          play-btn="{{item.data.videoUrl.length > 0}}">
-                        <img ng-src="{{item.data.topImage | cropImage:110:60}}">
+                        <img load-image="16x9" data-final-src="{{item.data.topImage | cropImage:110:60}}">
                     </div>
                     <div class="list-item-copy text-left padding-left-ten padding-right-ten text-overlay">
                         <p class="ellipsis margin-zero text-primary"><a class="text-primary">{{item.data.title}}</a></p>
