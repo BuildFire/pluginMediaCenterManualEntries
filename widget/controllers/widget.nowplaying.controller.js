@@ -83,7 +83,8 @@
                     else{
                         audioPlayer.settings.get(function (err, setting) {
                             NowPlaying.settings=setting;
-                            NowPlaying.volume = setting.volume;
+                            NowPlaying.settings.isPlayingCurrentTrack=true;
+                            audioPlayer.settings.set(NowPlaying.settings);
                         });
                     }
                     NowPlaying.playing = true;
