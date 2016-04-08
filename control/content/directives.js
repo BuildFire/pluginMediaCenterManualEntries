@@ -5,7 +5,7 @@
             return {
                 restrict: 'A',
                 link: function (scope, element, attrs) {
-                    element.attr("src", "../../../styles/media/holder-" + attrs.loadImage + ".gif");
+                    element.attr("src", "../../../../styles/media/holder-" + attrs.loadImage + ".gif");
 
                     var elem = $("<img>");
                     elem[0].onload = function () {
