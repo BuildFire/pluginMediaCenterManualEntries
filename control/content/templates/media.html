@@ -1,24 +1,5 @@
 <h4>Manual Item Entry Details Content</h4><br>
-<div class="item clearfix row">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Top Image</span>
-    </div>
-    <div class="main col-md-9 pull-right">
-        <div class="screens clearfix">
-            <div class="screen carouselicon pull-left text-center">
-                <a class="border-grey border-radius-three default-background-hover"
-                   ng-click="ContentMedia.selectTopImage()">
-                    <span class="add-icon hidden">+</span>
-                    <img ng-show="ContentMedia.item.data.topImage"
-                         ng-src="{{ContentMedia.item.data.topImage | resizeImage : 82:110}}">
-                </a>
-                <span class="icon btn-delete-icon btn-danger transition-third"
-                      ng-click="ContentMedia.removeTopImage()"></span>
-                <label class="secondary">1024x1024</label>
-            </div>
-        </div>
-    </div>
-</div>
+<div id="topImage"></div>
 <hr class="none">
 <div class="item clearfix row">
     <div class="labels col-md-3 padding-right-zero pull-left">
@@ -106,26 +87,7 @@
     </div>
 </div>
 <hr class="none">
-<div class="item clearfix row">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Audio Image</span>
-    </div>
-    <div class="main col-md-9 pull-right">
-        <div class="screens clearfix">
-            <div class="screen pull-left text-center">
-                <a class="border-grey border-radius-three default-background-hover"
-                   ng-click="ContentMedia.selectAudioImage()">
-                    <span class="add-icon hidden">+</span>
-                    <img ng-show="ContentMedia.item.data.image"
-                         ng-src="{{ContentMedia.item.data.image | resizeImage : 82:110}}">
-                </a>
-                <span ng-show="ContentMedia.item.data.image" class="icon btn-delete-icon btn-danger transition-third"
-                      ng-click="ContentMedia.removeAudioImage()"></span>
-                <label class="secondary">1024x1024</label>
-            </div>
-        </div>
-    </div>
-</div>
+<div id="audioImage"></div>
 <hr>
 <div class="item clearfix row">
     <div class="labels col-md-3 padding-right-zero pull-left">
