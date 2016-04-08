@@ -9,8 +9,8 @@
                 <a class="border-grey border-radius-three default-background-hover"
                    ng-click="ContentMedia.selectTopImage()">
                     <span class="add-icon hidden">+</span>
-                    <img ng-show="ContentMedia.item.data.topImage" load-image="16x9"
-                         data-final-src="{{ContentMedia.item.data.topImage | resizeImage : 82:110}}">
+                    <img ng-show="ContentMedia.item.data.topImage"
+                         ng-src="{{ContentMedia.item.data.topImage | resizeImage : 82:110}}">
                 </a>
                 <span class="icon btn-delete-icon btn-danger transition-third"
                       ng-click="ContentMedia.removeTopImage()"></span>
@@ -116,8 +116,8 @@
                 <a class="border-grey border-radius-three default-background-hover"
                    ng-click="ContentMedia.selectAudioImage()">
                     <span class="add-icon hidden">+</span>
-                    <img ng-show="ContentMedia.item.data.image" load-image="16x9"
-                         data-final-src="{{ContentMedia.item.data.image | resizeImage : 82:110}}">
+                    <img ng-show="ContentMedia.item.data.image"
+                         ng-src="{{ContentMedia.item.data.image | resizeImage : 82:110}}">
                 </a>
                 <span ng-show="ContentMedia.item.data.image" class="icon btn-delete-icon btn-danger transition-third"
                       ng-click="ContentMedia.removeAudioImage()"></span>
