@@ -76,6 +76,16 @@
                  * Player related method and variables
                  */
                 NowPlaying.playTrack = function () {
+                    if(NowPlaying.settings){
+                        NowPlaying.settings.isPlayingCurrentTrack=true;
+                        audioPlayer.settings.set(NowPlaying.settings);
+                    }
+                    else{
+                        audioPlayer.settings.get(function (err, setting) {
+                            NowPlaying.settings=setting;
+                            NowPlaying.volume = setting.volume;
+                        });
+                    }
                     NowPlaying.playing = true;
                     if (NowPlaying.paused) {
                         audioPlayer.play();
@@ -84,6 +94,10 @@
                     }
                 };
                 NowPlaying.playlistPlay = function (track) {
+                    if(NowPlaying.settings){
+                        NowPlaying.settings.isPlayingCurrentTrack=true;
+                        audioPlayer.settings.set(NowPlaying.settings);
+                    }
                     NowPlaying.playing = true;
                     if (track) {
                         audioPlayer.play({url: track.url});
@@ -92,12 +106,20 @@
                     $scope.$digest();
                 };
                 NowPlaying.pauseTrack = function () {
+                    if(NowPlaying.settings){
+                        NowPlaying.settings.isPlayingCurrentTrack=false;
+                        audioPlayer.settings.set(NowPlaying.settings);
+                    }
                     NowPlaying.playing = false;
                     NowPlaying.paused = true;
                     audioPlayer.pause();
                     $scope.$digest();
                 };
                 NowPlaying.playlistPause = function (track) {
+                    if(NowPlaying.settings){
+                        NowPlaying.settings.isPlayingCurrentTrack=false;
+                        audioPlayer.settings.set(NowPlaying.settings);
+                    }
                     track.playing = false;
                     NowPlaying.playing = false;
                     NowPlaying.paused = true;
@@ -245,6 +267,7 @@
                  * @param loop
                  * @param autoJumpToLastPosition
                  * @param shufflePlaylist
+                 * @param isPlayingCurrentTrack
                  * @constructor
                  */
                 function AudioSettings(settings) {
@@ -252,6 +275,7 @@
                     this.loopPlaylist = settings.loopPlaylist; // once the end of the playlist has been reached start over again
                     this.autoJumpToLastPosition = settings.autoJumpToLastPosition; //If a track has [lastPosition] use it to start playing the audio from there
                     this.shufflePlaylist = settings.shufflePlaylist;// shuffle the playlist
+                    this.isPlayingCurrentTrack = settings.isPlayingCurrentTrack;// tells whether current track is playing or not
                 }
 
 
