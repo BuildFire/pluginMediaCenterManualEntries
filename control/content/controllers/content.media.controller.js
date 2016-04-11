@@ -13,7 +13,7 @@
         /**
          * Breadcrumbs  related implementation
          */
-        Buildfire.history.push('Media', {id: 'itemId'});
+        //Buildfire.history.push('Media', {id: 'itemId'});
         //scroll current view to top when loaded.
         Buildfire.navigation.scrollTop();
         /**
@@ -371,7 +371,7 @@
          */
         ContentMedia.done = function () {
           console.log('Done called------------------------------------------------------------------------');
-          Buildfire.history.pop();
+          //Buildfire.history.pop();
           Location.goToHome();
         };
         /**

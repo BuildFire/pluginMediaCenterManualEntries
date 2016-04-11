@@ -141,7 +141,7 @@
                                     }
                                     break;
                                 case PATHS.HOME:
-                                    Buildfire.history.pop();
+                                    //Buildfire.history.pop();
                                     url = url + "home";
                                     break;
                                 default :
@@ -152,11 +152,11 @@
                     }
                 }
             };
-            Buildfire.history.onPop(function(data,err){
+            /*Buildfire.history.onPop(function(data,err){
                 if(data && data.label!='Media')
                 Location.goToHome();
                 console.log('Buildfire.history.onPop called--------------------------------------------',data,err);
-            });
+            });*/
         }]);
 })
 (window.angular, window.buildfire);
