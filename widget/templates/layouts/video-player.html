@@ -1,15 +1,19 @@
 
     <div ng-style="{height: WidgetMedia.deviceHeight /3}" ng-show="WidgetMedia.showVideo" class="videogular-container">
+      <img src="../../../styles/media/holder-16x9.gif"
+           ng-if="WidgetMedia.loadingVideo">
         <videogular data-ng-hide="WidgetMedia.item.data.videoUrl | isYoutubeVimeoLink" vg-player-ready="WidgetMedia.onPlayerReady($API)"
                     vg-change-source="WidgetMedia.sourceChanged($source)"
                     vg-theme="WidgetMedia.videoPlayerConfig.theme.url"
-                    vg-error="WidgetMedia.onVideoError($event)">
+                    vg-error="WidgetMedia.onVideoError($event)"
+                    vg-can-play="WidgetMedia.videoLoaded()">
             <vg-media vg-src="WidgetMedia.videoPlayerConfig.sources"
                       vg-tracks="WidgetMedia.videoPlayerConfig.tracks"
-                      vg-native-controls="false">
+                      vg-native-controls="false"
+                      ng-show="!WidgetMedia.loadingVideo">
             </vg-media>
-            <vg-controls vg-autohide="true">
-                <vg-play-pause-button></vg-play-pause-button>
+            <vg-controls vg-autohide="true" ng-show="!WidgetMedia.loadingVideo">
+                <vg-play-pause-button ng-show="!WidgetMedia.loadingVideo"></vg-play-pause-button>
                 <vg-scrub-bar>
                     <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
                 </vg-scrub-bar>
