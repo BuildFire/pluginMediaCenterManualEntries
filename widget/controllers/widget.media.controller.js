@@ -8,9 +8,11 @@
                 WidgetMedia.API = null;
                 WidgetMedia.showVideo = false;
                 WidgetMedia.showSource = false;
+                WidgetMedia.loadingVideo = false;
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
                 WidgetMedia.onPlayerReady = function ($API) {
                     WidgetMedia.API = $API;
+                    WidgetMedia.loadingVideo = true;
                 };
 
                 WidgetMedia.videoPlayerConfig = {
@@ -105,7 +107,7 @@
                                         if (id) {
                                             url = url + "/" + id;
                                         }
-                                        break
+                                        break;
                                     default :
 
                                         break
@@ -158,7 +160,12 @@
                     Buildfire.actionItems.execute(actionItem);
                 };
 
-                var initializing = true;
+                WidgetMedia.videoLoaded = function () {
+                    WidgetMedia.loadingVideo = false;
+                };
+
+
+              var initializing = true;
                 $scope.$watch(function () {
                     return WidgetMedia.item.data.videoUrl;
                 }, function () {
