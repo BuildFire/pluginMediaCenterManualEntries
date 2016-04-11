@@ -25,6 +25,8 @@
                 link: function (scope, element, attrs) {
                     element.attr("src", "../../../styles/media/holder-" + attrs.loadImage + ".gif");
 
+                    var src=attrs.finalSrc;
+
                     var elem = $("<img>");
                     elem[0].onload = function () {
                         element.attr("src", attrs.finalSrc);
@@ -32,8 +34,10 @@
                     };
 
                    function changeSrc(info) {
-                       element.attr("src", attrs.finalSrc);
-                       elem.remove();
+                       if(attrs.finalSrc != src) {
+                           element.attr("src", attrs.finalSrc);
+                           elem.remove();
+                       }
                    }
                    scope.$watch(function(val){
                        return attrs.finalSrc;
