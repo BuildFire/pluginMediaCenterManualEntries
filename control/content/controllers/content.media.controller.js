@@ -226,7 +226,6 @@
           });
         }
 
-
         function isValidItem(item) {
           return item.title;
         }
@@ -261,7 +260,7 @@
         /* Build fire thumbnail component to add thumbnail image*/
         var topImage = new Buildfire.components.images.thumbnail("#topImage", {
           title: "Top Image",
-          dimensionsLabel: "82x110"
+          dimensionsLabel: "1024x1024"
         });
 
         topImage.onChange = function (url) {
@@ -278,20 +277,22 @@
           }
         };
 
+
+
         /* Build fire thumbnail component to add thumbnail image*/
         var audioImage = new Buildfire.components.images.thumbnail("#audioImage", {
           title: "Audio Image",
           dimensionsLabel: "1024x1024"
         });
 
-        topImage.onChange = function (url) {
+        audioImage.onChange = function (url) {
           ContentMedia.item.data.image = url;
           if (!$scope.$$phase && !$scope.$root.$$phase) {
             $scope.$apply();
           }
         };
 
-        topImage.onDelete = function (url) {
+        audioImage.onDelete = function (url) {
           ContentMedia.item.data.image = "";
           if (!$scope.$$phase && !$scope.$root.$$phase) {
             $scope.$apply();
