@@ -7,7 +7,7 @@
                 /**
                  * Breadcrumbs  related implementation
                  */
-                Buildfire.history.pop();
+                //Buildfire.history.pop();
 
                 //scroll current view to top when loaded.
                 Buildfire.navigation.scrollTop();
@@ -504,4 +504,4 @@
                     }
                 });
             }]);
-})(window.angular, undefined);
+})(window.angular);
