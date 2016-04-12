@@ -4,8 +4,8 @@
             <div class="people-bg clearfix">
                 <div class="people-holder clearfix">
                     <div class="people-media text-center">
-                       <img data-ng-hide="WidgetMedia.showVideo"
-                             ng-src="{{WidgetMedia.item.data.topImage | resizeImage : 250 : 400}}">
+                       <img data-ng-hide="WidgetMedia.showVideo" load-image="16x9"
+                             data-final-src="{{WidgetMedia.item.data.topImage | resizeImage : 250 : 400}}">
 
                         <div ng-include="'templates/layouts/video-player.html'"></div>
                     </div>
