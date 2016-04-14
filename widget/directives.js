@@ -25,11 +25,20 @@
                 link: function (scope, element, attrs) {
                     element.attr("src", "../../../styles/media/holder-" + attrs.loadImage + ".gif");
 
+
                     var elem = $("<img>");
                     elem[0].onload = function () {
                         element.attr("src", attrs.finalSrc);
                         elem.remove();
                     };
+
+                    function changeSrc(info) {
+                        element.attr("src", attrs.finalSrc);
+                        elem.remove();
+                    }
+                   scope.$watch(function(val){
+                       return attrs.finalSrc;
+                   }, changeSrc, true);
                     elem.attr("src", attrs.finalSrc);
                 }
             };

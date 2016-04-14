@@ -321,6 +321,5 @@
                  NowPlaying.playTrack();
                  }, 1000);
             }
-        ])
-    ;
+        ]);
 })(window.angular);

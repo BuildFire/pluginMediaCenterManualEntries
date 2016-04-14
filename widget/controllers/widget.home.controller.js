@@ -1,8 +1,8 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders',
-            function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders) {
+        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location',
+            function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location) {
                 $rootScope.showFeed = true;
                 var WidgetHome = this;
                 var _infoData = {
@@ -94,28 +94,27 @@
                     if (event) {
                         switch (event.name) {
                             case EVENTS.ROUTE_CHANGE:
-                                var path = event.message.path,
-                                    id = event.message.id;
-                                var url = "#/";
-                                switch (path) {
-                                    case PATHS.MEDIA:
-                                        url = url + "media/";
-                                        if (id) {
-                                            url = url + id + "/";
-                                        }
-                                        break;
-                                    default :
-
-                                        break;
+                                if((event.message && event.message.path == PATHS.MEDIA && $location.$$path.indexOf('/media') == -1) || (event.message && event.message.path != PATHS.MEDIA)) {
+                                    var path = event.message.path,
+                                        id = event.message.id;
+                                    var url = "#/";
+                                    switch (path) {
+                                        case PATHS.MEDIA:
+                                            url = url + "media/";
+                                            if (id) {
+                                                url = url + id + "/";
+                                            }
+                                            break;
+                                    }
+                                    Location.go(url);
+                                    if (path == PATHS.MEDIA) {
+                                        $rootScope.showFeed = false;
+                                    }
+                                    else {
+                                        $rootScope.showFeed = true;
+                                    }
+                                    $scope.$apply();
                                 }
-                                Location.go(url);
-                                if (path==PATHS.MEDIA) {
-                                    $rootScope.showFeed = false;
-                                }
-                                else {
-                                    $rootScope.showFeed = true;
-                                }
-                                $scope.$apply();
                                 break;
                             case EVENTS.ITEMS_CHANGE:
                                 WidgetHome.refreshItems();
