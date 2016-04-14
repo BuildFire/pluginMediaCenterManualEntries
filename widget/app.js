@@ -171,8 +171,15 @@
                     else
                         buildfire.navigation._goBackOne();
                 }
-                else if (path.indexOf('/nowplaying') == 0)
-                    Location.go('#/media/' + path.split('/')[2]);
+                else if (path.indexOf('/nowplaying') == 0) {
+                    if ($rootScope.playlist) {
+                        $rootScope.playlist = false;
+                        $rootScope.$digest();
+                    }
+                    else {
+                        Location.go('#/media/' + path.split('/')[2]);
+                    }
+                }
                 else
                     buildfire.navigation._goBackOne();
             }

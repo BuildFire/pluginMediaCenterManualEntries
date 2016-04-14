@@ -202,7 +202,7 @@
                         }
                     });
                     NowPlaying.openMoreInfo = false;
-                    NowPlaying.openPlaylist = true;
+                    $rootScope.playlist = true;
                 };
                 NowPlaying.changeTime = function (time) {
                     audioPlayer.setTime(time);
@@ -232,7 +232,7 @@
                     NowPlaying.openSettings = false;
                 };
                 NowPlaying.closePlayListOverlay = function () {
-                    NowPlaying.openPlaylist = false;
+                    $rootScope.playlist = false;
                 };
                 NowPlaying.closeMoreInfoOverlay = function () {
                     NowPlaying.openMoreInfo = false;
