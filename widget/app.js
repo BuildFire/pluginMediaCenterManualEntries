@@ -182,7 +182,12 @@
                 }
                 else
                     buildfire.navigation._goBackOne();
-            }
+            };
+
+            buildfire.device.onAppBackgrounded = function () {
+              console.log('device locked');
+                $("pauseYTPlayer").click();
+            };
         }]);
 
 })(window.angular, window.buildfire);
