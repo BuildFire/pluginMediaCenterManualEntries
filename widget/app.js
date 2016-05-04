@@ -185,7 +185,8 @@
             };
 
             buildfire.device.onAppBackgrounded = function () {
-              console.log('device locked');
+                alert('device locked');
+                $('body').hide();
                 $("pauseYTPlayer").click();
             };
         }]);
