@@ -426,7 +426,7 @@
                     }
                     var item = ContentHome.items[index];
                     if ("undefined" !== typeof item) {
-                        Modals.removePopupModal({title: ''}).then(function (result) {
+                        Modals.removePopupModal({title: '',event:$event}).then(function (result) {
                             if (result) {
                                 MediaContent.delete(item.id).then(function (data) {
                                     ContentHome.items.splice(index, 1);
@@ -440,12 +440,12 @@
                         }, function (cancelData) {
                             //do something on cancel
                         });
-                        $timeout(function () {
+                        /*$timeout(function () {
                             var top = $($event.currentTarget).offset().top;
                             if (top > 100)
                                 top -= 100;
                             $('.modal-dialog.modal-sm').offset({top: top, left: 0});
-                        }, 500);
+                        }, 500);*/
 
                     }
                 };

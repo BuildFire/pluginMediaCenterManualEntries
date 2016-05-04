@@ -31,8 +31,13 @@
                 }
             };
         }])
-        .controller('RemovePopupCtrl', ['$scope', '$modalInstance', 'Info', function ($scope, $modalInstance, Info) {
+        .controller('RemovePopupCtrl', ['$scope', '$modalInstance', 'Info', '$timeout', function ($scope, $modalInstance, Info, $timeout) {
             var RemovePopup = this;
+            $timeout(function () {
+                console.log('Modal Top Changed');
+                var top = Info.event.pageY - 50;
+                $('.modal-dialog.modal-sm').offset({top: top, left: 0});
+            }, 700);
             RemovePopup.info = {};
             if (Info) {
                 RemovePopup.info = Info;
