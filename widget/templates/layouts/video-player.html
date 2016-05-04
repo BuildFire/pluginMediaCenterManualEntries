@@ -1,5 +1,5 @@
 
-    <div ng-style="{height: WidgetMedia.deviceHeight /3}" ng-show="WidgetMedia.showVideo" class="videogular-container">
+    <div ng-style="{height: (WidgetMedia.deviceWidth*9)/16}" ng-show="WidgetMedia.showVideo" class="videogular-container">
       <img src="../../../styles/media/holder-16x9.gif" data-ng-hide="WidgetMedia.item.data.videoUrl | isYoutubeVimeoLink"
            ng-if="WidgetMedia.loadingVideo">
         <videogular data-ng-hide="WidgetMedia.item.data.videoUrl | isYoutubeVimeoLink" vg-player-ready="WidgetMedia.onPlayerReady($API)"
