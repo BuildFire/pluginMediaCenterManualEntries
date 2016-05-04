@@ -298,6 +298,35 @@
                 });
 
                 /**
+                 * track play pause from playlist
+                 */
+
+                NowPlaying.playlistPlayPause = function (track, index) {
+                    if (NowPlaying.playing) {
+                        if (track.playing) {
+                            NowPlaying.playlistPause(track);
+                        }
+                        else {
+                            NowPlaying.playlistPlay(track,index);
+                        }
+                    }
+                    else if (NowPlaying.paused) {
+                        if (track.url == NowPlaying.currentTrack.url) {
+                            NowPlaying.settings.isPlayingCurrentTrack = true;
+                            NowPlaying.playing = true;
+                            track.playing = true;
+                            audioPlayer.play();
+                        }
+                        else {
+                            NowPlaying.playlistPlay(track,index);
+                        }
+                    }
+                    else {
+                        NowPlaying.playlistPlay(track,index);
+                    }
+                };
+
+                /**
                  * Implementation of pull down to refresh
                  */
                 var onRefresh=Buildfire.datastore.onRefresh(function(){

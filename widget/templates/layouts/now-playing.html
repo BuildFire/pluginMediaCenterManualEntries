@@ -91,10 +91,8 @@
                                 <p class="margin-bottom-zero ellipsis margin-top-twenty text-primary">{{track.title}}</p>
                             </div>
                             <div class="btns text-center">
-                                <a ng-if="!track.playing" class="icon icon-play-circle"
-                                   ng-click="NowPlaying.playlistPlay(track)"></a>
-                                <a ng-if="track.playing" class="icon icon-pause-circle primaryTheme"
-                                   ng-click="NowPlaying.playlistPause(track)"></a>
+                                <a ng-class="track.playing ? 'icon-pause-circle' : 'icon-play-circle'"
+                                   class="icon primaryTheme" ng-click="NowPlaying.playlistPlayPause(track,$index)"></a>
                             </div>
                             <div class="remove-btn text-center dangerBackgroundTheme" style="background:red;"
                                  ng-click="NowPlaying.removeTrackFromPlayList($index)">
