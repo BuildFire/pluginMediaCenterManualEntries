@@ -185,9 +185,8 @@
             };
 
             buildfire.device.onAppBackgrounded(function () {
-                alert('device locked');
-                $('body').hide();
-                callPlayer('ytPlayer', 'pauseVideo');
+                $rootScope.$emit('deviceLocked', {});
+                //callPlayer('ytPlayer', 'pauseVideo');
             });
         }]);
 
