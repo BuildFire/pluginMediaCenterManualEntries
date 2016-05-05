@@ -61,8 +61,10 @@
                             NowPlaying.playing = false;
                             break;
                         case 'next':
-                            NowPlaying.currentTrack = e.data.track;
-                            NowPlaying.playing = true;
+                            if(e && e.data && e.data.track){
+                                NowPlaying.currentTrack = e.data.track;
+                                NowPlaying.playing = true;
+                            }
                             break;
                         case 'removeFromPlaylist':
                             NowPlaying.playList = e.data && e.data.newPlaylist && e.data.newPlaylist.tracks;
