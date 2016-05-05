@@ -8,7 +8,7 @@
                      class="plugin-slide">
                     <!--ng-style="WidgetMedia.showVideo == false ? {'min-height': '192px'} : {}" style="width: 100% !important;max-height:192px !important"
                          -->
-                    <img data-ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage" load-image="16x9"
+                    <img data-ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage" load-image="16x9" style="min-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
                          data-final-src="{{WidgetMedia.item.data.topImage | cropImage : 1280 : 720}}"/>
 
                     <div ng-include="'templates/layouts/video-player.html'"></div>

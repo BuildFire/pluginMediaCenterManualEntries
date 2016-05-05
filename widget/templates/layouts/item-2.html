@@ -4,35 +4,52 @@
             <div class="people-bg clearfix">
                 <div class="people-holder clearfix">
                     <div class="people-media text-center">
-                       <img data-ng-hide="WidgetMedia.showVideo" load-image="16x9"
-                             data-final-src="{{WidgetMedia.item.data.topImage | resizeImage : 250 : 400}}">
+
+
+                        <div class="people-banner" data-ng-hide="WidgetMedia.showVideo"
+                             style="background:url('{{WidgetMedia.item.data.topImage|resizeImage:342:192}}') no-repeat; background-position:center center; background-size:cover !important;height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
+                            <div class="people-bg padding-bottom-fifteen clearfix">
+                                <div class="people-holder clearfix">
+                                    <div class="people-media text-center padding-top-fifteen"
+                                         data-ng-hide="WidgetMedia.showVideo">
+                                        <img load-image="2x1" style="width: 200px;height: 100px;"
+                                             data-final-src="{{WidgetMedia.item.data.topImage|resizeImage:200:100}}">
+                                    </div>
+                                    <div class="people-info text-center col-xs-12">
+                                        <h5 class="ellipsis margin-top-fifteen whiteTheme" style="font-size: 16px;">
+                                            {{WidgetMedia.item.data.title}}</h5>
+                                        <h5 class="margin-bottom-zero whiteTheme">
+                                            {{WidgetMedia.item.data.summary}}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div ng-include="'templates/layouts/video-player.html'"></div>
-                    </div>
-                    <div class="people-info text-center col-md-12">
-                        <h5 class="ellipsis margin-top-fifteen" style="font-size: 16px;">{{WidgetMedia.item.data.title}}</h5>
-                        <h5 class="margin-bottom-zero">{{WidgetMedia.item.data.summary}}</h5>
+
+
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="padded">
-			<hr class="small margin-top-zero">
-            <div class="link-list">
-                <a class="text-primary" ng-if="WidgetMedia.item.data.audioUrl"
-                   href="#/nowplaying/{{WidgetMedia.item.id}}">Listen</a>
-                <a class="text-primary" ng-if="WidgetMedia.item.data.videoUrl"
-                   ng-click="WidgetMedia.toggleShowVideo();">Watch</a>
-                <a id="sourceToggleButton" class="text-primary" ng-if="WidgetMedia.item.data.srcUrl" ng-click="WidgetMedia.showSourceIframe()">View Source</a>
-                <a class="text-primary" ng-if="WidgetMedia.item.data.links.length">Share</a>
-            </div>
-            <hr class="small">
-            <p ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
+            <div class="padded">
+                <hr class="small margin-top-zero">
+                <div class="link-list">
+                    <a class="text-primary" ng-if="WidgetMedia.item.data.audioUrl"
+                       href="#/nowplaying/{{WidgetMedia.item.id}}">Listen</a>
+                    <a class="text-primary" ng-if="WidgetMedia.item.data.videoUrl"
+                       ng-click="WidgetMedia.toggleShowVideo();">Watch</a>
+                    <a id="sourceToggleButton" class="text-primary" ng-if="WidgetMedia.item.data.srcUrl"
+                       ng-click="WidgetMedia.showSourceIframe()">View Source</a>
+                    <a class="text-primary" ng-if="WidgetMedia.item.data.links.length">Share</a>
+                </div>
+                <hr class="small">
+                <p ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
 
-            <div class="dynamic-links">
-                <a ng-click="WidgetMedia.executeAction(link)" class="d-link" ng-repeat="link in WidgetMedia.item.data.links">{{link.title}}</a>
+                <div class="dynamic-links">
+                    <a ng-click="WidgetMedia.executeAction(link)" class="d-link"
+                       ng-repeat="link in WidgetMedia.item.data.links">{{link.title}}</a>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
