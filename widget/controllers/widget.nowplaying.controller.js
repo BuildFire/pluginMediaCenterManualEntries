@@ -1,12 +1,12 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', '$timeout','Location',
-            function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS, $rootScope, $timeout,Location) {
+        .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', '$timeout', 'Location',
+            function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS, $rootScope, $timeout, Location) {
                 $rootScope.blackBackground = true;
                 $rootScope.showFeed = false;
                 var NowPlaying = this;
-                NowPlaying.swiped=[];
+                NowPlaying.swiped = [];
                 NowPlaying.currentTrack = new Track(media.data);
                 NowPlaying.item = media;
                 NowPlaying.playing = false;
@@ -26,7 +26,7 @@
                  */
                 var audioPlayer = Buildfire.services.media.audioPlayer;
                 audioPlayer.settings.get(function (err, setting) {
-                    NowPlaying.settings=setting;
+                    NowPlaying.settings = setting;
                     NowPlaying.volume = setting.volume;
                 });
 
@@ -61,8 +61,10 @@
                             NowPlaying.playing = false;
                             break;
                         case 'next':
-                            NowPlaying.currentTrack = e.data.track;
-                            NowPlaying.playing = true;
+                            if(e && e.data && e.data.track){
+                                NowPlaying.currentTrack = e.data.track;
+                                NowPlaying.playing = true;
+                            }
                             break;
                         case 'removeFromPlaylist':
                             NowPlaying.playList = e.data && e.data.newPlaylist && e.data.newPlaylist.tracks;
@@ -76,14 +78,14 @@
                  * Player related method and variables
                  */
                 NowPlaying.playTrack = function () {
-                    if(NowPlaying.settings){
-                        NowPlaying.settings.isPlayingCurrentTrack=true;
+                    if (NowPlaying.settings) {
+                        NowPlaying.settings.isPlayingCurrentTrack = true;
                         audioPlayer.settings.set(NowPlaying.settings);
                     }
-                    else{
+                    else {
                         audioPlayer.settings.get(function (err, setting) {
-                            NowPlaying.settings=setting;
-                            NowPlaying.settings.isPlayingCurrentTrack=true;
+                            NowPlaying.settings = setting;
+                            NowPlaying.settings.isPlayingCurrentTrack = true;
                             audioPlayer.settings.set(NowPlaying.settings);
                         });
                     }
@@ -95,8 +97,8 @@
                     }
                 };
                 NowPlaying.playlistPlay = function (track) {
-                    if(NowPlaying.settings){
-                        NowPlaying.settings.isPlayingCurrentTrack=true;
+                    if (NowPlaying.settings) {
+                        NowPlaying.settings.isPlayingCurrentTrack = true;
                         audioPlayer.settings.set(NowPlaying.settings);
                     }
                     NowPlaying.playing = true;
@@ -107,8 +109,8 @@
                     $scope.$digest();
                 };
                 NowPlaying.pauseTrack = function () {
-                    if(NowPlaying.settings){
-                        NowPlaying.settings.isPlayingCurrentTrack=false;
+                    if (NowPlaying.settings) {
+                        NowPlaying.settings.isPlayingCurrentTrack = false;
                         audioPlayer.settings.set(NowPlaying.settings);
                     }
                     NowPlaying.playing = false;
@@ -117,8 +119,8 @@
                     $scope.$digest();
                 };
                 NowPlaying.playlistPause = function (track) {
-                    if(NowPlaying.settings){
-                        NowPlaying.settings.isPlayingCurrentTrack=false;
+                    if (NowPlaying.settings) {
+                        NowPlaying.settings.isPlayingCurrentTrack = false;
                         audioPlayer.settings.set(NowPlaying.settings);
                     }
                     track.playing = false;
@@ -169,8 +171,9 @@
                     if (track)
                         audioPlayer.addToPlaylist(track);
                 };
-                NowPlaying.removeFromPlaylist = function (track) {
+                NowPlaying.removeFromPlaylist = function (track, index) {
                     Modals.removeTrackModal().then(function (data) {
+                            console.log('Data-------------------in success of remove track popup-0-', data);
                             if (NowPlaying.playList) {
                                 NowPlaying.playList.filter(function (val, index) {
                                     if (val.url == track.url)
@@ -187,8 +190,9 @@
                 };
                 NowPlaying.removeTrackFromPlayList = function (index) {
                     Modals.removeTrackModal().then(function (data) {
-                        audioPlayer.removeFromPlaylist(index);
-                    },
+                            console.log('Data-------------------in success of remove track popup-1-', data);
+                            audioPlayer.removeFromPlaylist(index);
+                        },
                         function (err) {
                             // Do something on error
                         });
@@ -238,7 +242,7 @@
                     NowPlaying.openMoreInfo = false;
                 };
 
-                NowPlaying.addEvents = function (e, i, toggle,track) {
+                NowPlaying.addEvents = function (e, i, toggle, track) {
                     toggle ? track.swiped = true : track.swiped = false;
                 };
 
@@ -298,9 +302,38 @@
                 });
 
                 /**
+                 * track play pause from playlist
+                 */
+
+                NowPlaying.playlistPlayPause = function (track, index) {
+                    if (NowPlaying.playing) {
+                        if (track.playing) {
+                            NowPlaying.playlistPause(track);
+                        }
+                        else {
+                            NowPlaying.playlistPlay(track, index);
+                        }
+                    }
+                    else if (NowPlaying.paused) {
+                        if (track.url == NowPlaying.currentTrack.url) {
+                            NowPlaying.settings.isPlayingCurrentTrack = true;
+                            NowPlaying.playing = true;
+                            track.playing = true;
+                            audioPlayer.play();
+                        }
+                        else {
+                            NowPlaying.playlistPlay(track, index);
+                        }
+                    }
+                    else {
+                        NowPlaying.playlistPlay(track, index);
+                    }
+                };
+
+                /**
                  * Implementation of pull down to refresh
                  */
-                var onRefresh=Buildfire.datastore.onRefresh(function(){
+                var onRefresh = Buildfire.datastore.onRefresh(function () {
                 });
 
                 /**
@@ -309,7 +342,7 @@
                 $scope.$on('$destroy', function () {
                     $rootScope.blackBackground = false;
                     onRefresh.clear();
-                    Buildfire.datastore.onRefresh(function(){
+                    Buildfire.datastore.onRefresh(function () {
                         Location.goToHome();
                     });
                 });
@@ -318,8 +351,8 @@
                  * Auto play the track
                  */
                 $timeout(function () {
-                 NowPlaying.playTrack();
-                 }, 1000);
+                    NowPlaying.playTrack();
+                }, 1000);
             }
         ]);
 })(window.angular);

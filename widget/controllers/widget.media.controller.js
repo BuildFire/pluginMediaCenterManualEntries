@@ -206,5 +206,14 @@
                     });
                 });
 
+                $rootScope.$on('deviceLocked', function () {
+                    // pause videogular video (if any)
+                    if(WidgetMedia.API)
+                    WidgetMedia.API.pause();
+
+                    // pause YT video (no need to check if there is any yt video playing)
+                    callPlayer('ytPlayer', 'pauseVideo');
+                });
+
             }]);
 })(window.angular, window);
