@@ -45,9 +45,12 @@
                 <hr class="small">
                 <p ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
 
-                <div class="dynamic-links">
-                    <a ng-click="WidgetMedia.executeAction(link)" class="d-link"
-                       ng-repeat="link in WidgetMedia.item.data.links">{{link.title}}</a>
+                <div class="dynamic-links" ng-repeat="link in WidgetMedia.item.data.links">
+                    <p ng-click="WidgetMedia.executeAction(link)" >
+                        <span ng-if="!link.iconUrl" class="icon icon-cog"></span>
+                        <span ng-if="link.iconUrl" class="icon"><img load-image="1x1" data-final-src="{{link.iconUrl | cropImage:17:17}}"/></span>
+                        {{link.title}}
+                    </p>
                 </div>
             </div>
         </div>
