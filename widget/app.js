@@ -184,11 +184,11 @@
                     buildfire.navigation._goBackOne();
             };
 
-            buildfire.device.onAppBackgrounded = function () {
+            buildfire.device.onAppBackgrounded(function () {
                 alert('device locked');
                 $('body').hide();
-                callPlayer('ytPlayer','pauseVideo');
-            };
+                callPlayer('ytPlayer', 'pauseVideo');
+            });
         }]);
 
 })(window.angular, window.buildfire);
