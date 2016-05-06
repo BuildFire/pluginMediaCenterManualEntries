@@ -6,6 +6,7 @@
                 $rootScope.blackBackground = true;
                 $rootScope.showFeed = false;
                 var NowPlaying = this;
+                NowPlaying.currentTime=0;
                 NowPlaying.swiped = [];
                 NowPlaying.currentTrack = new Track(media.data);
                 NowPlaying.item = media;
@@ -61,8 +62,10 @@
                             NowPlaying.playing = false;
                             break;
                         case 'next':
-                            NowPlaying.currentTrack = e.data.track;
-                            NowPlaying.playing = true;
+                            if(e && e.data && e.data.track){
+                                NowPlaying.currentTrack = e.data.track;
+                                NowPlaying.playing = true;
+                            }
                             break;
                         case 'removeFromPlaylist':
                             NowPlaying.playList = e.data && e.data.newPlaylist && e.data.newPlaylist.tracks;
