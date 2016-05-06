@@ -344,7 +344,7 @@
 }
 
 .audio-plyer input[type=range]:focus::-webkit-slider-runnable-track {
-    background: #367ebd;
+    /*background: #367ebd;*/
 }
 
 .audio-plyer input[type=range]::-moz-range-track {
