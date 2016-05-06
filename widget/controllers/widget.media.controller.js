@@ -211,8 +211,11 @@
                     if(WidgetMedia.API)
                     WidgetMedia.API.pause();
 
-                    // pause YT video (no need to check if there is any yt video playing)
+                    // pause Youtube video (no need to check if there is any yt video playing)
                     callPlayer('ytPlayer', 'pauseVideo');
+
+                    // pause Vimeo video (no need to check if there is any vimeo video playing)
+                    callVimeoPlayer('ytPlayer');
                 });
 
             }]);
