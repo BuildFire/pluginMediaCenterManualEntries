@@ -87,5 +87,12 @@
             }), "*");
         }
     }
+    function callVimeoPlayer(iframeId) {
+        var iframe = $('#' + iframeId)[0];
+        var url = 'https://player.vimeo.com';
+        /*   if (iframe.src.indexOf('https') == 0)
+         url = 'https://player.vimeo.com';*/
+        iframe.contentWindow.postMessage({method: 'pause'}, url);
+    }
 </script>
 </html>

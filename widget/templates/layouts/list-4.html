@@ -11,9 +11,8 @@
                  infinite-scroll-distance="1"
                  data-infinite-container=".infinite-scroll-parent"
                  infinite-scroll-disabled="WidgetHome.noMore">
-                <div ng-repeat="item in WidgetHome.items" ng-if="$index % 2 == 0" class="row text-overlay"
-                     ng-click="WidgetHome.goToMedia($index)">
-                    <div class="list-item-odd col-xs-6 pull-left clickable ">
+                <div ng-repeat="item in WidgetHome.items" ng-if="$index % 2 == 0" class="row text-overlay">
+                    <div class="list-item-odd col-xs-6 pull-left clickable " ng-click="WidgetHome.goToMedia($index)">
                         <div class="list-item-media text-center overflow-hidden text-overlay">
                             <div class="list-media-holder text-overlay"
                                  play-btn="{{WidgetHome.items[$index].data.videoUrl.length > 0}}">
@@ -31,7 +30,7 @@
                             <span class="list-item-date" data-ng-if="WidgetHome.items[$index].data.mediaDate">{{WidgetHome.items[$index].data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
                         </div>
                     </div>
-                    <div class="list-item-even col-xs-6 pull-left clickable text-overlay "
+                    <div class="list-item-even col-xs-6 pull-left clickable text-overlay " ng-click="WidgetHome.goToMedia($index+1)"
                          ng-if="WidgetHome.items[$index + 1]">
                         <div class="list-item-media text-center overflow-hidden text-overlay">
                             <div class="list-media-holder text-overlay"

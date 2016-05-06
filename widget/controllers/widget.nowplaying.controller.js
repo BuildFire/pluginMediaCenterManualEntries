@@ -6,6 +6,7 @@
                 $rootScope.blackBackground = true;
                 $rootScope.showFeed = false;
                 var NowPlaying = this;
+                NowPlaying.currentTime=0;
                 NowPlaying.swiped = [];
                 NowPlaying.currentTrack = new Track(media.data);
                 NowPlaying.item = media;
