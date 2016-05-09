@@ -84,8 +84,8 @@
         </a>
     </div>
     <!-- Playlist Overlay -->
-    <div ng-if="playlist" class="overlay"
-         style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8);">
+    <div ng-if="playlist" class="overlay backgroundColorTheme slide"
+         style="position:fixed; top:0; left:0; width:100%; height:100%;">
         <div class="overlay-content"
              style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
             <div class="media-player-list-layout layout3">
@@ -99,7 +99,7 @@
                                 <img ng-if="track.image" load-image="16x9" data-final-src="{{track.image | cropImage : 55 :22}}">
                             </div>
                             <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-                                <p class="margin-bottom-zero ellipsis margin-top-twenty text-primary">{{track.title}}</p>
+                                <p class="margin-bottom-zero ellipsis margin-top-twenty bodyTextTheme">{{track.title}}</p>
                             </div>
                             <div class="btns text-center">
                                 <a ng-class="track.playing ? 'icon-pause-circle' : 'icon-play-circle'"
@@ -111,9 +111,12 @@
                             </div>
                         </div>
                     </div>
+                    <div ng-if="!NowPlaying.playList.length">
+                        <h3 class="titleBarTheme">Playlist is empty.</h3>
+                    </div>
                 </div>
             </div>
-            <a ng-click="NowPlaying.closePlayListOverlay()" class="whiteTheme">Done</a>
+            <a ng-click="NowPlaying.closePlayListOverlay()" class="primaryTheme" >Done</a>
         </div>
     </div>
 
