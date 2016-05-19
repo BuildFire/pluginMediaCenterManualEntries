@@ -1,11 +1,88 @@
-/*
 describe("DesignHomeCtrl", function () {
 
     var $rootScope,
         $scope,
         controller,
         mediaCenterSpy,
+        Buildfire,
         q;
+    Buildfire;
+
+    beforeEach(module('mediaCenterDesign', function ($provide) {
+        $provide.service('Buildfire', function () {
+            this.imageLib = {
+                showDialog: function (options, callback) {
+                    controller._callback(null, {selectedFiles: ['test']});
+                }
+            };
+            this.datastore = jasmine.createSpyObj('datastore', ['get', 'save', 'update']);
+            this.datastore.get.and.callFake(function (_tagName, callback) {
+                if (_tagName) {
+                    callback(null, {
+                        data: {
+                            design: {
+                                itemListLayout: 'layout1',
+                                bgImage: ''
+                            },
+                            content: {
+                                images: [{title: 'bg1.png'}]
+                            }
+                        }
+                    });
+                } else {
+                    callback('Error', null);
+                }
+            });
+            this.datastore.update.and.callFake(function (_tagName, id, data, callback) {
+                if (_tagName) {
+                    callback(null, {
+                        data: {
+                            design: {
+                                itemListLayout: 'layout1',
+                                bgImage: ''
+                            },
+                            content: {
+                                images: [{title: 'bg1.png'}]
+                            }
+                        }
+                    });
+                } else {
+                    callback('Error', null);
+                }
+            });
+            this.datastore.save.and.callFake(function (options, _tagName, callback) {
+                if (_tagName) {
+                    callback(null, [{
+                        data: {
+                            design: {
+                                itemListLayout: 'layout1',
+                                bgImage: ''
+                            },
+                            content: {
+                                images: [{title: 'bg1.png'}]
+                            }
+                        }
+                    }]);
+                } else {
+                    callback('Error', null);
+                }
+            });
+            this.components = {
+                images: {
+                    thumbnail: function () {
+                        this.loadbackground = function (url) {
+                        };
+                        this.onChange = function (url) {
+                        };
+                        this.onDelete = function (url) {
+                        };
+                        return this;
+
+                    }
+                }
+            };
+        });
+    }));
 
 
     beforeEach(function () {
@@ -13,17 +90,12 @@ describe("DesignHomeCtrl", function () {
 
         inject(function ($injector, $q) {
             $rootScope = $injector.get('$rootScope');
+            Buildfire = $injector.get('Buildfire');
             $scope = $rootScope.$new();
             controller = $injector.get('$controller')('DesignHomeCtrl', {
                 $scope: $scope,
                 MediaCenterInfo: {id: '1', data: {design: {listLayout: 'test', backgroundImage: 'test1'}}},
-                Buildfire: {
-                    imageLib: {
-                        showDialog: function (options, callback) {
-                            controller._callback(null, {selectedFiles: ['test']});
-                        }
-                    }
-                }
+                Buildfire: Buildfire
             });
             q = $q;
         });
@@ -75,32 +147,25 @@ describe("DesignHomeCtrl", function () {
             controller.changeLayout('test', 'item');
             expect(controller.mediaInfo.data.design).toBeNull();
         });
-    });
-
-    describe('removeBackgroundImage', function () {
-        it('should make the background image property null', function () {
-            controller.removeBackgroundImage();
-            expect(controller.mediaInfo.data.design.backgroundImage).toBeNull();
-        });
-    });
-
-    describe('addBackgroundImage', function () {
-
-        beforeEach(function () {
-            controller._mediaCenter.update = function () {
-                var deferred = q.defer();
-                deferred.resolve('Remote call result');
-                return deferred.promise;
+        it('should do nothing if onChange called', function () {
+            var background = new Buildfire.components.images.thumbnail('id');
+            background.onChange = function (url) {
+                controller.mediaInfo.data.design.backgroundImage = url;
             };
+            background.onChange('test1');
+            $rootScope.$apply();
+            expect(controller.mediaInfo.data.design.backgroundImage).toEqual('test1');
         });
-
-        it('should make the background image property null', function () {
-            controller.removeBackgroundImage();
-            controller.addBackgroundImage();
-            expect(controller.mediaInfo.data.design.backgroundImage).toEqual('test');
+        it('should do nothing if onDelete called', function () {
+            var background = new Buildfire.components.images.thumbnail('id');
+            background.onDelete = function (url) {
+                controller.mediaInfo.data.design.backgroundImage = '';
+            };
+            background.onDelete('test1');
+            $rootScope.$apply();
+            expect(controller.mediaInfo.data.design.backgroundImage).toEqual('');
         });
     });
-
     describe('watcher of controller.mediaInfo', function () {
 
         it('should change the lastSaved when mediainfo is changed succesfully on db', function () {
@@ -112,7 +177,6 @@ describe("DesignHomeCtrl", function () {
             };
             //controller.mediaInfo = {};
             controller.mediaInfo.data.design.backgroundImage = 'test';
-            controller.removeBackgroundImage();
             $scope.$digest();
             expect(controller._lastSaved).not.toBeNull();
         });
@@ -125,10 +189,179 @@ describe("DesignHomeCtrl", function () {
                 return deferred.promise;
             };
 
-            controller.removeBackgroundImage();
             $scope.$digest();
             expect(controller.mediaInfo.data.design.backgroundImage).toEqual('test1');
         });
+        it('$watcher', function () {
+            controller.mediaInfo = {
+                data: {design: {backgroundImage: 'image'}}
+            };
+            $rootScope.$digest();
+        });
+        it('$watcher id is there', function () {
+            controller.mediaInfo = {
+                id: '123',
+                data: {design: {backgroundImage: 'image'}}
+            };
+            $rootScope.$digest();
+        });
     });
+});
 
-});*/
+// Empty case
+describe("DesignHomeCtrl Error case", function () {
+    var $rootScope,
+        $scope,
+        controller,
+        Buildfire,
+        q;
+    beforeEach(module('mediaCenterDesign', function ($provide) {
+        $provide.service('Buildfire', function () {
+            this.imageLib = {
+                showDialog: function (options, callback) {
+                    controller._callback(null, {selectedFiles: ['test']});
+                }
+            };
+            this.datastore = jasmine.createSpyObj('datastore', ['get', 'save', 'update']);
+            this.datastore.get.and.callFake(function (_tagName, callback) {
+                callback('Error', null);
+            });
+            this.datastore.update.and.callFake(function (_tagName, id, data, callback) {
+                callback('Error', null);
+            });
+            this.datastore.save.and.callFake(function (options, _tagName, callback) {
+                if (_tagName) {
+                    callback(null, [{
+                        data: {
+                            design: {
+                                itemListLayout: 'layout1',
+                                bgImage: ''
+                            },
+                            content: {
+                                images: [{title: 'bg1.png'}]
+                            }
+                        }
+                    }]);
+                } else {
+                    callback('Error', null);
+                }
+            });
+            this.components = {
+                images: {
+                    thumbnail: function () {
+                        this.loadbackground = function (url) {
+                        };
+                        this.onChange = function (url) {
+                        };
+                        this.onDelete = function (url) {
+                        };
+                        return this;
+
+                    }
+                }
+            };
+        });
+    }));
+
+
+    beforeEach(function () {
+        module('mediaCenterDesign');
+        inject(function ($injector, $q) {
+            $rootScope = $injector.get('$rootScope');
+            Buildfire = $injector.get('Buildfire');
+            $scope = $rootScope.$new();
+            controller = $injector.get('$controller')('DesignHomeCtrl', {
+                $scope: $scope,
+                MediaCenterInfo: null,
+                Buildfire: Buildfire
+            });
+            q = $q;
+        });
+    });
+    describe('Initialization with empty', function () {
+        it('should initialize the listLayouts to the default value', function () {
+            expect(controller.layouts.listLayouts.length).toEqual(4);
+        });
+    });
+    describe('Watcher error case', function () {
+        it('$watcher', function () {
+            controller.mediaInfo = {
+                data: {design: {backgroundImage: 'image'}}
+            };
+            $rootScope.$digest();
+            controller.mediaInfo ={id:'123',data:{}};
+            $rootScope.$digest();
+        });
+    });
+});
+describe("DesignHomeCtrl Error and data case", function () {
+    var $rootScope,
+        $scope,
+        controller,
+        Buildfire,
+        q;
+    beforeEach(module('mediaCenterDesign', function ($provide) {
+        $provide.service('Buildfire', function () {
+            this.imageLib = {
+                showDialog: function (options, callback) {
+                    controller._callback(null, {selectedFiles: ['test']});
+                }
+            };
+            this.datastore = jasmine.createSpyObj('datastore', ['get', 'save', 'update']);
+            this.datastore.get.and.callFake(function (_tagName, callback) {
+                callback('Error', null);
+            });
+            this.datastore.update.and.callFake(function (_tagName, id, data, callback) {
+                callback('Error', null);
+            });
+            this.datastore.save.and.callFake(function (options, _tagName, callback) {
+                callback('Error', null);
+            });
+            this.components = {
+                images: {
+                    thumbnail: function () {
+                        this.loadbackground = function (url) {
+                        };
+                        this.onChange = function (url) {
+                        };
+                        this.onDelete = function (url) {
+                        };
+                        return this;
+
+                    }
+                }
+            };
+        });
+    }));
+
+
+    beforeEach(function () {
+        module('mediaCenterDesign');
+        inject(function ($injector, $q) {
+            $rootScope = $injector.get('$rootScope');
+            Buildfire = $injector.get('Buildfire');
+            $scope = $rootScope.$new();
+            controller = $injector.get('$controller')('DesignHomeCtrl', {
+                $scope: $scope,
+                MediaCenterInfo: null,
+                Buildfire: Buildfire
+            });
+            q = $q;
+        });
+    });
+    describe('Initialization with empty', function () {
+        it('should initialize the listLayouts to the default value', function () {
+            expect(controller.layouts.listLayouts.length).toEqual(4);
+        });
+    });
+    describe('Watcher error case', function () {
+        it('$watcher', function () {
+            controller.mediaInfo = {
+                data: {design: {backgroundImage: 'image'}}
+            };
+            $rootScope.$digest();
+            controller.mediaInfo ={id:'123',data:{}};
+            $rootScope.$digest();
+        });
+    });
+});

@@ -16,7 +16,8 @@
             //"info.vietnamcode.nampnq.videogular.plugins.youtube",
             "com.2fdevs.videogular.plugins.controls",
             "com.2fdevs.videogular.plugins.overlayplay",
-            "videosharing-embed"
+            "videosharing-embed",
+            "ngTouch"
         ])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component
@@ -35,31 +36,6 @@
                 //buildfire.datastore.disableRefresh();
 
             $routeProvider
-                /* .when('/', {
-                 templateUrl: 'templates/home.html',
-                 controllerAs: 'WidgetHome',
-                 controller: 'WidgetHomeCtrl',
-                 resolve: {
-                 MediaCenterInfo: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location',
-                 function ($q, DB, COLLECTIONS, Orders, Location) {
-                 var deferred = $q.defer();
-                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
-                 MediaCenter.get().then(function success(result) {
-                 if (result && result.data && result.id) {
-                 deferred.resolve(result);
-                 }
-                 else {
-                 deferred.resolve(null);
-                 }
-                 },
-                 function fail(error) {
-                 deferred.resolve(null);
-                 }
-                 );
-                 return deferred.promise;
-                 }]
-                 }
-                 })*/
                 .when('/', {
                     template: '<div></div>'
                 })
@@ -170,28 +146,48 @@
             $httpProvider.interceptors.push(interceptor);
 
         }])
-        .run(['Location', '$location', '$rootScope', function (Location, $location, $rootScope) {
+        .run(['Location', '$location', '$rootScope', 'Messaging', 'EVENTS', 'PATHS', function (Location, $location, $rootScope, Messaging, EVENTS, PATHS) {
             if (buildfire.deeplink)
                 buildfire.deeplink.getData(function (data) {
                     if (data) {
-                        console.log('data---', data);
                         Location.go("#/media/" + JSON.parse(data).id);
                     }
                 });
 
+
             buildfire.navigation.onBackButtonClick = function () {
                 var path = $location.path();
                 if (path.indexOf('/media') == 0) {
-                    if ($("#feedView").hasClass('ng-hide'))
+
+                    if ($("#feedView").hasClass('notshowing')) {
+                        Messaging.sendMessageToControl({
+                            name: EVENTS.ROUTE_CHANGE,
+                            message: {
+                                path: PATHS.HOME
+                            }
+                        });
                         $("#showFeedBtn").click();
+                    }
                     else
-                        buildfire.navigation.navigateHome();
+                        buildfire.navigation._goBackOne();
                 }
-                else if (path.indexOf('/nowplaying') == 0)
-                    Location.go('#/media/' + path.split('/')[2]);
+                else if (path.indexOf('/nowplaying') == 0) {
+                    if ($rootScope.playlist) {
+                        $rootScope.playlist = false;
+                        $rootScope.$digest();
+                    }
+                    else {
+                        Location.go('#/media/' + path.split('/')[2]);
+                    }
+                }
                 else
-                    buildfire.navigation.navigateHome();
-            }
+                    buildfire.navigation._goBackOne();
+            };
+
+            buildfire.device.onAppBackgrounded(function () {
+                $rootScope.$emit('deviceLocked', {});
+                //callPlayer('ytPlayer', 'pauseVideo');
+            });
         }]);
 
 })(window.angular, window.buildfire);

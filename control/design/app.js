@@ -6,7 +6,6 @@
         [
             'mediaCenterEnums',
             'mediaCenterDesignServices',
-            'mediaCenterDesignFilters',
             'ngAnimate',
             'ngRoute'
         ])
@@ -21,7 +20,7 @@
                     controllerAs: 'DesignHome',
                     controller: 'DesignHomeCtrl',
                     resolve: {
-                        MediaCenterInfo: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location', function ($q, DB, COLLECTIONS, Orders, Location) {
+                        MediaCenterInfo: ['$q', 'DB', 'COLLECTIONS', 'Orders', function ($q, DB, COLLECTIONS, Orders) {
                             var deferred = $q.defer();
                             var MediaCenter = new DB(COLLECTIONS.MediaCenter);
                             MediaCenter.get().then(function success(result) {

@@ -1,8 +1,8 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', '$rootScope', 'Buildfire', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders',
-            function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, AppConfig, Messaging, EVENTS, PATHS, Location, Orders) {
+        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location',
+            function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location) {
                 $rootScope.showFeed = true;
                 var WidgetHome = this;
                 var _infoData = {
@@ -44,20 +44,13 @@
                         }
                         WidgetHome.media = MediaCenterInfo;
                         $rootScope.backgroundImage = MediaCenterInfo.data.design.backgroundImage;
-                        AppConfig.setSettings(MediaCenterInfo.data);
+
                     },
                     function fail() {
                         MediaCenterInfo = _infoData;
                         WidgetHome.media = MediaCenterInfo;
-                        AppConfig.setSettings(MediaCenterInfo.data);
                     }
                 );
-
-                /*  if (!MediaCenterInfo)
-                 MediaCenterInfo = _infoData;
-
-                 WidgetHome.media = MediaCenterInfo;*/
-
                 var _skip = 0,
                     _limit = 10,
                     searchOptions = {
@@ -74,7 +67,7 @@
 
                 /*declare the device width heights*/
                 $rootScope.deviceHeight = WidgetHome.deviceHeight = window.innerHeight;
-                $rootScope.deviceWidth = WidgetHome.deviceWidth = window.innerWidth;
+                $rootScope.deviceWidth = WidgetHome.deviceWidth = window.innerWidth || 320;
 
                 /*initialize the device width heights*/
                 var initDeviceSize = function (callback) {
@@ -101,28 +94,27 @@
                     if (event) {
                         switch (event.name) {
                             case EVENTS.ROUTE_CHANGE:
-                                var path = event.message.path,
-                                    id = event.message.id;
-                                var url = "#/";
-                                switch (path) {
-                                    case PATHS.MEDIA:
-                                        url = url + "media/";
-                                        if (id) {
-                                            url = url + id + "/";
-                                        }
-                                        break;
-                                    default :
-
-                                        break;
+                                if((event.message && event.message.path == PATHS.MEDIA && $location.$$path.indexOf('/media') == -1) || (event.message && event.message.path != PATHS.MEDIA)) {
+                                    var path = event.message.path,
+                                        id = event.message.id;
+                                    var url = "#/";
+                                    switch (path) {
+                                        case PATHS.MEDIA:
+                                            url = url + "media/";
+                                            if (id) {
+                                                url = url + id + "/";
+                                            }
+                                            break;
+                                    }
+                                    Location.go(url);
+                                    if (path == PATHS.MEDIA) {
+                                        $rootScope.showFeed = false;
+                                    }
+                                    else {
+                                        $rootScope.showFeed = true;
+                                    }
+                                    $scope.$apply();
                                 }
-                                Location.go(url);
-                                if (id) {
-                                    $rootScope.showFeed = false;
-                                }
-                                else {
-                                    $rootScope.showFeed = true;
-                                }
-                                $scope.$apply();
                                 break;
                             case EVENTS.ITEMS_CHANGE:
                                 WidgetHome.refreshItems();
@@ -174,7 +166,7 @@
 
                 // ShowDescription only when it have content
                 WidgetHome.showDescription = function () {
-                    if (WidgetHome.media.data.content.descriptionHTML == '<p>&nbsp;<br></p>' || WidgetHome.media.data.content.descriptionHTML == '<p><br data-mce-bogus="1"></p>')
+                    if (WidgetHome.media.data.content.descriptionHTML == '<p>&nbsp;<br></p>' || WidgetHome.media.data.content.descriptionHTML == '<p><br data-mce-bogus="1"></p>'|| WidgetHome.media.data.content.descriptionHTML == '')
                         return false;
                     else
                         return true;
@@ -237,8 +229,8 @@
 
                 $rootScope.$on("Carousel:LOADED", function () {
                     if (WidgetHome.media.data.content && WidgetHome.media.data.content.images) {
-                        view = new Buildfire.components.carousel.view("#carousel", []);
-                        view.loadItems(WidgetHome.media.data.content.images, false);
+                        view = new Buildfire.components.carousel.view("#carousel", WidgetHome.media.data.content.images);
+                        //view.loadItems(WidgetHome.media.data.content.images, false);
                     } else {
                         view.loadItems([]);
                     }
@@ -258,25 +250,19 @@
 
                         MediaCenter.get().then(function success(result) {
                                 WidgetHome.media = result;
-                                AppConfig.setSettings(MediaCenterInfo.data);
                             },
                             function fail() {
                                 WidgetHome.media = _infoData;
-                                AppConfig.setSettings(_infoData.data);
                             }
                         );
                     }
                 });
-
-                /* $rootScope.$on("ROUTE_CHANGED", function (e, design) {
-                 if (design) {
-                 WidgetHome.media.data.design = design;
-                 console.log('WidgetHome.media.data.design>>', WidgetHome.media.data.design);
-                 $scope.$apply();
-                 }
-                 listener.clear();
-                 listener = Buildfire.datastore.onUpdate(onUpdateCallback);
-                 });*/
+                /**
+                 * Implementation of pull down to refresh
+                 */
+                var onRefresh=Buildfire.datastore.onRefresh(function(){
+                    Location.goToHome();
+                });
 
 
             }]);

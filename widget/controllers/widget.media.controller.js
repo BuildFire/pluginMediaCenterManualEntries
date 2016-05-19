@@ -1,16 +1,18 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'AppConfig', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'PATHS', '$rootScope',
-            function ($scope, $window, AppConfig, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, PATHS, $rootScope) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'PATHS', '$rootScope','Location',
+            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, PATHS, $rootScope,Location) {
 
                 var WidgetMedia = this;
                 WidgetMedia.API = null;
                 WidgetMedia.showVideo = false;
                 WidgetMedia.showSource = false;
+                WidgetMedia.loadingVideo = false;
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
                 WidgetMedia.onPlayerReady = function ($API) {
                     WidgetMedia.API = $API;
+                    WidgetMedia.loadingVideo = true;
                 };
 
                 WidgetMedia.videoPlayerConfig = {
@@ -29,26 +31,17 @@
                             type: 'video/' + WidgetMedia.item.data.videoUrl.split('.').pop() //"video/mp4"
                         }];
                 };
-                //if (AppConfig.getSettings()) {
-                if (false) {
+                MediaCenter.get().then(function (data) {
                     WidgetMedia.media = {
-                        data: AppConfig.getSettings()
+                        data: data.data
                     };
-                }
-                else {
-                    MediaCenter.get().then(function (data) {
-                        WidgetMedia.media = {
-                            data: data.data
-                        };
-                        $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
-                        console.log('Get Info---', data, 'data---');
-                    }, function (err) {
-                        WidgetMedia.media = {
-                            data: {}
-                        };
-                        console.log('Get Error---', err);
-                    });
-                }
+                    $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
+                }, function (err) {
+                    WidgetMedia.media = {
+                        data: {}
+                    };
+                    console.error('Get Error---', err);
+                });
 
 
                 WidgetMedia.sourceChanged = function ($source) {
@@ -71,16 +64,11 @@
                     }
                 };
                 if (media) {
-                    /*$rootScope.showFeed = false;
-                     $scope.$apply();*/
                     WidgetMedia.item = media;
-                    console.log('initial', WidgetMedia.item);
                     WidgetMedia.changeVideoSrc();
                     WidgetMedia.iframeSrcUrl = $sce.trustAsUrl(WidgetMedia.item.data.srcUrl);
                 }
                 else {
-                    /*  $rootScope.showFeed = false;
-                     $scope.$apply();*/
                     WidgetMedia.iframeSrcUrl = '';
                 }
 
@@ -119,7 +107,7 @@
                                         if (id) {
                                             url = url + "/" + id;
                                         }
-                                        break
+                                        break;
                                     default :
 
                                         break
@@ -130,12 +118,10 @@
                     }
                 });
                 WidgetMedia.onUpdateFn = Buildfire.datastore.onUpdate(function (event) {
-                    console.log('update called');
                     switch (event.tag) {
                         case COLLECTIONS.MediaContent:
                             if (event.data) {
                                 WidgetMedia.item = event;
-                                console.log('change', WidgetMedia.item);
                                 $scope.$digest();
                             }
                             break;
@@ -157,7 +143,11 @@
                 };
 
                 WidgetMedia.showSourceIframe = function () {
-                    Buildfire.navigation.openWindow(WidgetMedia.item.data.srcUrl, '_system');
+                    var link = WidgetMedia.item.data.srcUrl;
+                    if (!/^(?:f|ht)tps?\:\/\//.test(link)) {
+                        link = "http://" + link;
+                    }
+                    Buildfire.navigation.openWindow(link, '_system');
                     /* WidgetMedia.showSource = !WidgetMedia.showSource;
                      if (WidgetMedia.showSource) {
                      $timeout(function () {
@@ -170,7 +160,12 @@
                     Buildfire.actionItems.execute(actionItem);
                 };
 
-                var initializing = true;
+                WidgetMedia.videoLoaded = function () {
+                    WidgetMedia.loadingVideo = false;
+                };
+
+
+              var initializing = true;
                 $scope.$watch(function () {
                     return WidgetMedia.item.data.videoUrl;
                 }, function () {
@@ -184,7 +179,6 @@
                 });
                 $scope.$on("$destroy", function () {
                     WidgetMedia.onUpdateFn.clear();
-                    //$rootScope.$broadcast('ROUTE_CHANGED', WidgetMedia.data.design.listLayout);
                 });
 
                 //Sync with Control section
@@ -194,6 +188,34 @@
                         path: PATHS.MEDIA,
                         id: WidgetMedia.item.id || null
                     }
+                });
+
+                /**
+                 * Implementation of pull down to refresh
+                 */
+                var onRefresh=Buildfire.datastore.onRefresh(function(){
+                });
+
+                /**
+                 * Unbind the onRefresh
+                 */
+                $scope.$on('$destroy', function () {
+                    onRefresh.clear();
+                    Buildfire.datastore.onRefresh(function(){
+                        Location.goToHome();
+                    });
+                });
+
+                $rootScope.$on('deviceLocked', function () {
+                    // pause videogular video (if any)
+                    if(WidgetMedia.API)
+                    WidgetMedia.API.pause();
+
+                    // pause Youtube video (no need to check if there is any yt video playing)
+                    callPlayer('ytPlayer', 'pauseVideo');
+
+                    // pause Vimeo video (no need to check if there is any vimeo video playing)
+                    callVimeoPlayer('ytPlayer');
                 });
 
             }]);

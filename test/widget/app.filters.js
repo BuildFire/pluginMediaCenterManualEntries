@@ -1,7 +1,7 @@
 /**
  * Created by lakshay on 27/8/15.
  */
-xdescribe('Unit: resizeImage filter', function () {
+describe('Unit: resizeImage filter', function () {
     beforeEach(module('mediaCenterWidgetFilters'));
     var filter;
     beforeEach(inject(function (_$filter_) {
@@ -20,7 +20,7 @@ xdescribe('Unit: resizeImage filter', function () {
         expect(result).toEqual("http://s7obnu.cloudimage.io/s/resizenp/88x124/");
     });
 });
-xdescribe('Unit: isYoutubeVimeoLink filter', function () {
+describe('Unit: isYoutubeVimeoLink filter', function () {
     beforeEach(module('mediaCenterWidgetFilters'));
     var filter;
     beforeEach(inject(function (_$filter_) {
@@ -51,7 +51,7 @@ xdescribe('Unit: isYoutubeVimeoLink filter', function () {
         expect(result).toBeFalsy();
     });
 });
-xdescribe('Unit: cropImage filter', function () {
+describe('Unit: cropImage filter', function () {
     beforeEach(module('mediaCenterWidgetFilters'));
     var filter;
     beforeEach(inject(function (_$filter_) {
@@ -69,8 +69,13 @@ xdescribe('Unit: cropImage filter', function () {
         result = filter('cropImage')('', 88, 124);
         expect(result).toEqual("http://s7obnu.cloudimage.io/s/crop/88x124/");
     });
+    it('it should give a blank if parameter is blank and nodefault is true', function () {
+        var result;
+        result = filter('cropImage')(null, 88, 124,true);
+        expect(result).toEqual('');
+    });
 });
-xdescribe('Unit: safeHtml filter', function () {
+describe('Unit: safeHtml filter', function () {
     beforeEach(module('mediaCenterWidgetFilters'));
     var filter;
     beforeEach(inject(function (_$filter_) {
@@ -89,7 +94,7 @@ xdescribe('Unit: safeHtml filter', function () {
         expect(result).toEqual("");
     });
 });
-xdescribe('Unit: jsDate filter', function () {
+describe('Unit: jsDate filter', function () {
     beforeEach(module('mediaCenterWidgetFilters'));
     var filter;
     beforeEach(inject(function (_$filter_) {

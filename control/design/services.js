@@ -1,21 +1,6 @@
 (function (angular, buildfire, location) {
     'use strict';
     //created mediaCenterWidget module
-    var settings, appId;
-    var Settings = {
-        setSettings: function (newSettings) {
-            settings = newSettings;
-        },
-        setAppId: function (newId) {
-            appId = newId;
-        },
-        getSetting: function () {
-            return settings;
-        },
-        getAppId: function () {
-            return appId;
-        }
-    };
     angular
         .module('mediaCenterDesignServices', ['mediaCenterEnums'])
         .provider('Buildfire', [function () {
@@ -31,17 +16,6 @@
         .provider('ImageLib', [function () {
             this.$get = function () {
                 return buildfire.imageLib;
-            };
-        }])
-        .factory('Location', [function () {
-            var _location = location;
-            return {
-                go: function (path) {
-                    _location.href = path;
-                },
-                goToHome: function () {
-                    _location.href = _location.href.substr(0, _location.href.indexOf('#'));
-                }
             };
         }])
         .factory('Orders', [function () {
@@ -62,12 +36,7 @@
             ];
             return {
                 ordersMap: ordersMap,
-                options: orders,
-                getOrder: function (name) {
-                    return orders.filter(function (order) {
-                        return order.name === name;
-                    })[0];
-                }
+                options: orders
             };
         }])
         .factory("DB", ['Buildfire', '$q', 'MESSAGES', 'CODES', function (Buildfire, $q, MESSAGES, CODES) {
@@ -87,70 +56,6 @@
                     }
                     else {
                         return deferred.resolve(result);
-                    }
-                });
-                return deferred.promise;
-            };
-            DB.prototype.getById = function (id) {
-                var that = this;
-                var deferred = $q.defer();
-                Buildfire.datastore.getById(id, that._tagName, function (err, result) {
-                    if (err) {
-                        return deferred.reject(err);
-                    }
-                    else if (result && result.data) {
-                        return deferred.resolve(result);
-                    } else {
-                        return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
-                    }
-                });
-                return deferred.promise;
-            };
-            DB.prototype.insert = function (items) {
-                var that = this;
-                var deferred = $q.defer();
-                if (typeof items == 'undefined') {
-                    return deferred.reject(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
-                }
-                if (Array.isArray(items)) {
-                    Buildfire.datastore.bulkInsert(items, that._tagName, function (err, result) {
-                        if (err) {
-                            return deferred.reject(err);
-                        }
-                        else if (result) {
-                            return deferred.resolve(result);
-                        } else {
-                            return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
-                        }
-                    });
-                } else {
-                    Buildfire.datastore.insert(items, that._tagName, false, function (err, result) {
-                        if (err) {
-                            return deferred.reject(err);
-                        }
-                        else if (result) {
-                            return deferred.resolve(result);
-                        } else {
-                            return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
-                        }
-                    });
-                }
-                return deferred.promise;
-            };
-            DB.prototype.find = function (options) {
-                var that = this;
-                var deferred = $q.defer();
-                if (typeof options == 'undefined') {
-                    return deferred.reject(new Error(MESSAGES.ERROR.OPTION_REQUIRES));
-                }
-                Buildfire.datastore.search(options, that._tagName, function (err, result) {
-                    if (err) {
-                        return deferred.reject(err);
-                    }
-                    else if (result) {
-                        return deferred.resolve(result);
-                    } else {
-                        return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
                     }
                 });
                 return deferred.promise;
@@ -194,54 +99,6 @@
                 });
                 return deferred.promise;
             };
-            DB.prototype.delete = function (id) {
-                var that = this;
-                var deferred = $q.defer();
-                if (typeof id == 'undefined') {
-                    return deferred.reject(new Error(MESSAGES.ERROR.ID_NOT_DEFINED));
-                }
-                Buildfire.datastore.delete(id, that._tagName, function (err, result) {
-                    if (err) {
-                        return deferred.reject(err);
-                    }
-                    else if (result) {
-                        return deferred.resolve(result);
-                    } else {
-                        return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
-                    }
-                });
-                return deferred.promise;
-            };
             return DB;
-        }])
-        .value('Settings', Settings)
-        .factory("AppConfig", ['$rootScope', 'Buildfire', 'Settings', function ($rootScope, Buildfire, Settings) {
-            return {
-                setSettings: function (newSettings) {
-                    Settings.setSettings(newSettings);
-                },
-                setAppId: function (newAppId) {
-                    Settings.setAppId(newAppId);
-                },
-                getSettings: function () {
-                    return Settings.getSetting();
-                },
-                getAppId: function () {
-                    return Settings.getAppId();
-                },
-                changeBackgroundTheme: function (url) {
-                    if (url) {
-                        $rootScope.currentBackgroundImage = {
-                            "background-image": "url(" + Buildfire.imageLib.resizeImage(url, {
-                                width: 342,
-                                height: 770
-                            }) + ")"
-                        };
-                        return;
-                    } else {
-                        $rootScope.currentBackgroundImage = "";
-                    }
-                }
-            };
         }]);
 })(window.angular, window.buildfire, window.location);

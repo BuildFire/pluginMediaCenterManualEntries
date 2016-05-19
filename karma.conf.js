@@ -36,7 +36,8 @@ module.exports = function (config) {
             //'http://localhost:63342/sdk/scripts/buildfire.js',
             'http://localhost:63342/sdk/plugins/pluginMediaCenterManualEntries/widget/assets/js/owl.carousel.min.js',
             'http://localhost:63342/sdk/scripts/buildfire/services/media/audioPlayer.js',
-            'http://localhost:63342/sdk/scripts/buildfire/components/carousel/carousel.js'
+            'http://localhost:63342/sdk/scripts/buildfire/components/carousel/carousel.js',
+            'http://localhost:63342/sdk/scripts/buildfire/components/images/thumbnail.js'
         ],
 
 

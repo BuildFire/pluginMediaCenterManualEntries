@@ -150,6 +150,9 @@
                                 link.click();
                                 document.body.removeChild(link);
                             }
+                            else{
+                                window.open('data:attachment/csv;charset=utf-8,' + encodeURI([csv]),'_self');//for safari only
+                            }
                         }
                     },
                     import: function (header, name) {

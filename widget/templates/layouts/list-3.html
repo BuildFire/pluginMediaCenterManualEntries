@@ -1,10 +1,10 @@
 <div class="holder padding-zero">
     <div class="media-center-plugin layout3 text-overlay">
-        <div class="plugin-banner clearfix border-bottom-grey text-overlay">
-            <div id="carousel" build-fire-carousel=""></div>
+        <div class="plugin-banner clearfix text-overlay">
+            <div ng-style="WidgetHome.data.content.images.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}" id="carousel" build-fire-carousel=""></div>
         </div>
-        <div class="padded text-left text-overlay">
-            <p class="margin-bottom-zero" ng-if="WidgetHome.showDescription()"
+        <div class="padded text-left text-overlay" ng-if="WidgetHome.showDescription()">
+            <p class="margin-bottom-zero"
                ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">
             </p>
         </div>
@@ -16,15 +16,15 @@
                  ng-click="WidgetHome.goToMedia($index)">
                 <div class="plugin-banner clearfix text-overlay">
                     <div class="text-overlay" ng-if="item.data.topImage" play-btn="{{item.data.videoUrl.length > 0}}">
-                        <img ng-src="{{item.data.topImage | cropImage:340:190}}">
+                        <img load-image="16x9" data-final-src="{{item.data.topImage | cropImage:340:190}}">
                     </div>
                 </div>
                 <div class="padded text-left text-overlay">
-                    <p class="text-primary ellipsis">
+                    <p class="text-primary ellipsis margin-zero">
                         <a class="text-primary">{{item.data.title}}</a>
                     </p>
-                    <p class="margin-bottom-zero">{{item.data.summary}}</p>
-                    <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
+                    <p class="margin-bottom-zero" style="font-size:13px;">{{item.data.summary}}</p>
+                    <span class="list-item-date" data-ng-if="item.data.mediaDate" style="font-size:11px; font-style:italic; margin-top:-4px;">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
                 </div>
             </div>
         </div>

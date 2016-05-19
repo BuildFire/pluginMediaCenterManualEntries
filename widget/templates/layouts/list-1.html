@@ -1,11 +1,10 @@
 <div class="holder padding-zero">
     <div class="media-center-plugin layout1 text-overlay">
-        <div class="plugin-banner clearfix border-bottom-grey">
-            <div id="carousel" build-fire-carousel=""></div>
+        <div class="plugin-banner clearfix">
+            <div ng-style="WidgetHome.data.content.images.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}" id="carousel" build-fire-carousel=""></div>
         </div>
-        <div class="text-left padded padding-bottom-zero clearfix text-overlay">
-            <p ng-if="WidgetHome.showDescription()"
-               ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">
+        <div class="text-left padded padding-bottom-zero clearfix text-overlay" >
+            <p ng-if="WidgetHome.showDescription()" ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">
             </p>
         </div>
         <div class="padded padding-top-zero text-overlay">
@@ -20,8 +19,8 @@
                          ng-class-even="list-item-even">
                         <div class="list-item-media text-center border-radius-three overflow-hidden text-overlay">
                             <div play-btn="{{item.data.videoUrl.length > 0}}" class="list-media-holder text-overlay">
-                                <img ng-if="item.data.topImage" ng-src="{{item.data.topImage | cropImage:240:135}}">
-                                <img ng-if="!item.data.topImage" src="assets/images/placeholder16x9.png">
+                                <img ng-if="item.data.topImage" load-image="16x9" data-final-src="{{item.data.topImage | cropImage:240:135}}">
+                                <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png">
                             </div>
                         </div>
                         <div class="list-item-copy text-left">

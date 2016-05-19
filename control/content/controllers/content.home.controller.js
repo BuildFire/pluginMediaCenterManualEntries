@@ -4,13 +4,20 @@
         .module('mediaCenterContent')
         .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv',
             function ($scope, MediaCenterInfo, Modals, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv) {
+                /**
+                 * Breadcrumbs  related implementation
+                 */
+                //Buildfire.history.pop();
+
+                //scroll current view to top when loaded.
+                Buildfire.navigation.scrollTop();
                 var ContentHome = this;
 
                 var _infoData = {
                     data: {
                         content: {
                             images: [],
-                            descriptionHTML: '<p>&nbsp;<br></p>',
+                            descriptionHTML: '',
                             description: '',
                             sortBy: Orders.ordersMap.Newest,
                             rankOfLastItem: 0
@@ -97,9 +104,22 @@
                 };
                 // this method will be called when you change the order of items
                 editor.onOrderChange = function (item, oldIndex, newIndex) {
-                    var temp = ContentHome.info.data.content.images[oldIndex];
-                    ContentHome.info.data.content.images[oldIndex] = ContentHome.info.data.content.images[newIndex];
-                    ContentHome.info.data.content.images[newIndex] = temp;
+                  var items = ContentHome.info.data.content.images;
+
+                  var tmp = items[oldIndex];
+
+                  if (oldIndex < newIndex) {
+                    for (var i = oldIndex + 1; i <= newIndex; i++) {
+                      items[i - 1] = items[i];
+                    }
+                  } else {
+                    for (var i = oldIndex - 1; i >= newIndex; i--) {
+                      items[i + 1] = items[i];
+                    }
+                  }
+                  items[newIndex] = tmp;
+
+                  ContentHome.info.data.content.images = items;
                     $scope.$digest();
                 };
 
@@ -317,20 +337,19 @@
 
                             var columns = rows.shift();
 
-                            for(var _index = 0; _index < headerRow.length; _index++){
-                                if(header[headerRow[_index]] != columns[headerRow[_index]])
-                                {
+                            for (var _index = 0; _index < headerRow.length; _index++) {
+                                if (header[headerRow[_index]] != columns[headerRow[_index]]) {
                                     ContentHome.loading = false;
                                     ContentHome.csvDataInvalid = true;
-                                   /* $timeout(function hideCsvDataError() {
-                                        ContentHome.csvDataInvalid = false;
-                                    }, 2000);*/
+                                    /* $timeout(function hideCsvDataError() {
+                                     ContentHome.csvDataInvalid = false;
+                                     }, 2000);*/
                                     break;
                                 }
                             }
 
-                            if(!ContentHome.loading)
-                            return;
+                            if (!ContentHome.loading)
+                                return;
 
                             var rank = ContentHome.info.data.content.rankOfLastItem || 0;
                             for (var index = 0; index < rows.length; index++) {
@@ -362,10 +381,11 @@
                         }
                         else {
                             ContentHome.loading = false;
-                            ContentHome.csvDataInvalid = true;/*
-                            $timeout(function hideCsvDataError() {
-                                ContentHome.csvDataInvalid = false;
-                            }, 2000);*/
+                            ContentHome.csvDataInvalid = true;
+                            /*
+                             $timeout(function hideCsvDataError() {
+                             ContentHome.csvDataInvalid = false;
+                             }, 2000);*/
                             $scope.$apply();
                         }
                     }, function (error) {
@@ -406,7 +426,7 @@
                     }
                     var item = ContentHome.items[index];
                     if ("undefined" !== typeof item) {
-                        Modals.removePopupModal({title: ''}).then(function (result) {
+                        Modals.removePopupModal({title: '',event:$event}).then(function (result) {
                             if (result) {
                                 MediaContent.delete(item.id).then(function (data) {
                                     ContentHome.items.splice(index, 1);
@@ -420,12 +440,12 @@
                         }, function (cancelData) {
                             //do something on cancel
                         });
-                        $timeout(function () {
+                        /*$timeout(function () {
                             var top = $($event.currentTarget).offset().top;
                             if (top > 100)
                                 top -= 100;
                             $('.modal-dialog.modal-sm').offset({top: top, left: 0});
-                        }, 500);
+                        }, 500);*/
 
                     }
                 };
@@ -448,9 +468,9 @@
                     if (!_info.id) {
                         MediaCenter.save(_info.data).then(function (data) {
                             MediaCenter.get().then(function (getData) {
-                               /* ContentHome.masterInfo = angular.copy(_info);
-                                _info.id = getData.id;
-                                AppConfig.setSettings(_info.data);*/
+                                /* ContentHome.masterInfo = angular.copy(_info);
+                                 _info.id = getData.id;
+                                 AppConfig.setSettings(_info.data);*/
                                 updateMasterInfo(data);
                                 AppConfig.setSettings(_info.data);
                             }, function (err) {
@@ -497,4 +517,4 @@
                     }
                 });
             }]);
-})(window.angular, undefined);
+})(window.angular);

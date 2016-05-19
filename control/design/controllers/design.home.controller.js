@@ -9,7 +9,7 @@
                 data: {
                     content: {
                         images: [],
-                        descriptionHTML: '<p>&nbsp;<br></p>',
+                        descriptionHTML: '',
                         description: '',
                         sortBy: Orders.ordersMap.Newest,
                         rankOfLastItem: 0
@@ -32,7 +32,6 @@
             if (DesignHome.mediaInfo.data && DesignHome.mediaInfo.data.design && DesignHome.mediaInfo.data.design.backgroundImage) {
                 background.loadbackground(DesignHome.mediaInfo.data.design.backgroundImage);
             }
-            console.log('mediainfo on init', DesignHome.mediaInfo);
             /*Buildfire DB Service*/
 
             DesignHome._mediaCenter = new DB(COLLECTIONS.MediaCenter);

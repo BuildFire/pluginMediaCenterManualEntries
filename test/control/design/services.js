@@ -5,6 +5,16 @@ describe('mediaCenterDesignServices: Services', function () {
         COLLECTIONS = $injector.get('COLLECTIONS');
     }));
 
+    describe('ImageLib service', function () {
+        var ImageLib;
+        beforeEach(inject(
+            function (_ImageLib_) {
+                ImageLib = _ImageLib_;
+            }));
+        it('ImageLib should exists', function () {
+            expect(ImageLib).toBeDefined();
+        });
+    });
     describe('Buildfire service', function () {
         var Buildfire;
         beforeEach(inject(
@@ -28,11 +38,9 @@ describe('mediaCenterDesignServices: Services', function () {
         });
         it('MediaCenter methods should exists', function () {
          expect(MediaCenter.get).toBeDefined();
-         expect(MediaCenter.find).toBeDefined();
+         expect(typeof MediaCenter.get).toEqual('function');
          expect(MediaCenter.save).toBeDefined();
          expect(MediaCenter.update).toBeDefined();
-         expect(MediaCenter.delete).toBeDefined();
-         expect(MediaCenter.insert).toBeDefined();
          });
     });
     describe('MediaContent service', function () {
@@ -48,11 +56,8 @@ describe('mediaCenterDesignServices: Services', function () {
         });
         it('MediaCenter methods should exists', function () {
             expect(MediaContent.get).toBeDefined();
-            expect(MediaContent.find).toBeDefined();
             expect(MediaContent.save).toBeDefined();
             expect(MediaContent.update).toBeDefined();
-            expect(MediaContent.delete).toBeDefined();
-            expect(MediaContent.insert).toBeDefined();
         });
     });
     describe('Messaging service', function () {

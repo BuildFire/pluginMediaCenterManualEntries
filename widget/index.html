@@ -8,7 +8,6 @@
     <link href="../../../styles/helper.css" rel="stylesheet">
     <link href="../../../styles/siteIcons.css" rel="stylesheet">
     <link href="../../../scripts/owlCarousel/owlCarousel.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../../styles/appStyle.css">
     <link rel="stylesheet" href="../../../styles/transitionAnimation.css">
     <link href="assets/css/widget.app.css" rel="stylesheet">
     <!--SDK js-->
@@ -40,6 +39,7 @@
     <script src="assets/js/videogular.min.js"></script>
     <script src="assets/js/vg-controls.min.js"></script>
     <script src="assets/js/vg-overlay-play.min.js"></script>
+    <script src="assets/js/angular-touch.js"></script>
 
     <!-- Audio player-->
     <script src="../../../scripts/buildfire/services/media/audioPlayer.js"></script>
@@ -49,16 +49,50 @@
 </head>
 <!--<body class="scrollable customBackground" ng-style="currentBackgroundImage"
       ng-class="blackBackground ? 'blackBackground': ''">-->
-<body class="body-scroll" data-ng-attr-style="background:url({{ backgroundImage | cropImage:deviceWidth:deviceHeight:true}}) !important; background-size:cover;">
+<body class="body-scroll">
 <div class="main_view">
-    <div id="feedView" class="content slide infinite-scroll-parent  no-background" ng-show="showFeed">
+    <div ng-class="showFeed ? 'showing' : 'notshowing'" data-ng-attr-style="background:url({{ backgroundImage | cropImage:deviceWidth:deviceHeight:true}}) !important; background-size:cover !important;" id="feedView" class="content slide infinite-scroll-parent" >
         <div ng-controller="WidgetHomeCtrl as WidgetHome">
             <div ng-include="'templates/home.html'">
             </div>
         </div>
     </div>
-    <div ng-view="" class="slide content  no-background" ng-if="!showFeed"></div>
+    <div data-ng-attr-style="{{
+    backgroundImage
+        ? 'background: url(' + (backgroundImage | cropImage:deviceWidth:deviceHeight:true) + ') !important; background-size: cover;'
+        : 'background: white'
+}}"
+         ng-view=""
+         class="slide content"
+         ng-if="!showFeed"></div>
+
     <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>
+
 </div>
 </body>
+<script>
+    function callPlayer(frame_id, func, args) {
+        if (window.jQuery && frame_id instanceof jQuery) frame_id = frame_id.get(0).id;
+        var iframe = document.getElementById(frame_id);
+        if (iframe && iframe.tagName.toUpperCase() != 'IFRAME') {
+            iframe = iframe.getElementsByTagName('iframe')[0];
+        }
+        if (iframe) {
+            // Frame exists,
+            iframe.contentWindow.postMessage(JSON.stringify({
+                "event": "command",
+                "func": func,
+                "args": args || [],
+                "id": frame_id
+            }), "*");
+        }
+    }
+    function callVimeoPlayer(iframeId) {
+        var iframe = $('#' + iframeId)[0];
+        var url = 'https://player.vimeo.com';
+        /*   if (iframe.src.indexOf('https') == 0)
+         url = 'https://player.vimeo.com';*/
+        iframe.contentWindow.postMessage({method: 'pause'}, url);
+    }
+</script>
 </html>

@@ -1,22 +1,29 @@
 {
-  "author":"BuildFire"
-,"pluginName":"MediaCenterManualEntriesPlugin"
-,"pluginDescription":"This plugin is used for playing audio and video media files using HTML5 player and Youtube/Vimeo players."
-,"supportEmail":"support@buildfire.com"
-,"control":{
-  "content":{
-    "enabled":true
-  }
-, "design":{
-    "enabled":true
-  }
-, "settings":{
-    "enabled":false
-  }
-}
-,"widget":{
-
-},
-  "features" : [],
-  "languages" : ["en"]
+  "author": "BuildFire",
+  "pluginName": "Media Center Manual",
+  "pluginDescription": "The Media Center plugin is incredibly useful for a variety of different media use cases. Create categorized manual entries of audio, video, and other media content.",
+  "supportEmail": "support@buildfire.com",
+  "pluginIcon": "icon.png",
+  "supportSite": "http://support.appdocumentation.com/knowledge-base/media-center-manual-plugin/",
+  "control": {
+    "content": {
+      "enabled": true
+    },
+    "design": {
+      "enabled": true
+    },
+    "settings": {
+      "enabled": false
+    }
+  },
+  "widget": {
+  },
+  "features": [
+    {
+      "name": "BackgroundAudio"
+    }
+  ],
+  "languages": [
+    "en"
+  ]
 }

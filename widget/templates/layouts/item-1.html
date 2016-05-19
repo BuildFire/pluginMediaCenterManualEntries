@@ -8,15 +8,15 @@
                      class="plugin-slide">
                     <!--ng-style="WidgetMedia.showVideo == false ? {'min-height': '192px'} : {}" style="width: 100% !important;max-height:192px !important"
                          -->
-                    <img data-ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage"
-                         ng-src="{{WidgetMedia.item.data.topImage | cropImage : 1280 : 720}}"/>
+                    <img data-ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage" load-image="16x9" style="min-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
+                         data-final-src="{{WidgetMedia.item.data.topImage | cropImage : 1280 : 720}}"/>
 
                     <div ng-include="'templates/layouts/video-player.html'"></div>
                 </div>
             </div>
         </div>
         <div class="text-left padded padding-bottom-zero clearfix ">
-            <h4 class="margin-top-zero">{{WidgetMedia.item.data.title}}</h4>
+            <h4 class="margin-top-zero" style="font-size: 16px;">{{WidgetMedia.item.data.title}}</h4>
             <h5 class="margin-bottom-zero">{{WidgetMedia.item.data.summary}}</h5>
         </div>
         <div class="padded padding-top-zero">
@@ -37,8 +37,12 @@
             <p ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
 
 
-            <div ng-class="WidgetMedia.item.data.links.length ? 'dynamic-links' : ''">
-                <a ng-click="WidgetMedia.executeAction(link)" class="d-link" ng-repeat="link in WidgetMedia.item.data.links">{{link.title}}</a>
+            <div class="dynamic-links" ng-repeat="link in WidgetMedia.item.data.links">
+                <p ng-click="WidgetMedia.executeAction(link)" >
+                    <span ng-if="!link.iconUrl" class="icon icon-cog"></span>
+                    <span ng-if="link.iconUrl" class="icon"><img load-image="1x1" data-final-src="{{link.iconUrl | cropImage:17:17}}"/></span>
+                    {{link.title}}
+                </p>
             </div>
         </div>
     </div>
