@@ -111,7 +111,7 @@
 </div>
         <script>
             $(function(){
-                if ( $('#datePickerMCM')[0].type == 'date' ) $('#datePickerMCM').datepicker();
+                if ( $('#datePickerMCM')[0].type != 'date' ) $('#datePickerMCM').datepicker();
                 else console.log("DATEEEEEEEE");
                 $('#ui-datepicker-div').css('background-color','beige');
             })
