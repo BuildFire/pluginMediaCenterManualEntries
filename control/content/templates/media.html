@@ -94,8 +94,8 @@
         <span>Media Date</span>
     </div>
     <div class="main col-md-9 pull-right">
-        <input dt="{{ContentMedia.item.data.mediaDate}}" type="date" class="form-control"
-               ng-model="ContentMedia.item.data.mediaDate"/>
+        <input id="datePickerMCM" dt="{{ContentMedia.item.data.mediaDate}}" type="date" class="form-control"
+               ng-model="ContentMedia.item.data.mediaDate" readonly='true'/>
     </div>
 </div>
 <hr class="none">
@@ -109,3 +109,11 @@
         </div>
     </div>
 </div>
+        <script>
+            $(function(){
+                if ( $('#datePickerMCM')[0].type != 'date' ) $('#datePickerMCM').datepicker();
+                else console.log("DATEEEEEEEE");
+                $('#ui-datepicker-div').css('background-color','beige');
+            })
+
+        </script>
