@@ -35,7 +35,7 @@
                     WidgetMedia.media = {
                         data: data.data
                     };
-                    $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
+                    $rootScope.backgroundImage = WidgetMedia.media && WidgetMedia.media.data && WidgetMedia.media.data.design && WidgetMedia.media.data.design.backgroundImage;
                 }, function (err) {
                     WidgetMedia.media = {
                         data: {}
