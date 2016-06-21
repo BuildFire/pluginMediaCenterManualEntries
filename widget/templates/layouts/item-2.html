@@ -13,7 +13,8 @@
                                     <div class="people-media text-center padding-top-fifteen"
                                          data-ng-hide="WidgetMedia.showVideo">
                                         <img load-image="2x1" style="width: 200px;height: 100px;"
-                                             data-final-src="{{WidgetMedia.item.data.topImage|resizeImage:200:100}}">
+                                             crop-width="200" crop-height="100" crop-type="resize"
+                                             data-final-src="{{WidgetMedia.item.data.topImage}}">
                                     </div>
                                     <div class="people-info text-center col-xs-12">
                                         <h5 class="ellipsis margin-top-fifteen whiteTheme" style="font-size: 16px;">
@@ -48,7 +49,7 @@
                 <div class="dynamic-links" ng-repeat="link in WidgetMedia.item.data.links">
                     <p ng-click="WidgetMedia.executeAction(link)" >
                         <span ng-if="!link.iconUrl" class="icon icon-cog"></span>
-                        <span ng-if="link.iconUrl" class="icon"><img load-image="1x1" data-final-src="{{link.iconUrl | cropImage:17:17}}"/></span>
+                        <span ng-if="link.iconUrl" class="icon"><img load-image="1x1" crop-width="17" crop-height="17" crop-type="crop" data-final-src="{{link.iconUrl}}"/></span>
                         {{link.title}}
                     </p>
                 </div>
