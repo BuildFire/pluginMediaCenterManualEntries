@@ -30,20 +30,20 @@
                 <!--<a class="text-primary" ng-if="WidgetMedia.item.data.srcUrl" href="{{WidgetMedia.item.data.srcUrl}}"
                    target="_blank">View Source</a>-->
                 <a id="sourceToggleButton" class="text-primary" ng-if="WidgetMedia.item.data.srcUrl" ng-click="WidgetMedia.showSourceIframe()">View Source</a>
-                <a class="text-primary" ng-if="WidgetMedia.item.data.links.length">Share</a>
+                <a class="text-primary" ng-if="WidgetMedia.item.data.links.length" ng-click="WidgetMedia.openLinks(WidgetMedia.item.data.links)">More Options</a>
 
             </div>
             <hr class="small" ng-if="WidgetMedia.item.data.body">
             <p ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
 
 
-            <div class="dynamic-links" ng-repeat="link in WidgetMedia.item.data.links">
+            <!--<div class="dynamic-links" ng-repeat="link in WidgetMedia.item.data.links">
                 <p ng-click="WidgetMedia.executeAction(link)" >
                     <span ng-if="!link.iconUrl" class="icon icon-cog"></span>
                     <span ng-if="link.iconUrl" class="icon"><img load-image="1x1" data-final-src="{{link.iconUrl | cropImage:17:17}}"/></span>
                     {{link.title}}
                 </p>
-            </div>
+            </div>-->
         </div>
     </div>
 </div>
