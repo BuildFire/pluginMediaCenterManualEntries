@@ -1,4 +1,4 @@
-describe('mediaCenterDesign: Services', function () {
+xdescribe('mediaCenterDesign: Services', function () {
     var COLLECTIONS,
         CODES,
         MESSAGES,

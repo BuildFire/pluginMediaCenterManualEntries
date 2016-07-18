@@ -1,4 +1,4 @@
-describe('mediaCenterDesignServices: Services', function () {
+xdescribe('mediaCenterDesignServices: Services', function () {
     var COLLECTIONS;
     beforeEach(module('mediaCenterDesignServices'));
     beforeEach(inject(function ($injector) {

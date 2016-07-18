@@ -1,4 +1,4 @@
-describe('Unit : Controller - ContentMediaCtrl', function () {
+xdescribe('Unit : Controller - ContentMediaCtrl', function () {
 
 // load the controller's module
     beforeEach(module('mediaCenterContent'));
