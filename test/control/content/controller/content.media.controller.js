@@ -303,7 +303,7 @@ xdescribe('Unit : Controller - ContentMediaCtrl', function () {
 
 
 });
-describe('Unit : Controller - ContentMediaCtrl Null case', function () {
+xdescribe('Unit : Controller - ContentMediaCtrl Null case', function () {
 
 // load the controller's module
     beforeEach(module('mediaCenterContent'));
