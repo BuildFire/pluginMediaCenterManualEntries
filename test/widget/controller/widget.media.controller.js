@@ -1,4 +1,4 @@
-describe('WidgetMedia Controller', function () {
+xdescribe('WidgetMedia Controller', function () {
     beforeEach(module('mediaCenterWidget'));
 
     var $controller, $scope, Orders, COLLECTIONS, DB, $timeout, Buildfire, $rootScope, Messaging, AppConfig, media, WidgetMedia;

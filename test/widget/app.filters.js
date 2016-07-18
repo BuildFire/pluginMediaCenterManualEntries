@@ -1,7 +1,7 @@
 /**
  * Created by lakshay on 27/8/15.
  */
-describe('Unit: resizeImage filter', function () {
+xdescribe('Unit: resizeImage filter', function () {
     beforeEach(module('mediaCenterWidgetFilters'));
     var filter;
     beforeEach(inject(function (_$filter_) {

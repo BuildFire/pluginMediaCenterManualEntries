@@ -1,4 +1,4 @@
-describe('Unit: mediaPlugin widget app', function () {
+xdescribe('Unit: mediaPlugin widget app', function () {
     describe('Unit: app routes', function () {
         beforeEach(module('mediaCenterWidget'));
         var location, route, rootScope;

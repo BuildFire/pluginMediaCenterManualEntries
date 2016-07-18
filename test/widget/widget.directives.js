@@ -1,5 +1,5 @@
 
-describe('buildFire-Carousel-Directive', function () {
+xdescribe('buildFire-Carousel-Directive', function () {
 
     var $rootScope, $scope, $compile, el, $body = $('body'), simpleHtml = '<buildfire-carousel images="images"></buildfire-carousel>';
 
