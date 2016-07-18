@@ -53,7 +53,7 @@ xdescribe('Unit: mediaPlugin design app', function () {
         });
     });
 });
-describe('Unit: mediaPlugin design app Error case', function () {
+xdescribe('Unit: mediaPlugin design app Error case', function () {
     describe('Unit: app routes', function () {
         beforeEach(module('mediaCenterDesign'));
         beforeEach(module('mediaCenterDesign', function ($provide) {
@@ -94,7 +94,7 @@ describe('Unit: mediaPlugin design app Error case', function () {
         });
     });
 });
-describe('Unit: mediaPlugin design app Null case', function () {
+xdescribe('Unit: mediaPlugin design app Null case', function () {
     describe('Unit: app routes', function () {
         beforeEach(module('mediaCenterDesign'));
         beforeEach(module('mediaCenterDesign', function ($provide) {

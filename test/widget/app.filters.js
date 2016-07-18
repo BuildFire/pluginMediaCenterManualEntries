@@ -20,7 +20,7 @@ xdescribe('Unit: resizeImage filter', function () {
         expect(result).toEqual("http://s7obnu.cloudimage.io/s/resizenp/88x124/");
     });
 });
-describe('Unit: isYoutubeVimeoLink filter', function () {
+xdescribe('Unit: isYoutubeVimeoLink filter', function () {
     beforeEach(module('mediaCenterWidgetFilters'));
     var filter;
     beforeEach(inject(function (_$filter_) {
@@ -51,7 +51,7 @@ describe('Unit: isYoutubeVimeoLink filter', function () {
         expect(result).toBeFalsy();
     });
 });
-describe('Unit: cropImage filter', function () {
+xdescribe('Unit: cropImage filter', function () {
     beforeEach(module('mediaCenterWidgetFilters'));
     var filter;
     beforeEach(inject(function (_$filter_) {
@@ -75,7 +75,7 @@ describe('Unit: cropImage filter', function () {
         expect(result).toEqual('');
     });
 });
-describe('Unit: safeHtml filter', function () {
+xdescribe('Unit: safeHtml filter', function () {
     beforeEach(module('mediaCenterWidgetFilters'));
     var filter;
     beforeEach(inject(function (_$filter_) {
@@ -94,7 +94,7 @@ describe('Unit: safeHtml filter', function () {
         expect(result).toEqual("");
     });
 });
-describe('Unit: jsDate filter', function () {
+xdescribe('Unit: jsDate filter', function () {
     beforeEach(module('mediaCenterWidgetFilters'));
     var filter;
     beforeEach(inject(function (_$filter_) {

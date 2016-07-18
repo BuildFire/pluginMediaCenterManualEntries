@@ -563,7 +563,7 @@ xdescribe('Unit : Controller - ContentHomeCtrl', function () {
 
     });
 });
-describe('Unit : Controller - ContentHomeCtrl', function () {
+xdescribe('Unit : Controller - ContentHomeCtrl', function () {
 
 // load the controller's module
     beforeEach(module('mediaCenterContent'));
