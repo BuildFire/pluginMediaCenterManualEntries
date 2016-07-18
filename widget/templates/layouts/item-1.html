@@ -9,7 +9,8 @@
                     <!--ng-style="WidgetMedia.showVideo == false ? {'min-height': '192px'} : {}" style="width: 100% !important;max-height:192px !important"
                          -->
                     <img data-ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage" load-image="16x9" style="min-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
-                         data-final-src="{{WidgetMedia.item.data.topImage | cropImage : 1280 : 720}}"/>
+                         crop-width="1280" crop-height="720" crop-type="crop"
+                         data-final-src="{{WidgetMedia.item.data.topImage}}"/>
 
                     <div ng-include="'templates/layouts/video-player.html'"></div>
                 </div>
@@ -40,7 +41,7 @@
             <!--<div class="dynamic-links" ng-repeat="link in WidgetMedia.item.data.links">
                 <p ng-click="WidgetMedia.executeAction(link)" >
                     <span ng-if="!link.iconUrl" class="icon icon-cog"></span>
-                    <span ng-if="link.iconUrl" class="icon"><img load-image="1x1" data-final-src="{{link.iconUrl | cropImage:17:17}}"/></span>
+                    <span ng-if="link.iconUrl" class="icon"><img load-image="1x1" crop-width="17" crop-height="17" crop-type="crop" data-final-src="{{link.iconUrl}}"/></span>
                     {{link.title}}
                 </p>
             </div>-->

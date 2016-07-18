@@ -12,6 +12,7 @@
     <link href="assets/css/widget.app.css" rel="stylesheet">
     <!--SDK js-->
     <script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+    <script src="../../../scripts/smartcrop.js"></script>
     <script src="../../../scripts/buildfire.js"></script>
     <script src="../../../scripts/angular/angular.min.js"></script>
     <script src="../../../scripts/angular/angular-route.min.js"></script>
@@ -19,7 +20,7 @@
     <script src="../../../scripts/angular/ui-bootstrap.min.js"></script>
     <script src="../../../scripts/owlCarousel/owlCarousel.js"></script>
     <!-- JS -->
-    <script src="assets/js/ng-infinite-scroll.custom.js"></script>
+    <script src="../../../scripts/angular/ng-infinite-scroll.custom.js"></script>
     <!--app js-->
     <script src="app.js"></script>
     <script src="enums.js"></script>
@@ -39,7 +40,7 @@
     <script src="assets/js/videogular.min.js"></script>
     <script src="assets/js/vg-controls.min.js"></script>
     <script src="assets/js/vg-overlay-play.min.js"></script>
-    <script src="assets/js/angular-touch.js"></script>
+    <script src="../../../scripts/angular/angular-touch.js"></script>
 
     <!-- Audio player-->
     <script src="../../../scripts/buildfire/services/media/audioPlayer.js"></script>
@@ -51,17 +52,13 @@
       ng-class="blackBackground ? 'blackBackground': ''">-->
 <body class="body-scroll">
 <div class="main_view">
-    <div ng-class="showFeed ? 'showing' : 'notshowing'" data-ng-attr-style="background:url({{ backgroundImage | cropImage:deviceWidth:deviceHeight:true}}) !important; background-size:cover !important;" id="feedView" class="content slide infinite-scroll-parent" >
+    <div ng-class="showFeed ? 'showing' : 'notshowing'" data-back-img="{{backgroundImage}}" id="feedView" class="content slide infinite-scroll-parent" >
         <div ng-controller="WidgetHomeCtrl as WidgetHome">
             <div ng-include="'templates/home.html'">
             </div>
         </div>
     </div>
-    <div data-ng-attr-style="{{
-    backgroundImage
-        ? 'background: url(' + (backgroundImage | cropImage:deviceWidth:deviceHeight:true) + ') !important; background-size: cover;'
-        : 'background: white'
-}}"
+    <div data-back-img="{{backgroundImage}}"
          ng-view=""
          class="slide content"
          ng-if="!showFeed"></div>
