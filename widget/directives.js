@@ -1,4 +1,4 @@
-(function (angular) {
+(function (angular , buildfire) {
     angular
         .module('mediaCenterWidget')
         .directive('playBtn', function () {
@@ -19,7 +19,7 @@
                 }
             };
         }])
-        .directive("loadImage", ['Buildfire', function (Buildfire) {
+        .directive("loadImage", function () {
             return {
                 restrict: 'A',
                 link: function (scope, element, attrs) {
@@ -27,7 +27,7 @@
 
                     var _img = attrs.finalSrc;
                     if (attrs.cropType == 'resize') {
-                        Buildfire.imageLib.local.resizeImage(_img, {
+                        buildfire.imageLib.local.resizeImage(_img, {
                             width: attrs.cropWidth,
                             height: attrs.cropHeight
                         }, function (err, imgUrl) {
@@ -35,7 +35,7 @@
                             replaceImg(_img);
                         });
                     } else {
-                        Buildfire.imageLib.local.cropImage(_img, {
+                        buildfire.imageLib.local.cropImage(_img, {
                             width: attrs.cropWidth,
                             height: attrs.cropHeight
                         }, function (err, imgUrl) {
@@ -64,7 +64,7 @@
                     }
                 }
             };
-        }])
+        })
     /**
      * A directive which is used handle background image for layouts.
      */
@@ -100,4 +100,4 @@
                 });
             };
         }]);
-})(window.angular, undefined);
+})(window.angular, window.buildfire);
