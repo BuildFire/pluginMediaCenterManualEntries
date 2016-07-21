@@ -1,4 +1,4 @@
-describe('mediaCenterDesignServices: Services', function () {
+xdescribe('mediaCenterDesignServices: Services', function () {
     var COLLECTIONS;
     beforeEach(module('mediaCenterDesignServices'));
     beforeEach(inject(function ($injector) {
@@ -72,7 +72,7 @@ describe('mediaCenterDesignServices: Services', function () {
     });
 
 });
-describe('Unit : ImageLib Factory', function () {
+xdescribe('Unit : ImageLib Factory', function () {
     beforeEach(module('mediaCenterDesignServices'));
     //var ImageLibrary, Buildfire, STATUS_MESSAGES, STATUS_CODE, q;
     beforeEach(inject(function () {

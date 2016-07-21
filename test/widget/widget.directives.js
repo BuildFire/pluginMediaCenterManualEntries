@@ -1,5 +1,5 @@
 
-describe('buildFire-Carousel-Directive', function () {
+xdescribe('buildFire-Carousel-Directive', function () {
 
     var $rootScope, $scope, $compile, el, $body = $('body'), simpleHtml = '<buildfire-carousel images="images"></buildfire-carousel>';
 
@@ -26,7 +26,7 @@ describe('buildFire-Carousel-Directive', function () {
 });
 
 
-describe('Unit: play Button Directive', function () {
+xdescribe('Unit: play Button Directive', function () {
 
     var $rootScope, $scope, $compile, el, $body = $('body'), simpleHtml = '<div play-btn="{{true}}"></div>';
 

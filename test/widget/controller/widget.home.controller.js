@@ -1,4 +1,4 @@
-describe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
+xdescribe('Unit : mediaCenterPlugin WidgetHome Controller', function () {
     beforeEach(module('mediaCenterWidget'));
 
     var $window, $controller, rootScope, $scope, WidgetHome, COLLECTIONS, DB, Buildfire, MediaCenterInfo, Messaging, EVENTS, PATHS, Location, Orders;

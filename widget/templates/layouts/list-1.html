@@ -19,7 +19,7 @@
                          ng-class-even="list-item-even">
                         <div class="list-item-media text-center border-radius-three overflow-hidden text-overlay">
                             <div play-btn="{{item.data.videoUrl.length > 0}}" class="list-media-holder text-overlay">
-                                <img ng-if="item.data.topImage" load-image="16x9" data-final-src="{{item.data.topImage | cropImage:240:135}}">
+                                <img ng-if="item.data.topImage" load-image="16x9" crop-width="240" crop-height="135" crop-type="crop" data-final-src="{{item.data.topImage}}">
                                 <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png">
                             </div>
                         </div>

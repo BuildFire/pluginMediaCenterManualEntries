@@ -1,4 +1,4 @@
-describe('mediaCenterWidgetModals: Services', function () {
+xdescribe('mediaCenterWidgetModals: Services', function () {
     var $modal, $q;
     beforeEach(module('mediaCenterWidgetModals'));
     beforeEach(module('mediaCenterWidgetFilters'));

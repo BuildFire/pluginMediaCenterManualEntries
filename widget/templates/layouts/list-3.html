@@ -16,7 +16,7 @@
                  ng-click="WidgetHome.goToMedia($index)">
                 <div class="plugin-banner clearfix text-overlay">
                     <div class="text-overlay" ng-if="item.data.topImage" play-btn="{{item.data.videoUrl.length > 0}}">
-                        <img load-image="16x9" data-final-src="{{item.data.topImage | cropImage:340:190}}">
+                        <img load-image="16x9" crop-width="340" crop-height="190" crop-type="crop" data-final-src="{{item.data.topImage}}">
                     </div>
                 </div>
                 <div class="padded text-left text-overlay">

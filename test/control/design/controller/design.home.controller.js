@@ -1,4 +1,4 @@
-describe("DesignHomeCtrl", function () {
+xdescribe("DesignHomeCtrl", function () {
 
     var $rootScope,
         $scope,
@@ -209,7 +209,7 @@ describe("DesignHomeCtrl", function () {
 });
 
 // Empty case
-describe("DesignHomeCtrl Error case", function () {
+xdescribe("DesignHomeCtrl Error case", function () {
     var $rootScope,
         $scope,
         controller,
@@ -294,7 +294,7 @@ describe("DesignHomeCtrl Error case", function () {
         });
     });
 });
-describe("DesignHomeCtrl Error and data case", function () {
+xdescribe("DesignHomeCtrl Error and data case", function () {
     var $rootScope,
         $scope,
         controller,

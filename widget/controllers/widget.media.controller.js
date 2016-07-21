@@ -35,7 +35,7 @@
                     WidgetMedia.media = {
                         data: data.data
                     };
-                    $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
+                    $rootScope.backgroundImage = WidgetMedia.media && WidgetMedia.media.data && WidgetMedia.media.data.design && WidgetMedia.media.data.design.backgroundImage;
                 }, function (err) {
                     WidgetMedia.media = {
                         data: {}
@@ -154,6 +154,18 @@
                      angular.element('#sourceIframe').attr('src', WidgetMedia.item.data.srcUrl);
                      }, 1000);
                      }*/
+                };
+
+                WidgetMedia.openLinks = function (actionItems) {
+                    if (actionItems && actionItems.length) {
+                        var options = {};
+                        var callback = function (error, result) {
+                            if (error) {
+                                console.error('Error:', error);
+                            }
+                        };
+                        Buildfire.actionItems.list(actionItems, options, callback);
+                    }
                 };
 
                 WidgetMedia.executeAction = function (actionItem) {
