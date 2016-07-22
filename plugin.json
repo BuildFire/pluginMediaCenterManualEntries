@@ -4,6 +4,7 @@
   "pluginDescription": "The Media Center plugin is incredibly useful for a variety of different media use cases. Create categorized manual entries of audio, video, and other stream media content.MP4",
   "supportEmail": "support@buildfire.com",
   "pluginIcon": "icon.png",
+  "offlineModeEnabled": true,
   "supportSite": "http://support.appdocumentation.com/knowledge-base/media-center-manual-plugin/",
   "control": {
     "content": {
