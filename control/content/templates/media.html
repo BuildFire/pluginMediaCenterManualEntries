@@ -1,5 +1,25 @@
 <h4>Manual Item Entry Details Content</h4><br>
-<div id="topImage"></div>
+<div class="col-md-3 labels pull-left">
+    <span>Top Image</span>
+</div>
+<div class="col-md-9 main ">
+    <div class="screens clearfix">
+        <div class="screen logoicon pull-left text-center">
+            <a class="border-grey border-radius-three default-background-hover" ng-click="ContentMedia.addListImage()">
+                <span ng-if="!ContentMedia.item.data.topImage" class="add-icon">+</span>
+                <img ng-if="ContentMedia.item.data.topImage" ng-src="{{ContentMedia.item.data.topImage }}">
+            </a>
+            <span ng-if="ContentMedia.item.data.topImage" class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentMedia.removeListImage()"></span>
+        </div>
+
+        <br>  <br>  <br>  <br>
+        </div>
+    <span style="margin-left:50%"> 1200x675</span>
+
+</div>
+
+
+
 <hr class="none">
 <div class="item clearfix row">
     <div class="labels col-md-3 padding-right-zero pull-left">

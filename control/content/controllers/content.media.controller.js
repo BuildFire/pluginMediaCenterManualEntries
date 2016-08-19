@@ -104,7 +104,7 @@
             if (media.data.mediaDate)
               ContentMedia.item.data.mediaDate = new Date(media.data.mediaDate);
             if (ContentMedia.item.data.topImage) {
-              topImage.loadbackground(ContentMedia.item.data.topImage);
+              //topImage.loadbackground(ContentMedia.item.data.topImage);
             }
             if (ContentMedia.item.data.image) {
               audioImage.loadbackground(ContentMedia.item.data.image);
@@ -257,25 +257,40 @@
           }
         }
 
-        /* Build fire thumbnail component to add thumbnail image*/
-        var topImage = new Buildfire.components.images.thumbnail("#topImage", {
-          title: "Top Image",
-          dimensionsLabel: "1024x1024"
-        });
-
-        topImage.onChange = function (url) {
-          ContentMedia.item.data.topImage = url;
-          if (!$scope.$$phase && !$scope.$root.$$phase) {
-            $scope.$apply();
-          }
+        ContentMedia.addListImage = function () {
+          var options = {showIcons: false, multiSelection: false},
+            listImgCB = function (error, result) {
+              if (error) {
+                console.error('Error:', error);
+              } else {
+                ContentMedia.item.data.topImage = result && result.selectedFiles && result.selectedFiles[0] || null;
+                if (!$scope.$$phase)$scope.$digest();
+              }
+            };
+          buildfire.imageLib.showDialog(options, listImgCB);
         };
-
-        topImage.onDelete = function (url) {
+        ContentMedia.removeListImage = function () {
           ContentMedia.item.data.topImage = "";
-          if (!$scope.$$phase && !$scope.$root.$$phase) {
-            $scope.$apply();
-          }
         };
+        /* Build fire thumbnail component to add thumbnail image*/
+        //var topImage = new Buildfire.components.images.thumbnail("#topImage", {
+        //  title: "Top Image",
+        //  dimensionsLabel: "1200x675"
+        //});
+        //
+        //topImage.onChange = function (url) {
+        //  ContentMedia.item.data.topImage = url;
+        //  if (!$scope.$$phase && !$scope.$root.$$phase) {
+        //    $scope.$apply();
+        //  }
+        //};
+        //
+        //topImage.onDelete = function (url) {
+        //  ContentMedia.item.data.topImage = "";
+        //  if (!$scope.$$phase && !$scope.$root.$$phase) {
+        //    $scope.$apply();
+        //  }
+        //};
 
 
 
