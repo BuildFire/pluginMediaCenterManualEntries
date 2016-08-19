@@ -58,8 +58,11 @@
                 {id: 1, name: "Newest", value: "Newest", key: "dateCreated", order: -1},
                 {id: 1, name: "Oldest", value: "Oldest", key: "dateCreated", order: 1},
                 {id: 1, name: "Most", value: "Most Items", key: "title", order: 1},
-                {id: 1, name: "Least", value: "Least Items", key: "title", order: -1}
+                {id: 1, name: "Least", value: "Least Items", key: "title", order: -1},
+                {id: 1, name: "Media Date Asc", value: "Media Date Asc", key: "mediaDate", order: 1},
+                {id: 1, name: "Media Date Desc", value: "Media Date Desc", key: "mediaDate", order: -1}
             ];
+
             return {
                 ordersMap: ordersMap,
                 options: orders,
