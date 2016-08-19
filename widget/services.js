@@ -24,33 +24,38 @@
                 }
             };
         }])
-        .factory('Orders', [function () {
-            var ordersMap = {
-                Manually: "Manually",
-                Default: "Manually",
-                Newest: "Newest",
-                Oldest: "Oldest",
-                Most: " Oldest",
-                Least: " Oldest"
-            };
-            var orders = [
-                {id: 1, name: "Manually", value: "Manually", key: "rank", order: 1},
-                {id: 1, name: "Newest", value: "Newest", key: "dateCreated", order: -1},
-                {id: 1, name: "Oldest", value: "Oldest", key: "dateCreated", order: 1},
-                {id: 1, name: "Most", value: "Most Items", key: "title", order: 1},
-                {id: 1, name: "Least", value: "Least Items", key: "title", order: -1}
-            ];
-            return {
-                ordersMap: ordersMap,
-                options: orders,
-                getOrder: function (name) {
-                    return orders.filter(function (order) {
-                        return order.name === name;
-                    })[0];
-                }
-            };
-        }])
-        .factory("DB", ['Buildfire', '$q', 'MESSAGES', 'CODES', function (Buildfire, $q, MESSAGES, CODES) {
+      .factory('Orders', [function () {
+          var ordersMap = {
+              Manually: "Manually",
+              Default: "Manually",
+              Newest: "Newest",
+              Oldest: "Oldest",
+              Most: " Oldest",
+              Least: " Oldest",
+              MediaDateAsc:"Media Date Asc",
+              MediaDateDesc:"Media Date Desc"
+          };
+          var orders = [
+              {id: 1, name: "Manually", value: "Manually", key: "rank", order: 1},
+              {id: 1, name: "Newest", value: "Newest", key: "dateCreated", order: -1},
+              {id: 1, name: "Oldest", value: "Oldest", key: "dateCreated", order: 1},
+              {id: 1, name: "Most", value: "Most Items", key: "title", order: 1},
+              {id: 1, name: "Least", value: "Least Items", key: "title", order: -1},
+              {id: 1, name: "Media Date Asc", value: "Media Date Asc", key: "mediaDate", order: 1},
+              {id: 1, name: "Media Date Desc", value: "Media Date Desc", key: "mediaDate", order: -1}
+          ];
+          return {
+              ordersMap: ordersMap,
+              options: orders,
+              getOrder: function (name) {
+                  return orders.filter(function (order) {
+                      return order.name === name;
+                  })[0];
+              }
+          };
+      }])
+
+      .factory("DB", ['Buildfire', '$q', 'MESSAGES', 'CODES', function (Buildfire, $q, MESSAGES, CODES) {
             function DB(tagName) {
                 this._tagName = tagName;
             }
