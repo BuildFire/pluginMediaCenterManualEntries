@@ -42,11 +42,24 @@
 </div>
 <hr class="none">
 <div class="item clearfix row">
-    <div class="labels col-md-3 padding-right-zero pull-left">
+
+    <div class="main col-md-12 pull-right padding-left-zero row">
+        <div class="pull-left inner-main col-md-8 padding-zero">
+            <input type="text" class="form-control" placeholder="Item Name" ng-model="search">
+
+        </div>
+        <div class="col-md-4 pull-right">
+            <a class="btn btn-primary pull-right stretch" ng-click="ContentHome.searchListItem(search)">Search</a>
+        </div>
+    </div>
+</div>
+<br>
+<div class="item clearfix row">
+    <div class="labels col-md-2 padding-right-zero pull-left">
         <span>Sort Items</span>
     </div>
-    <div class="main pull-right col-md-9 padding-left-zero row">
-        <div class="dropdown pull-left col-md-8 padding-zero" dropdown is-open="status.isopen">
+    <div class="main pull-right col-md-10 padding-left-zero row">
+        <div class="dropdown pull-left col-md-7 padding-zero" dropdown is-open="status.isopen">
             <button class="btn btn-default text-left dropdown-toggle" dropdown-toggle ng-disabled="disabled"
                     aria-expanded="true">
                 <span class="pull-left">{{ContentHome.info.data.content.sortByValue || 'Newest'}}</span>
@@ -58,25 +71,13 @@
                 </li>
             </ul>
         </div>
-
-    </div>
-</div>
-<hr>
-<div class="item clearfix row">
-    <div class="col-md-3 pull-left">
-        <a class="btn btn-success pull-right stretch" href="#/media">Add New Item</a>
-    </div>
-    <div class="main col-md-9 pull-right padding-left-zero row">
-        <div class="pull-left inner-main col-md-8 padding-zero">
-            <input type="text" class="form-control" placeholder="Item Name" ng-model="search">
-
-        </div>
-        <div class="col-md-4 pull-right">
-            <a class="btn btn-primary pull-right stretch" ng-click="ContentHome.searchListItem(search)">Search</a>
+        <div class="col-md-5 pull-left">
+            <a class="btn btn-success pull-right stretch" href="#/media">Add New Item</a>
         </div>
     </div>
 </div>
 <hr>
+
 <div class="item clearfix">
     <div class="tab-order draggable-list-view wide-list has-btn-link border-grey border-radius-four  infinite-scroll-parent">
         <div infinite-scroll="ContentHome.getMore()"
@@ -94,7 +95,7 @@
 
                     <div class="media-holder pull-left">
                         <img load-image="1x1" data-final-src="{{item.data.topImage | resizeImage : 50:50}}" ng-if="item.data.topImage">
-                        <img src="../../../../styles/media/holder-1x1.png" ng-if="!item.data.topImage">
+                        <img src="../../../../../styles/media/holder-1x1.png" ng-if="!item.data.topImage">
                     </div>
                     <div class="copy pull-right">
                         <a class="text-primary" href="#/media/{{item.id}}"><span

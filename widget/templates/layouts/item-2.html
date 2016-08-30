@@ -12,8 +12,8 @@
                                 <div class="people-holder clearfix">
                                     <div class="people-media text-center padding-top-fifteen"
                                          data-ng-hide="WidgetMedia.showVideo">
-                                        <img load-image="2x1" style="width: 200px;height: 100px;"
-                                             crop-width="200" crop-height="100" crop-type="resize"
+                                        <img load-image="16x9" style="width: 161px;height: 91px;"
+                                             crop-width="161" crop-height="91" crop-type="crop"
                                              data-final-src="{{WidgetMedia.item.data.topImage}}">
                                     </div>
                                     <div class="people-info text-center col-xs-12">
@@ -33,7 +33,6 @@
                 </div>
             </div>
             <div class="padded">
-                <hr class="small margin-top-zero">
                 <div class="link-list">
                     <a class="text-primary" ng-if="WidgetMedia.item.data.audioUrl"
                        href="#/nowplaying/{{WidgetMedia.item.id}}">Listen</a>
