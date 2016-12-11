@@ -215,6 +215,22 @@
                     });
                 };
 
+                WidgetHome.openLinks = function (actionItems, $event) {
+                    if (actionItems && actionItems.length) {
+                        var options = {};
+                        var callback = function (error, result) {
+                            if (error) {
+                                console.error('Error:', error);
+                            }
+                        };
+
+                        $event.preventDefault();
+                        $timeout(function() {
+                            Buildfire.actionItems.list(actionItems, options, callback);	
+                        });
+                    }
+                };
+
                 WidgetHome.refreshItems = function () {
                     searchOptions.skip = 0;
                     WidgetHome.items = [];
