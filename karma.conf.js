@@ -23,7 +23,7 @@ module.exports = function (config) {
             './bower_components/angular-bootstrap/ui-bootstrap.min.js',
             './bower_components/angular-ui-tinymce/src/tinymce.js',
             './bower_components/tinymce-dist/tinymce.min.js',
-            './bower_components/angular-sanitize/angular-sanitize.min.js',
+            //'./bower_components/angular-sanitize/angular-sanitize.min.js',
             './bower_components/videogular/videogular.min.js',
             './bower_components/videogular-controls/vg-controls.min.js',
             './bower_components/videogular-overlay-play/vg-overlay-play.min.js',
@@ -34,10 +34,10 @@ module.exports = function (config) {
             './widget/**/*.js',
             './test/**/*.js',
             //'http://localhost:63342/sdk/scripts/buildfire.js',
-            'http://localhost:63342/sdk/plugins/pluginMediaCenterManualEntries/widget/assets/js/owl.carousel.min.js',
-            'http://localhost:63342/sdk/scripts/buildfire/services/media/audioPlayer.js',
-            'http://localhost:63342/sdk/scripts/buildfire/components/carousel/carousel.js',
-            'http://localhost:63342/sdk/scripts/buildfire/components/images/thumbnail.js'
+            //'http://localhost:63342/sdk/plugins/pluginMediaCenterManualEntries/widget/assets/js/owl.carousel.min.js',
+            //'http://localhost:63342/sdk/scripts/buildfire/services/media/audioPlayer.js',
+            //'http://localhost:63342/sdk/scripts/buildfire/components/carousel/carousel.js',
+            //'http://localhost:63342/sdk/scripts/buildfire/components/images/thumbnail.js'
         ],
 
 
