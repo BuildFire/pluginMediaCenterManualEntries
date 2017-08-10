@@ -5,7 +5,7 @@
   "supportEmail": "support@buildfire.com",
   "pluginIcon": "icon.png",
   "offlineModeEnabled": true,
-  "supportSite": "http://support.appdocumentation.com/knowledge-base/media-center-manual-plugin/",
+  "supportSite": "http://learn.appdocumentation.com/plugin-tutorials/media-center-manual-plugin-tutorial/",
   "control": {
     "content": {
       "enabled": true
