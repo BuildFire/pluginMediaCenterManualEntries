@@ -72,7 +72,9 @@
                             break;
 
                     }
-                    $scope.$digest();
+                    if(!$scope.$$phase) {
+                        $scope.$digest();
+                    }
                 });
 
                 /**
@@ -107,7 +109,9 @@
                         audioPlayer.play({url: track.url});
                         track.playing = true;
                     }
-                    $scope.$digest();
+                    if(!$scope.$$phase) {
+                        $scope.$digest();
+                    }
                 };
                 NowPlaying.pauseTrack = function () {
                     if (NowPlaying.settings) {
@@ -117,7 +121,9 @@
                     NowPlaying.playing = false;
                     NowPlaying.paused = true;
                     audioPlayer.pause();
-                    $scope.$digest();
+                    if(!$scope.$$phase) {
+                        $scope.$digest();
+                    }
                 };
                 NowPlaying.playlistPause = function (track) {
                     if (NowPlaying.settings) {
@@ -128,7 +134,9 @@
                     NowPlaying.playing = false;
                     NowPlaying.paused = true;
                     audioPlayer.pause();
-                    $scope.$digest();
+                    if(!$scope.$$phase) {
+                        $scope.$digest();
+                    }
                 };
                 NowPlaying.forward = function () {
                     if (NowPlaying.currentTime + 5 >= NowPlaying.currentTrack.duration)
@@ -203,7 +211,9 @@
                     audioPlayer.getPlaylist(function (err, data) {
                         if (data && data.tracks) {
                             NowPlaying.playList = data.tracks;
-                            $scope.$digest();
+                            if(!$scope.$$phase) {
+                                $scope.$digest();
+                            }
                         }
                     });
                     NowPlaying.openMoreInfo = false;
@@ -291,7 +301,9 @@
                             if (event.data) {
 
                                 NowPlaying.item = event;
-                                $scope.$digest();
+                                if(!$scope.$$phase) {
+                                    $scope.$digest();
+                                }
                             }
                             break;
                         case COLLECTIONS.MediaCenter:
