@@ -52,7 +52,7 @@
                     }
                 );
                 var _skip = 0,
-                    _limit = 10,
+                    _limit = 15,
                     searchOptions = {
                         filter: {"$json.title": {"$regex": '/*'}},
                         skip: _skip,
@@ -226,7 +226,7 @@
 
                         $event.preventDefault();
                         $timeout(function() {
-                            Buildfire.actionItems.list(actionItems, options, callback);	
+                            Buildfire.actionItems.list(actionItems, options, callback);
                         });
                     }
                 };
