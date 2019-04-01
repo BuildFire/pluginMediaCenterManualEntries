@@ -357,7 +357,7 @@
                                 rows[index].dateCreated = +new Date();
                                 rows[index].links = [];
                                 rows[index].rank = rank;
-                                rows[index].body = "";
+                                rows[index].body = rows[index].bodyHTML;
                             }
                             if (validateCsv(rows)) {
                                 MediaContent.insert(rows).then(function (data) {
