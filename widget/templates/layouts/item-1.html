@@ -2,9 +2,10 @@
     <div class="media-center-plugin layout1">
         <div class="media-center-banner clearfix">
             <div ng-class="WidgetMedia.showVideo == false ? '' : 'video-container-background'"
+                  style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
                  class="plugin-slider text-center">
                 <div ng-class="WidgetMedia.showVideo == false ? '' : 'video-container-background'"
-
+                     style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
                      class="plugin-slide">
                     <!--ng-style="WidgetMedia.showVideo == false ? {'min-height': '192px'} : {}" style="width: 100% !important;max-height:192px !important"
                          -->
