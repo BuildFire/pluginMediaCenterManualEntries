@@ -40,14 +40,20 @@
                             ng-model="NowPlaying.currentTime"
                             ng-change="NowPlaying.changeTime(NowPlaying.currentTime)"
                             class="whiteBackgroundTheme" style="height:30px; border-radius:4px;background-color: transparent !important;"/></div>
-                <div ng-if="NowPlaying.currentTime!=0" class="time-indicator" style="float:left">
-                    {{NowPlaying.currentTime | secondsToDateTime |date: 'mm:ss'}}
-                </div>
-                <div ng-if="NowPlaying.currentTime==0" class="time-indicator" style="float: left;">
+                <div ng-if="!NowPlaying.currentTime" class="time-indicator" style="float: left;">
                     {{"--:--"}}
                 </div>
-                <div ng-if="NowPlaying.duration" class="time-indicator" style="float: right;">
+                <div ng-if="NowPlaying.currentTime > 0 && NowPlaying.currentTime < 3600" class="time-indicator" style="float:left">
+                    {{NowPlaying.currentTime | secondsToDateTime |date: 'mm:ss'}}
+                </div>
+                <div ng-if="NowPlaying.currentTime > 3600" class="time-indicator" style="float:left">
+                    {{NowPlaying.currentTime | secondsToDateTime |date: 'hh:mm:ss'}}
+                </div>
+                <div ng-if="NowPlaying.duration > 0 && NowPlaying.duration < 3600" class="time-indicator" style="float: right;">
                     {{(NowPlaying.duration | secondsToDateTime | date: 'mm:ss')}}
+                </div>
+                <div ng-if="NowPlaying.duration > 3600" class="time-indicator" style="float: right;">
+                    {{(NowPlaying.duration | secondsToDateTime | date: 'hh:mm:ss')}}
                 </div>
                 <div ng-if="!NowPlaying.duration" class="time-indicator" style="float: right;">
                     {{"--:--"}}
