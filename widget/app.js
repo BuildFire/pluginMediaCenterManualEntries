@@ -147,13 +147,6 @@
 
         }])
         .run(['Location', '$location', '$rootScope', 'Messaging', 'EVENTS', 'PATHS', function (Location, $location, $rootScope, Messaging, EVENTS, PATHS) {
-            if (buildfire.deeplink)
-                buildfire.deeplink.getData(function (data) {
-                    if (data) {
-                        Location.go("#/media/" + JSON.parse(data).id);
-                    }
-                });
-
 
             buildfire.navigation.onBackButtonClick = function () {
                 var path = $location.path();
