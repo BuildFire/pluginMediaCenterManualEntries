@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "./node_modules/.bin/bower install",
     "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS",
-    "build": "cd .. && rm -rf pluginMediaCenterManualEntries.zip && zip -r pluginMediaCenterManualEntries.zip pluginMediaCenterManualEntries/ -x *node_modules* *.git*"
+    "build": "cd .. && rm -rf mediaCenterManual.zip && zip -r mediaCenterManual.zip pluginMediaCenterManualEntries/ -x \\*node_modules\\* \\*.git\\* \\*test\\*"
   },
   "keywords": [
     "angularjs",

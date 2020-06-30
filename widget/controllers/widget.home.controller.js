@@ -209,6 +209,26 @@
                         }
                         WidgetHome.items = WidgetHome.items ? WidgetHome.items.concat(result) : result;
                         WidgetHome.isBusy = false;
+                        if (!window.deeplinkingDone && buildfire.deeplink) {
+                          buildfire.deeplink.getData(function (data) {
+                            if(data && data.deepLinkUrl) {
+                                var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
+                                var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
+                                $rootScope.showFeed = false; 
+                                $rootScope.fromSearch = true;
+                                window.setTimeout(() => {
+                                    Location.go("#/media/" + JSON.parse(deepLinkUrl).id);
+                                }, 0);
+                            }
+                            else if (data && WidgetHome.items.find(item => item.id === data.id)) {
+                                window.deeplinkingDone = true;
+                                $rootScope.showFeed = false;
+                                window.setTimeout(() => {
+                                  Location.go("#/media/" + data.id);
+                                }, 0);
+                              }
+                          });
+                        }
                     }, function fail() {
                         WidgetHome.isBusy = false;
                         console.error('error');
