@@ -106,13 +106,15 @@
                                             }
                                             break;
                                     }
-                                    Location.go(url);
-                                    if (path == PATHS.MEDIA) {
+                                    if(!$rootScope.fromSearch)
+                                        Location.go(url);
+                                    if (path == PATHS.MEDIA || $rootScope.fromSearch) {
                                         $rootScope.showFeed = false;
                                     }
                                     else {
                                         $rootScope.showFeed = true;
                                     }
+                                    $rootScope.fromSearch = false;
                                     $scope.$apply();
                                 }
                                 break;
@@ -128,7 +130,6 @@
                         if (event.data) {
                             WidgetHome.media.data = event.data;
                             $rootScope.backgroundImage = WidgetHome.media.data.design.backgroundImage;
-                            console.log(WidgetHome.media);
                             $scope.$apply();
                             if (view && event.data.content && event.data.content.images) {
                                 view.loadItems(event.data.content.images);
@@ -187,7 +188,6 @@
                  * loadMore method loads the items in list page.
                  */
                 WidgetHome.loadMore = function () {
-
                     if (WidgetHome.isBusy || WidgetHome.noMore) {
                         return;
                     }

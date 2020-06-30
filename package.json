@@ -2,10 +2,11 @@
   "name": "media-center-plugin",
   "version": "0.0.0",
   "description": "\"media-center-plugin\"",
-   "supportSite":"http://learn.appdocumentation.com/plugin-tutorials/media-center-manual-plugin-tutorial",
+  "supportSite": "http://learn.appdocumentation.com/plugin-tutorials/media-center-manual-plugin-tutorial",
   "scripts": {
     "postinstall": "./node_modules/.bin/bower install",
-    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
+    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS",
+    "build": "cd .. && rm -rf pluginMediaCenterManualEntries.zip && zip -r pluginMediaCenterManualEntries.zip pluginMediaCenterManualEntries/ -x *node_modules* *.git*"
   },
   "keywords": [
     "angularjs",

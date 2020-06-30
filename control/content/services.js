@@ -73,6 +73,95 @@
                 }
             };
         }])
+        .factory("SearchEngine", ["Buildfire", '$q', function(Buildfire, $q) {
+            function SearchEngine(tagName) {
+                this._tagName = tagName;
+            }
+            SearchEngine.prototype.insert = function(item) {
+                var that = this;
+                var deferred = $q.defer();
+                if (typeof item == 'undefined') {
+                    return deferred.reject(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
+                }
+                var data = {
+                    tag: that._tagName,
+                    title: item.title,
+                    description: item.summary,
+                    imageUrl: item.topImage,
+                };
+
+                Buildfire.services.searchEngine.insert(data, function (err, result) {
+                    if (err) {
+                        return deferred.reject(err);
+                    }
+                    else if (result) {
+                        return deferred.resolve(result);
+                    } else {
+                        return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
+                    }
+                });
+                return deferred.promise;
+            };
+
+            SearchEngine.prototype.update = function (id, item) {
+                var that = this;
+                var deferred = $q.defer();
+                if (typeof id == 'undefined') {
+                    return deferred.reject(new Error(MESSAGES.ERROR.ID_NOT_DEFINED));
+                }
+                if (typeof item == 'undefined') {
+                    return deferred.reject(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
+                }
+
+                var data = {
+                    id: id,
+                    tag: that._tagName,
+                    title: item.title,
+                    description: item.summary,
+                    imageUrl: item.topImage,
+                    data: {
+                        deepLinkUrl: item.deepLinkUrl
+                    },
+                };
+
+                Buildfire.services.searchEngine.update(data, function (err, result) {
+                    if (err) {
+                        return deferred.reject(err);
+                    }
+                    else if (result) {
+                        return deferred.resolve(result);
+                    } else {
+                        return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
+                    }
+                });
+                return deferred.promise;
+            };
+
+            SearchEngine.prototype.delete = function (id) {
+                var that = this;
+                var deferred = $q.defer();
+                if (typeof id == 'undefined') {
+                    return deferred.reject(new Error(MESSAGES.ERROR.ID_NOT_DEFINED));
+                }
+                var data = {
+                    id: id,
+                    tag: that._tagName
+                }
+                Buildfire.services.searchEngine.delete(data, function (err, result) {
+                    if (err) {
+                        return deferred.reject(err);
+                    }
+                    else if (result) {
+                        return deferred.resolve(result);
+                    } else {
+                        return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
+                    }
+                });
+                return deferred.promise;
+            };
+
+            return SearchEngine;
+        }])
         .factory("DB", ['Buildfire', '$q', 'MESSAGES', 'CODES', function (Buildfire, $q, MESSAGES, CODES) {
             function DB(tagName) {
                 this._tagName = tagName;

@@ -149,7 +149,14 @@
         .run(['Location', '$location', '$rootScope', 'Messaging', 'EVENTS', 'PATHS', function (Location, $location, $rootScope, Messaging, EVENTS, PATHS) {
             if (buildfire.deeplink)
                 buildfire.deeplink.getData(function (data) {
-                    if (data) {
+                    if(data && data.deepLinkUrl) {
+                        var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
+                        var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
+                        $rootScope.showFeed = false; 
+                        $rootScope.fromSearch = true;
+                        Location.go("#/media/" + JSON.parse(deepLinkUrl).id);
+                    }
+                    else if (data) {
                         Location.go("#/media/" + JSON.parse(data).id);
                     }
                 });
