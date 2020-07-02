@@ -261,8 +261,7 @@
 
                 WidgetHome.goToMedia = function (ind) {
                     $rootScope.showFeed = false;
-                    buildfire.history.push(WidgetHome.items[ind].id);
-                    Location.go('#/media/' + WidgetHome.items[ind].id);
+                    Location.go('#/media/' + WidgetHome.items[ind].id, true);
                 };
 
                 $rootScope.$on("Carousel:LOADED", function () {
