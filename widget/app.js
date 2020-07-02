@@ -124,11 +124,8 @@
                         return config;
                     },
                     response: function (response) {
-                        counter--;
-                        if (counter === 0) {
-
-                            buildfire.spinner.hide();
-                        }
+                        counter--;                       
+                        buildfire.spinner.hide();                        
                         return response;
                     },
                     responseError: function (rejection) {
@@ -150,7 +147,7 @@
             buildfire.navigation.onBackButtonClick = function () {
                 var path = $location.path();
                 if (path.indexOf('/media') == 0) {
-
+                    buildfire.history.pop();
                     if ($("#feedView").hasClass('notshowing')) {
                         Messaging.sendMessageToControl({
                             name: EVENTS.ROUTE_CHANGE,

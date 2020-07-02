@@ -106,8 +106,9 @@
                                             }
                                             break;
                                     }
-                                    if(!$rootScope.fromSearch)
+                                    if(!$rootScope.fromSearch){
                                         Location.go(url);
+                                    }
                                     if (path == PATHS.MEDIA || $rootScope.fromSearch) {
                                         $rootScope.showFeed = false;
                                     }
@@ -260,6 +261,7 @@
 
                 WidgetHome.goToMedia = function (ind) {
                     $rootScope.showFeed = false;
+                    buildfire.history.push(WidgetHome.items[ind].id);
                     Location.go('#/media/' + WidgetHome.items[ind].id);
                 };
 
