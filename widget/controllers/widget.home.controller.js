@@ -215,11 +215,14 @@
                             if(data && data.deepLinkUrl) {
                                 var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
                                 var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
-                                $rootScope.showFeed = false; 
-                                $rootScope.fromSearch = true;
-                                window.setTimeout(() => {
-                                    Location.go("#/media/" + JSON.parse(deepLinkUrl).id);
-                                }, 0);
+                                var itemId = JSON.parse(deepLinkUrl).id;
+                                if(WidgetHome.items.find(item => item.id === itemId)) {
+                                    $rootScope.showFeed = false; 
+                                    $rootScope.fromSearch = true;
+                                    window.setTimeout(() => {
+                                            Location.go("#/media/" + itemId);
+                                    }, 0);
+                                }
                             }
                             else if (data && WidgetHome.items.find(item => item.id === data.id)) {
                                 window.deeplinkingDone = true;
