@@ -2,8 +2,8 @@
     'use strict';
     angular
         .module('mediaCenterContent')
-        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv',
-            function ($scope, MediaCenterInfo, Modals, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv) {
+        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'SearchEngine', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv',
+            function ($scope, MediaCenterInfo, Modals, SearchEngine, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv) {
                 /**
                  * Breadcrumbs  related implementation
                  */
@@ -62,6 +62,7 @@
                  */
                 var MediaContent = new DB(COLLECTIONS.MediaContent);
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
+                var SearchEngineService = new SearchEngine(COLLECTIONS.MediaContent);
 
                 var _skip = 0,
                     _limit = 10,
@@ -360,16 +361,26 @@
                                 rows[index].body = rows[index].bodyHTML;
                             }
                             if (validateCsv(rows)) {
-                                MediaContent.insert(rows).then(function (data) {
-                                    ContentHome.loading = false;
-                                    ContentHome.isBusy = false;
-                                    ContentHome.items = [];
-                                    ContentHome.info.data.content.rankOfLastItem = rank;
-                                    ContentHome.getMore();
-                                }, function errorHandler(error) {
-                                    console.error(error);
-                                    ContentHome.loading = false;
-                                    $scope.$apply();
+                                var searchEngineRequests = [];
+                                rows.forEach(function (row) {
+                                    SearchEngineService.insert(row);
+                                });
+                                Promise.all(searchEngineRequests).then(function (searchEngineResponses) {
+                                    searchEngineResponses.forEach(function (searchEngineResponse, index){
+                                        rows[i].searchEngineId = searchEngineResponse.id;
+                                    });
+
+                                    MediaContent.insert(rows).then(function (data) {
+                                        ContentHome.loading = false;
+                                        ContentHome.isBusy = false;
+                                        ContentHome.items = [];
+                                        ContentHome.info.data.content.rankOfLastItem = rank;
+                                        ContentHome.getMore();
+                                    }, function errorHandler(error) {
+                                        console.error(error);
+                                        ContentHome.loading = false;
+                                        $scope.$apply();
+                                    });
                                 });
                             } else {
                                 ContentHome.loading = false;
@@ -428,6 +439,9 @@
                     if ("undefined" !== typeof item) {
                         Modals.removePopupModal({title: '',event:$event}).then(function (result) {
                             if (result) {
+                                if(item.data.searchEngineId) {
+                                    SearchEngineService.delete(item.data.searchEngineId);
+                                }
                                 MediaContent.delete(item.id).then(function (data) {
                                     ContentHome.items.splice(index, 1);
                                 }, function (err) {

@@ -8,8 +8,8 @@
   /**
    * Inject dependency
    */
-    .controller('ContentMediaCtrl', ['$scope', '$window', 'Buildfire', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig', 'Orders',
-      function ($scope, $window, Buildfire, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig, Orders) {
+    .controller('ContentMediaCtrl', ['$scope', '$window', 'Buildfire', 'SearchEngine', 'DB','COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig', 'Orders',
+      function ($scope, $window, Buildfire, SearchEngine, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig, Orders) {
         /**
          * Breadcrumbs  related implementation
          */
@@ -27,6 +27,7 @@
          */
         var MediaContent = new DB(COLLECTIONS.MediaContent);
         var MediaCenter = new DB(COLLECTIONS.MediaCenter);
+        var SearchEngineService = new SearchEngine(COLLECTIONS.MediaContent);
         /**
          * Get the MediaCenter initialized settings
          */
@@ -75,7 +76,8 @@
             image: '',
             mediaDate: new Date(),
             rank: (MediaCenterSettings.content.rankOfLastItem || 0) + 10,
-            links: [] // this will contain action links
+            links: [], // this will contain action links,
+            searchEngineId: '',
           };
           /**
            * Define links sortable options
@@ -171,17 +173,30 @@
         function updateItemData() {
           updating = true;
           ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
-          MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then(function (data) {
-            updateMasterItem(ContentMedia.item);
-            updating = false;
-            Messaging.sendMessageToWidget({
-              name: EVENTS.ITEMS_CHANGE,
-              message: {}
+          if(!ContentMedia.item.data.deepLinkUrl) {
+            ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({id: ContentMedia.item.id});
+          }
+          if (ContentMedia.item.data.searchEngineId) {
+            SearchEngineService.update(ContentMedia.item.data.searchEngineId, ContentMedia.item.data).then(function () {
+              update();
             });
-          }, function (err) {
-            resetItem();
-            console.error('Error-------', err);
-          });
+          } else {
+            update();
+          }
+          
+          function update() {
+            MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then(function (data) {
+              updateMasterItem(ContentMedia.item);
+              updating = false;
+              Messaging.sendMessageToWidget({
+                name: EVENTS.ITEMS_CHANGE,
+                message: {}
+              });
+            }, function (err) {
+              resetItem();
+              console.error('Error-------', err);
+            });
+          }
         }
 
         /**
@@ -191,38 +206,41 @@
         function addNewItem() {
           updating = true;
           ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
-          MediaContent.insert(ContentMedia.item.data).then(function (data) {
-            MediaContent.getById(data.id).then(function (item) {
-              ContentMedia.item = item;
-              ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({id: item.id});
-              updateMasterItem(item);
-              updating = false;
-              MediaCenterSettings.content.rankOfLastItem = item.data.rank;
-              if (appId && MediaCenterSettings) {
-                MediaCenter.update(appId, MediaCenterSettings).then(function (data) {
-                  console.info("Updated MediaCenter rank");
-                }, function (err) {
-                  console.error('Error-------', err);
+          SearchEngineService.insert(ContentMedia.item.data).then(function (searchEngineData) {
+            ContentMedia.item.data.searchEngineId = searchEngineData.id;
+            MediaContent.insert(ContentMedia.item.data).then(function (data) {
+              MediaContent.getById(data.id).then(function (item) {
+                ContentMedia.item = item;
+                ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({id: item.id});
+                updateMasterItem(item);
+                updating = false;
+                MediaCenterSettings.content.rankOfLastItem = item.data.rank;
+                if (appId && MediaCenterSettings) {
+                  MediaCenter.update(appId, MediaCenterSettings).then(function (data) {
+                    console.info("Updated MediaCenter rank");
+                  }, function (err) {
+                    console.error('Error-------', err);
+                  });
+                }
+                else {
+                  MediaCenter.insert(MediaCenterSettings).then(function (data) {
+                    console.info("Inserted MediaCenter rank");
+                  }, function (err) {
+                    console.error('Error-------', err);
+                  });
+                }
+                Messaging.sendMessageToWidget({
+                  name: EVENTS.ITEMS_CHANGE,
+                  message: {}
                 });
-              }
-              else {
-                MediaCenter.insert(MediaCenterSettings).then(function (data) {
-                  console.info("Inserted MediaCenter rank");
-                }, function (err) {
-                  console.error('Error-------', err);
-                });
-              }
-              Messaging.sendMessageToWidget({
-                name: EVENTS.ITEMS_CHANGE,
-                message: {}
+  
+              }, function (err) {
+                resetItem();
+                console.error('Error while getting----------', err);
               });
-
             }, function (err) {
-              resetItem();
-              console.error('Error while getting----------', err);
+              console.error('---------------Error while inserting data------------', err);
             });
-          }, function (err) {
-            console.error('---------------Error while inserting data------------', err);
           });
         }
 

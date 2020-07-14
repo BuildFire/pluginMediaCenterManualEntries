@@ -16,7 +16,12 @@
         .factory('Location', [function () {
             var _location = location;
             return {
-                go: function (path) {
+                go: function (path, pushToHistory) {
+                    if(pushToHistory) {
+                        setTimeout(function () {
+                            buildfire.history.push(path);
+                        }, 1000);
+                    }
                     _location.href = path;
                 },
                 goToHome: function () {

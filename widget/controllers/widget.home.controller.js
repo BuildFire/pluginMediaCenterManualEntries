@@ -106,13 +106,16 @@
                                             }
                                             break;
                                     }
-                                    Location.go(url);
-                                    if (path == PATHS.MEDIA) {
+                                    if(!$rootScope.fromSearch){
+                                        Location.go(url);
+                                    }
+                                    if (path == PATHS.MEDIA || $rootScope.fromSearch) {
                                         $rootScope.showFeed = false;
                                     }
                                     else {
                                         $rootScope.showFeed = true;
                                     }
+                                    $rootScope.fromSearch = false;
                                     $scope.$apply();
                                 }
                                 break;
@@ -128,7 +131,6 @@
                         if (event.data) {
                             WidgetHome.media.data = event.data;
                             $rootScope.backgroundImage = WidgetHome.media.data.design.backgroundImage;
-                            console.log(WidgetHome.media);
                             $scope.$apply();
                             if (view && event.data.content && event.data.content.images) {
                                 view.loadItems(event.data.content.images);
@@ -187,7 +189,6 @@
                  * loadMore method loads the items in list page.
                  */
                 WidgetHome.loadMore = function () {
-
                     if (WidgetHome.isBusy || WidgetHome.noMore) {
                         return;
                     }
@@ -211,7 +212,19 @@
                         WidgetHome.isBusy = false;
                         if (!window.deeplinkingDone && buildfire.deeplink) {
                           buildfire.deeplink.getData(function (data) {
-                              if (data && WidgetHome.items.find(item => item.id === data.id)) {
+                            if(data && data.deepLinkUrl) {
+                                var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
+                                var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
+                                var itemId = JSON.parse(deepLinkUrl).id;
+                                if(WidgetHome.items.find(item => item.id === itemId)) {
+                                    $rootScope.showFeed = false; 
+                                    $rootScope.fromSearch = true;
+                                    window.setTimeout(() => {
+                                            Location.go("#/media/" + itemId);
+                                    }, 0);
+                                }
+                            }
+                            else if (data && WidgetHome.items.find(item => item.id === data.id)) {
                                 window.deeplinkingDone = true;
                                 $rootScope.showFeed = false;
                                 window.setTimeout(() => {
@@ -251,7 +264,7 @@
 
                 WidgetHome.goToMedia = function (ind) {
                     $rootScope.showFeed = false;
-                    Location.go('#/media/' + WidgetHome.items[ind].id);
+                    Location.go('#/media/' + WidgetHome.items[ind].id, true);
                 };
 
                 $rootScope.$on("Carousel:LOADED", function () {
