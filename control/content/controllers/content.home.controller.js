@@ -361,26 +361,17 @@
                                 rows[index].body = rows[index].bodyHTML;
                             }
                             if (validateCsv(rows)) {
-                                var searchEngineRequests = [];
-                                rows.forEach(function (row) {
-                                    SearchEngineService.insert(row);
-                                });
-                                Promise.all(searchEngineRequests).then(function (searchEngineResponses) {
-                                    searchEngineResponses.forEach(function (searchEngineResponse, index){
-                                        rows[i].searchEngineId = searchEngineResponse.id;
-                                    });
-
-                                    MediaContent.insert(rows).then(function (data) {
-                                        ContentHome.loading = false;
-                                        ContentHome.isBusy = false;
-                                        ContentHome.items = [];
-                                        ContentHome.info.data.content.rankOfLastItem = rank;
-                                        ContentHome.getMore();
-                                    }, function errorHandler(error) {
-                                        console.error(error);
-                                        ContentHome.loading = false;
-                                        $scope.$apply();
-                                    });
+                                MediaContent.insert(rows).then(function (data) {
+                                    ContentHome.loading = false;
+                                    ContentHome.isBusy = false;
+                                    ContentHome.items = [];
+                                    ContentHome.info.data.content.rankOfLastItem = rank;
+                                    ContentHome.getMore();
+                                    ContentHome.setDeeplinks();
+                                }, function errorHandler(error) {
+                                    console.error(error);
+                                    ContentHome.loading = false;
+                                    $scope.$apply();
                                 });
                             } else {
                                 ContentHome.loading = false;
@@ -405,6 +396,29 @@
                         //do something on cancel
                     });
                 };
+
+
+                ContentHome.setDeeplinks = function () {
+                    
+                    MediaContent.find({filter: {}, recordCount: true})
+                    .then(function (counter) {
+                      var numberOfRecords = counter.totalRecord;
+                      for (let skip = 0; skip < numberOfRecords; skip += 50) {
+                        MediaContent.find({filter: {}, skip, limit: 50})
+                        .then(function (res) {
+                          for (let i = 0; i < res.length; i += 1) { 
+                              if(!res[i].data.searchEngineId){
+                                res[i].data.deepLinkUrl = Buildfire.deeplink.createLink({ id: res[i].id });
+                                SearchEngineService.insert(res[i].data).then(function (data) {
+                                    res[i].data.searchEngineId = data.id;
+                                    MediaContent.update(res[i].id, res[i].data);
+                                });
+                              }
+                          }
+                        });
+                      }
+                    });
+                }
 
                 /**
                  * ContentHome.searchListItem() used to search items list
