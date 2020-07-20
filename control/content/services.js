@@ -73,7 +73,7 @@
                 }
             };
         }])
-        .factory("SearchEngine", ["Buildfire", '$q', function(Buildfire, $q) {
+        .factory("SearchEngine", ["Buildfire", '$q', 'MESSAGES', function(Buildfire, $q, MESSAGES) {
             function SearchEngine(tagName) {
                 this._tagName = tagName;
             }
@@ -88,6 +88,12 @@
                     title: item.title,
                     description: item.summary,
                     imageUrl: item.topImage,
+                };
+
+                if(item.deepLinkUrl) {
+                    data.data = {
+                        deepLinkUrl: item.deepLinkUrl
+                    }
                 };
 
                 Buildfire.services.searchEngine.insert(data, function (err, result) {

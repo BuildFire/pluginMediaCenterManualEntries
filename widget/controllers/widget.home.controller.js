@@ -216,13 +216,12 @@
                                 var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
                                 var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
                                 var itemId = JSON.parse(deepLinkUrl).id;
-                                if(WidgetHome.items.find(item => item.id === itemId)) {
-                                    $rootScope.showFeed = false; 
-                                    $rootScope.fromSearch = true;
-                                    window.setTimeout(() => {
-                                            Location.go("#/media/" + itemId);
-                                    }, 0);
-                                }
+                                $rootScope.showFeed = false; 
+                                $rootScope.fromSearch = true;
+                                window.deeplinkingDone = true;
+                                window.setTimeout(() => {
+                                    Location.go("#/media/" + itemId);
+                                }, 0);
                             }
                             else if (data && WidgetHome.items.find(item => item.id === data.id)) {
                                 window.deeplinkingDone = true;
