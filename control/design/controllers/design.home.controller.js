@@ -17,7 +17,8 @@
                     design: {
                         listLayout: "list-1",
                         itemLayout: "item-1",
-                        backgroundImage: ""
+                        backgroundImage: "",
+                        skipMediaPage: false
                     }
                 }
             };

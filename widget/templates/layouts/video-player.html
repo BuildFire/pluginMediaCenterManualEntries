@@ -6,7 +6,9 @@
                     vg-change-source="WidgetMedia.sourceChanged($source)"
                     vg-theme="WidgetMedia.videoPlayerConfig.theme.url"
                     vg-error="WidgetMedia.onVideoError($event)"
-                    vg-can-play="WidgetMedia.videoLoaded()">
+                    vg-can-play="WidgetMedia.videoLoaded()"
+                    vg-auto-play="WidgetMedia.media.data.design.skipMediaPage"
+                    >
             <vg-media vg-src="WidgetMedia.videoPlayerConfig.sources"
                       vg-tracks="WidgetMedia.videoPlayerConfig.tracks"
                       vg-native-controls="false"

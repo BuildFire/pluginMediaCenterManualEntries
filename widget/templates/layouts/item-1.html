@@ -9,7 +9,7 @@
                      class="plugin-slide">
                     <!--ng-style="WidgetMedia.showVideo == false ? {'min-height': '192px'} : {}" style="width: 100% !important;max-height:192px !important"
                          -->
-                    <img data-ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage" load-image="16x9" style="min-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
+                    <img  data-ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage || ( WidgetMedia.media.data.design.skipMediaPage && WidgetMedia.item.data.videoUrl )" load-image="16x9" style="min-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
                          crop-width="1280" crop-height="720" crop-type="crop"
                          data-final-src="{{WidgetMedia.item.data.topImage}}"/>
 
@@ -24,7 +24,7 @@
         <div class="padded padding-top-zero">
             <hr class="small"
                 ng-if="WidgetMedia.item.data.audioUrl || WidgetMedia.item.data.videoUrl || WidgetMedia.item.data.srcUrl || WidgetMedia.item.data.links.length">
-            <div class="link-list">
+            <div class="link-list" data-ng-hide="WidgetMedia.media.data.design.skipMediaPage">
                 <a class="text-primary" ng-if="WidgetMedia.item.data.audioUrl"
                    href="#/nowplaying/{{WidgetMedia.item.id}}">Listen</a>
                 <a class="text-primary" ng-if="WidgetMedia.item.data.videoUrl"

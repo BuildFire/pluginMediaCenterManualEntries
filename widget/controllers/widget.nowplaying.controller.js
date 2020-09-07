@@ -1,8 +1,8 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', '$timeout', 'Location',
-            function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS, $rootScope, $timeout, Location) {
+        .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', '$timeout', 'Location','EVENTS','PATHS',
+            function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS, $rootScope, $timeout, Location,EVENTS,PATHS) {
                 $rootScope.blackBackground = true;
                 $rootScope.showFeed = false;
                 var NowPlaying = this;
@@ -349,6 +349,14 @@
                 var onRefresh = Buildfire.datastore.onRefresh(function () {
                 });
 
+                if(NowPlaying.item.data.audioUrl)
+                buildfire.messaging.sendMessageToControl({
+                    name: EVENTS.ROUTE_CHANGE,
+                    message: {
+                        path: PATHS.MEDIA,
+                        id: NowPlaying.item.id || null
+                    }
+                });
                 /**
                  * Unbind the onRefresh
                  */

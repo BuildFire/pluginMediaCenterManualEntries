@@ -17,7 +17,7 @@
                  ng-click="WidgetHome.goToMedia($index)">
                 <div class="list-item-media text-left overflow-hidden">
                     <div class="list-media-holder pull-left text-overlay" ng-if="item.data.topImage"
-                         play-btn="{{item.data.videoUrl.length > 0}}">
+                         play-btn="{{item.data.videoUrl.length > 0  || (WidgetHome.media.data.design.skipMediaPage && (item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0)) }}">
                         <img load-image="16x9" crop-width="110" crop-height="60" crop-type="crop" data-final-src="{{item.data.topImage}}">
                     </div>
                     <div class="list-item-copy text-left padding-left-ten padding-right-ten text-overlay">

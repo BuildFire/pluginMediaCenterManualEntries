@@ -17,7 +17,8 @@
                         design: {
                             listLayout: "list-1",
                             itemLayout: "item-1",
-                            backgroundImage: ""
+                            backgroundImage: "",
+                            skipMediaPage: false
                         }
                     }
                 };
@@ -94,29 +95,38 @@
                     if (event) {
                         switch (event.name) {
                             case EVENTS.ROUTE_CHANGE:
-                                if((event.message && event.message.path == PATHS.MEDIA && $location.$$path.indexOf('/media') == -1) || (event.message && event.message.path != PATHS.MEDIA)) {
+                                if((event.message && event.message.path == PATHS.MEDIA && $location.$$path.indexOf('/media') == -1)  || (event.message && event.message.path != PATHS.MEDIA)) {
                                     var path = event.message.path,
                                         id = event.message.id;
                                     var url = "#/";
+                                    var foundObj=WidgetHome.items.filter(function(el){return el.id==id;})[0];
                                     switch (path) {
                                         case PATHS.MEDIA:
-                                            url = url + "media/";
+                                            if(!foundObj||!WidgetHome.media.data.design.skipMediaPage||(WidgetHome.media.data.design.skipMediaPage&&foundObj.data.videoUrl)
+                                            ||(WidgetHome.media.data.design.skipMediaPage&&!foundObj.data.videoUrl&&!foundObj.data.audioUrl)){
+                                                url = url + "media/";
+                                            }else{
+                                                url = url + "nowplaying/";
+                                            }
                                             if (id) {
                                                 url = url + id + "/";
                                             }
                                             break;
                                     }
-                                    if(!$rootScope.fromSearch){
-                                        Location.go(url);
+                                    var myCurrentPath="#"+$location.$$path+"/";
+                                    if(url!=myCurrentPath){
+                                        if(!$rootScope.fromSearch){
+                                            Location.go(url);
+                                        }
+                                        if (path == PATHS.MEDIA || $rootScope.fromSearch) {
+                                            $rootScope.showFeed = false;
+                                        }
+                                        else {
+                                            $rootScope.showFeed = true;
+                                        }
+                                        $rootScope.fromSearch = false;
+                                        $scope.$apply();
                                     }
-                                    if (path == PATHS.MEDIA || $rootScope.fromSearch) {
-                                        $rootScope.showFeed = false;
-                                    }
-                                    else {
-                                        $rootScope.showFeed = true;
-                                    }
-                                    $rootScope.fromSearch = false;
-                                    $scope.$apply();
                                 }
                                 break;
                             case EVENTS.ITEMS_CHANGE:
@@ -220,14 +230,22 @@
                                 $rootScope.fromSearch = true;
                                 window.deeplinkingDone = true;
                                 window.setTimeout(() => {
-                                    Location.go("#/media/" + itemId);
+                                    //Location.go("#/media/" + itemId);
+                                    var foundObj=WidgetHome.items.find(function(el){return el.id==itemId;});
+                                    var index=WidgetHome.items.indexOf(foundObj);
+                                    if(index!=-1)
+                                        WidgetHome.goToMedia(WidgetHome.items.indexOf(foundObj));
                                 }, 0);
                             }
                             else if (data && WidgetHome.items.find(item => item.id === data.id)) {
                                 window.deeplinkingDone = true;
                                 $rootScope.showFeed = false;
                                 window.setTimeout(() => {
-                                  Location.go("#/media/" + data.id);
+                                  //Location.go("#/media/" + data.id);
+                                  var foundObj=WidgetHome.items.find(function(el){return el.id==data.id;});
+                                  var index=WidgetHome.items.indexOf(foundObj);
+                                  if(index!=-1)
+                                    WidgetHome.goToMedia(index);
                                 }, 0);
                               }
                           });
@@ -263,7 +281,12 @@
 
                 WidgetHome.goToMedia = function (ind) {
                     $rootScope.showFeed = false;
-                    Location.go('#/media/' + WidgetHome.items[ind].id, true);
+                    if(!WidgetHome.media.data.design.skipMediaPage||(WidgetHome.media.data.design.skipMediaPage&&WidgetHome.items[ind].data.videoUrl)
+                    ||(WidgetHome.media.data.design.skipMediaPage&&!WidgetHome.items[ind].data.videoUrl&&!WidgetHome.items[ind].data.audioUrl)){
+                        Location.go('#/media/' + WidgetHome.items[ind].id, true);
+                    }else {
+                        Location.go('#/nowplaying/' + WidgetHome.items[ind].id, true);
+                    }
                 };
 
                 $rootScope.$on("Carousel:LOADED", function () {
