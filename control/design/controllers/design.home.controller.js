@@ -33,6 +33,8 @@
             if (DesignHome.mediaInfo.data && DesignHome.mediaInfo.data.design && DesignHome.mediaInfo.data.design.backgroundImage) {
                 background.loadbackground(DesignHome.mediaInfo.data.design.backgroundImage);
             }
+            if(!DesignHome.mediaInfo.data.design.skipMediaPage)
+                DesignHome.mediaInfo.data.design.skipMediaPage=false;
             /*Buildfire DB Service*/
 
             DesignHome._mediaCenter = new DB(COLLECTIONS.MediaCenter);

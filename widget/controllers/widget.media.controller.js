@@ -153,6 +153,10 @@
                     }
                     if(WidgetMedia.media.data.design.skipMediaPage&&!WidgetMedia.item.data.videoUrl&&WidgetMedia.item.data.audioUrl)
                     {
+                        if(WidgetMedia.showVideo){
+                            WidgetMedia.showVideo=false;
+                            WidgetMedia.API.pause();
+                        }
                         Location.go('#/nowplaying/' + WidgetMedia.item.id, true);
                     }
                     else if(WidgetMedia.media.data.design.skipMediaPage&&WidgetMedia.item.data.videoUrl){

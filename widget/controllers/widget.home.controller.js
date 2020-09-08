@@ -280,12 +280,18 @@
                 };
 
                 WidgetHome.goToMedia = function (ind) {
+                    if(typeof ind != 'number'){
+                        var foundObj=WidgetHome.items.find(function(el){return el.id==ind;});
+                        ind=WidgetHome.items.indexOf(foundObj);
+                    }
                     $rootScope.showFeed = false;
-                    if(!WidgetHome.media.data.design.skipMediaPage||(WidgetHome.media.data.design.skipMediaPage&&WidgetHome.items[ind].data.videoUrl)
-                    ||(WidgetHome.media.data.design.skipMediaPage&&!WidgetHome.items[ind].data.videoUrl&&!WidgetHome.items[ind].data.audioUrl)){
-                        Location.go('#/media/' + WidgetHome.items[ind].id, true);
-                    }else {
-                        Location.go('#/nowplaying/' + WidgetHome.items[ind].id, true);
+                    if(ind!=-1){
+                        if(!WidgetHome.media.data.design.skipMediaPage||(WidgetHome.media.data.design.skipMediaPage&&WidgetHome.items[ind].data.videoUrl)
+                        ||(WidgetHome.media.data.design.skipMediaPage&&!WidgetHome.items[ind].data.videoUrl&&!WidgetHome.items[ind].data.audioUrl)){
+                            Location.go('#/media/' + WidgetHome.items[ind].id, true);
+                        }else {
+                            Location.go('#/nowplaying/' + WidgetHome.items[ind].id, true);           
+                        }
                     }
                 };
 

@@ -1,8 +1,8 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', '$timeout', 'Location','EVENTS','PATHS',
-            function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS, $rootScope, $timeout, Location,EVENTS,PATHS) {
+        .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', '$timeout', 'Location','EVENTS','PATHS','DB',
+            function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS, $rootScope, $timeout, Location,EVENTS,PATHS,DB) {
                 $rootScope.blackBackground = true;
                 $rootScope.showFeed = false;
                 var NowPlaying = this;
@@ -49,6 +49,7 @@
                  * audioPlayer.onEvent callback calls when audioPlayer event fires.
                  */
                 audioPlayer.onEvent(function (e) {
+                    console.log("Pozvan event",JSON.stringify(e));
                     switch (e.event) {
                         case 'timeUpdate':
                             NowPlaying.currentTime = e.data.currentTime;
@@ -305,6 +306,13 @@
                                     $scope.$digest();
                                 }
                             }
+                            var MediaCenter = new DB(COLLECTIONS.MediaCenter);
+                            MediaCenter.get().then(function success(result) {
+                                if(result.data.design.skipMediaPage&&event.data.videoUrl){
+                                    audioPlayer.pause();
+                                    Location.go('#/media/' + event.id, true);
+                                }
+                            });
                             break;
                         case COLLECTIONS.MediaCenter:
                             if (event.data) {
