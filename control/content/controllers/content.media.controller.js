@@ -255,7 +255,7 @@
          */
         function updateItemsWithDelay(item) {
           if (updating) {
-            console.log(' came but updating is going on');
+            //console.log(' came but updating is going on');
             return;
           }
           if (tmrDelayForMedia) {
@@ -404,7 +404,7 @@
          * done will close the single item view
          */
         ContentMedia.done = function () {
-          console.log('Done called------------------------------------------------------------------------');
+          //console.log('Done called------------------------------------------------------------------------');
           //Buildfire.history.pop();
           Location.goToHome();
         };

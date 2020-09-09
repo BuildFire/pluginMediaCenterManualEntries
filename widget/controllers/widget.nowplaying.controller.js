@@ -49,7 +49,7 @@
                  * audioPlayer.onEvent callback calls when audioPlayer event fires.
                  */
                 audioPlayer.onEvent(function (e) {
-                    console.log("Pozvan event",JSON.stringify(e));
+                    //console.log("Pozvan event",JSON.stringify(e));
                     switch (e.event) {
                         case 'timeUpdate':
                             NowPlaying.currentTime = e.data.currentTime;

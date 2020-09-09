@@ -81,7 +81,7 @@
                             DesignHome._lastSaved = angular.copy(DesignHome.mediaInfo);
                             DesignHome._lastSaved.id = getData.id;
                             DesignHome.mediaInfo.id = getData.id;
-                            console.log('load edit to medianInfo/', DesignHome.mediaInfo);
+                            //console.log('load edit to medianInfo/', DesignHome.mediaInfo);
                         }, function (err) {
                             console.error(err);
                         });
