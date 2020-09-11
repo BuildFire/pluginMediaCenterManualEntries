@@ -148,28 +148,37 @@
                             }
                             break;
                         case COLLECTIONS.MediaCenter:
+                            var old=WidgetMedia.media.data.design.itemLayout;
                             WidgetMedia.media = event;
-                            WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
                             $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
-                            if(WidgetMedia.media.data.design.skipMediaPage&&!WidgetMedia.item.data.videoUrl&&WidgetMedia.item.data.audioUrl)
-                            {
-                                if(WidgetMedia.showVideo){
-                                    WidgetMedia.showVideo=false;
-                                    WidgetMedia.API.pause();
-                                }
-                                Location.go('#/nowplaying/' + WidgetMedia.item.id, true);
-                            }
-                            else if(WidgetMedia.media.data.design.skipMediaPage&&WidgetMedia.item.data.videoUrl){
-                                WidgetMedia.showVideo=true;
-                                WidgetMedia.API.play();
-                            }else{
-                                WidgetMedia.showVideo=false;
-                                WidgetMedia.API.pause();
-                            }
+                            WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
+                            if(old == WidgetMedia.media.data.design.itemLayout)WidgetMedia.ApplayUpdates();
                             $scope.$apply();
+                            if(old != WidgetMedia.media.data.design.itemLayout)
+                            $scope.$$postDigest(function () {
+                                WidgetMedia.ApplayUpdates();
+                              })
                             break;
                     }
                 });
+
+                WidgetMedia.ApplayUpdates = function () {
+                    if(WidgetMedia.media.data.design.skipMediaPage&&!WidgetMedia.item.data.videoUrl&&WidgetMedia.item.data.audioUrl)
+                    {
+                        if(WidgetMedia.showVideo){
+                            WidgetMedia.showVideo=false;
+                            WidgetMedia.API.pause();
+                        }
+                        Location.go('#/nowplaying/' + WidgetMedia.item.id, true);
+                    }
+                    else if(WidgetMedia.media.data.design.skipMediaPage&&WidgetMedia.item.data.videoUrl){
+                        WidgetMedia.showVideo=true;
+                        WidgetMedia.API.play();
+                    }else{
+                        WidgetMedia.showVideo=false;
+                        WidgetMedia.API.pause();
+                    }
+                };
 
                 WidgetMedia.toggleShowVideo = function () {
                     WidgetMedia.showVideo = !WidgetMedia.showVideo;
