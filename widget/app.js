@@ -168,14 +168,9 @@
                     if ($rootScope.playlist) {
                         $rootScope.playlist = false;
                         $rootScope.$digest();
-                    } else if(obj.data.design.skipMediaPage){
-                        Messaging.sendMessageToControl({
-                            name: EVENTS.ROUTE_CHANGE,
-                            message: {
-                                path: PATHS.HOME
-                            }
-                        });
-                        $("#showFeedBtn").click();
+                    } else if(obj.data.design.skipMediaPage ){
+                        buildfire.history.pop();
+                        Location.goToHome();
                     }
                     else {
                         Location.go('#/media/' + path.split('/')[2]);
