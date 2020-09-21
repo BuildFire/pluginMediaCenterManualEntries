@@ -46,3 +46,21 @@
 
 <hr>
 <div id="background"></div>
+
+<hr>
+<div class="item row clearfix">
+    <div class="labels col-md-3 padding-right-zero pull-left">
+        <span>Media info page</span>
+    </div>
+    <div class="main col-md-9 pull-right">
+        <div class="radio radio-primary radio-inline">
+            <input id="skipMediaPageOff" type="radio" name="skipMediaPageOff" checked="checked" ng-model="DesignHome.mediaInfo.data.design.skipMediaPage" ng-value="false">
+            <label for="skipMediaPageOff">Show</label>
+        </div>
+        <div class="radio radio-primary radio-inline">
+            <input id="skipMediaPage" type="radio" name="skipMediaPage" ng-model="DesignHome.mediaInfo.data.design.skipMediaPage" ng-value="true">
+            <label for="skipMediaPage">Skip</label>
+        </div>
+        <p class="info margin-top-fifteen">Note: If the info page is skipped, the video URL will be prioritized.</p>
+    </div>
+</div>

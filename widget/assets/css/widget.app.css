@@ -785,3 +785,7 @@ input[type=range] {
 +  border-color: transparent;
 +  color: transparent;
 +}
+
+.plugin-slide img[style]{
+	width: 100%!important;
+} 

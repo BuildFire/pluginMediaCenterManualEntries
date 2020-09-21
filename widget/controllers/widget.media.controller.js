@@ -12,8 +12,10 @@
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
                 WidgetMedia.onPlayerReady = function ($API) {
                     WidgetMedia.API = $API;
-                    WidgetMedia.loadingVideo = true;
-                };
+                    WidgetMedia.loadingVideo = true;              
+                    if(WidgetMedia.media.data.design.skipMediaPage&&WidgetMedia.item.data.videoUrl)
+                        WidgetMedia.toggleShowVideo();
+                    };
 
                 WidgetMedia.videoPlayerConfig = {
                     autoHide: false,
@@ -21,15 +23,35 @@
                     sources: undefined,
                     tracks: undefined,
                     theme: {
-                        url: "http://www.videogular.com/styles/themes/default/latest/videogular.css"
+                        url: "./assets/css/videogular.css"
                     }
                 };
                 WidgetMedia.changeVideoSrc = function () {
-                    if (WidgetMedia.item.data.videoUrl)
+                    if (WidgetMedia.item.data.videoUrl){
+                        var myType;
+                        var videoUrlToSend=WidgetMedia.item.data.videoUrl;
+                        if(videoUrlToSend.includes("www.dropbox")||videoUrlToSend.includes("dl.dropbox.com")){
+                            videoUrlToSend=videoUrlToSend.replace("www.dropbox","dl.dropboxusercontent").split("?dl=")[0];
+                            videoUrlToSend=videoUrlToSend.replace("dl.dropbox.com","dl.dropboxusercontent.com");
+                            myType=videoUrlToSend.split('.').pop();
+                        }else if(videoUrlToSend.includes("drive.google.com")){
+                            //var urlArray=videoUrlToSend.replace("/view","").replace("/preview","").split("/");
+                            //var urlId=urlArray[urlArray.length-1].split("?")[0];
+                            //videoUrlToSend="https://drive.google.com/uc?id="+urlId;
+                            videoUrlToSend=WidgetMedia.item.data.videoUrl.replace("/view","/preview").split("?")[0];
+                            WidgetMedia.item.data.videoUrl=videoUrlToSend;
+                            //var frame=document.getElementsByTagName("iframe")[0];
+                            //frame.setAttribute("src",WidgetMedia.item.data.videoUrl);
+                            myType="mp4";
+                        }
+                        else{
+                            myType=videoUrlToSend.split('.').pop();
+                        }
                         WidgetMedia.videoPlayerConfig.sources = [{
-                            src: $sce.trustAsResourceUrl(WidgetMedia.item.data.videoUrl),
-                            type: 'video/' + WidgetMedia.item.data.videoUrl.split('.').pop() //"video/mp4"
+                            src: $sce.trustAsResourceUrl(videoUrlToSend),
+                            type: 'video/' + myType //"video/mp4"
                         }];
+                    }
                 };
                 MediaCenter.get().then(function (data) {
                     WidgetMedia.media = {
@@ -126,13 +148,37 @@
                             }
                             break;
                         case COLLECTIONS.MediaCenter:
+                            var old=WidgetMedia.media.data.design.itemLayout;
                             WidgetMedia.media = event;
-                            WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
                             $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
+                            WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
+                            if(old == WidgetMedia.media.data.design.itemLayout)WidgetMedia.ApplayUpdates();
                             $scope.$apply();
+                            if(old != WidgetMedia.media.data.design.itemLayout)
+                            $scope.$$postDigest(function () {
+                                WidgetMedia.ApplayUpdates();
+                              })
                             break;
                     }
                 });
+
+                WidgetMedia.ApplayUpdates = function () {
+                    if(WidgetMedia.media.data.design.skipMediaPage&&!WidgetMedia.item.data.videoUrl&&WidgetMedia.item.data.audioUrl)
+                    {
+                        if(WidgetMedia.showVideo){
+                            WidgetMedia.showVideo=false;
+                            WidgetMedia.API.pause();
+                        }
+                        Location.go('#/nowplaying/' + WidgetMedia.item.id, true);
+                    }
+                    else if(WidgetMedia.media.data.design.skipMediaPage&&WidgetMedia.item.data.videoUrl){
+                        WidgetMedia.showVideo=true;
+                        WidgetMedia.API.play();
+                    }else{
+                        WidgetMedia.showVideo=false;
+                        WidgetMedia.API.pause();
+                    }
+                };
 
                 WidgetMedia.toggleShowVideo = function () {
                     WidgetMedia.showVideo = !WidgetMedia.showVideo;
@@ -172,7 +218,7 @@
                     Buildfire.actionItems.execute(actionItem);
                 };
 
-                WidgetMedia.videoLoaded = function () {
+                WidgetMedia.videoLoaded = function () {                    
                     WidgetMedia.loadingVideo = false;
                 };
 
@@ -205,7 +251,7 @@
                 /**
                  * Implementation of pull down to refresh
                  */
-                var onRefresh=Buildfire.datastore.onRefresh(function(){
+                var onRefresh=Buildfire.datastore.onRefresh(function(){                   
                 });
 
                 /**

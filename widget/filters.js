@@ -50,11 +50,11 @@
                 if (!x)
                     return '';
                 var num = Number(x.charAt(0));
-
+                
                 if (isNaN(num))
                     return '';
 
-                num = num - 3;
+               // num = num - 3;
                 x = num.toString() + x.substring(1);
                 return x;
             };
@@ -62,7 +62,7 @@
         .filter("isYoutubeVimeoLink", function () {
             return function (x) {
                 if (x)
-                    return (x.indexOf('youtu.be') >= 0 || x.indexOf('youtube.com') >= 0 || x.indexOf('vimeo.com') >= 0);
+                    return (x.indexOf('youtu.be') >= 0 || x.indexOf('youtube.com') >= 0 || x.indexOf('vimeo.com') >= 0 || x.indexOf('drive.google.com') >= 0);
                 else
                     return false;
             };

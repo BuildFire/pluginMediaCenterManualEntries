@@ -25,7 +25,8 @@
                         design: {
                             listLayout: "list-1",
                             itemLayout: "item-1",
-                            backgroundImage: ""
+                            backgroundImage: "",
+                            skipMediaPage: false
                         }
                     }
                 };
@@ -203,7 +204,7 @@
                         var endIndex = ui.item.sortable.dropindex,
                             maxRank = 0,
                             draggedItem = ContentHome.items[endIndex];
-                        console.log(ui.item.sortable.dropindex)
+                        //console.log(ui.item.sortable.dropindex)
                         if (draggedItem) {
                             var prev = ContentHome.items[endIndex - 1],
                                 next = ContentHome.items[endIndex + 1];

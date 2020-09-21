@@ -143,8 +143,12 @@
             $httpProvider.interceptors.push(interceptor);
 
         }])
-        .run(['Location', '$location', '$rootScope', 'Messaging', 'EVENTS', 'PATHS', function (Location, $location, $rootScope, Messaging, EVENTS, PATHS) {
+        .run(['Location', '$location', '$rootScope', 'Messaging', 'EVENTS', 'PATHS','DB', 'COLLECTIONS', function (Location, $location, $rootScope, Messaging, EVENTS, PATHS,DB, COLLECTIONS) {
             buildfire.navigation.onBackButtonClick = function () {
+               // var MediaContent = new DB(COLLECTIONS.MediaCenter);
+                //MediaContent.find({filter: {}})
+                //.then(function (obj){
+                buildfire.datastore.get("MediaCenter",(err,obj)=>{
                 var path = $location.path();
                 if (path.indexOf('/media') == 0) {
                     buildfire.history.pop();
@@ -164,6 +168,9 @@
                     if ($rootScope.playlist) {
                         $rootScope.playlist = false;
                         $rootScope.$digest();
+                    } else if(obj.data.design.skipMediaPage ){
+                        buildfire.history.pop();
+                        Location.goToHome();
                     }
                     else {
                         Location.go('#/media/' + path.split('/')[2]);
@@ -171,6 +178,7 @@
                 }
                 else
                     buildfire.navigation._goBackOne();
+            });
             };
 
             buildfire.device.onAppBackgrounded(function () {

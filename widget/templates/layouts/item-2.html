@@ -12,7 +12,7 @@
                                 <div class="people-holder clearfix">
                                     <div class="people-media text-center padding-top-fifteen"
                                          data-ng-hide="WidgetMedia.showVideo">
-                                        <img load-image="16x9" style="width: 161px;height: 91px;"
+                                        <img data-ng-hide="WidgetMedia.media.data.design.skipMediaPage && WidgetMedia.item.data.videoUrl" load-image="16x9" style="width: 161px;height: 91px;"
                                              crop-width="161" crop-height="91" crop-type="crop"
                                              data-final-src="{{WidgetMedia.item.data.topImage}}">
                                     </div>
@@ -33,7 +33,7 @@
                 </div>
             </div>
             <div class="padded">
-                <div class="link-list">
+                <div class="link-list" data-ng-hide="WidgetMedia.media.data.design.skipMediaPage">
                     <a class="text-primary" ng-if="WidgetMedia.item.data.audioUrl"
                        href="#/nowplaying/{{WidgetMedia.item.id}}">Listen</a>
                     <a class="text-primary" ng-if="WidgetMedia.item.data.videoUrl"

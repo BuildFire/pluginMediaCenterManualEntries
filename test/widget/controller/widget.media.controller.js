@@ -38,7 +38,8 @@ xdescribe('WidgetMedia Controller', function () {
                         design: {
                             listLayout: "list-1",
                             itemLayout: "item-1",
-                            backgroundImage: ""
+                            backgroundImage: "",
+                            skipMediaPage: false
                         }
                     }
                 },
@@ -54,7 +55,8 @@ xdescribe('WidgetMedia Controller', function () {
                         design: {
                             listLayout: "list-1",
                             itemLayout: "item-1",
-                            backgroundImage: "imageurl"
+                            backgroundImage: "imageurl",
+                            skipMediaPage: false
                         }
                     }
                 },

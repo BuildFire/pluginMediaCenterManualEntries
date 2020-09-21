@@ -17,7 +17,8 @@
                     design: {
                         listLayout: "list-1",
                         itemLayout: "item-1",
-                        backgroundImage: ""
+                        backgroundImage: "",
+                        skipMediaPage: false
                     }
                 }
             };
@@ -32,6 +33,8 @@
             if (DesignHome.mediaInfo.data && DesignHome.mediaInfo.data.design && DesignHome.mediaInfo.data.design.backgroundImage) {
                 background.loadbackground(DesignHome.mediaInfo.data.design.backgroundImage);
             }
+            if(!DesignHome.mediaInfo.data.design.skipMediaPage)
+                DesignHome.mediaInfo.data.design.skipMediaPage=false;
             /*Buildfire DB Service*/
 
             DesignHome._mediaCenter = new DB(COLLECTIONS.MediaCenter);
@@ -78,7 +81,7 @@
                             DesignHome._lastSaved = angular.copy(DesignHome.mediaInfo);
                             DesignHome._lastSaved.id = getData.id;
                             DesignHome.mediaInfo.id = getData.id;
-                            console.log('load edit to medianInfo/', DesignHome.mediaInfo);
+                            //console.log('load edit to medianInfo/', DesignHome.mediaInfo);
                         }, function (err) {
                             console.error(err);
                         });
