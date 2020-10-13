@@ -8,12 +8,16 @@
                 var NowPlaying = this;
                 NowPlaying.currentTime=0;
                 NowPlaying.swiped = [];
+                if(media.data.audioUrl.includes("www.dropbox")||media.data.audioUrl.includes("dl.dropbox.com")){
+                    media.data.audioUrl=media.data.audioUrl.replace("www.dropbox","dl.dropbox").split("?dl=")[0];
+                }
                 NowPlaying.currentTrack = new Track(media.data);
                 NowPlaying.item = media;
                 NowPlaying.playing = false;
                 NowPlaying.paused = false;
                 NowPlaying.showVolume = false;
                 NowPlaying.track = media.data.audioUrl;
+
                 /**
                  * slider to show the slider on now-playing page.
                  * @type {*|jQuery|HTMLElement}
