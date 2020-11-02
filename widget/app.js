@@ -145,6 +145,8 @@
         }])
         .run(['Location', '$location', '$rootScope', 'Messaging', 'EVENTS', 'PATHS','DB', 'COLLECTIONS', function (Location, $location, $rootScope, Messaging, EVENTS, PATHS,DB, COLLECTIONS) {
             buildfire.navigation.onBackButtonClick = function () {
+                $rootScope.goingBack = true;
+                $rootScope.$digest();
                // var MediaContent = new DB(COLLECTIONS.MediaCenter);
                 //MediaContent.find({filter: {}})
                 //.then(function (obj){
@@ -170,7 +172,17 @@
                         $rootScope.$digest();
                     } else if(obj.data.design.skipMediaPage ){
                         buildfire.history.pop();
-                        Location.goToHome();
+                        if ($("#feedView").hasClass('notshowing')) {
+                            Messaging.sendMessageToControl({
+                                name: EVENTS.ROUTE_CHANGE,
+                                message: {
+                                    path: PATHS.HOME
+                                }
+                            });
+                            $("#showFeedBtn").click();
+                        }
+                        else
+                            buildfire.navigation._goBackOne();
                     }
                     else {
                         Location.go('#/media/' + path.split('/')[2]);
