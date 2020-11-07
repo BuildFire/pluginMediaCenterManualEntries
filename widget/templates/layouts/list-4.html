@@ -14,6 +14,11 @@
                 <div ng-repeat="item in WidgetHome.items" ng-if="$index % 2 == 0" class="row text-overlay">
                     <div class="list-item-odd col-xs-6 pull-left clickable " ng-click="WidgetHome.goToMedia($index)">
                         <div class="list-item-media text-center overflow-hidden text-overlay">
+                            <div class="li-actions-item">
+                                <i class="share glyphicon glyphicon-share-alt" ng-click="WidgetHome.share($event, item)" role="button"></i>
+                                <i class="bookmark glyphicon" style="right: 0; font-family: 'Glyphicons Halflings' !important; position: absolute;" ng-class="{ 'glyphicon-star-empty' : !item.data.bookmarked, 'glyphicon-star' : item.data.bookmarked }"
+                                 ng-click="WidgetHome.bookmark($event, item)" role="button"></i>
+                            </div>
                             <div class="list-media-holder text-overlay"
                                  play-btn="{{WidgetHome.items[$index].data.videoUrl.length > 0  || (WidgetHome.media.data.design.skipMediaPage && (WidgetHome.items[$index].data.videoUrl.length > 0 || WidgetHome.items[$index].data.audioUrl.length > 0)) }}">
                                 <img ng-if="WidgetHome.items[$index].data.topImage" load-image="1x1"
@@ -34,6 +39,11 @@
                     <div class="list-item-even col-xs-6 pull-left clickable text-overlay " ng-click="WidgetHome.goToMedia($index+1)"
                          ng-if="WidgetHome.items[$index + 1]">
                         <div class="list-item-media text-center overflow-hidden text-overlay">
+                            <div class="li-actions-item">
+                                <i class="share glyphicon glyphicon-share-alt" ng-click="WidgetHome.share($event, item)" role="button"></i>
+                                <i class="bookmark glyphicon" style="right: 0; font-family: 'Glyphicons Halflings' !important; position: absolute;" ng-class="{ 'glyphicon-star-empty' : !WidgetHome.items[$index + 1].data.bookmarked, 'glyphicon-star' : WidgetHome.items[$index + 1].data.bookmarked }"
+                                 ng-click="WidgetHome.bookmark($event, WidgetHome.items[$index + 1])" role="button"></i>
+                            </div>
                             <div class="list-media-holder text-overlay"
                                  play-btn="{{WidgetHome.items[$index+1].data.videoUrl.length > 0  || (WidgetHome.media.data.design.skipMediaPage && (WidgetHome.items[$index+1].data.videoUrl.length > 0 || WidgetHome.items[$index+1].data.audioUrl.length > 0)) }}">
                                 <img ng-if="WidgetHome.items[$index + 1].data.topImage" load-image="1x1"

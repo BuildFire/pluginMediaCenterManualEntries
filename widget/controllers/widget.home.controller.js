@@ -218,11 +218,49 @@
                             searchOptions.skip = searchOptions.skip + _limit;
                             WidgetHome.noMore = false;
                         }
+                        $rootScope.deepLinkNavigate = true;
+                        $rootScope.seekTime = 10.22;
                         WidgetHome.items = WidgetHome.items ? WidgetHome.items.concat(result) : result;
                         WidgetHome.isBusy = false;
+                        
+                        bookmarks.sync($rootScope);
                         if (!window.deeplinkingDone && buildfire.deeplink) {
                           buildfire.deeplink.getData(function (data) {
-                            if(data && data.deepLinkUrl) {
+                            console.log('DEEP LINK DATA', data)
+                            if(data && data.mediaId) {
+                                $rootScope.showFeed = false; 
+                                $rootScope.fromSearch = true;
+                                window.deeplinkingDone = true;
+                                window.setTimeout(() => {
+                                    //Location.go("#/media/" + itemId);
+                                    var foundObj=WidgetHome.items.find(function(el){return el.id==data.mediaId;});
+                                    var index=WidgetHome.items.indexOf(foundObj);
+                                    if(index!=-1)
+                                        WidgetHome.goToMedia(WidgetHome.items.indexOf(foundObj));
+                                }, 0);
+                            }
+                            else if(data && data.link) {
+                                $rootScope.showFeed = false; 
+                                $rootScope.fromSearch = true;
+                                window.deeplinkingDone = true;
+                                window.setTimeout(() => {
+                                    //Location.go("#/media/" + itemId);
+                                    var foundObj=WidgetHome.items.find(function(el){return el.id==data.link;});
+                                    var index=WidgetHome.items.indexOf(foundObj);
+                                    if(data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
+                                        $rootScope.deepLinkNavigate = true;
+                                        $rootScope.seekTime = data.timeIndex;
+                                    }
+
+                                    if(foundObj.data.audioUrl) {
+                                        return Location.goTo('#/nowplaying/' + foundObj.id)
+                                    }
+                                    
+                                    if(index!=-1)
+                                        WidgetHome.goToMedia(WidgetHome.items.indexOf(foundObj));
+                                }, 0);
+                            }
+                            else if(data && data.deepLinkUrl) {
                                 var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
                                 var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
                                 var itemId = JSON.parse(deepLinkUrl).id;
@@ -284,6 +322,7 @@
                         var foundObj=WidgetHome.items.find(function(el){return el.id==ind;});
                         ind=WidgetHome.items.indexOf(foundObj);
                     }
+                    
                     $rootScope.showFeed = false;
                     if(ind!=-1){
                         if(!WidgetHome.media.data.design.skipMediaPage||(WidgetHome.media.data.design.skipMediaPage&&WidgetHome.items[ind].data.videoUrl)
@@ -293,6 +332,61 @@
                             Location.go('#/nowplaying/' + WidgetHome.items[ind].id, true);           
                         }
                     }
+                };
+
+                buildfire.auth.onLogin(function () {
+                    bookmarks.sync($scope);
+                });
+
+                buildfire.auth.onLogout(function () {
+                    bookmarks.sync($scope);
+                });
+
+                WidgetHome.bookmark = function ($event, item) {
+                    $event.stopImmediatePropagation();
+                    var isBookmarked = item.data.bookmarked ? true : false;
+                    if (isBookmarked) {
+                        bookmarks.delete($scope, item);
+                    } else {
+                        bookmarks.add($scope, item);
+                    }
+                };
+
+                WidgetHome.bookmarked = function ($event, item) {
+                    $event.stopImmediatePropagation();
+                    WidgetHome.bookmark($event, item);
+                };
+
+                WidgetHome.share = function ($event, item) {
+                    $event.stopImmediatePropagation();
+
+                    var link = {};
+                    link.title = item.data.title;
+                    link.type = "website";
+                    link.description = item.data.summary ? item.data.summary : null;
+                    //link.imageUrl = item.data.topImage ? item.data.topImage : null;
+                    
+                    link.data = {
+                        "mediaId": item.id
+                    };
+                    
+                    buildfire.deeplink.generateUrl(link, function (err, result) {
+                        if (err) {
+                            console.error(err)
+                        } else {
+                                     // output : {"url":"https://buildfire.com/shortlinks/f6fd5ca6-c093-11ea-b714-067610557690"}
+                            console.log(result);
+                            buildfire.device.share({
+                                subject: link.title,
+                                text: link.description,
+                                image: link.imageUrl,
+                                link: result.url
+                            }, function(err, result) {
+                                console.log(err, result)
+                            });
+
+                        }
+                    });
                 };
 
                 $rootScope.$on("Carousel:LOADED", function () {

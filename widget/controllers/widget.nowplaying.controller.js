@@ -1,15 +1,15 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', '$timeout', 'Location','EVENTS','PATHS','DB',
-            function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS, $rootScope, $timeout, Location,EVENTS,PATHS,DB) {
+        .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', '$timeout', 'Location', 'EVENTS', 'PATHS', 'DB',
+            function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS, $rootScope, $timeout, Location, EVENTS, PATHS, DB) {
                 $rootScope.blackBackground = true;
                 $rootScope.showFeed = false;
                 var NowPlaying = this;
-                NowPlaying.currentTime=0;
+                NowPlaying.currentTime = 0;
                 NowPlaying.swiped = [];
-                if(media.data.audioUrl.includes("www.dropbox")||media.data.audioUrl.includes("dl.dropbox.com")){
-                    media.data.audioUrl=media.data.audioUrl.replace("www.dropbox","dl.dropbox").split("?dl=")[0];
+                if (media.data.audioUrl.includes("www.dropbox") || media.data.audioUrl.includes("dl.dropbox.com")) {
+                    media.data.audioUrl = media.data.audioUrl.replace("www.dropbox", "dl.dropbox").split("?dl=")[0];
                 }
                 NowPlaying.currentTrack = new Track(media.data);
                 NowPlaying.item = media;
@@ -17,14 +17,10 @@
                 NowPlaying.paused = false;
                 NowPlaying.showVolume = false;
                 NowPlaying.track = media.data.audioUrl;
-
                 /**
                  * slider to show the slider on now-playing page.
                  * @type {*|jQuery|HTMLElement}
                  */
-                NowPlaying.changeTime = function (time) {
-                    audioPlayer.setTime(time);
-                };
 
                 /**
                  * audioPlayer is Buildfire.services.media.audioPlayer.
@@ -43,17 +39,36 @@
                             audioPlayer.settings.set(setting);
                         }
                         else {
-                            audioPlayer.settings.set({volume: volume});
+                            audioPlayer.settings.set({ volume: volume });
                         }
                     });
 
                 };
 
+    
+
+                NowPlaying.addNote = function () {
+                    var options = {
+                        itemId: NowPlaying.item.id,
+                        title: NowPlaying.item.data.title,
+                        imageUrl: NowPlaying.item.data.topImage
+                    };
+
+                    options.timeIndex = NowPlaying.currentTime;
+
+                    var callback = function (err, data) {
+                        if (err) throw err;
+                        console.log(data);
+                    };
+
+                    buildfire.notes.openDialog(options, callback);
+                };
+
+
                 /**
                  * audioPlayer.onEvent callback calls when audioPlayer event fires.
                  */
                 audioPlayer.onEvent(function (e) {
-                    //console.log("Pozvan event",JSON.stringify(e));
                     switch (e.event) {
                         case 'timeUpdate':
                             NowPlaying.currentTime = e.data.currentTime;
@@ -67,7 +82,7 @@
                             NowPlaying.playing = false;
                             break;
                         case 'next':
-                            if(e && e.data && e.data.track){
+                            if (e && e.data && e.data.track) {
                                 NowPlaying.currentTrack = e.data.track;
                                 NowPlaying.playing = true;
                             }
@@ -77,7 +92,7 @@
                             break;
 
                     }
-                    if(!$scope.$$phase) {
+                    if (!$scope.$$phase) {
                         $scope.$digest();
                     }
                 });
@@ -101,7 +116,11 @@
                     if (NowPlaying.paused) {
                         audioPlayer.play();
                     } else {
-                        audioPlayer.play(NowPlaying.currentTrack);
+                        if($rootScope.seekTime) audioPlayer.setTime($rootScope.seekTime)
+                        setTimeout(() => {
+                            audioPlayer.play(NowPlaying.currentTrack);    
+                        }, 500);
+                        
                     }
                 };
                 NowPlaying.playlistPlay = function (track) {
@@ -111,10 +130,10 @@
                     }
                     NowPlaying.playing = true;
                     if (track) {
-                        audioPlayer.play({url: track.url});
+                        audioPlayer.play({ url: track.url });
                         track.playing = true;
                     }
-                    if(!$scope.$$phase) {
+                    if (!$scope.$$phase) {
                         $scope.$digest();
                     }
                 };
@@ -126,7 +145,7 @@
                     NowPlaying.playing = false;
                     NowPlaying.paused = true;
                     audioPlayer.pause();
-                    if(!$scope.$$phase) {
+                    if (!$scope.$$phase) {
                         $scope.$digest();
                     }
                 };
@@ -139,7 +158,7 @@
                     NowPlaying.playing = false;
                     NowPlaying.paused = true;
                     audioPlayer.pause();
-                    if(!$scope.$$phase) {
+                    if (!$scope.$$phase) {
                         $scope.$digest();
                     }
                 };
@@ -170,7 +189,7 @@
                             audioPlayer.settings.set(setting);
                         }
                         else {
-                            audioPlayer.settings.set({volume: volume});
+                            audioPlayer.settings.set({ volume: volume });
                         }
                     });
 
@@ -187,16 +206,16 @@
                 };
                 NowPlaying.removeFromPlaylist = function (track, index) {
                     Modals.removeTrackModal().then(function (data) {
-                            console.log('Data-------------------in success of remove track popup-0-', data);
-                            if (NowPlaying.playList) {
-                                NowPlaying.playList.filter(function (val, index) {
-                                    if (val.url == track.url)
-                                        audioPlayer.removeFromPlaylist(index);
-                                    return index;
+                        console.log('Data-------------------in success of remove track popup-0-', data);
+                        if (NowPlaying.playList) {
+                            NowPlaying.playList.filter(function (val, index) {
+                                if (val.url == track.url)
+                                    audioPlayer.removeFromPlaylist(index);
+                                return index;
 
-                                });
-                            }
-                        },
+                            });
+                        }
+                    },
                         function (err) {
                             // Do something on error
                         });
@@ -204,9 +223,9 @@
                 };
                 NowPlaying.removeTrackFromPlayList = function (index) {
                     Modals.removeTrackModal().then(function (data) {
-                            console.log('Data-------------------in success of remove track popup-1-', data);
-                            audioPlayer.removeFromPlaylist(index);
-                        },
+                        console.log('Data-------------------in success of remove track popup-1-', data);
+                        audioPlayer.removeFromPlaylist(index);
+                    },
                         function (err) {
                             // Do something on error
                         });
@@ -216,7 +235,7 @@
                     audioPlayer.getPlaylist(function (err, data) {
                         if (data && data.tracks) {
                             NowPlaying.playList = data.tracks;
-                            if(!$scope.$$phase) {
+                            if (!$scope.$$phase) {
                                 $scope.$digest();
                             }
                         }
@@ -306,13 +325,13 @@
                             if (event.data) {
 
                                 NowPlaying.item = event;
-                                if(!$scope.$$phase) {
+                                if (!$scope.$$phase) {
                                     $scope.$digest();
                                 }
                             }
                             var MediaCenter = new DB(COLLECTIONS.MediaCenter);
                             MediaCenter.get().then(function success(result) {
-                                if(result.data.design.skipMediaPage&&event.data.videoUrl){
+                                if (result.data.design.skipMediaPage && event.data.videoUrl) {
                                     audioPlayer.pause();
                                     Location.go('#/media/' + event.id, true);
                                 }
@@ -361,14 +380,14 @@
                 var onRefresh = Buildfire.datastore.onRefresh(function () {
                 });
 
-                if(NowPlaying.item.data.audioUrl)
-                buildfire.messaging.sendMessageToControl({
-                    name: EVENTS.ROUTE_CHANGE,
-                    message: {
-                        path: PATHS.MEDIA,
-                        id: NowPlaying.item.id || null
-                    }
-                });
+                if (NowPlaying.item.data.audioUrl)
+                    buildfire.messaging.sendMessageToControl({
+                        name: EVENTS.ROUTE_CHANGE,
+                        message: {
+                            path: PATHS.MEDIA,
+                            id: NowPlaying.item.id || null
+                        }
+                    });
                 /**
                  * Unbind the onRefresh
                  */
@@ -385,6 +404,8 @@
                  */
                 $timeout(function () {
                     NowPlaying.playTrack();
+                    console.log($routeParams)
+                    if ($routeParams.seekTime) NowPlaying.changeTime($routeParams.seekTime)
                 }, 1000);
             }
         ]);

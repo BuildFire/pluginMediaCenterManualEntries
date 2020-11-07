@@ -76,7 +76,7 @@
                                 element.attr("style", 'background:url(' + img + ') !important ;;background-size: cover !important;');
                             } else {
                                 img = '';
-                                element.attr("style", 'background-color:white');
+                                element.attr("style", 'background-color:wheat');
                             }
                             element.css({
                                 'background-size': 'cover !important'
@@ -86,7 +86,7 @@
                     }
                     else {
                         img = "";
-                        element.attr("style", 'background-color:white');
+                        element.attr("style", 'background-color:darkkhaki');
                         element.css({
                             'background-size': 'cover !important'
                         });

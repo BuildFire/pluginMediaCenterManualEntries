@@ -19,6 +19,7 @@
                 go: function (path, pushToHistory) {
                     if(pushToHistory) {
                         setTimeout(function () {
+                            console.log("GURA HISTORY", path)
                             buildfire.history.push(path);
                         }, 1000);
                     }
@@ -84,7 +85,10 @@
             DB.prototype.getById = function (id) {
                 var that = this;
                 var deferred = $q.defer();
+                console.log(that, id)
                 Buildfire.datastore.getById(id, that._tagName, function (err, result) {
+                    console.log("AAAAAAAAAAAAAAAAAAAAAAAA", result)
+
                     if (err) {
                         return deferred.reject(err);
                     }
