@@ -5,6 +5,7 @@
             function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location) {
                 $rootScope.showFeed = true;
                 var WidgetHome = this;
+                WidgetHome.deepLink=false;
                 var _infoData = {
                     data: {
                         content: {
@@ -91,7 +92,7 @@
                  * Messaging.onReceivedMessage is called when any event is fire from Content/design section.
                  * @param event
                  */
-                Messaging.onReceivedMessage = function (event) {
+                Messaging.onReceivedMessage = function (event) {   
                     if (event) {
                         switch (event.name) {
                             case EVENTS.ROUTE_CHANGE:
@@ -273,6 +274,7 @@
                                     var index=WidgetHome.items.indexOf(foundObj);
                                     if(index!=-1)
                                         WidgetHome.goToMedia(WidgetHome.items.indexOf(foundObj));
+                                        //WidgetHome.deepLink=true;
                                 }, 0);
                             }
                             else if (data && WidgetHome.items.find(item => item.id === data.id)) {
@@ -284,8 +286,9 @@
                                   var index=WidgetHome.items.indexOf(foundObj);
                                   if(index!=-1)
                                     WidgetHome.goToMedia(index);
+                                  //WidgetHome.deepLink=true;
                                 }, 0);
-                              }
+                              }else WidgetHome.deepLink=true;
                           });
                         }
                     }, function fail() {
@@ -418,6 +421,10 @@
                             }
                         );
                     }
+                });
+                $rootScope.$watch('goingBack', function () {
+                    if($rootScope.goingBack)
+                        WidgetHome.deepLink=true;
                 });
                 /**
                  * Implementation of pull down to refresh

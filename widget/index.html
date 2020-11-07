@@ -60,9 +60,10 @@
             </div>
         </div>
     </div>
-    <div data-back-img="{{backgroundImage}}"
+    <div ng-class="WidgetHome.deepLink ? 'noSlide' : 'slide'"
+         data-back-img="{{backgroundImage}}"
          ng-view=""
-         class="slide content"
+         class="content"
          ng-if="!showFeed"></div>
 
     <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>
