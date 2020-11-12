@@ -23,6 +23,7 @@
                             buildfire.history.push(path);
                         }, 1000);
                     }
+                    console.log("NE GURA HISTORY AL IDE")
                     _location.href = path;
                 },
                 goToHome: function () {

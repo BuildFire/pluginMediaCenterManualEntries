@@ -62,7 +62,7 @@
 }
 
 /* Media Player */
-.holder.now-playing{
+/* .holder.now-playing{
 	margin-top:0;
 	height:100%;
 	padding:50px 0 0 !important;
@@ -228,7 +228,7 @@
 	.holder.now-playing .media-holder{
 		display:none;
 	}
-}
+} */
 /* End Plugin CSS */
 
 
@@ -723,8 +723,18 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 
 /* Link Items */
-.link-list{
-	padding-top:2px;
+
+.link-list {
+	display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+}
+
+.link-list i{
+	font-size: 20px;
+	display: inline-block;
+	padding: 5px 16px;
 }
 .link-list a + a{
 	margin-left:10px;
@@ -768,10 +778,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
     font-size:24px;
     color:#fff;
 }
-.time-indicator{
-    margin-top: -25px !important;
-    opacity: 0.6 !important;
-}
+
 input[type=range] {
 +  -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
 +  width: 100%; /* Specific width is required for Firefox. */
@@ -824,7 +831,10 @@ input[type=range] {
     top: 0;
 }
 
-.li-actions-item i { padding: 10px; } 
+.li-actions-item i { padding: 5px; } 
+img {
+	filter: brightness(0.8);
+}
 
 .li-actions i {
     font-size: 20px;
@@ -844,15 +854,20 @@ input[type=range] {
 	height: 40px;
 }
 .layout1 .li-actions-item i,
-.layout2 .li-actions-item i,
+.layout4 .li-actions-item i,
 .layout3 .list-item-media .li-actions-item{
 	position: absolute;
+}
+
+.layout1 .li-actions-item i,
+.layout4 .li-actions-item i {
+	color: white !important;
 }
 
 .layout1 .list-item-media::before
 .layout2 .list-item-media::before
 .layout3 .list-item-media::before
-.layout4 .list-item-media::before  {
+.layout4 .list-item-media-holder::before  {
 	display: block;
 	position: absolute;
 	top: 0;

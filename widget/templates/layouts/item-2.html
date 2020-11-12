@@ -33,7 +33,7 @@
                 </div>
             </div>
             <div class="padded">
-                <div class="link-list" data-ng-hide="WidgetMedia.media.data.design.skipMediaPage">
+                <!-- <div class="link-list" data-ng-hide="WidgetMedia.media.data.design.skipMediaPage">
                     <a class="text-primary" ng-if="WidgetMedia.item.data.audioUrl"
                        href="#/nowplaying/{{WidgetMedia.item.id}}">Listen</a>
                     <a class="text-primary" ng-if="WidgetMedia.item.data.videoUrl"
@@ -41,26 +41,30 @@
                     <a id="sourceToggleButton" class="text-primary" ng-if="WidgetMedia.item.data.srcUrl"
                        ng-click="WidgetMedia.showSourceIframe()">View Source</a>
                     <a class="text-primary" ng-if="WidgetMedia.item.data.links.length" ng-click="WidgetMedia.openLinks(WidgetMedia.item.data.links)">More Options</a>
-                </div>
+                </div> -->
                 <div class="item-actions">
-                <div class="link-list">
-                  <a class="media-action" ng-click="WidgetMedia.playAudio()" ng-if="WidgetMedia.medium == 'AUDIO'">
-                    <i class="btn btn-success share glyphicon glyphicon-volume-up"></i>
-                  </a>
-                  <a class="media-action video" ng-click="WidgetMedia.API.play()" ng-if="WidgetMedia.isVideoPlayerSupported && WidgetMedia.medium == 'VIDEO'">
-                    <i class="btn btn-success share glyphicon glyphicon-play"></i>
-                  </a>
-                  <a ng-if="WidgetMedia.item.link" ng-click="WidgetMedia.openLink(WidgetMedia.item.link)" target="_blank">
-                    <i class="share glyphicon glyphicon-screenshot"></i>
-                  </a>
+                    <div class="link-list">
+                        <a class="media-action" ng-click="WidgetMedia.playAudio();" ng-if="WidgetMedia.mediaType == 'AUDIO'">
+                            <i class="btn btn-success share glyphicon glyphicon-volume-up"></i>
+                        </a>
+                        <a class="media-action video" ng-click="WidgetMedia.toggleShowVideo();"
+                            ng-if="WidgetMedia.mediaType == 'VIDEO'">
+                            <i class="btn btn-success share glyphicon glyphicon-play"></i>
+                        </a>
+                        <a ng-if="WidgetMedia.item.srcUrl" ng-click="WidgetMedia.openLink(WidgetMedia.item.srcUrl)"
+                            target="_blank">
+                            <i class="glyphicon glyphicon-screenshot"></i>
+                        </a>
+                    </div>
+                    <div class="li-actions">
+                        <i class="share glyphicon glyphicon glyphicon-edit" ng-click="WidgetMedia.addNote()" ng-click=""
+                            role="button"></i>
+                        <i class="share glyphicon glyphicon-share-alt" ng-click="WidgetMedia.share($event)" role="button"></i>
+                        <i class="glyphicon icon bookmark" style="font-family: 'Glyphicons Halflings' !important;"
+                            ng-class="{ 'glyphicon-star-empty' : !WidgetMedia.item.data.bookmarked, 'glyphicon-star' : WidgetMedia.item.data.bookmarked }"
+                            ng-click="WidgetMedia.bookmark($event)" role="button"></i>
+                    </div>
                 </div>
-                <div class="li-actions">
-                  <i class="share glyphicon glyphicon glyphicon-edit"  ng-click="WidgetMedia.addNote()" ng-click="" role="button"></i>
-                  <i class="share glyphicon glyphicon-share-alt" ng-click="WidgetMedia.share()" role="button"></i>
-                  <i class="glyphicon icon bookmark" style="font-family: 'Glyphicons Halflings' !important;" ng-class="{ 'glyphicon-star-empty' : !WidgetMedia.item.data.bookmarked, 'glyphicon-star' : WidgetMedia.item.data.bookmarked }"
-                    ng-click="WidgetMedia.bookmark($event)" role="button"></i>
-                </div>
-              </div>
                 <!-- <hr class="small"> -->
                 <p ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
 

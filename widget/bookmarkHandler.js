@@ -80,6 +80,15 @@ var bookmarks = {
                     $scope.WidgetMedia.item.data.bookmarked = false;
                 }
             }
+            else if ($scope.NowPlaying) {
+                var isBookmarked = bookmarkIds.includes($scope.NowPlaying.item.id);
+                if (isBookmarked) {
+                    $scope.NowPlaying.item.data.bookmarked = true;
+                } else {
+                    $scope.NowPlaying.item.data.bookmarked = false;
+                }
+            }
+            
             if (!$scope.$$phase) {
                 $scope.$apply();
             }

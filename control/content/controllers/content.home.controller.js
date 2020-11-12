@@ -69,7 +69,7 @@
                     _limit = 10,
                     _maxLimit = 19,
                     searchOptions = {
-                        filter: {"$json.title": {"$regex": '/*'}},
+                        filter: { "$json.title": { "$regex": '/*' } },
                         skip: _skip,
                         limit: _limit + 1 // the plus one is to check if there are any more
                     };
@@ -106,22 +106,22 @@
                 };
                 // this method will be called when you change the order of items
                 editor.onOrderChange = function (item, oldIndex, newIndex) {
-                  var items = ContentHome.info.data.content.images;
+                    var items = ContentHome.info.data.content.images;
 
-                  var tmp = items[oldIndex];
+                    var tmp = items[oldIndex];
 
-                  if (oldIndex < newIndex) {
-                    for (var i = oldIndex + 1; i <= newIndex; i++) {
-                      items[i - 1] = items[i];
+                    if (oldIndex < newIndex) {
+                        for (var i = oldIndex + 1; i <= newIndex; i++) {
+                            items[i - 1] = items[i];
+                        }
+                    } else {
+                        for (var i = oldIndex - 1; i >= newIndex; i--) {
+                            items[i + 1] = items[i];
+                        }
                     }
-                  } else {
-                    for (var i = oldIndex - 1; i >= newIndex; i--) {
-                      items[i + 1] = items[i];
-                    }
-                  }
-                  items[newIndex] = tmp;
+                    items[newIndex] = tmp;
 
-                  ContentHome.info.data.content.images = items;
+                    ContentHome.info.data.content.images = items;
                     $scope.$digest();
                 };
 
@@ -369,6 +369,7 @@
                                     ContentHome.info.data.content.rankOfLastItem = rank;
                                     ContentHome.getMore();
                                     ContentHome.setDeeplinks();
+                                    console.log("ROWS", rows)
                                 }, function errorHandler(error) {
                                     console.error(error);
                                     ContentHome.loading = false;
@@ -400,25 +401,35 @@
 
 
                 ContentHome.setDeeplinks = function () {
-                    
-                    MediaContent.find({filter: {}, recordCount: true})
-                    .then(function (counter) {
-                      var numberOfRecords = counter.totalRecord;
-                      for (let skip = 0; skip < numberOfRecords; skip += 50) {
-                        MediaContent.find({filter: {}, skip, limit: 50})
-                        .then(function (res) {
-                          for (let i = 0; i < res.length; i += 1) { 
-                              if(!res[i].data.searchEngineId){
-                                res[i].data.deepLinkUrl = Buildfire.deeplink.createLink({ id: res[i].id });
-                                SearchEngineService.insert(res[i].data).then(function (data) {
-                                    res[i].data.searchEngineId = data.id;
-                                    MediaContent.update(res[i].id, res[i].data);
-                                });
-                              }
-                          }
-                        });
-                      }
-                    });
+                    var records = [];
+                    var page = 0;
+
+                    var get = function () {
+                        MediaContent.find({ filter: {}, pageSize: 50, page: page, recordCount: true })
+                            .then(function (data) {
+                                records = records.concat(data.result);
+                                if (records.length < data.totalRecord) {
+                                    console.log("IDE DALJE", page)
+                                    page++;
+                                    get();
+                                } else {
+                                    console.log("GOTOVO", records)
+                                    records.forEach(function (record) {
+                                        if (!record.data.searchEngineId) {
+                                            record.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: record.id });
+                                            console.log("RECORD DATA", record)
+                                            SearchEngineService.insert(record.data).then(function (data) {
+                                                record.data.searchEngineId = data.id;
+                                                MediaContent.update(record.id, record.data);
+                                                console.log("SEARCH DATA", data)
+                                            });
+                                        }
+                                    });
+                                }
+
+                            });
+                    }
+                    get();
                 }
 
                 /**
@@ -437,7 +448,7 @@
                     if (!value) {
                         value = '/*';
                     }
-                    searchOptions.filter = {"$json.title": {"$regex": value}};
+                    searchOptions.filter = { "$json.title": { "$regex": value } };
                     ContentHome.getMore();
                 };
 
@@ -452,9 +463,9 @@
                     }
                     var item = ContentHome.items[index];
                     if ("undefined" !== typeof item) {
-                        Modals.removePopupModal({title: '',event:$event}).then(function (result) {
+                        Modals.removePopupModal({ title: '', event: $event }).then(function (result) {
                             if (result) {
-                                if(item.data.searchEngineId) {
+                                if (item.data.searchEngineId) {
                                     SearchEngineService.delete(item.data.searchEngineId);
                                 }
                                 MediaContent.delete(item.id).then(function (data) {

@@ -5,7 +5,7 @@
             function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location) {
                 $rootScope.showFeed = true;
                 var WidgetHome = this;
-                WidgetHome.deepLink=false;
+                WidgetHome.deepLink = false;
                 var _infoData = {
                     data: {
                         content: {
@@ -38,16 +38,16 @@
                  */
                 var MediaCenterInfo = null;
                 MediaCenter.get().then(function success(result) {
-                        if (result && result.data && result.id) {
-                            MediaCenterInfo = result;
-                        }
-                        else {
-                            MediaCenterInfo = _infoData;
-                        }
-                        WidgetHome.media = MediaCenterInfo;
-                        $rootScope.backgroundImage = MediaCenterInfo.data.design.backgroundImage;
+                    if (result && result.data && result.id) {
+                        MediaCenterInfo = result;
+                    }
+                    else {
+                        MediaCenterInfo = _infoData;
+                    }
+                    WidgetHome.media = MediaCenterInfo;
+                    $rootScope.backgroundImage = MediaCenterInfo.data.design.backgroundImage;
 
-                    },
+                },
                     function fail() {
                         MediaCenterInfo = _infoData;
                         WidgetHome.media = MediaCenterInfo;
@@ -56,7 +56,7 @@
                 var _skip = 0,
                     _limit = 15,
                     searchOptions = {
-                        filter: {"$json.title": {"$regex": '/*'}},
+                        filter: { "$json.title": { "$regex": '/*' } },
                         skip: _skip,
                         limit: _limit + 1 // the plus one is to check if there are any more
                     };
@@ -92,21 +92,22 @@
                  * Messaging.onReceivedMessage is called when any event is fire from Content/design section.
                  * @param event
                  */
-                Messaging.onReceivedMessage = function (event) {   
+                Messaging.onReceivedMessage = function (event) {
+                    console.log("PALI EVENT", event)
                     if (event) {
                         switch (event.name) {
                             case EVENTS.ROUTE_CHANGE:
-                                if((event.message && event.message.path == PATHS.MEDIA && $location.$$path.indexOf('/media') == -1)  || (event.message && event.message.path != PATHS.MEDIA)) {
+                                if ((event.message && event.message.path == PATHS.MEDIA && $location.$$path.indexOf('/media') == -1) || (event.message && event.message.path != PATHS.MEDIA)) {
                                     var path = event.message.path,
                                         id = event.message.id;
                                     var url = "#/";
-                                    var foundObj=WidgetHome.items.filter(function(el){return el.id==id;})[0];
+                                    var foundObj = WidgetHome.items.filter(function (el) { return el.id == id; })[0];
                                     switch (path) {
                                         case PATHS.MEDIA:
-                                            if(!foundObj||!WidgetHome.media.data.design.skipMediaPage||(WidgetHome.media.data.design.skipMediaPage&&foundObj.data.videoUrl)
-                                            ||(WidgetHome.media.data.design.skipMediaPage&&!foundObj.data.videoUrl&&!foundObj.data.audioUrl)){
+                                            if (!foundObj || !WidgetHome.media.data.design.skipMediaPage || (WidgetHome.media.data.design.skipMediaPage && foundObj.data.videoUrl)
+                                                || (WidgetHome.media.data.design.skipMediaPage && !foundObj.data.videoUrl && !foundObj.data.audioUrl)) {
                                                 url = url + "media/";
-                                            }else{
+                                            } else {
                                                 url = url + "nowplaying/";
                                             }
                                             if (id) {
@@ -114,12 +115,14 @@
                                             }
                                             break;
                                     }
-                                    var myCurrentPath="#"+$location.$$path+"/";
-                                    if(url!=myCurrentPath){
-                                        if(!$rootScope.fromSearch){
+                                    var myCurrentPath = "#" + $location.$$path + "/";
+                                    if (url != myCurrentPath) {
+                                        console.log("PALI SE PROVJERA")
+                                        if (!$rootScope.fromSearch) {
                                             Location.go(url);
+                                            console.log("!rootScope", url)
                                         }
-                                        if (path == PATHS.MEDIA || $rootScope.fromSearch) {
+                                        if (path == PATHS.MEDIA || $rootScope.fromSearch && !$rootScope.goingBack) {
                                             $rootScope.showFeed = false;
                                         }
                                         else {
@@ -179,7 +182,7 @@
 
                 // ShowDescription only when it have content
                 WidgetHome.showDescription = function () {
-                    if (WidgetHome.media.data.content.descriptionHTML == '<p>&nbsp;<br></p>' || WidgetHome.media.data.content.descriptionHTML == '<p><br data-mce-bogus="1"></p>'|| WidgetHome.media.data.content.descriptionHTML == '')
+                    if (WidgetHome.media.data.content.descriptionHTML == '<p>&nbsp;<br></p>' || WidgetHome.media.data.content.descriptionHTML == '<p><br data-mce-bogus="1"></p>' || WidgetHome.media.data.content.descriptionHTML == '')
                         return false;
                     else
                         return true;
@@ -219,77 +222,88 @@
                             searchOptions.skip = searchOptions.skip + _limit;
                             WidgetHome.noMore = false;
                         }
-                        $rootScope.deepLinkNavigate = true;
-                        $rootScope.seekTime = 10.22;
+                        // $rootScope.deepLinkNavigate = true;
+                        // $rootScope.seekTime = 10.22;
                         WidgetHome.items = WidgetHome.items ? WidgetHome.items.concat(result) : result;
                         WidgetHome.isBusy = false;
-                        
-                        bookmarks.sync($rootScope);
-                        if (!window.deeplinkingDone && buildfire.deeplink) {
-                          buildfire.deeplink.getData(function (data) {
-                            console.log('DEEP LINK DATA', data)
-                            if(data && data.mediaId) {
-                                $rootScope.showFeed = false; 
-                                $rootScope.fromSearch = true;
-                                window.deeplinkingDone = true;
-                                window.setTimeout(() => {
-                                    //Location.go("#/media/" + itemId);
-                                    var foundObj=WidgetHome.items.find(function(el){return el.id==data.mediaId;});
-                                    var index=WidgetHome.items.indexOf(foundObj);
-                                    if(index!=-1)
-                                        WidgetHome.goToMedia(WidgetHome.items.indexOf(foundObj));
-                                }, 0);
-                            }
-                            else if(data && data.link) {
-                                $rootScope.showFeed = false; 
-                                $rootScope.fromSearch = true;
-                                window.deeplinkingDone = true;
-                                window.setTimeout(() => {
-                                    //Location.go("#/media/" + itemId);
-                                    var foundObj=WidgetHome.items.find(function(el){return el.id==data.link;});
-                                    var index=WidgetHome.items.indexOf(foundObj);
-                                    if(data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
-                                        $rootScope.deepLinkNavigate = true;
-                                        $rootScope.seekTime = data.timeIndex;
-                                    }
 
-                                    if(foundObj.data.audioUrl) {
-                                        return Location.goTo('#/nowplaying/' + foundObj.id)
-                                    }
-                                    
-                                    if(index!=-1)
-                                        WidgetHome.goToMedia(WidgetHome.items.indexOf(foundObj));
-                                }, 0);
-                            }
-                            else if(data && data.deepLinkUrl) {
-                                var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
-                                var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
-                                var itemId = JSON.parse(deepLinkUrl).id;
-                                $rootScope.showFeed = false; 
-                                $rootScope.fromSearch = true;
-                                window.deeplinkingDone = true;
-                                window.setTimeout(() => {
-                                    //Location.go("#/media/" + itemId);
-                                    var foundObj=WidgetHome.items.find(function(el){return el.id==itemId;});
-                                    var index=WidgetHome.items.indexOf(foundObj);
-                                    if(index!=-1)
-                                        WidgetHome.goToMedia(WidgetHome.items.indexOf(foundObj));
-                                        //WidgetHome.deepLink=true;
-                                }, 0);
-                            }
-                            else if (data && WidgetHome.items.find(item => item.id === data.id)) {
-                                window.deeplinkingDone = true;
-                                $rootScope.showFeed = false;
-                                window.setTimeout(() => {
-                                  //Location.go("#/media/" + data.id);
-                                  var foundObj=WidgetHome.items.find(function(el){return el.id==data.id;});
-                                  var index=WidgetHome.items.indexOf(foundObj);
-                                  if(index!=-1)
-                                    WidgetHome.goToMedia(index);
-                                  //WidgetHome.deepLink=true;
-                                }, 0);
-                              }else WidgetHome.deepLink=true;
-                          });
+                        bookmarks.sync($scope);
+                        console.log("RADI SYNC")
+                        if (!window.deeplinkingDone && buildfire.deeplink) {
+                            buildfire.deeplink.getData(function (data) {
+                                console.log('DEEP LINK DATA', data)
+                                if (data && data.mediaId) {
+                                    $rootScope.showFeed = false;
+                                    $rootScope.fromSearch = true;
+                                    window.deeplinkingDone = true;
+                                    window.setTimeout(() => {
+                                        var foundObj = WidgetHome.items.find(function (el) { return el.id == data.mediaId; });
+                                        var index = WidgetHome.items.indexOf(foundObj);
+                                        if (index != -1)
+                                            WidgetHome.goToMedia(WidgetHome.items.indexOf(foundObj));
+                                    }, 0);
+                                }
+                                else if (data && data.link) {
+                                    $rootScope.showFeed = false;
+                                    $rootScope.fromSearch = true;
+                                    window.deeplinkingDone = true;
+                                    window.setTimeout(() => {
+                                        var foundObj = WidgetHome.items.find(function (el) { return el.id == data.link; });
+                                        var index = WidgetHome.items.indexOf(foundObj);
+                                        if (data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
+                                            $rootScope.deepLinkNavigate = true;
+                                            $rootScope.seekTime = data.timeIndex;
+                                        }
+
+                                        if (foundObj.data.audioUrl) {
+                                            return Location.go('#/nowplaying/' + foundObj.id)
+                                        }
+
+                                        if (index != -1)
+                                            WidgetHome.goToMedia(WidgetHome.items.indexOf(foundObj));
+                                    }, 0);
+                                }
+                                else if (data && data.deepLinkUrl) {
+                                    var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
+                                    var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
+                                    var itemId = JSON.parse(deepLinkUrl).id;
+                                    $rootScope.showFeed = false;
+                                    $rootScope.fromSearch = true;
+                                    window.deeplinkingDone = true;
+                                    window.setTimeout(() => {
+                                        var foundObj = WidgetHome.items.find(function (el) { return el.id == itemId; });
+                                        var index = WidgetHome.items.indexOf(foundObj);
+                                        if (index != -1)
+                                            WidgetHome.goToMedia(WidgetHome.items.indexOf(foundObj));
+                                        else {
+                                            console.log("NEMA GA");
+                                            MediaContent.getById(itemId).then(function success(result) {
+                                                var foundObj = WidgetHome.items.find(function (el) { return el.id == itemId; });
+                                                if (result && result.data) {
+                                                    if (!WidgetHome.media.data.design.skipMediaPage || (WidgetHome.media.data.design.skipMediaPage && result.data.videoUrl)
+                                                        || (WidgetHome.media.data.design.skipMediaPage && !result.data.videoUrl && !result.data.audioUrl)) {
+                                                        Location.go('#/media/' + result.id, true);
+                                                    } else {
+                                                        Location.go('#/nowplaying/' + result.id, true);
+                                                    }
+                                                }
+                                                else Location.goToHome();
+                                            },
+                                            );
+                                        }
+                                    }, 0);
+                                }
+                                else if (data && WidgetHome.items.find(item => item.id === data.id)) {
+                                    window.deeplinkingDone = true;
+                                    $rootScope.showFeed = false;
+                                    window.setTimeout(() => {
+                                        var foundObj = WidgetHome.items.find(function (el) { return el.id == data.id; });
+                                        var index = WidgetHome.items.indexOf(foundObj);
+                                        if (index != -1)
+                                            WidgetHome.goToMedia(index);
+                                    }, 0);
+                                } else WidgetHome.deepLink = true;
+                            });
                         }
                     }, function fail() {
                         WidgetHome.isBusy = false;
@@ -307,7 +321,7 @@
                         };
 
                         $event.preventDefault();
-                        $timeout(function() {
+                        $timeout(function () {
                             Buildfire.actionItems.list(actionItems, options, callback);
                         });
                     }
@@ -321,20 +335,21 @@
                 };
 
                 WidgetHome.goToMedia = function (ind) {
-                    if(typeof ind != 'number'){
-                        var foundObj=WidgetHome.items.find(function(el){return el.id==ind;});
-                        ind=WidgetHome.items.indexOf(foundObj);
+                    if (typeof ind != 'number') {
+                        var foundObj = WidgetHome.items.find(function (el) { return el.id == ind; });
+                        ind = WidgetHome.items.indexOf(foundObj);
                     }
-                    
+
                     $rootScope.showFeed = false;
-                    if(ind!=-1){
-                        if(!WidgetHome.media.data.design.skipMediaPage||(WidgetHome.media.data.design.skipMediaPage&&WidgetHome.items[ind].data.videoUrl)
-                        ||(WidgetHome.media.data.design.skipMediaPage&&!WidgetHome.items[ind].data.videoUrl&&!WidgetHome.items[ind].data.audioUrl)){
+                    if (ind != -1) {
+                        if (!WidgetHome.media.data.design.skipMediaPage || (WidgetHome.media.data.design.skipMediaPage && WidgetHome.items[ind].data.videoUrl)
+                            || (WidgetHome.media.data.design.skipMediaPage && !WidgetHome.items[ind].data.videoUrl && !WidgetHome.items[ind].data.audioUrl)) {
                             Location.go('#/media/' + WidgetHome.items[ind].id, true);
-                        }else {
-                            Location.go('#/nowplaying/' + WidgetHome.items[ind].id, true);           
+                        } else {
+                            Location.go('#/nowplaying/' + WidgetHome.items[ind].id, true);
                         }
                     }
+                    console.log("GO TO MEDIA");
                 };
 
                 buildfire.auth.onLogin(function () {
@@ -368,23 +383,23 @@
                     link.type = "website";
                     link.description = item.data.summary ? item.data.summary : null;
                     //link.imageUrl = item.data.topImage ? item.data.topImage : null;
-                    
+
                     link.data = {
                         "mediaId": item.id
                     };
-                    
+
                     buildfire.deeplink.generateUrl(link, function (err, result) {
                         if (err) {
                             console.error(err)
                         } else {
-                                     // output : {"url":"https://buildfire.com/shortlinks/f6fd5ca6-c093-11ea-b714-067610557690"}
+                            // output : {"url":"https://buildfire.com/shortlinks/f6fd5ca6-c093-11ea-b714-067610557690"}
                             console.log(result);
                             buildfire.device.share({
                                 subject: link.title,
                                 text: link.description,
                                 image: link.imageUrl,
                                 link: result.url
-                            }, function(err, result) {
+                            }, function (err, result) {
                                 console.log(err, result)
                             });
 
@@ -412,10 +427,11 @@
                     if ($rootScope.showFeed) {
                         listener.clear();
                         listener = Buildfire.datastore.onUpdate(onUpdateCallback);
-
+                        bookmarks.sync($scope);
+                        console.log("RADI SYNC")
                         MediaCenter.get().then(function success(result) {
-                                WidgetHome.media = result;
-                            },
+                            WidgetHome.media = result;
+                        },
                             function fail() {
                                 WidgetHome.media = _infoData;
                             }
@@ -423,13 +439,15 @@
                     }
                 });
                 $rootScope.$watch('goingBack', function () {
-                    if($rootScope.goingBack)
-                        WidgetHome.deepLink=true;
+                    if ($rootScope.goingBack) {
+                        WidgetHome.deepLink = true;
+
+                    }
                 });
                 /**
                  * Implementation of pull down to refresh
                  */
-                var onRefresh=Buildfire.datastore.onRefresh(function(){
+                var onRefresh = Buildfire.datastore.onRefresh(function () {
                     Location.goToHome();
                 });
 

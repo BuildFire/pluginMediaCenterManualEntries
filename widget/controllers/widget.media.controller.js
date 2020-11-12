@@ -15,7 +15,7 @@
                 WidgetMedia.onPlayerReady = function ($API) {
                     WidgetMedia.API = $API;
                     WidgetMedia.loadingVideo = true;              
-                    if(WidgetMedia.media.data.design.skipMediaPage&&WidgetMedia.item.data.videoUrl)
+                    if(WidgetMedia.media.data.design.skipMediaPage&&WidgetMedia.item.data.videoUrl && !$rootScope.deepLinkNavigate)
                         WidgetMedia.toggleShowVideo();
                     };
 
@@ -59,6 +59,7 @@
                     WidgetMedia.media = {
                         data: data.data
                     };
+                    console.log("AAAAAAAAAAAAAAAAAA", WidgetMedia.media)
                     $rootScope.backgroundImage = WidgetMedia.media && WidgetMedia.media.data && WidgetMedia.media.data.design && WidgetMedia.media.data.design.backgroundImage;
                 }, function (err) {
                     WidgetMedia.media = {
@@ -88,10 +89,14 @@
                     }
                 };
                 if (media) {
+                    console.log("WIDGET MEDIA", WidgetMedia.media)
                     WidgetMedia.item = media;
                     WidgetMedia.mediaType = media.data.audioUrl ? 'AUDIO' : (media.data.videoUrl ?  'VIDEO' : null);
                   //  WidgetMedia.item.title.length > 27 ? WidgetMedia.item.title = WidgetMedia.item.title.substring(0, 24) + "..." : WidgetMedia.item.title; 
                     WidgetMedia.item.srcUrl = media.data.audioUrl ? media.data.audioUrl : media.data.videoUrl;
+                    bookmarks.sync($scope);
+                    WidgetMedia.changeVideoSrc();
+                    WidgetMedia.iframeSrcUrl = $sce.trustAsUrl(WidgetMedia.item.data.srcUrl);
                     if($rootScope.deepLinkNavigate && $rootScope.seekTime) {
                         if(WidgetMedia.mediaType == 'VIDEO') {
                             var retry = setInterval(function () {
@@ -101,18 +106,16 @@
                                     clearInterval(retry);
                                     WidgetMedia.API.seekTime($rootScope.seekTime);
                                     WidgetMedia.toggleShowVideo();
+                                    console.log("IDEEEE")
+                                    $rootScope.deepLinkNavigate = null;
+                                    $rootScope.seekTime = null;
                                     setTimeout(function () {
-                                        WidgetMedia.API.play();
+                                            WidgetMedia.API.play();
                                     }, 500);
                                 }
                             }, 500);
-                        } else if(WidgetMedia.mediaType == 'AUDIO'){
-                            Location.go('#/nowplaying/' + WidgetMedia.item.id, true);
-                        }
+                        } 
                     }
-                    bookmarks.sync($scope);
-                    WidgetMedia.changeVideoSrc();
-                    WidgetMedia.iframeSrcUrl = $sce.trustAsUrl(WidgetMedia.item.data.srcUrl);
                 }
                 else {
                     WidgetMedia.iframeSrcUrl = '';
@@ -185,7 +188,9 @@
                             break;
                     }
                 });
-
+                WidgetMedia.playAudio = function () {
+                    Location.go('#/nowplaying/' + WidgetMedia.item.id, true);
+                }
                 WidgetMedia.ApplayUpdates = function () {
                     if(WidgetMedia.media.data.design.skipMediaPage&&!WidgetMedia.item.data.videoUrl&&WidgetMedia.item.data.audioUrl)
                     {
@@ -264,7 +269,7 @@
                     }
                 };
 
-                WidgetMedia.share = function ($event, item) {
+                WidgetMedia.share = function ($event) {
                     $event.stopImmediatePropagation();
 
                     var link = {};
@@ -314,18 +319,6 @@
                 WidgetMedia.openLink = function (link) {
                     Buildfire.navigation.openWindow(link, '_system');
                 };
-                
-
-                buildfire.notes.onSeekTo(function (data) {
-                    WidgetMedia.item.seekTo = data.time;
-                    console.log("MEDIA SEEK TO")
-                    if(WidgetMedia.mediaType == 'AUDIO')  {
-                        console.log("MEDIA SEEK TO")
-                        Location.go('#/nowplaying/' + WidgetMedia.item.id, true);           
-                    } else {
-                        WidgetMedia.toggleShowVideo()
-                    }
-                });
 
               var initializing = true;
                 $scope.$watch(function () {

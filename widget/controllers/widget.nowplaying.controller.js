@@ -12,11 +12,21 @@
                     media.data.audioUrl = media.data.audioUrl.replace("www.dropbox", "dl.dropbox").split("?dl=")[0];
                 }
                 NowPlaying.currentTrack = new Track(media.data);
+                NowPlaying.currentTrack.image = media.data.topImage;
+                NowPlaying.currentTrack.title = media.data.title;
+                if ($rootScope.seekTime) NowPlaying.currentTrack.startAt = $rootScope.seekTime;
+
+                $rootScope.deepLinkNavigate = null;
+                $rootScope.seekTime = null;
+
                 NowPlaying.item = media;
                 NowPlaying.playing = false;
                 NowPlaying.paused = false;
                 NowPlaying.showVolume = false;
                 NowPlaying.track = media.data.audioUrl;
+                console.log("CURRENT TRACK", NowPlaying.currentTrack, media.data, $rootScope)
+                bookmarks.sync($scope);
+
                 /**
                  * slider to show the slider on now-playing page.
                  * @type {*|jQuery|HTMLElement}
@@ -42,10 +52,17 @@
                             audioPlayer.settings.set({ volume: volume });
                         }
                     });
-
                 };
 
-    
+                NowPlaying.bookmark = function ($event) {
+                    $event.stopImmediatePropagation();
+                    var isBookmarked = NowPlaying.item.data.bookmarked ? true : false;
+                    if (isBookmarked) {
+                        bookmarks.delete($scope, NowPlaying.item);
+                    } else {
+                        bookmarks.add($scope, NowPlaying.item);
+                    }
+                };
 
                 NowPlaying.addNote = function () {
                     var options = {
@@ -60,17 +77,52 @@
                         if (err) throw err;
                         console.log(data);
                     };
-
                     buildfire.notes.openDialog(options, callback);
                 };
 
 
+                NowPlaying.share = function ($event) {
+                    $event.stopImmediatePropagation();
+
+                    var link = {};
+                    link.title = NowPlaying.item.data.title;
+                    link.type = "website";
+                    link.description = NowPlaying.item.data.summary ? NowPlaying.item.data.summary : null;
+                    link.data = {
+                        "mediaId": NowPlaying.item.id
+                    };
+
+                    buildfire.deeplink.generateUrl(link, function (err, result) {
+                        if (err) {
+                            console.error(err)
+                        } else {
+                            console.log(result);
+                            buildfire.device.share({
+                                subject: link.title,
+                                text: link.description,
+                                image: link.imageUrl,
+                                link: result.url
+                            }, function (err, result) {
+                                console.log(err, result)
+                            });
+
+                        }
+                    });
+                };
+
                 /**
                  * audioPlayer.onEvent callback calls when audioPlayer event fires.
                  */
+                var first = true;
+
                 audioPlayer.onEvent(function (e) {
                     switch (e.event) {
                         case 'timeUpdate':
+                            var ready = e.data.duration > 0;
+                            if (ready && first && NowPlaying.currentTrack.startAt) {
+                                NowPlaying.changeTime(NowPlaying.currentTrack.startAt);
+                                first = false;
+                            }
                             NowPlaying.currentTime = e.data.currentTime;
                             NowPlaying.duration = e.data.duration;
                             break;
@@ -116,11 +168,10 @@
                     if (NowPlaying.paused) {
                         audioPlayer.play();
                     } else {
-                        if($rootScope.seekTime) audioPlayer.setTime($rootScope.seekTime)
                         setTimeout(() => {
-                            audioPlayer.play(NowPlaying.currentTrack);    
+                            audioPlayer.play(NowPlaying.currentTrack);
                         }, 500);
-                        
+
                     }
                 };
                 NowPlaying.playlistPlay = function (track) {
@@ -404,9 +455,8 @@
                  */
                 $timeout(function () {
                     NowPlaying.playTrack();
-                    console.log($routeParams)
-                    if ($routeParams.seekTime) NowPlaying.changeTime($routeParams.seekTime)
-                }, 1000);
+                    console.log("auto play")
+                }, 0);
             }
         ]);
 })(window.angular);
