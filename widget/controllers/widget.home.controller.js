@@ -97,7 +97,6 @@
                     var index = WidgetHome.items.indexOf(foundObj);
 
                     $rootScope.showFeed = false;
-                    console.log("UUUUUUUUUUUUUUUU")
                     var navigate = function (item) {
                         console.log(item)
                         if (item && item.data) {
@@ -137,7 +136,6 @@
                 }
 
                 Messaging.onReceivedMessage = function (event) {
-                    console.log("PALI EVENT", event)
                     if (event.message && event.message.path == 'MEDIA') {
                         WidgetHome.goTo(event.message.id);
                     }
@@ -154,7 +152,6 @@
                         if (event.data) {
                             WidgetHome.media.data = event.data;
                             $rootScope.backgroundImage = WidgetHome.media.data.design.backgroundImage;
-                            console.log(WidgetHome.media.data)
                             $scope.$apply();
                             if (view && event.data.content && event.data.content.images) {
                                 view.loadItems(event.data.content.images);

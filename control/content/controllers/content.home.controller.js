@@ -369,7 +369,6 @@
                                     ContentHome.info.data.content.rankOfLastItem = rank;
                                     ContentHome.getMore();
                                     ContentHome.setDeeplinks();
-                                    console.log("ROWS", rows)
                                 }, function errorHandler(error) {
                                     console.error(error);
                                     ContentHome.loading = false;
@@ -409,19 +408,15 @@
                             .then(function (data) {
                                 records = records.concat(data.result);
                                 if (records.length < data.totalRecord) {
-                                    console.log("IDE DALJE", page)
                                     page++;
                                     get();
                                 } else {
-                                    console.log("GOTOVO", records)
                                     records.forEach(function (record) {
                                         if (!record.data.searchEngineId) {
                                             record.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: record.id });
-                                            console.log("RECORD DATA", record)
                                             SearchEngineService.insert(record.data).then(function (data) {
                                                 record.data.searchEngineId = data.id;
                                                 MediaContent.update(record.id, record.data);
-                                                console.log("SEARCH DATA", data)
                                             });
                                         }
                                     });

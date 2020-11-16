@@ -174,7 +174,6 @@
                         navigate();
                     }
                     else {
-                        console.log("AAAAA", $rootScope.skipMediaPage)
                         Location.go('#/media/' + path.split('/')[2]);
                     }
                 }

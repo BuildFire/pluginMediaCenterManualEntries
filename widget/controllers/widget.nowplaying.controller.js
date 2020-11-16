@@ -35,19 +35,6 @@
                  * audioPlayer is Buildfire.services.media.audioPlayer.
                  */
                 var audioPlayer = Buildfire.services.media.audioPlayer;
-                var alert = function (title, text) {
-                    Buildfire.notifications.localNotification.schedule(
-                        {
-                            title: title,
-                            text: text,
-                            at: new Date(),
-                            users: [],
-                        },
-                        function (e) {
-                            if (e) console.error('Error while setting PN schedule.', e);
-                        }
-                    );
-                }
 
                 audioPlayer.settings.get(function (err, setting) {
                     NowPlaying.settings = setting;
@@ -468,12 +455,7 @@
                  * Auto play the track
                  */
                 $timeout(function () {
-                    var isIOS = /iPad|iPhone|iPod/.test(navigator.platform)
-                    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-                    
-                    NowPlaying.playTrack();
-                    
-                    console.log("auto play")
+                    NowPlaying.playTrack();  
                 }, 0);
             }
         ]);
