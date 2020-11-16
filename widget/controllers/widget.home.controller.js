@@ -119,19 +119,22 @@
                             if(Object.keys(result.data).length > 2)
                                 navigate(result);
                             else {
-                                $rootScope.showFeed = true;
-                                $rootScope.showEmptyState = true;
-                                $window.deeplinkingDone = true;
-
-                                angular.element('#home').css('display', 'none');
-                                angular.element('#emptyState').css('display', 'block');
-                                
+                                WidgetHome.setEmptyState();
                                 // Location.goToHome();
                             }
                         });
                     }
 
                 };
+
+                WidgetHome.setEmptyState = function() {
+                    $rootScope.showFeed = true;
+                    $rootScope.showEmptyState = true;
+                    $window.deeplinkingDone = true;
+
+                    angular.element('#home').css('display', 'none');
+                    angular.element('#emptyState').css('display', 'block');
+                }
 
                 Messaging.onReceivedMessage = function (event) {
                     console.log("PALI EVENT", event)
@@ -250,6 +253,7 @@
                                     $rootScope.fromSearch = true;
                                     $window.deeplinkingDone = true;
                                     var foundObj = WidgetHome.items.find(function (el) { return el.id == data.link; });
+                                    if(!foundObj) return WidgetHome.setEmptyState();
                                     if (data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
                                         $rootScope.deepLinkNavigate = true;
                                         $rootScope.seekTime = data.timeIndex;
@@ -276,7 +280,6 @@
                                 else if (data && WidgetHome.items.find(item => item.id === data.id)) {
                                     $window.deeplinkingDone = true;
                                     $rootScope.showFeed = false;
-                                    console.log("LUDILOOOO")
                                     // window.setTimeout(() => {
                                     //     WidgetHome.goTo(id);
                                     // }, 0);
