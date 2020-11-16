@@ -59,13 +59,11 @@
                     WidgetMedia.media = {
                         data: data.data
                     };
-                    console.log("AAAAAAAAAAAAAAAAAA", WidgetMedia.media)
                     $rootScope.backgroundImage = WidgetMedia.media && WidgetMedia.media.data && WidgetMedia.media.data.design && WidgetMedia.media.data.design.backgroundImage;
                 }, function (err) {
                     WidgetMedia.media = {
                         data: {}
                     };
-                    console.error('Get Error---', err);
                 });
 
 
@@ -89,7 +87,6 @@
                     }
                 };
                 if (media) {
-                    console.log("WIDGET MEDIA", WidgetMedia.media)
                     WidgetMedia.item = media;
                     WidgetMedia.mediaType = media.data.audioUrl ? 'AUDIO' : (media.data.videoUrl ?  'VIDEO' : null);
                   //  WidgetMedia.item.title.length > 27 ? WidgetMedia.item.title = WidgetMedia.item.title.substring(0, 24) + "..." : WidgetMedia.item.title; 
@@ -106,7 +103,6 @@
                                     clearInterval(retry);
                                     WidgetMedia.API.seekTime($rootScope.seekTime);
                                     WidgetMedia.toggleShowVideo();
-                                    console.log("IDEEEE")
                                     $rootScope.deepLinkNavigate = null;
                                     $rootScope.seekTime = null;
                                     setTimeout(function () {
@@ -284,15 +280,12 @@
                         if (err) {
                             console.error(err)
                         } else {
-                            console.log(result);
                             buildfire.device.share({
                                 subject: link.title,
                                 text: link.description,
                                 image: link.imageUrl,
                                 link: result.url
-                            }, function(err, result) {
-                                console.log(err, result)
-                            });
+                            }, function(err, result) {});
 
                         }
                     });

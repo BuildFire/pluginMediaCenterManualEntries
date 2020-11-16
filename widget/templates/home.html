@@ -4,8 +4,11 @@
 </div>-->
 <div id="home">
     <div ng-if="WidgetHome.media.data.design.listLayout"
-         ng-style="WidgetHome.deepLink ? {'visibility':'visible'} : {'visibility':'hidden'}"
+         
          ng-include="'templates/layouts/' + WidgetHome.media.data.design.listLayout+ '.html'">
     </div>
+</div>
+<div id="emptyState" class="bitmap" style="display: none;">
+
 </div>
 

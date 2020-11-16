@@ -145,53 +145,47 @@
         }])
         .run(['Location', '$location', '$rootScope', 'Messaging', 'EVENTS', 'PATHS', 'DB', 'COLLECTIONS', function (Location, $location, $rootScope, Messaging, EVENTS, PATHS, DB, COLLECTIONS) {
             buildfire.navigation.onBackButtonClick = function () {
-                $rootScope.goingBack = true;
-                $rootScope.$digest();
-                buildfire.datastore.get("MediaCenter", (err, obj) => {
-                    var path = $location.path();
-                    if (path.indexOf('/media') == 0) {
-                        if ($("#feedView").hasClass('notshowing')) {
-                            Messaging.sendMessageToControl({
-                                name: EVENTS.ROUTE_CHANGE,
-                                message: {
-                                    path: PATHS.HOME
-                                }
-                            });
-                            $("#showFeedBtn").click();
-                        }
-                        console.log("IDE NAZAD NA HOME");
-                        buildfire.history.pop();
-                    }
-                    else if (path.indexOf('/nowplaying') == 0) {
-                        if ($rootScope.playlist) {
-                            $rootScope.playlist = false;
-                            $rootScope.$digest();
-                        } else if (obj.data.design.skipMediaPage) {
-                            console.log("IDE NAZAD NOW PLAYING")
-                            buildfire.history.pop();
-                            if ($("#feedView").hasClass('notshowing')) {
-                                Messaging.sendMessageToControl({
-                                    name: EVENTS.ROUTE_CHANGE,
-                                    message: {
-                                        path: PATHS.HOME
-                                    }
-                                });
-                                $("#showFeedBtn").click();
+                console.log("BACK BUTTON CLICKED")
+                var navigate = function () {
+                    buildfire.history.pop();
+                    console.log($("#feedView").hasClass('notshowing'))
+                    if ($("#feedView").hasClass('notshowing')) {
+                        Messaging.sendMessageToControl({
+                            name: EVENTS.ROUTE_CHANGE,
+                            message: {
+                                path: PATHS.HOME
                             }
-                        }
-                        else {
-                            buildfire.history.pop();
-                            Location.go('#/media/' + path.split('/')[2]);
-                            console.log("IDE NAZAD NA MEDIA")
-                        }
+                        });
+                        $("#showFeedBtn").click();
+                    } else buildfire.navigation._goBackOne();
+                }
+
+                var path = $location.path();
+                if (path.indexOf('/media') == 0) {
+                    navigate();
+                }
+                else if (path.indexOf('/nowplaying') == 0) {
+                    if ($rootScope.playlist) {
+                        $rootScope.playlist = false;
+                        $rootScope.$digest();
+                    }
+                    else if($rootScope.skipMediaPage) 
+                    {
+                        navigate();
                     }
                     else {
-                        console.log("IDE NAZAD")
-                        buildfire.navigation._goBackOne();
+                        console.log("AAAAA", $rootScope.skipMediaPage)
+                        Location.go('#/media/' + path.split('/')[2]);
                     }
-                })
+                }
+                else if($rootScope.showEmptyState) {
+                    angular.element('#emptyState').css('display', 'none');
+                    angular.element('#home').css('display', 'block');
+                    $rootScope.showEmptyState = false;
+                }
+                else buildfire.navigation._goBackOne(); 
             }
-            
+
             buildfire.device.onAppBackgrounded(function () {
                 $rootScope.$emit('deviceLocked', {});
                 //callPlayer('ytPlayer', 'pauseVideo');

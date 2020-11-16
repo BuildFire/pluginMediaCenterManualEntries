@@ -24,7 +24,6 @@
                 NowPlaying.paused = false;
                 NowPlaying.showVolume = false;
                 NowPlaying.track = media.data.audioUrl;
-                console.log("CURRENT TRACK", NowPlaying.currentTrack, media.data, $rootScope)
                 bookmarks.sync($scope);
 
                 /**
@@ -36,6 +35,20 @@
                  * audioPlayer is Buildfire.services.media.audioPlayer.
                  */
                 var audioPlayer = Buildfire.services.media.audioPlayer;
+                var alert = function (title, text) {
+                    Buildfire.notifications.localNotification.schedule(
+                        {
+                            title: title,
+                            text: text,
+                            at: new Date(),
+                            users: [],
+                        },
+                        function (e) {
+                            if (e) console.error('Error while setting PN schedule.', e);
+                        }
+                    );
+                }
+
                 audioPlayer.settings.get(function (err, setting) {
                     NowPlaying.settings = setting;
                     NowPlaying.volume = setting.volume;
@@ -43,7 +56,6 @@
 
                 NowPlaying.changeVolume = function (volume) {
                     audioPlayer.settings.get(function (err, setting) {
-                        console.log(setting);
                         if (setting) {
                             setting.volume = volume;
                             audioPlayer.settings.set(setting);
@@ -80,7 +92,6 @@
                     buildfire.notes.openDialog(options, callback);
                 };
 
-
                 NowPlaying.share = function ($event) {
                     $event.stopImmediatePropagation();
 
@@ -96,15 +107,12 @@
                         if (err) {
                             console.error(err)
                         } else {
-                            console.log(result);
                             buildfire.device.share({
                                 subject: link.title,
                                 text: link.description,
                                 image: link.imageUrl,
                                 link: result.url
-                            }, function (err, result) {
-                                console.log(err, result)
-                            });
+                            }, function (err, result) {});
 
                         }
                     });
@@ -169,11 +177,17 @@
                         audioPlayer.play();
                     } else {
                         setTimeout(() => {
-                            audioPlayer.play(NowPlaying.currentTrack);
+                            try {
+                                audioPlayer.play(NowPlaying.currentTrack);
+                            }
+                            catch (err) {
+                            }
                         }, 500);
 
                     }
                 };
+
+
                 NowPlaying.playlistPlay = function (track) {
                     if (NowPlaying.settings) {
                         NowPlaying.settings.isPlayingCurrentTrack = true;
@@ -454,7 +468,11 @@
                  * Auto play the track
                  */
                 $timeout(function () {
+                    var isIOS = /iPad|iPhone|iPod/.test(navigator.platform)
+                    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+                    
                     NowPlaying.playTrack();
+                    
                     console.log("auto play")
                 }, 0);
             }

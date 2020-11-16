@@ -92,51 +92,57 @@
                  * Messaging.onReceivedMessage is called when any event is fire from Content/design section.
                  * @param event
                  */
+                WidgetHome.goTo = function (id) {
+                    var foundObj = WidgetHome.items.find(function (el) { return el.id == id; });
+                    var index = WidgetHome.items.indexOf(foundObj);
+
+                    $rootScope.showFeed = false;
+                    console.log("UUUUUUUUUUUUUUUU")
+                    var navigate = function (item) {
+                        console.log(item)
+                        if (item && item.data) {
+                            if (!WidgetHome.media.data.design.skipMediaPage || (WidgetHome.media.data.design.skipMediaPage && item.data.videoUrl)
+                                || (WidgetHome.media.data.design.skipMediaPage && !item.data.videoUrl && !item.data.audioUrl)) {
+                                Location.go('#/media/' + item.id, true);
+                            } else {
+                                Location.go('#/nowplaying/' + item.id, true);
+                            }
+                        }
+                    }
+
+                    if (index != -1) {
+                        navigate(WidgetHome.items[index]);
+                    } else {
+                        MediaContent.getById(id).then(function success(result) {
+                            
+
+                            if(Object.keys(result.data).length > 2)
+                                navigate(result);
+                            else {
+                                $rootScope.showFeed = true;
+                                $rootScope.showEmptyState = true;
+                                $window.deeplinkingDone = true;
+
+                                angular.element('#home').css('display', 'none');
+                                angular.element('#emptyState').css('display', 'block');
+                                
+                                // Location.goToHome();
+                            }
+                        });
+                    }
+
+                };
+
                 Messaging.onReceivedMessage = function (event) {
                     console.log("PALI EVENT", event)
-                    if (event) {
-                        switch (event.name) {
-                            case EVENTS.ROUTE_CHANGE:
-                                if ((event.message && event.message.path == PATHS.MEDIA && $location.$$path.indexOf('/media') == -1) || (event.message && event.message.path != PATHS.MEDIA)) {
-                                    var path = event.message.path,
-                                        id = event.message.id;
-                                    var url = "#/";
-                                    var foundObj = WidgetHome.items.filter(function (el) { return el.id == id; })[0];
-                                    switch (path) {
-                                        case PATHS.MEDIA:
-                                            if (!foundObj || !WidgetHome.media.data.design.skipMediaPage || (WidgetHome.media.data.design.skipMediaPage && foundObj.data.videoUrl)
-                                                || (WidgetHome.media.data.design.skipMediaPage && !foundObj.data.videoUrl && !foundObj.data.audioUrl)) {
-                                                url = url + "media/";
-                                            } else {
-                                                url = url + "nowplaying/";
-                                            }
-                                            if (id) {
-                                                url = url + id + "/";
-                                            }
-                                            break;
-                                    }
-                                    var myCurrentPath = "#" + $location.$$path + "/";
-                                    if (url != myCurrentPath) {
-                                        console.log("PALI SE PROVJERA")
-                                        if (!$rootScope.fromSearch) {
-                                            Location.go(url);
-                                            console.log("!rootScope", url)
-                                        }
-                                        if (path == PATHS.MEDIA || $rootScope.fromSearch && !$rootScope.goingBack) {
-                                            $rootScope.showFeed = false;
-                                        }
-                                        else {
-                                            $rootScope.showFeed = true;
-                                        }
-                                        $rootScope.fromSearch = false;
-                                        $scope.$apply();
-                                    }
-                                }
-                                break;
-                            case EVENTS.ITEMS_CHANGE:
-                                WidgetHome.refreshItems();
-                                break;
-                        }
+                    if (event.message && event.message.path == 'MEDIA') {
+                        WidgetHome.goTo(event.message.id);
+                    }
+                    if (event.message && event.message.path == 'HOME') {
+                        buildfire.history.get({ pluginBreadCrumbsOnly: true }, function (err, result) {
+                            result.map(item => buildfire.history.pop());
+                            Location.goToHome();
+                        });
                     }
                 };
 
@@ -145,6 +151,7 @@
                         if (event.data) {
                             WidgetHome.media.data = event.data;
                             $rootScope.backgroundImage = WidgetHome.media.data.design.backgroundImage;
+                            console.log(WidgetHome.media.data)
                             $scope.$apply();
                             if (view && event.data.content && event.data.content.images) {
                                 view.loadItems(event.data.content.images);
@@ -228,39 +235,31 @@
                         WidgetHome.isBusy = false;
 
                         bookmarks.sync($scope);
-                        console.log("RADI SYNC")
-                        if (!window.deeplinkingDone && buildfire.deeplink) {
+                        if (!$window.deeplinkingDone && buildfire.deeplink) {
                             buildfire.deeplink.getData(function (data) {
-                                console.log('DEEP LINK DATA', data)
                                 if (data && data.mediaId) {
                                     $rootScope.showFeed = false;
                                     $rootScope.fromSearch = true;
-                                    window.deeplinkingDone = true;
+                                    $window.deeplinkingDone = true;
                                     window.setTimeout(() => {
-                                        var foundObj = WidgetHome.items.find(function (el) { return el.id == data.mediaId; });
-                                        var index = WidgetHome.items.indexOf(foundObj);
-                                        if (index != -1)
-                                            WidgetHome.goToMedia(WidgetHome.items.indexOf(foundObj));
+                                        WidgetHome.goTo(data.mediaId);
                                     }, 0);
                                 }
                                 else if (data && data.link) {
                                     $rootScope.showFeed = false;
                                     $rootScope.fromSearch = true;
-                                    window.deeplinkingDone = true;
+                                    $window.deeplinkingDone = true;
+                                    var foundObj = WidgetHome.items.find(function (el) { return el.id == data.link; });
+                                    if (data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
+                                        $rootScope.deepLinkNavigate = true;
+                                        $rootScope.seekTime = data.timeIndex;
+                                    }
                                     window.setTimeout(() => {
-                                        var foundObj = WidgetHome.items.find(function (el) { return el.id == data.link; });
-                                        var index = WidgetHome.items.indexOf(foundObj);
-                                        if (data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
-                                            $rootScope.deepLinkNavigate = true;
-                                            $rootScope.seekTime = data.timeIndex;
-                                        }
-
-                                        if (foundObj.data.audioUrl) {
+                                        if (foundObj.data.audioUrl && $rootScope.seekTime) {
                                             return Location.go('#/nowplaying/' + foundObj.id)
                                         }
 
-                                        if (index != -1)
-                                            WidgetHome.goToMedia(WidgetHome.items.indexOf(foundObj));
+                                        WidgetHome.goTo(data.link);
                                     }, 0);
                                 }
                                 else if (data && data.deepLinkUrl) {
@@ -269,40 +268,19 @@
                                     var itemId = JSON.parse(deepLinkUrl).id;
                                     $rootScope.showFeed = false;
                                     $rootScope.fromSearch = true;
-                                    window.deeplinkingDone = true;
+                                    $window.deeplinkingDone = true;
                                     window.setTimeout(() => {
-                                        var foundObj = WidgetHome.items.find(function (el) { return el.id == itemId; });
-                                        var index = WidgetHome.items.indexOf(foundObj);
-                                        if (index != -1)
-                                            WidgetHome.goToMedia(WidgetHome.items.indexOf(foundObj));
-                                        else {
-                                            console.log("NEMA GA");
-                                            MediaContent.getById(itemId).then(function success(result) {
-                                                var foundObj = WidgetHome.items.find(function (el) { return el.id == itemId; });
-                                                if (result && result.data) {
-                                                    if (!WidgetHome.media.data.design.skipMediaPage || (WidgetHome.media.data.design.skipMediaPage && result.data.videoUrl)
-                                                        || (WidgetHome.media.data.design.skipMediaPage && !result.data.videoUrl && !result.data.audioUrl)) {
-                                                        Location.go('#/media/' + result.id, true);
-                                                    } else {
-                                                        Location.go('#/nowplaying/' + result.id, true);
-                                                    }
-                                                }
-                                                else Location.goToHome();
-                                            },
-                                            );
-                                        }
+                                        WidgetHome.goTo(itemId);
                                     }, 0);
                                 }
                                 else if (data && WidgetHome.items.find(item => item.id === data.id)) {
-                                    window.deeplinkingDone = true;
+                                    $window.deeplinkingDone = true;
                                     $rootScope.showFeed = false;
-                                    window.setTimeout(() => {
-                                        var foundObj = WidgetHome.items.find(function (el) { return el.id == data.id; });
-                                        var index = WidgetHome.items.indexOf(foundObj);
-                                        if (index != -1)
-                                            WidgetHome.goToMedia(index);
-                                    }, 0);
-                                } else WidgetHome.deepLink = true;
+                                    console.log("LUDILOOOO")
+                                    // window.setTimeout(() => {
+                                    //     WidgetHome.goTo(id);
+                                    // }, 0);
+                                } 
                             });
                         }
                     }, function fail() {
@@ -349,7 +327,6 @@
                             Location.go('#/nowplaying/' + WidgetHome.items[ind].id, true);
                         }
                     }
-                    console.log("GO TO MEDIA");
                 };
 
                 buildfire.auth.onLogin(function () {
@@ -393,15 +370,12 @@
                             console.error(err)
                         } else {
                             // output : {"url":"https://buildfire.com/shortlinks/f6fd5ca6-c093-11ea-b714-067610557690"}
-                            console.log(result);
                             buildfire.device.share({
                                 subject: link.title,
                                 text: link.description,
                                 image: link.imageUrl,
                                 link: result.url
-                            }, function (err, result) {
-                                console.log(err, result)
-                            });
+                            }, function (err, result) { });
 
                         }
                     });
@@ -416,34 +390,35 @@
                     }
                 });
 
-                Messaging.sendMessageToControl({
-                    name: EVENTS.ROUTE_CHANGE,
-                    message: {
-                        path: PATHS.HOME
-                    }
-                });
+                // Messaging.sendMessageToControl({
+                //     name: EVENTS.ROUTE_CHANGE,
+                //     message: {
+                //         path: PATHS.HOME
+                //     }
+                // });
 
                 $rootScope.$watch('showFeed', function () {
                     if ($rootScope.showFeed) {
                         listener.clear();
                         listener = Buildfire.datastore.onUpdate(onUpdateCallback);
                         bookmarks.sync($scope);
-                        console.log("RADI SYNC")
+                        console.log("SHOW FEED SYNC")
                         MediaCenter.get().then(function success(result) {
                             WidgetHome.media = result;
+                            if (WidgetHome.media.data.design.skipMediaPage) $rootScope.skipMediaPage = true;
                         },
                             function fail() {
                                 WidgetHome.media = _infoData;
                             }
                         );
-                    }
-                });
-                $rootScope.$watch('goingBack', function () {
-                    if ($rootScope.goingBack) {
-                        WidgetHome.deepLink = true;
 
                     }
                 });
+                // $rootScope.$watch('goingBack', function () {
+                //     if ($rootScope.goingBack) {
+                //         WidgetHome.deepLink = true;
+                //     }
+                // });
                 /**
                  * Implementation of pull down to refresh
                  */

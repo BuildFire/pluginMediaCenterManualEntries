@@ -19,11 +19,9 @@
                 go: function (path, pushToHistory) {
                     if(pushToHistory) {
                         setTimeout(function () {
-                            console.log("GURA HISTORY", path)
                             buildfire.history.push(path);
                         }, 1000);
                     }
-                    console.log("NE GURA HISTORY AL IDE")
                     _location.href = path;
                 },
                 goToHome: function () {
@@ -86,9 +84,8 @@
             DB.prototype.getById = function (id) {
                 var that = this;
                 var deferred = $q.defer();
-                console.log(that, id)
                 Buildfire.datastore.getById(id, that._tagName, function (err, result) {
-                    console.log("AAAAAAAAAAAAAAAAAAAAAAAA", result)
+                    console.log("GET BY ID", result)
 
                     if (err) {
                         return deferred.reject(err);

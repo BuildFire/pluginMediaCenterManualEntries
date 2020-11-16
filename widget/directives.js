@@ -27,7 +27,6 @@
 
                     attrs.$observe('finalSrc', function () {
                         var _img = attrs.finalSrc;
-                        console.log(attrs)
                         if (attrs.cropType == 'resize') {
                             _img = buildfire.imageLib.resizeImage(_img, {
                                 size: 'xxs',
@@ -39,7 +38,6 @@
                                 aspect: attrs.loadImage
                             });
                         }
-                        console.log(_img)
                         replaceImg(_img);
                     });
 

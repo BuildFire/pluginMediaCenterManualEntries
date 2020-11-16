@@ -2,8 +2,8 @@
     'use strict';
     angular
         .module('mediaCenterContent')
-        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'SearchEngine', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv',
-            function ($scope, MediaCenterInfo, Modals, SearchEngine, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv) {
+        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Location', 'Modals', 'SearchEngine', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv',
+            function ($scope, MediaCenterInfo, Location, Modals, SearchEngine, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv) {
                 /**
                  * Breadcrumbs  related implementation
                  */
@@ -491,6 +491,18 @@
                 };
 
 
+                ContentHome.goTo = function (id) {
+                    console.log(id);
+                    Location.go('#media/' + id);
+                    Messaging.sendMessageToWidget({
+                        name: EVENTS.ROUTE_CHANGE,
+                        message: {
+                            path: PATHS.MEDIA,
+                            id: id || null
+                        }
+                    });
+                };
+
                 updateSearchOptions();
                 function updateMasterInfo(info) {
                     ContentHome.masterInfo = angular.copy(info);
@@ -550,11 +562,11 @@
                     return ContentHome.info;
                 }, saveDataWithDelay, true);
 
-                Messaging.sendMessageToWidget({
-                    name: EVENTS.ROUTE_CHANGE,
-                    message: {
-                        path: PATHS.HOME
-                    }
-                });
+                // Messaging.sendMessageToWidget({
+                //     name: EVENTS.ROUTE_CHANGE,
+                //     message: {
+                //         path: PATHS.HOME
+                //     }
+                // });
             }]);
 })(window.angular);

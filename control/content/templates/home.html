@@ -98,7 +98,7 @@
                         <img src="../../../../../styles/media/holder-1x1.png" ng-if="!item.data.topImage">
                     </div>
                     <div class="copy pull-right">
-                        <a class="text-primary" href="#/media/{{item.id}}"><span
+                        <a class="text-primary" ng-click="ContentHome.goTo(item.id)"><span
                                 class="title ellipsis pull-left">{{item.data.title}}</span></a>
                         <span class="title ellipsis pull-left">{{item.data.summary}}</span>
 

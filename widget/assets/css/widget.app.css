@@ -327,7 +327,6 @@
 
 .audio-plyer input[type=range] {
     -webkit-appearance: none;
-    margin: 13px 0;
     width: 100%;
 }
 
@@ -911,3 +910,20 @@ img {
 .layout2 .list-media-holder .li-actions-item i{
 	margin-left: 0;
 }
+
+.bitmap {
+	background-image: url('../.images/empty_page.svg');
+	background-repeat: no-repeat;
+	background-attachment: absolute;
+	background-position: center;
+	height: 80vh;
+  }
+  
+  .bitmap::after {
+	content: "Content is not available anymore.";
+    position: absolute;
+    text-align: center;
+    bottom: 35%;
+    width: 100%;
+  }
+  

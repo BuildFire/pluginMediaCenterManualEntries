@@ -7,7 +7,7 @@
 
 
                         <div class="people-banner" data-ng-hide="WidgetMedia.showVideo"
-                             style="background:url('{{WidgetMedia.item.data.topImage|resizeImage:342:192}}') no-repeat; background-position:center center; background-size:cover !important;height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
+                             style="background:url('{{WidgetMedia.item.data.topImage}}') no-repeat; background-position:center center; background-size:cover !important;height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
                             <div class="people-bg padding-bottom-fifteen clearfix" style="height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
                                 <div class="people-holder clearfix">
                                     <div class="people-media text-center padding-top-fifteen"
@@ -33,15 +33,6 @@
                 </div>
             </div>
             <div class="padded">
-                <!-- <div class="link-list" data-ng-hide="WidgetMedia.media.data.design.skipMediaPage">
-                    <a class="text-primary" ng-if="WidgetMedia.item.data.audioUrl"
-                       href="#/nowplaying/{{WidgetMedia.item.id}}">Listen</a>
-                    <a class="text-primary" ng-if="WidgetMedia.item.data.videoUrl"
-                       ng-click="WidgetMedia.toggleShowVideo();">Watch</a>
-                    <a id="sourceToggleButton" class="text-primary" ng-if="WidgetMedia.item.data.srcUrl"
-                       ng-click="WidgetMedia.showSourceIframe()">View Source</a>
-                    <a class="text-primary" ng-if="WidgetMedia.item.data.links.length" ng-click="WidgetMedia.openLinks(WidgetMedia.item.data.links)">More Options</a>
-                </div> -->
                 <div class="item-actions">
                     <div class="link-list">
                         <a class="media-action" ng-click="WidgetMedia.playAudio();" ng-if="WidgetMedia.mediaType == 'AUDIO'">
