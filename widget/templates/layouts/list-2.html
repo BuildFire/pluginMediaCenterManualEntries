@@ -18,13 +18,22 @@
                 <div class="list-item-media text-left overflow-hidden">
                     <div class="list-media-holder pull-left text-overlay" ng-if="item.data.topImage"
                          play-btn="{{item.data.videoUrl.length > 0  || (WidgetHome.media.data.design.skipMediaPage && (item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0)) }}">
+                         <div class="li-actions-item">
+                            <i class="share glyphicon glyphicon-share-alt" style="color: white !important;" ng-click="WidgetHome.share($event, item)" role="button"></i>
+                        </div>
                         <img load-image="16x9" crop-width="110" crop-height="60" crop-type="crop" data-final-src="{{item.data.topImage}}">
+                        
                     </div>
+
                     <div class="list-item-copy text-left padding-left-ten padding-right-ten text-overlay">
                         <p class="ellipsis margin-zero text-primary"><a class="text-primary">{{item.data.title}}</a></p>
 
                         <p class="summary ellipsis margin-zero">{{item.data.summary}}</p>
                         <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
+                        
+                        <div class="li-actions-item">
+                            <i class="glyphicon bookmark star" ng-class="{ 'glyphicon-star-empty' : !item.data.bookmarked, 'glyphicon-star' : item.data.bookmarked }" ng-click="WidgetHome.bookmark($event, item)" role="button"></i>
+                        </div>
                     </div>
                 </div>
             </div>

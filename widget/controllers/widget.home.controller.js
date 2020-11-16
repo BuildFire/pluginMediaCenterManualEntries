@@ -5,7 +5,7 @@
             function ($scope, $window, DB, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location) {
                 $rootScope.showFeed = true;
                 var WidgetHome = this;
-                WidgetHome.deepLink=false;
+                WidgetHome.deepLink = false;
                 var _infoData = {
                     data: {
                         content: {
@@ -38,16 +38,16 @@
                  */
                 var MediaCenterInfo = null;
                 MediaCenter.get().then(function success(result) {
-                        if (result && result.data && result.id) {
-                            MediaCenterInfo = result;
-                        }
-                        else {
-                            MediaCenterInfo = _infoData;
-                        }
-                        WidgetHome.media = MediaCenterInfo;
-                        $rootScope.backgroundImage = MediaCenterInfo.data.design.backgroundImage;
+                    if (result && result.data && result.id) {
+                        MediaCenterInfo = result;
+                    }
+                    else {
+                        MediaCenterInfo = _infoData;
+                    }
+                    WidgetHome.media = MediaCenterInfo;
+                    $rootScope.backgroundImage = MediaCenterInfo.data.design.backgroundImage;
 
-                    },
+                },
                     function fail() {
                         MediaCenterInfo = _infoData;
                         WidgetHome.media = MediaCenterInfo;
@@ -56,7 +56,7 @@
                 var _skip = 0,
                     _limit = 15,
                     searchOptions = {
-                        filter: {"$json.title": {"$regex": '/*'}},
+                        filter: { "$json.title": { "$regex": '/*' } },
                         skip: _skip,
                         limit: _limit + 1 // the plus one is to check if there are any more
                     };
@@ -92,48 +92,58 @@
                  * Messaging.onReceivedMessage is called when any event is fire from Content/design section.
                  * @param event
                  */
-                Messaging.onReceivedMessage = function (event) {   
-                    if (event) {
-                        switch (event.name) {
-                            case EVENTS.ROUTE_CHANGE:
-                                if((event.message && event.message.path == PATHS.MEDIA && $location.$$path.indexOf('/media') == -1)  || (event.message && event.message.path != PATHS.MEDIA)) {
-                                    var path = event.message.path,
-                                        id = event.message.id;
-                                    var url = "#/";
-                                    var foundObj=WidgetHome.items.filter(function(el){return el.id==id;})[0];
-                                    switch (path) {
-                                        case PATHS.MEDIA:
-                                            if(!foundObj||!WidgetHome.media.data.design.skipMediaPage||(WidgetHome.media.data.design.skipMediaPage&&foundObj.data.videoUrl)
-                                            ||(WidgetHome.media.data.design.skipMediaPage&&!foundObj.data.videoUrl&&!foundObj.data.audioUrl)){
-                                                url = url + "media/";
-                                            }else{
-                                                url = url + "nowplaying/";
-                                            }
-                                            if (id) {
-                                                url = url + id + "/";
-                                            }
-                                            break;
-                                    }
-                                    var myCurrentPath="#"+$location.$$path+"/";
-                                    if(url!=myCurrentPath){
-                                        if(!$rootScope.fromSearch){
-                                            Location.go(url);
-                                        }
-                                        if (path == PATHS.MEDIA || $rootScope.fromSearch) {
-                                            $rootScope.showFeed = false;
-                                        }
-                                        else {
-                                            $rootScope.showFeed = true;
-                                        }
-                                        $rootScope.fromSearch = false;
-                                        $scope.$apply();
-                                    }
-                                }
-                                break;
-                            case EVENTS.ITEMS_CHANGE:
-                                WidgetHome.refreshItems();
-                                break;
+                WidgetHome.goTo = function (id) {
+                    var foundObj = WidgetHome.items.find(function (el) { return el.id == id; });
+                    var index = WidgetHome.items.indexOf(foundObj);
+
+                    $rootScope.showFeed = false;
+                    var navigate = function (item) {
+                        console.log(item)
+                        if (item && item.data) {
+                            if (!WidgetHome.media.data.design.skipMediaPage || (WidgetHome.media.data.design.skipMediaPage && item.data.videoUrl)
+                                || (WidgetHome.media.data.design.skipMediaPage && !item.data.videoUrl && !item.data.audioUrl)) {
+                                Location.go('#/media/' + item.id, true);
+                            } else {
+                                Location.go('#/nowplaying/' + item.id, true);
+                            }
                         }
+                    }
+
+                    if (index != -1) {
+                        navigate(WidgetHome.items[index]);
+                    } else {
+                        MediaContent.getById(id).then(function success(result) {
+                            
+
+                            if(Object.keys(result.data).length > 2)
+                                navigate(result);
+                            else {
+                                WidgetHome.setEmptyState();
+                                // Location.goToHome();
+                            }
+                        });
+                    }
+
+                };
+
+                WidgetHome.setEmptyState = function() {
+                    $rootScope.showFeed = true;
+                    $rootScope.showEmptyState = true;
+                    $window.deeplinkingDone = true;
+
+                    angular.element('#home').css('display', 'none');
+                    angular.element('#emptyState').css('display', 'block');
+                }
+
+                Messaging.onReceivedMessage = function (event) {
+                    if (event.message && event.message.path == 'MEDIA') {
+                        WidgetHome.goTo(event.message.id);
+                    }
+                    if (event.message && event.message.path == 'HOME') {
+                        buildfire.history.get({ pluginBreadCrumbsOnly: true }, function (err, result) {
+                            result.map(item => buildfire.history.pop());
+                            Location.goToHome();
+                        });
                     }
                 };
 
@@ -179,7 +189,7 @@
 
                 // ShowDescription only when it have content
                 WidgetHome.showDescription = function () {
-                    if (WidgetHome.media.data.content.descriptionHTML == '<p>&nbsp;<br></p>' || WidgetHome.media.data.content.descriptionHTML == '<p><br data-mce-bogus="1"></p>'|| WidgetHome.media.data.content.descriptionHTML == '')
+                    if (WidgetHome.media.data.content.descriptionHTML == '<p>&nbsp;<br></p>' || WidgetHome.media.data.content.descriptionHTML == '<p><br data-mce-bogus="1"></p>' || WidgetHome.media.data.content.descriptionHTML == '')
                         return false;
                     else
                         return true;
@@ -219,39 +229,59 @@
                             searchOptions.skip = searchOptions.skip + _limit;
                             WidgetHome.noMore = false;
                         }
+                        // $rootScope.deepLinkNavigate = true;
+                        // $rootScope.seekTime = 10.22;
                         WidgetHome.items = WidgetHome.items ? WidgetHome.items.concat(result) : result;
                         WidgetHome.isBusy = false;
-                        if (!window.deeplinkingDone && buildfire.deeplink) {
-                          buildfire.deeplink.getData(function (data) {
-                            if(data && data.deepLinkUrl) {
-                                var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
-                                var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
-                                var itemId = JSON.parse(deepLinkUrl).id;
-                                $rootScope.showFeed = false; 
-                                $rootScope.fromSearch = true;
-                                window.deeplinkingDone = true;
-                                window.setTimeout(() => {
-                                    //Location.go("#/media/" + itemId);
-                                    var foundObj=WidgetHome.items.find(function(el){return el.id==itemId;});
-                                    var index=WidgetHome.items.indexOf(foundObj);
-                                    if(index!=-1)
-                                        WidgetHome.goToMedia(WidgetHome.items.indexOf(foundObj));
-                                        //WidgetHome.deepLink=true;
-                                }, 0);
-                            }
-                            else if (data && WidgetHome.items.find(item => item.id === data.id)) {
-                                window.deeplinkingDone = true;
-                                $rootScope.showFeed = false;
-                                window.setTimeout(() => {
-                                  //Location.go("#/media/" + data.id);
-                                  var foundObj=WidgetHome.items.find(function(el){return el.id==data.id;});
-                                  var index=WidgetHome.items.indexOf(foundObj);
-                                  if(index!=-1)
-                                    WidgetHome.goToMedia(index);
-                                  //WidgetHome.deepLink=true;
-                                }, 0);
-                              }else WidgetHome.deepLink=true;
-                          });
+
+                        bookmarks.sync($scope);
+                        if (!$window.deeplinkingDone && buildfire.deeplink) {
+                            buildfire.deeplink.getData(function (data) {
+                                if (data && data.mediaId) {
+                                    $rootScope.showFeed = false;
+                                    $rootScope.fromSearch = true;
+                                    $window.deeplinkingDone = true;
+                                    window.setTimeout(() => {
+                                        WidgetHome.goTo(data.mediaId);
+                                    }, 0);
+                                }
+                                else if (data && data.link) {
+                                    $rootScope.showFeed = false;
+                                    $rootScope.fromSearch = true;
+                                    $window.deeplinkingDone = true;
+                                    var foundObj = WidgetHome.items.find(function (el) { return el.id == data.link; });
+                                    if(!foundObj) return WidgetHome.setEmptyState();
+                                    if (data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
+                                        $rootScope.deepLinkNavigate = true;
+                                        $rootScope.seekTime = data.timeIndex;
+                                    }
+                                    window.setTimeout(() => {
+                                        if (foundObj.data.audioUrl && $rootScope.seekTime) {
+                                            return Location.go('#/nowplaying/' + foundObj.id)
+                                        }
+
+                                        WidgetHome.goTo(data.link);
+                                    }, 0);
+                                }
+                                else if (data && data.deepLinkUrl) {
+                                    var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
+                                    var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
+                                    var itemId = JSON.parse(deepLinkUrl).id;
+                                    $rootScope.showFeed = false;
+                                    $rootScope.fromSearch = true;
+                                    $window.deeplinkingDone = true;
+                                    window.setTimeout(() => {
+                                        WidgetHome.goTo(itemId);
+                                    }, 0);
+                                }
+                                else if (data && WidgetHome.items.find(item => item.id === data.id)) {
+                                    $window.deeplinkingDone = true;
+                                    $rootScope.showFeed = false;
+                                    // window.setTimeout(() => {
+                                    //     WidgetHome.goTo(id);
+                                    // }, 0);
+                                } 
+                            });
                         }
                     }, function fail() {
                         WidgetHome.isBusy = false;
@@ -269,7 +299,7 @@
                         };
 
                         $event.preventDefault();
-                        $timeout(function() {
+                        $timeout(function () {
                             Buildfire.actionItems.list(actionItems, options, callback);
                         });
                     }
@@ -283,19 +313,72 @@
                 };
 
                 WidgetHome.goToMedia = function (ind) {
-                    if(typeof ind != 'number'){
-                        var foundObj=WidgetHome.items.find(function(el){return el.id==ind;});
-                        ind=WidgetHome.items.indexOf(foundObj);
+                    if (typeof ind != 'number') {
+                        var foundObj = WidgetHome.items.find(function (el) { return el.id == ind; });
+                        ind = WidgetHome.items.indexOf(foundObj);
                     }
+
                     $rootScope.showFeed = false;
-                    if(ind!=-1){
-                        if(!WidgetHome.media.data.design.skipMediaPage||(WidgetHome.media.data.design.skipMediaPage&&WidgetHome.items[ind].data.videoUrl)
-                        ||(WidgetHome.media.data.design.skipMediaPage&&!WidgetHome.items[ind].data.videoUrl&&!WidgetHome.items[ind].data.audioUrl)){
+                    if (ind != -1) {
+                        if (!WidgetHome.media.data.design.skipMediaPage || (WidgetHome.media.data.design.skipMediaPage && WidgetHome.items[ind].data.videoUrl)
+                            || (WidgetHome.media.data.design.skipMediaPage && !WidgetHome.items[ind].data.videoUrl && !WidgetHome.items[ind].data.audioUrl)) {
                             Location.go('#/media/' + WidgetHome.items[ind].id, true);
-                        }else {
-                            Location.go('#/nowplaying/' + WidgetHome.items[ind].id, true);           
+                        } else {
+                            Location.go('#/nowplaying/' + WidgetHome.items[ind].id, true);
                         }
                     }
+                };
+
+                buildfire.auth.onLogin(function () {
+                    bookmarks.sync($scope);
+                });
+
+                buildfire.auth.onLogout(function () {
+                    bookmarks.sync($scope);
+                });
+
+                WidgetHome.bookmark = function ($event, item) {
+                    $event.stopImmediatePropagation();
+                    var isBookmarked = item.data.bookmarked ? true : false;
+                    if (isBookmarked) {
+                        bookmarks.delete($scope, item);
+                    } else {
+                        bookmarks.add($scope, item);
+                    }
+                };
+
+                WidgetHome.bookmarked = function ($event, item) {
+                    $event.stopImmediatePropagation();
+                    WidgetHome.bookmark($event, item);
+                };
+
+                WidgetHome.share = function ($event, item) {
+                    $event.stopImmediatePropagation();
+
+                    var link = {};
+                    link.title = item.data.title;
+                    link.type = "website";
+                    link.description = item.data.summary ? item.data.summary : null;
+                    //link.imageUrl = item.data.topImage ? item.data.topImage : null;
+
+                    link.data = {
+                        "mediaId": item.id
+                    };
+
+                    buildfire.deeplink.generateUrl(link, function (err, result) {
+                        if (err) {
+                            console.error(err)
+                        } else {
+                            // output : {"url":"https://buildfire.com/shortlinks/f6fd5ca6-c093-11ea-b714-067610557690"}
+                            buildfire.device.share({
+                                subject: link.title,
+                                text: link.description,
+                                image: link.imageUrl,
+                                link: result.url
+                            }, function (err, result) { });
+
+                        }
+                    });
                 };
 
                 $rootScope.$on("Carousel:LOADED", function () {
@@ -307,35 +390,39 @@
                     }
                 });
 
-                Messaging.sendMessageToControl({
-                    name: EVENTS.ROUTE_CHANGE,
-                    message: {
-                        path: PATHS.HOME
-                    }
-                });
+                // Messaging.sendMessageToControl({
+                //     name: EVENTS.ROUTE_CHANGE,
+                //     message: {
+                //         path: PATHS.HOME
+                //     }
+                // });
 
                 $rootScope.$watch('showFeed', function () {
                     if ($rootScope.showFeed) {
                         listener.clear();
                         listener = Buildfire.datastore.onUpdate(onUpdateCallback);
-
+                        bookmarks.sync($scope);
+                        console.log("SHOW FEED SYNC")
                         MediaCenter.get().then(function success(result) {
-                                WidgetHome.media = result;
-                            },
+                            WidgetHome.media = result;
+                            if (WidgetHome.media.data.design.skipMediaPage) $rootScope.skipMediaPage = true;
+                        },
                             function fail() {
                                 WidgetHome.media = _infoData;
                             }
                         );
+
                     }
                 });
-                $rootScope.$watch('goingBack', function () {
-                    if($rootScope.goingBack)
-                        WidgetHome.deepLink=true;
-                });
+                // $rootScope.$watch('goingBack', function () {
+                //     if ($rootScope.goingBack) {
+                //         WidgetHome.deepLink = true;
+                //     }
+                // });
                 /**
                  * Implementation of pull down to refresh
                  */
-                var onRefresh=Buildfire.datastore.onRefresh(function(){
+                var onRefresh = Buildfire.datastore.onRefresh(function () {
                     Location.goToHome();
                 });
 

@@ -1,4 +1,4 @@
-(function (angular , buildfire) {
+(function (angular, buildfire) {
     angular
         .module('mediaCenterWidget')
         .directive('playBtn', function () {
@@ -19,49 +19,43 @@
                 }
             };
         }])
-      .directive("loadImage", ['Buildfire', function (Buildfire) {
-          return {
-              restrict: 'A',
-              link: function (scope, element, attrs) {
-                  element.attr("src", "../../../styles/media/holder-" + attrs.loadImage + ".gif");
+        .directive("loadImage", ['Buildfire', function (Buildfire) {
+            return {
+                restrict: 'A',
+                link: function (scope, element, attrs) {
+                    element.attr("src", "../../../styles/media/holder-" + attrs.loadImage + ".gif");
 
-                  attrs.$observe('finalSrc', function() {
-                      var _img = attrs.finalSrc;
+                    attrs.$observe('finalSrc', function () {
+                        var _img = attrs.finalSrc;
+                        if (attrs.cropType == 'resize') {
+                            _img = buildfire.imageLib.resizeImage(_img, {
+                                size: 'xxs',
+                                aspect: attrs.loadImage
+                            });
+                        } else {
+                            _img = buildfire.imageLib.cropImage(_img, {
+                                size: 'xxs',
+                                aspect: attrs.loadImage
+                            });
+                        }
+                        replaceImg(_img);
+                    });
 
-                      if (attrs.cropType == 'resize') {
-                          Buildfire.imageLib.local.resizeImage(_img, {
-                              width: attrs.cropWidth,
-                              height: attrs.cropHeight
-                          }, function (err, imgUrl) {
-                              _img = imgUrl;
-                              replaceImg(_img);
-                          });
-                      } else {
-                          Buildfire.imageLib.local.cropImage(_img, {
-                              width: attrs.cropWidth,
-                              height: attrs.cropHeight
-                          }, function (err, imgUrl) {
-                              _img = imgUrl;
-                              replaceImg(_img);
-                          });
-                      }
-                  });
+                    function replaceImg(finalSrc) {
+                        var elem = $("<img>");
+                        elem[0].onload = function () {
+                            element.attr("src", finalSrc);
+                            elem.remove();
+                        };
+                        elem.attr("src", finalSrc);
+                    }
+                }
+            };
+        }])
 
-                  function replaceImg(finalSrc) {
-                      var elem = $("<img>");
-                      elem[0].onload = function () {
-                          element.attr("src", finalSrc);
-                          elem.remove();
-                      };
-                      elem.attr("src", finalSrc);
-                  }
-              }
-          };
-      }])
-
-      /**
-     * A directive which is used handle background image for layouts.
-     */
+        /**
+       * A directive which is used handle background image for layouts.
+       */
         .directive('backImg', ["$rootScope", function ($rootScope) {
             return function (scope, element, attrs) {
                 attrs.$observe('backImg', function (value) {
@@ -71,22 +65,21 @@
                             width: $rootScope.deviceWidth,
                             height: $rootScope.deviceHeight
                         }, function (err, imgUrl) {
-                            if(imgUrl) {
+                            if (imgUrl) {
                                 img = imgUrl;
-                                element.attr("style", 'background:url(' + img + ') !important ;;background-size: cover !important;');
+                                element.attr("style", 'background:url(' + img + ') !important; background-size: cover !important;');
                             } else {
                                 img = '';
-                                element.attr("style", 'background-color:white');
+                                element.attr("style", 'background-color: wheat;');
                             }
                             element.css({
                                 'background-size': 'cover !important'
                             });
                         });
-//                      img = $filter("cropImage")(value, $rootScope.deviceWidth, $rootScope.deviceHeight, true);
                     }
                     else {
                         img = "";
-                        element.attr("style", 'background-color:white');
+                        element.attr("style", 'background-color:darkkhaki');
                         element.css({
                             'background-size': 'cover !important'
                         });

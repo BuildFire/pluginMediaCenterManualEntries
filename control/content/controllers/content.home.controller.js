@@ -2,8 +2,8 @@
     'use strict';
     angular
         .module('mediaCenterContent')
-        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Modals', 'SearchEngine', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv',
-            function ($scope, MediaCenterInfo, Modals, SearchEngine, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv) {
+        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Location', 'Modals', 'SearchEngine', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv',
+            function ($scope, MediaCenterInfo, Location, Modals, SearchEngine, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv) {
                 /**
                  * Breadcrumbs  related implementation
                  */
@@ -69,7 +69,7 @@
                     _limit = 10,
                     _maxLimit = 19,
                     searchOptions = {
-                        filter: {"$json.title": {"$regex": '/*'}},
+                        filter: { "$json.title": { "$regex": '/*' } },
                         skip: _skip,
                         limit: _limit + 1 // the plus one is to check if there are any more
                     };
@@ -106,22 +106,22 @@
                 };
                 // this method will be called when you change the order of items
                 editor.onOrderChange = function (item, oldIndex, newIndex) {
-                  var items = ContentHome.info.data.content.images;
+                    var items = ContentHome.info.data.content.images;
 
-                  var tmp = items[oldIndex];
+                    var tmp = items[oldIndex];
 
-                  if (oldIndex < newIndex) {
-                    for (var i = oldIndex + 1; i <= newIndex; i++) {
-                      items[i - 1] = items[i];
+                    if (oldIndex < newIndex) {
+                        for (var i = oldIndex + 1; i <= newIndex; i++) {
+                            items[i - 1] = items[i];
+                        }
+                    } else {
+                        for (var i = oldIndex - 1; i >= newIndex; i--) {
+                            items[i + 1] = items[i];
+                        }
                     }
-                  } else {
-                    for (var i = oldIndex - 1; i >= newIndex; i--) {
-                      items[i + 1] = items[i];
-                    }
-                  }
-                  items[newIndex] = tmp;
+                    items[newIndex] = tmp;
 
-                  ContentHome.info.data.content.images = items;
+                    ContentHome.info.data.content.images = items;
                     $scope.$digest();
                 };
 
@@ -400,25 +400,31 @@
 
 
                 ContentHome.setDeeplinks = function () {
-                    
-                    MediaContent.find({filter: {}, recordCount: true})
-                    .then(function (counter) {
-                      var numberOfRecords = counter.totalRecord;
-                      for (let skip = 0; skip < numberOfRecords; skip += 50) {
-                        MediaContent.find({filter: {}, skip, limit: 50})
-                        .then(function (res) {
-                          for (let i = 0; i < res.length; i += 1) { 
-                              if(!res[i].data.searchEngineId){
-                                res[i].data.deepLinkUrl = Buildfire.deeplink.createLink({ id: res[i].id });
-                                SearchEngineService.insert(res[i].data).then(function (data) {
-                                    res[i].data.searchEngineId = data.id;
-                                    MediaContent.update(res[i].id, res[i].data);
-                                });
-                              }
-                          }
-                        });
-                      }
-                    });
+                    var records = [];
+                    var page = 0;
+
+                    var get = function () {
+                        MediaContent.find({ filter: {}, pageSize: 50, page: page, recordCount: true })
+                            .then(function (data) {
+                                records = records.concat(data.result);
+                                if (records.length < data.totalRecord) {
+                                    page++;
+                                    get();
+                                } else {
+                                    records.forEach(function (record) {
+                                        if (!record.data.searchEngineId) {
+                                            record.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: record.id });
+                                            SearchEngineService.insert(record.data).then(function (data) {
+                                                record.data.searchEngineId = data.id;
+                                                MediaContent.update(record.id, record.data);
+                                            });
+                                        }
+                                    });
+                                }
+
+                            });
+                    }
+                    get();
                 }
 
                 /**
@@ -437,7 +443,7 @@
                     if (!value) {
                         value = '/*';
                     }
-                    searchOptions.filter = {"$json.title": {"$regex": value}};
+                    searchOptions.filter = { "$json.title": { "$regex": value } };
                     ContentHome.getMore();
                 };
 
@@ -452,9 +458,9 @@
                     }
                     var item = ContentHome.items[index];
                     if ("undefined" !== typeof item) {
-                        Modals.removePopupModal({title: '',event:$event}).then(function (result) {
+                        Modals.removePopupModal({ title: '', event: $event }).then(function (result) {
                             if (result) {
-                                if(item.data.searchEngineId) {
+                                if (item.data.searchEngineId) {
                                     SearchEngineService.delete(item.data.searchEngineId);
                                 }
                                 MediaContent.delete(item.id).then(function (data) {
@@ -479,6 +485,18 @@
                     }
                 };
 
+
+                ContentHome.goTo = function (id) {
+                    console.log(id);
+                    Location.go('#media/' + id);
+                    Messaging.sendMessageToWidget({
+                        name: EVENTS.ROUTE_CHANGE,
+                        message: {
+                            path: PATHS.MEDIA,
+                            id: id || null
+                        }
+                    });
+                };
 
                 updateSearchOptions();
                 function updateMasterInfo(info) {
@@ -539,11 +557,11 @@
                     return ContentHome.info;
                 }, saveDataWithDelay, true);
 
-                Messaging.sendMessageToWidget({
-                    name: EVENTS.ROUTE_CHANGE,
-                    message: {
-                        path: PATHS.HOME
-                    }
-                });
+                // Messaging.sendMessageToWidget({
+                //     name: EVENTS.ROUTE_CHANGE,
+                //     message: {
+                //         path: PATHS.HOME
+                //     }
+                // });
             }]);
 })(window.angular);

@@ -85,6 +85,8 @@
                 var that = this;
                 var deferred = $q.defer();
                 Buildfire.datastore.getById(id, that._tagName, function (err, result) {
+                    console.log("GET BY ID", result)
+
                     if (err) {
                         return deferred.reject(err);
                     }

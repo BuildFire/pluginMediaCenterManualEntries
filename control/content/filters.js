@@ -11,14 +11,14 @@
                 });
             };
         }])
-        .filter('cropImage', [function () {
-            return function (url, width, height, type) {
-                return buildfire.imageLib.cropImage(url, {
-                    width: width,
-                    height: height
-                });
-            };
-        }])
+        // .filter('cropImage', [function () {
+        //     return function (url, width, height, type) {
+        //         return buildfire.imageLib.cropImage(url, {
+        //             width: width,
+        //             height: height
+        //         });
+        //     };
+        // }])
         .filter('safeHtml', ['$sce', function ($sce) {
             return function (html) {
                 if (html) {

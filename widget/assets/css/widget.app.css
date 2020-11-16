@@ -62,7 +62,7 @@
 }
 
 /* Media Player */
-.holder.now-playing{
+/* .holder.now-playing{
 	margin-top:0;
 	height:100%;
 	padding:50px 0 0 !important;
@@ -228,7 +228,7 @@
 	.holder.now-playing .media-holder{
 		display:none;
 	}
-}
+} */
 /* End Plugin CSS */
 
 
@@ -327,7 +327,6 @@
 
 .audio-plyer input[type=range] {
     -webkit-appearance: none;
-    margin: 13px 0;
     width: 100%;
 }
 
@@ -723,8 +722,18 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 
 /* Link Items */
-.link-list{
-	padding-top:2px;
+
+.link-list {
+	display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+}
+
+.link-list i{
+	font-size: 20px;
+	display: inline-block;
+	padding: 5px 16px;
 }
 .link-list a + a{
 	margin-left:10px;
@@ -768,10 +777,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
     font-size:24px;
     color:#fff;
 }
-.time-indicator{
-    margin-top: -25px !important;
-    opacity: 0.6 !important;
-}
+
 input[type=range] {
 +  -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
 +  width: 100%; /* Specific width is required for Firefox. */
@@ -799,3 +805,125 @@ input[type=range] {
 .plugin-slide img[style]{
 	width: 100%!important;
 } 
+
+.item-actions{
+	margin: 16px 0;
+	padding: 0;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	position: relative;
+}
+.item-actions, .li-actions .li-actions{
+    display: flex;
+    position: relative;
+}
+
+.li-actions i, .li-actions-item i 
+.li-actions i, .li-actions-item i {
+    position: relative;
+    display: block;
+    padding: 16px;
+    flex-shrink: 0;
+    top: 0;
+}
+
+.li-actions-item i { padding: 5px; } 
+img {
+	filter: brightness(0.8);
+}
+
+.li-actions i {
+    font-size: 20px;
+    display: inline-block;
+}
+
+.layout1 .list-item-media .li-actions-item,
+.layout2 .list-item-media .li-actions-item,
+.layout3 .list-item-media .li-actions-item,
+.layout4 .list-item-media .li-actions-item{
+	z-index: 2;
+	display: flex;
+	position: absolute;
+	font-size: 2rem;
+	border-radius: 40px;
+	width: 100%;
+	height: 40px;
+}
+.layout1 .li-actions-item i,
+.layout4 .li-actions-item i,
+.layout3 .list-item-media .li-actions-item{
+	position: absolute;
+}
+
+.layout1 .li-actions-item i,
+.layout4 .li-actions-item i {
+	color: white !important;
+}
+
+.layout1 .list-item-media::before
+.layout2 .list-item-media::before
+.layout3 .list-item-media::before
+.layout4 .list-item-media-holder::before  {
+	display: block;
+	position: absolute;
+	top: 0;
+	content: '';
+	z-index: 1;
+	width: 100%;
+	height: 100%;
+	background: -moz-linear-gradient(top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 60%, rgba(0,0,0,0) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, rgba(0,0,0,0.5) 0%,rgba(0,0,0,0) 60%,rgba(0,0,0,0) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%,rgba(0,0,0,0) 60%,rgba(0,0,0,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80000000', endColorstr='#00000000',GradientType=0 ); /* IE6-9 */
+}
+
+.layout2 .list-media-holder .li-actions-item{
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 2;
+}
+
+.layout2 .li-actions-item i{
+	margin-left: 8px;
+	position: relative;
+}
+
+
+
+.li-actions-item .star {
+	position: absolute;
+    right: 0;
+    margin-right: 20px;
+    font-size: 20px;
+    padding: 0 !important;
+}
+
+.layout3 .action .li-actions-item .share { right: 40px;}
+.layout3 .action .li-actions-item .star { line-height: 2.5; }
+
+
+
+.layout2 .list-media-holder .li-actions-item i{
+	margin-left: 0;
+}
+
+.bitmap {
+	background-image: url('../.images/empty_page.svg');
+	background-repeat: no-repeat;
+	background-attachment: absolute;
+	background-position: center;
+	height: 80vh;
+  }
+  
+  .bitmap::after {
+	content: "Content is not available anymore.";
+    position: absolute;
+    text-align: center;
+    bottom: 35%;
+    width: 100%;
+  }
+  

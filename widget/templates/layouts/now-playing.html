@@ -1,174 +1,184 @@
 <div class="holder now-playing text-center audio-player">
-    <!--// need to refactor this.-->
-    <div ng-style="{'background':'url(' + (NowPlaying.currentTrack.image? (NowPlaying.currentTrack.image | cropImage : deviceWidth : deviceHeight) : 'http://app.buildfire.com/app/media/now-playing.png') + ') no-repeat center center' ,
-          '-o-filter': 'blur(10px) brightness(0.2)',
-    '-moz-filter': 'blur(10px) brightness(0.2)',
-    '-webkit-filter': 'blur(10px) brightness(0.2)',
-    'filter': 'blur(10px) brightness(0.2)',
+    <div ng-style="{'background':'url(' + (NowPlaying.currentTrack.image ? NowPlaying.currentTrack.image : 'http://app.buildfire.com/app/media/now-playing.png') + ') no-repeat center center',
+         '-o-filter': 'blur(10px) brightness(0.4)',
+    '-moz-filter': 'blur(10px) brightness(0.4)',
+    '-webkit-filter': 'blur(10px) brightness(0.4)',
+    'filter': 'blur(10px) brightness(0.4)',
     'position': 'absolute',
     'top': '-5%',
     'left': '-5%',
     '-o-background-size': 'cover',
     '-moz-background-size': 'cover',
     '-webkit-background-size': 'cover',
-    'background-size': 'cover',
+    'background-size': 'cover !important',
     'height': '110%',
     'width': '110%',
-    'z-index': '0'
-         }"></div>
-    <div class="media-center-plugin"  ng-if="!(NowPlaying.openMoreInfo || NowPlaying.openSettings)">
+    'z-index': '0'}"></div>
+    <div class="media-center-plugin" ng-if="!(NowPlaying.openMoreInfo || NowPlaying.openSettings)">
         <div class="media-header-link">
-            <a ng-click="NowPlaying.getFromPlaylist()" class="whiteTheme">Open Playlist</a>
+            <span class="btn btn-icon" ng-click="NowPlaying.getFromPlaylist()"><img
+                    src="assets/css/icons/ic_playlist.svg" alt="playlist"></span>
         </div>
-        <div class="media-holder margin-top-fifteen">
+        <div class="media-holder">
             <div class="media-inner text-center">
-                <img ng-if="NowPlaying.currentTrack.image" class="border-radius-two" load-image="1x1"
-                     crop-width="260" crop-height="260" crop-type="crop"
-                     data-final-src="{{NowPlaying.currentTrack.image}}" height="260px" width="260">
-                <img ng-if="!NowPlaying.currentTrack.image" class="border-radius-two"
-                     src="http://app.buildfire.com/app/media/now-playing.png" height="260px" width="260">
+                <img ng-if="NowPlaying.currentTrack.image" load-image="1x1" crop-width="260" crop-height="260"
+                    crop-type="crop" data-final-src="{{NowPlaying.currentTrack.image}}">
+                <img ng-if="!NowPlaying.currentTrack.image" src="http://app.buildfire.com/app/media/now-playing.png">
             </div>
         </div>
-        <div class="media-player-info margin-top-fifteen">
-            <h4 class="margin-zero ellipsis whiteTheme" style="font-size: 16px!important;">{{NowPlaying.currentTrack.title}}</h4>
-
-            <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.artist}}</p>
+        <div class="media-player-info ellipsis">
+            <span class="glyphicon glyphicon-share-alt whiteTheme btn btn-icon" ng-click="NowPlaying.share($event)"
+                role="button"></span>
+            <div class="media-title ellipsis">
+                <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title}}</h4>
+                <p class="margin-zero whiteTheme ellipsis">
+                    {{NowPlaying.currentTrack.user.username}}{{NowPlaying.currentTrack.artist}}</p>
+            </div>
+            <span class="glyphicon whiteTheme btn btn-icon"
+                ng-class="{ 'glyphicon-star-empty' : !NowPlaying.item.data.bookmarked, 'glyphicon-star' : NowPlaying.item.data.bookmarked }"
+                ng-click="NowPlaying.bookmark($event)" role="button"></span>
         </div>
-        <div class="slider margin-top-ten" style="margin-bottom: -30px;">
+        <div class="slider">
             <div>
-                <div class="audio-plyer"><input type="range" min="0" max="{{NowPlaying.duration || 163.94449}}"
-                            ng-model="NowPlaying.currentTime"
-                            ng-change="NowPlaying.changeTime(NowPlaying.currentTime)"
-                            class="whiteBackgroundTheme" style="height:30px; border-radius:4px;background-color: transparent !important;"/></div>
-                <div ng-if="!NowPlaying.currentTime" class="time-indicator" style="float: left;">
-                    {{"--:--"}}
+                <div class="audio-plyer"><input type="range" min="0.0" max="{{NowPlaying.duration}}"
+                        ng-model="NowPlaying.currentTime" ng-change="NowPlaying.changeTime(NowPlaying.currentTime)" />
                 </div>
-                <div ng-if="NowPlaying.currentTime > 0 && NowPlaying.currentTime < 3600" class="time-indicator" style="float:left">
-                    {{NowPlaying.currentTime | secondsToDateTime |date: 'mm:ss'}}
+                <div ng-if="NowPlaying.currentTime!=0" class="time-indicator" style="float:left">
+                    <span>{{NowPlaying.currentTime | secondsToDateTime |date: 'mm:ss'}}</span>
                 </div>
-                <div ng-if="NowPlaying.currentTime > 3600" class="time-indicator" style="float:left">
-                    {{NowPlaying.currentTime | secondsToDateTime |date: 'hh:mm:ss'}}
+                <div ng-if="NowPlaying.currentTime==0" class="time-indicator" style="float: left;">
+                    <span>{{"--:--"}}</span>
                 </div>
-                <div ng-if="NowPlaying.duration > 0 && NowPlaying.duration < 3600" class="time-indicator" style="float: right;">
-                    {{(NowPlaying.duration | secondsToDateTime | date: 'mm:ss')}}
-                </div>
-                <div ng-if="NowPlaying.duration > 3600" class="time-indicator" style="float: right;">
-                    {{(NowPlaying.duration | secondsToDateTime | date: 'hh:mm:ss')}}
+                <div ng-if="NowPlaying.duration" class="time-indicator" style="float: right;">
+                    <span>{{(NowPlaying.duration | secondsToDateTime | date: 'mm:ss')}}</span>
                 </div>
                 <div ng-if="!NowPlaying.duration" class="time-indicator" style="float: right;">
-                    {{"--:--"}}
+                    <span>{{"--:--"}}</span>
                 </div>
-                <!--<div ng-if="NowPlaying.currentTime" class="time-indicator" style="float: left">{{NowPlaying.currentTime | secondsToDateTime | date:'mm:ss'}}</div>
-                <div ng-if="NowPlaying.duration" class="time-indicator" style="float: right">{{NowPlaying.duration | secondsToDateTime | date:'mm:ss'}}</div>-->
+            </div>
+            <div class="volume">
+                &nbsp;<input class="volume-button rotate-270"
+                    ng-style="NowPlaying.showVolume? {'visibility':'visible'}:{'visibility':'hidden'}" type="range"
+                    min="0.0" max="100" ng-model="NowPlaying.volume"
+                    ng-change="NowPlaying.changeVolume(NowPlaying.volume)"
+                    style="width: 149px; border-radius:4px; background:#fff; margin-top: -93px;margin-left: -14px;z-index: 1000000" />
             </div>
         </div>
-        <div class="text-center margin-top-fifteen">
-            <span class="icon icon-dots"></span>
+        <div class="media-player-btns">
+            <span
+                ng-class="(NowPlaying.settings && NowPlaying.settings.shufflePlaylist) ? 'primaryTheme bold' : 'whiteTheme'"
+                class="icon icon-shuffle icon-sm " ng-click="NowPlaying.shufflePlaylist()"></span>
+            <div class="player-btns">
+                <span class="btn btn-icon" ng-click="NowPlaying.backward()"><img
+                        src="assets/css/icons/ic_fast_rewind.svg" alt=""></span>
+                <button class="btn btn-icon btn-lg btn-primary">
+                    <span ng-if="!NowPlaying.playing" class="icon  icon-main whiteTheme"
+                        ng-click="NowPlaying.playTrack()">
+                        <img src="assets/css/icons/ic_play2.svg" alt="">
+                    </span>
+                    <span ng-if="NowPlaying.playing" class="icon  icon-main whiteTheme"
+                        ng-click="NowPlaying.pauseTrack()">
+                        <img src="assets/css/icons/ic_pause_2.svg" alt="">
+                    </span>
+                </button>
+                <span class="btn btn-icon" ng-click="NowPlaying.forward()"><img
+                        src="assets/css/icons/ic_fast_forward.svg" alt=""></span>
+            </div>
+            <span
+                ng-class="(NowPlaying.settings && NowPlaying.settings.loopPlaylist) ? 'primaryTheme bold' : 'whiteTheme'"
+                class="icon icon-repeat icon-sm" ng-click="NowPlaying.loopPlaylist()"></span>
+            <span class="icon icon-repeat-one icon-sm primaryTheme hidden whiteTheme"></span>
+            <span class="icon icon-repeat icon-sm primaryTheme hidden whiteTheme"></span>
         </div>
-        <div class="media-player-action-btns margin-top-ten">
-            &nbsp;<input class="whiteBackgroundTheme"
-                         ng-style="NowPlaying.showVolume? {'visibility':'visible'}:{'visibility':'hidden'}" type="range"
-                         min="0" max="1" step="0.1" ng-model="NowPlaying.volume"
-                         ng-change="NowPlaying.changeVolume(NowPlaying.volume)"
-                         style="width:120px; height:7px; border-radius:4px; position:relative; top:-54px; visibility: visible;margin-top:40px;margin-left:43px; transform:rotate(-90deg);"/>
-            <!--<span class="audio-player-icon icon icon-volume-high icon-sm"
-                  ng-click="NowPlaying.showVolume=!NowPlaying.showVolume"></span>-->
-            <span class="audio-player-icon icon icon-ellipsis icon-sm"
-                  ng-click="NowPlaying.openMoreInfoOverlay()"></span>
-            <span class="audio-player-icon icon icon-cog icon-sm" ng-click="NowPlaying.getSettings()"></span>
+        <div class="media-player-action-btns">
+            <!--<span class="icon icon-volume-high icon-sm" ng-click="NowPlaying.showVolume=!NowPlaying.showVolume"></span>-->
+            <span class="glyphicon glyphicon-option-horizontal whiteTheme"
+                ng-click="NowPlaying.openMoreInfoOverlay()"></span>
+            <span class="glyphicon glyphicon-cog whiteTheme" ng-click="NowPlaying.getSettings()"></span>
+            <span class="glyphicon glyphicon-edit whiteTheme" ng-click="NowPlaying.addNote()"></span>
         </div>
-        <a class="media-player-btns margin-top-ten">
-            <span ng-class="(NowPlaying.settings && NowPlaying.settings.shufflePlaylist) ? 'primaryTheme bold' : 'whiteTheme'" class="icon icon-shuffle icon-sm" ng-click="NowPlaying.shufflePlaylist()"></span>
-            <span class="audio-player-icon icon icon-backward-circle " ng-click="NowPlaying.backward()"></span>
-            <span ng-if="!NowPlaying.playing" class="audio-player-icon icon icon-play-circle icon-main "
-                  ng-click="NowPlaying.playTrack()"></span>
-            <span ng-if="NowPlaying.playing" class="audio-player-icon icon icon-pause-circle icon-main "
-                  ng-click="NowPlaying.pauseTrack()"></span>
-            <span class="audio-player-icon icon icon-forward-circle" ng-click="NowPlaying.forward()"></span>
-            <span ng-class="(NowPlaying.settings && NowPlaying.settings.loopPlaylist) ? 'primaryTheme bold' : 'whiteTheme'" class="icon icon-repeat icon-sm" ng-click="NowPlaying.loopPlaylist()"></span>
-            <span class="icon icon-repeat-one icon-sm primaryTheme hidden"></span>
-            <span class="icon icon-repeat icon-sm primaryTheme hidden"></span>
-        </a>
     </div>
+
     <!-- Playlist Overlay -->
     <div ng-if="playlist" class="overlay backgroundColorTheme slide"
-         style="position:fixed; top:0; left:0; width:100%; height:100%;">
-        <div class="overlay-content"
-             style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
+        style="position:fixed; top:0; left:0; width:100%; height:100%;">
+        <div class="overlay-content" style="position:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
             <div class="media-player-list-layout layout3">
                 <div class="list-layout has-btns">
                     <div class="list-item overflow-hidden"
-                         ng-swipe-right="NowPlaying.addEvents($event, $index, false,track)"
-                         ng-swipe-left="NowPlaying.addEvents($event, $index, true,track)"
-                         ng-repeat="track in NowPlaying.playList">
+                        ng-swipe-right="NowPlaying.addEvents($event, $index, false,track)"
+                        ng-swipe-left="NowPlaying.addEvents($event, $index, true,track)"
+                        ng-repeat="track in NowPlaying.playList">
                         <div class="list-item-media text-left" ng-class="{'edit' : track.swiped}">
                             <div class="list-media-holder square-icon pull-left">
-                                <img ng-if="track.image" load-image="16x9" crop-width="55" crop-height="22" crop-type="crop" data-final-src="{{track.image}}">
+                                <img ng-if="track.image" load-image="2x1" crop-width="55" crop-height="22"
+                                    crop-type="crop" data-ng-src="{{track.image}}">
                             </div>
                             <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-                                <p class="margin-bottom-zero ellipsis margin-top-twenty bodyTextTheme">{{track.title}}</p>
+                                <p class="margin-bottom-zero ellipsis margin-top-twenty bodyTextTheme">
+                                    {{track.title}}</p>
                             </div>
                             <div class="btns text-center">
+                                <!--<a ng-if="!track.playing" class="icon icon-play-circle" ng-click="NowPlaying.playlistPlay(track)"></a>
+                                <a ng-if="track.playing" class="icon icon-pause-circle primaryTheme" ng-click="NowPlaying.playlistPause(track)"></a>-->
                                 <a ng-class="track.playing ? 'icon-pause-circle' : 'icon-play-circle'"
-                                   class="icon primaryTheme" ng-click="NowPlaying.playlistPlayPause(track,$index)"></a>
+                                    class="icon primaryTheme" ng-click="NowPlaying.playlistPlayPause(track)"></a>
                             </div>
                             <div class="remove-btn text-center dangerBackgroundTheme" style="background:red;"
-                                 ng-click="NowPlaying.removeTrackFromPlayList($index)">
-                                <span>Remove</span>
+                                ng-click="NowPlaying.removeTrackFromPlayList($index)">
+                                <span class="whiteTheme">Remove</span>
                             </div>
                         </div>
                     </div>
                     <div ng-if="!NowPlaying.playList.length">
-                        <h3 class="titleBarTheme">Playlist is empty.</h3>
+                        <h3>Playlist is empty.</h3>
                     </div>
                 </div>
             </div>
-            <a ng-click="NowPlaying.closePlayListOverlay()" class="primaryTheme" >Done</a>
+            <div class="margin-top-ten margin-bottom-ten">
+                <a ng-click="NowPlaying.closePlayListOverlay()" class="primaryTheme">Done</a>
+            </div>
         </div>
     </div>
 
     <!-- More Info Overlay -->
     <div ng-if="NowPlaying.openMoreInfo" class="overlay"
-         style="position:fixed; top:0; left:0; width:100%; height:100%;">
-        <div class="overlay-content"
-             style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
+        style="position:fixed; top:0; left:0; width:100%; height:100%;">
+        <div class="overlay-content" style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
             <div class="media-player-more-info">
                 <div class="media-holder margin-top-thirty">
                     <div class="media-inner text-center">
-                        <img ng-if="!NowPlaying.currentTrack.image" class="border-radius-two"
-                             src="http://app.buildfire.com/app/media/now-playing.png">
-                        <img ng-if="NowPlaying.currentTrack.image" class="border-radius-two"
-                             load-image="1x1" crop-width="140" crop-height="140" crop-type="crop"
-                             ng-src="{{NowPlaying.currentTrack.image}}">
+                        <img ng-if="NowPlaying.currentTrack.image" ng-src="{{NowPlaying.currentTrack.image}}">
                     </div>
                 </div>
                 <hr class="none">
-                <div class="media-player-info margin-top-fifteen">
-                    <div class="media-player-info margin-top-twenty">
+                <div class="media-player-info margin-top-twenty padding-left-ten padding-right-ten">
+                    <div class="ellipsis">
                         <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title}}</h4>
-
                         <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.artist}}</p>
                     </div>
-                    <div class="more-info-list padded">
-                        <div class="text-center item">
-                            <a ng-click="NowPlaying.getFromPlaylist()" class="whiteTheme">Go to Playlist</a>
-                        </div>
-                        <div class="text-center item">
-                            <a ng-click="NowPlaying.addToPlaylist(NowPlaying.currentTrack)" class="whiteTheme">Add to Playlist</a>
-                        </div>
-                        <div class="text-center item">
-                            <a ng-click="NowPlaying.removeFromPlaylist(NowPlaying.currentTrack)" class="whiteTheme">Remove from
-                                Playlist</a>
-                        </div>
-                        <!--<div class="text-center item">
-                            <a>Purchase</a>
-                        </div>
-                        <div class="text-center item">
-                            <a>Share</a>
-                        </div>-->
-                        <div class="text-center item">
-                            <a ng-click="NowPlaying.closeMoreInfoOverlay()" class="whiteTheme">Done</a>
-                        </div>
+                </div>
+                <hr class="none">
+                <div class="more-info-list padded">
+                    <div class="text-center item">
+                        <a ng-click="NowPlaying.getFromPlaylist()" class="whiteTheme">Go to Playlist</a>
+                    </div>
+                    <div class="text-center item">
+                        <a ng-click="NowPlaying.addToPlaylist(NowPlaying.currentTrack)" class="whiteTheme">Add to
+                            Playlist</a>
+                    </div>
+                    <div class="text-center item">
+                        <a ng-click="NowPlaying.removeFromPlaylist(NowPlaying.currentTrack)" class="whiteTheme">Remove
+                            from Playlist</a>
+                    </div>
+                    <!--<div class="text-center item">
+                        <a>Purchase</a>
+                    </div>
+                    <div class="text-center item">
+                        <a>Share</a>
+                    </div>-->
+                    <div class="text-center item">
+                        <a ng-click="NowPlaying.closeMoreInfoOverlay()" class="whiteTheme">Cancel</a>
                     </div>
                 </div>
             </div>
@@ -177,9 +187,8 @@
 
     <!-- Settings Overlay -->
     <div ng-if="NowPlaying.openSettings" class="overlay"
-         style="position:fixed; top:0; left:0; width:100%; height:100%;">
-        <div class="overlay-content"
-             style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
+        style="position:fixed; top:0; left:0; width:100%; height:100%;">
+        <div class="overlay-content" style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
             <div class="media-player-settings">
                 <div class="settings-list padded padding-top-zero">
                     <div class="item clearfix row">
@@ -188,9 +197,8 @@
                         </div>
                         <div class="col-md-2 pull-right text-right">
                             <div class="checkbox checkbox-primary checked no-label margin-zero">
-                                <input type="checkbox" id="playnext"
-                                       ng-model="NowPlaying.settings.autoPlayNext"
-                                       ng-change="NowPlaying.setSettings(NowPlaying.settings)">
+                                <input type="checkbox" id="playnext" ng-model="NowPlaying.settings.autoPlayNext"
+                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)">
                                 <label for="playnext"></label>
                             </div>
                         </div>
@@ -202,7 +210,7 @@
                         <div class="col-md-2 pull-right text-right">
                             <div class="checkbox checkbox-primary checked no-label margin-zero">
                                 <input type="checkbox" id="loop" ng-model="NowPlaying.settings.loopPlaylist"
-                                       ng-change="NowPlaying.setSettings(NowPlaying.settings)">
+                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)">
                                 <label for="loop"></label>
                             </div>
                         </div>
@@ -213,9 +221,8 @@
                         </div>
                         <div class="col-md-2 pull-right text-right">
                             <div class="checkbox checkbox-primary checked no-label margin-zero">
-                                <input type="checkbox" id="repeat"
-                                       ng-model="NowPlaying.settings.autoJumpToLastPosition"
-                                       ng-change="NowPlaying.setSettings(NowPlaying.settings)">
+                                <input type="checkbox" id="repeat" ng-model="NowPlaying.settings.autoJumpToLastPosition"
+                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)">
                                 <label for="repeat"></label>
                             </div>
                         </div>
@@ -226,16 +233,17 @@
                         </div>
                         <div class="col-md-2 pull-right text-right">
                             <div class="checkbox checkbox-primary checked no-label margin-zero">
-                                <input type="checkbox" id="playfromLast"
-                                       ng-model="NowPlaying.settings.shufflePlaylist"
-                                       ng-change="NowPlaying.setSettings(NowPlaying.settings)">
+                                <input type="checkbox" id="playfromLast" ng-model="NowPlaying.settings.shufflePlaylist"
+                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)">
                                 <label for="playfromLast"></label>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <a ng-click="NowPlaying.closeSettingsOverlay()" class="whiteTheme">Done</a>
+            <div class="margin-bottom-ten">
+                <a ng-click="NowPlaying.closeSettingsOverlay()" class="whiteTheme">Done</a>
+            </div>
         </div>
     </div>
-    </div>
+</div>

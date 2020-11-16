@@ -6,14 +6,16 @@
 
                 var WidgetMedia = this;
                 WidgetMedia.API = null;
+                WidgetMedia.mediaType = null;
                 WidgetMedia.showVideo = false;
                 WidgetMedia.showSource = false;
                 WidgetMedia.loadingVideo = false;
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
+
                 WidgetMedia.onPlayerReady = function ($API) {
                     WidgetMedia.API = $API;
                     WidgetMedia.loadingVideo = true;              
-                    if(WidgetMedia.media.data.design.skipMediaPage&&WidgetMedia.item.data.videoUrl)
+                    if(WidgetMedia.media.data.design.skipMediaPage&&WidgetMedia.item.data.videoUrl && !$rootScope.deepLinkNavigate)
                         WidgetMedia.toggleShowVideo();
                     };
 
@@ -62,7 +64,6 @@
                     WidgetMedia.media = {
                         data: {}
                     };
-                    console.error('Get Error---', err);
                 });
 
 
@@ -87,8 +88,30 @@
                 };
                 if (media) {
                     WidgetMedia.item = media;
+                    WidgetMedia.mediaType = media.data.audioUrl ? 'AUDIO' : (media.data.videoUrl ?  'VIDEO' : null);
+                  //  WidgetMedia.item.title.length > 27 ? WidgetMedia.item.title = WidgetMedia.item.title.substring(0, 24) + "..." : WidgetMedia.item.title; 
+                    WidgetMedia.item.srcUrl = media.data.audioUrl ? media.data.audioUrl : media.data.videoUrl;
+                    bookmarks.sync($scope);
                     WidgetMedia.changeVideoSrc();
                     WidgetMedia.iframeSrcUrl = $sce.trustAsUrl(WidgetMedia.item.data.srcUrl);
+                    if($rootScope.deepLinkNavigate && $rootScope.seekTime) {
+                        if(WidgetMedia.mediaType == 'VIDEO') {
+                            var retry = setInterval(function () {
+                                if (!WidgetMedia.API || !WidgetMedia.API.isReady || WidgetMedia.API.totalTime === 0) {
+                                    return;
+                                } else {
+                                    clearInterval(retry);
+                                    WidgetMedia.API.seekTime($rootScope.seekTime);
+                                    WidgetMedia.toggleShowVideo();
+                                    $rootScope.deepLinkNavigate = null;
+                                    $rootScope.seekTime = null;
+                                    setTimeout(function () {
+                                            WidgetMedia.API.play();
+                                    }, 500);
+                                }
+                            }, 500);
+                        } 
+                    }
                 }
                 else {
                     WidgetMedia.iframeSrcUrl = '';
@@ -161,7 +184,9 @@
                             break;
                     }
                 });
-
+                WidgetMedia.playAudio = function () {
+                    Location.go('#/nowplaying/' + WidgetMedia.item.id, true);
+                }
                 WidgetMedia.ApplayUpdates = function () {
                     if(WidgetMedia.media.data.design.skipMediaPage&&!WidgetMedia.item.data.videoUrl&&WidgetMedia.item.data.audioUrl)
                     {
@@ -222,6 +247,71 @@
                     WidgetMedia.loadingVideo = false;
                 };
 
+                buildfire.auth.onLogin(function () {
+                    bookmarks.sync($scope);
+                });
+
+                buildfire.auth.onLogout(function () {
+                    bookmarks.sync($scope);
+                });
+
+                WidgetMedia.bookmark = function ($event) {
+                    $event.stopImmediatePropagation();
+                    var isBookmarked = WidgetMedia.item.data.bookmarked ? true : false;
+                    if (isBookmarked) {
+                        bookmarks.delete($scope, WidgetMedia.item);
+                    } else {
+                        bookmarks.add($scope, WidgetMedia.item);
+                    }
+                };
+
+                WidgetMedia.share = function ($event) {
+                    $event.stopImmediatePropagation();
+
+                    var link = {};
+                    link.title = WidgetMedia.item.data.title;
+                    link.type = "website";
+                    link.description = WidgetMedia.item.data.summary ? WidgetMedia.item.data.summary : null;                    
+                    link.data = {
+                        "mediaId": WidgetMedia.item.id
+                    };
+                    
+                    buildfire.deeplink.generateUrl(link, function (err, result) {
+                        if (err) {
+                            console.error(err)
+                        } else {
+                            buildfire.device.share({
+                                subject: link.title,
+                                text: link.description,
+                                image: link.imageUrl,
+                                link: result.url
+                            }, function(err, result) {});
+
+                        }
+                    });
+                };
+
+                WidgetMedia.addNote = function () {
+                    var options = {
+                        itemId: WidgetMedia.item.id,
+                        title: WidgetMedia.item.data.title,
+                        imageUrl: WidgetMedia.item.data.topImage
+                    };
+                    if (WidgetMedia.mediaType === 'VIDEO' && WidgetMedia.API) {
+                        options.timeIndex = WidgetMedia.API.currentTime / 1000;
+                    }
+
+                    var callback = function (err, data) {
+                        if (err) throw err;
+                        console.log(data);
+                    };
+
+                    buildfire.notes.openDialog(options, callback);
+                };
+
+                WidgetMedia.openLink = function (link) {
+                    Buildfire.navigation.openWindow(link, '_system');
+                };
 
               var initializing = true;
                 $scope.$watch(function () {

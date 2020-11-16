@@ -5,10 +5,10 @@
   'use strict';
   angular
     .module('mediaCenterContent')
-  /**
-   * Inject dependency
-   */
-    .controller('ContentMediaCtrl', ['$scope', '$window', 'Buildfire', 'SearchEngine', 'DB','COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig', 'Orders',
+    /**
+     * Inject dependency
+     */
+    .controller('ContentMediaCtrl', ['$scope', '$window', 'Buildfire', 'SearchEngine', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig', 'Orders',
       function ($scope, $window, Buildfire, SearchEngine, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig, Orders) {
         /**
          * Breadcrumbs  related implementation
@@ -57,7 +57,7 @@
          * Options for image library
          * @type {{showIcons: boolean, multiSelection: boolean}}
          */
-        var selectImageOptions = {showIcons: false, multiSelection: false};
+        var selectImageOptions = { showIcons: false, multiSelection: false };
 
         var updating = false;
 
@@ -116,7 +116,7 @@
 
           }
           else {
-            ContentMedia.item = {data: data};
+            ContentMedia.item = { data: data };
             updateMasterItem(ContentMedia.item);
 
           }
@@ -160,7 +160,7 @@
          * @returns {*|boolean}
          */
         function isUnChanged(item) {
-          if (item.data.body && tinymce.editors[0] && angular.equals(tinymce.editors[0].getContent({format: 'text'}).trim(), "")) {
+          if (item.data.body && tinymce.editors[0] && angular.equals(tinymce.editors[0].getContent({ format: 'text' }).trim(), "")) {
             return angular.equals(filter(item), ContentMedia.masterItem);
           }
           else {
@@ -174,8 +174,8 @@
         function updateItemData() {
           updating = true;
           ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
-          if(!ContentMedia.item.data.deepLinkUrl) {
-            ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({id: ContentMedia.item.id});
+          if (!ContentMedia.item.data.deepLinkUrl) {
+            ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: ContentMedia.item.id });
           }
           if (ContentMedia.item.data.searchEngineId) {
             SearchEngineService.update(ContentMedia.item.data.searchEngineId, ContentMedia.item.data).then(function () {
@@ -184,7 +184,7 @@
           } else {
             update();
           }
-          
+
           function update() {
             MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then(function (data) {
               updateMasterItem(ContentMedia.item);
@@ -212,7 +212,7 @@
             MediaContent.insert(ContentMedia.item.data).then(function (data) {
               MediaContent.getById(data.id).then(function (item) {
                 ContentMedia.item = item;
-                ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({id: item.id});
+                ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: item.id });
                 updateMasterItem(item);
                 updating = false;
                 MediaCenterSettings.content.rankOfLastItem = item.data.rank;
@@ -234,7 +234,7 @@
                   name: EVENTS.ITEMS_CHANGE,
                   message: {}
                 });
-  
+
               }, function (err) {
                 resetItem();
                 console.error('Error while getting----------', err);
@@ -277,13 +277,13 @@
         }
 
         ContentMedia.addListImage = function () {
-          var options = {showIcons: false, multiSelection: false},
+          var options = { showIcons: false, multiSelection: false },
             listImgCB = function (error, result) {
               if (error) {
                 console.error('Error:', error);
               } else {
                 ContentMedia.item.data.topImage = result && result.selectedFiles && result.selectedFiles[0] || null;
-                if (!$scope.$$phase)$scope.$digest();
+                if (!$scope.$$phase) $scope.$digest();
               }
             };
           buildfire.imageLib.showDialog(options, listImgCB);
@@ -406,6 +406,13 @@
         ContentMedia.done = function () {
           //console.log('Done called------------------------------------------------------------------------');
           //Buildfire.history.pop();
+
+          Messaging.sendMessageToWidget({
+            name: EVENTS.ROUTE_CHANGE,
+            message: {
+              path: PATHS.HOME
+            }
+          });
           Location.goToHome();
         };
         /**
@@ -415,13 +422,13 @@
         /**
          * On rout change update the widget layout
          */
-        Messaging.sendMessageToWidget({
-          name: EVENTS.ROUTE_CHANGE,
-          message: {
-            path: PATHS.MEDIA,
-            id: ContentMedia.item.id || null
-          }
-        });
+        // Messaging.sendMessageToWidget({
+        //   name: EVENTS.ROUTE_CHANGE,
+        //   message: {
+        //     path: PATHS.MEDIA,
+        //     id: ContentMedia.item.id || null
+        //   }
+        // });
         /**
          * Watch on ContentMedia.item to see changes and call updateItemsWithDelay
          */

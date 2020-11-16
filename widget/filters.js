@@ -5,7 +5,7 @@
         .module('mediaCenterWidgetFilters', [])
         .filter('resizeImage', [function () {
             return function (url, width, height, type) {
-                return buildfire.imageLib.resizeImage(url, {
+                return buildfire.imageLib.local.resizeImage(url, {
                     width: width,
                     height: height
                 });
@@ -18,7 +18,7 @@
                     if(!url)
                     return '';
                 }
-                return buildfire.imageLib.cropImage(url, {
+                return buildfire.imageLib.local.cropImage(url, {
                     width: width,
                     height: height
                 });
