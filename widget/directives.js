@@ -28,17 +28,22 @@
                     attrs.$observe('finalSrc', function () {
                         var _img = attrs.finalSrc;
                         if (attrs.cropType == 'resize') {
-                            _img = buildfire.imageLib.resizeImage(_img, {
-                                size: 'xxs',
-                                aspect: attrs.loadImage
+                            Buildfire.imageLib.local.resizeImage(_img, {
+                                width: attrs.cropWidth,
+                                height: attrs.cropHeight
+                            }, function (err, imgUrl) {
+                                _img = imgUrl;
+                                replaceImg(_img);
                             });
                         } else {
-                            _img = buildfire.imageLib.cropImage(_img, {
-                                size: 'xxs',
-                                aspect: attrs.loadImage
+                            Buildfire.imageLib.local.cropImage(_img, {
+                                width: attrs.cropWidth,
+                                height: attrs.cropHeight
+                            }, function (err, imgUrl) {
+                                _img = imgUrl;
+                                replaceImg(_img);
                             });
                         }
-                        replaceImg(_img);
                     });
 
                     function replaceImg(finalSrc) {
@@ -70,7 +75,7 @@
                                 element.attr("style", 'background:url(' + img + ') !important; background-size: cover !important;');
                             } else {
                                 img = '';
-                                element.attr("style", 'background-color: wheat;');
+                                element.attr("style", 'background-color: white;');
                             }
                             element.css({
                                 'background-size': 'cover !important'
