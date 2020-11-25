@@ -36,19 +36,19 @@
                 <div class="item-actions">
                     <div class="link-list">
                         <a class="media-action" ng-click="WidgetMedia.playAudio();" ng-if="WidgetMedia.mediaType == 'AUDIO'">
-                            <i class="btn btn-success share glyphicon glyphicon-volume-up"></i>
+                            <i class="btn btn-success glyphicon glyphicon-volume-up"></i>
                         </a>
                         <a class="media-action video" ng-click="WidgetMedia.toggleShowVideo();"
                             ng-if="WidgetMedia.mediaType == 'VIDEO'">
-                            <i class="btn btn-success share glyphicon glyphicon-play"></i>
+                            <i class="btn btn-success glyphicon glyphicon-play"></i>
                         </a>
                         <a ng-if="WidgetMedia.item.srcUrl" ng-click="WidgetMedia.openLink(WidgetMedia.item.srcUrl)"
                             target="_blank">
-                            <i class="glyphicon glyphicon-screenshot"></i>
+                            <i class="glyphicon share glyphicon-screenshot"></i>
                         </a>
                     </div>
                     <div class="li-actions">
-                        <i class="share glyphicon glyphicon glyphicon-edit" ng-click="WidgetMedia.addNote()" ng-click=""
+                        <i class="glyphicon glyphicon glyphicon-edit" ng-click="WidgetMedia.addNote()" ng-click=""
                             role="button"></i>
                         <i class="share glyphicon glyphicon-share-alt" ng-click="WidgetMedia.share($event)" role="button"></i>
                         <i class="glyphicon icon bookmark" style="font-family: 'Glyphicons Halflings' !important;"
