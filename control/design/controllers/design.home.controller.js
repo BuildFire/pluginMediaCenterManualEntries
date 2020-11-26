@@ -12,7 +12,9 @@
                         descriptionHTML: '',
                         description: '',
                         sortBy: Orders.ordersMap.Newest,
-                        rankOfLastItem: 0
+                        rankOfLastItem: 0,
+                        allowShare: true,
+                        allowSource: true,
                     },
                     design: {
                         listLayout: "list-1",

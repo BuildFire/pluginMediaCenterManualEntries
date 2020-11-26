@@ -38,7 +38,9 @@
               descriptionHTML: '<p>&nbsp;<br></p>',
               description: '',
               sortBy: Orders.ordersMap.Newest,
-              rankOfLastItem: 0
+              rankOfLastItem: 0,
+              allowShare: true,
+              allowSource: true,
             },
             design: {
               listLayout: "list-1",
@@ -79,6 +81,8 @@
             rank: (MediaCenterSettings.content.rankOfLastItem || 0) + 10,
             links: [], // this will contain action links,
             searchEngineId: '',
+            allowShare: true,
+            allowSource: true,
           };
           /**
            * Define links sortable options

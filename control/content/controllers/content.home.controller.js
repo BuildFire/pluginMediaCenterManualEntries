@@ -20,7 +20,9 @@
                             descriptionHTML: '',
                             description: '',
                             sortBy: Orders.ordersMap.Newest,
-                            rankOfLastItem: 0
+                            rankOfLastItem: 0,
+                            allowShare: true,
+                            allowSource: true,
                         },
                         design: {
                             listLayout: "list-1",
@@ -30,6 +32,9 @@
                         }
                     }
                 };
+                var MediaContent = new DB(COLLECTIONS.MediaContent);
+                var MediaCenter = new DB(COLLECTIONS.MediaCenter);
+                var SearchEngineService = new SearchEngine(COLLECTIONS.MediaContent);
 
                 if (MediaCenterInfo) {
                     updateMasterInfo(MediaCenterInfo);
@@ -40,6 +45,11 @@
                     updateMasterInfo(_infoData);
                     ContentHome.info = _infoData;
                 }
+                if (typeof (ContentHome.info.data.content.allowShare) == 'undefined')
+                ContentHome.info.data.content.allowShare = true;
+                if (typeof (ContentHome.info.data.content.allowSource) == 'undefined')
+                ContentHome.info.data.content.allowSource = true;
+                MediaCenter.save(ContentHome.info.data).then(function (result) {});
 
                 AppConfig.setSettings(MediaCenterInfo.data);
                 AppConfig.setAppId(MediaCenterInfo.id);
@@ -61,9 +71,6 @@
                  * Create instance of MediaContent, MediaCenter db collection
                  * @type {DB}
                  */
-                var MediaContent = new DB(COLLECTIONS.MediaContent);
-                var MediaCenter = new DB(COLLECTIONS.MediaCenter);
-                var SearchEngineService = new SearchEngine(COLLECTIONS.MediaContent);
 
                 var _skip = 0,
                     _limit = 10,

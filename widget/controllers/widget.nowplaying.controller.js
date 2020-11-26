@@ -392,6 +392,8 @@
                         case COLLECTIONS.MediaCenter:
                             if (event.data) {
                                 $rootScope.design = event.data.design;
+                                $rootScope.allowShare = event.data.content.allowShare;
+                                $rootScope.allowSource = event.data.content.allowSource;
                             }
                             break;
                     }

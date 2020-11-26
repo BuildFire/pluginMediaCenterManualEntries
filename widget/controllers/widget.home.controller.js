@@ -13,7 +13,9 @@
                             descriptionHTML: '<p>&nbsp;<br></p>',
                             description: '',
                             sortBy: Orders.ordersMap.Newest,
-                            rankOfLastItem: 0
+                            rankOfLastItem: 0,
+                            allowShare: true,
+                            allowSource: true,
                         },
                         design: {
                             listLayout: "list-1",
@@ -46,7 +48,8 @@
                     }
                     WidgetHome.media = MediaCenterInfo;
                     $rootScope.backgroundImage = MediaCenterInfo.data.design.backgroundImage;
-
+                    $rootScope.allowShare = MediaCenterInfo.data.content.allowShare;
+                    $rootScope.allowSource = MediaCenterInfo.data.content.allowSource;
                 },
                     function fail() {
                         MediaCenterInfo = _infoData;
@@ -151,7 +154,9 @@
                     if (event.tag == "MediaCenter") {
                         if (event.data) {
                             WidgetHome.media.data = event.data;
-                            $rootScope.backgroundImage = WidgetHome.media.data.design.backgroundImage;
+                            $rootScope.backgroundImage = WidgetHome.media.data.design && WidgetHome.media.data.design.backgroundImage;
+                            $rootScope.allowShare = WidgetHome.media.data.content.allowShare;
+                            $rootScope.allowSource = WidgetHome.media.data.content.allowSource;
                             $scope.$apply();
                             if (view && event.data.content && event.data.content.images) {
                                 view.loadItems(event.data.content.images);
@@ -405,7 +410,7 @@
                         console.log("SHOW FEED SYNC")
                         MediaCenter.get().then(function success(result) {
                             WidgetHome.media = result;
-                            if (WidgetHome.media.data.design.skipMediaPage) $rootScope.skipMediaPage = true;
+                            if (WidgetHome.media.data.design && WidgetHome.media.data.design.skipMediaPage) $rootScope.skipMediaPage = true;
                         },
                             function fail() {
                                 WidgetHome.media = _infoData;

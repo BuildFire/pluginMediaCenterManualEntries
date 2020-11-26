@@ -42,7 +42,7 @@
                             ng-if="WidgetMedia.mediaType == 'VIDEO'">
                             <i class="btn btn-success glyphicon glyphicon-play"></i>
                         </a>
-                        <a ng-if="WidgetMedia.item.srcUrl" ng-click="WidgetMedia.openLink(WidgetMedia.item.srcUrl)"
+                        <a ng-if="WidgetMedia.item.srcUrl && allowSource" ng-click="WidgetMedia.openLink(WidgetMedia.item.srcUrl)"
                             target="_blank">
                             <i class="glyphicon share glyphicon-screenshot"></i>
                         </a>
@@ -50,7 +50,7 @@
                     <div class="li-actions">
                         <i class="glyphicon glyphicon glyphicon-edit" ng-click="WidgetMedia.addNote()" ng-click=""
                             role="button"></i>
-                        <i class="share glyphicon glyphicon-share-alt" ng-click="WidgetMedia.share($event)" role="button"></i>
+                        <i class="share glyphicon glyphicon-share-alt" ng-if="allowShare" ng-click="WidgetMedia.share($event)" role="button"></i>
                         <i class="glyphicon icon bookmark" style="font-family: 'Glyphicons Halflings' !important;"
                             ng-class="{ 'glyphicon-star-empty' : !WidgetMedia.item.data.bookmarked, 'glyphicon-star' : WidgetMedia.item.data.bookmarked }"
                             ng-click="WidgetMedia.bookmark($event)" role="button"></i>
