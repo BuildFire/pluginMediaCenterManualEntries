@@ -27,7 +27,7 @@
             </div>
         </div>
         <div class="media-player-info ellipsis">
-            <span class="glyphicon glyphicon-share-alt whiteTheme btn btn-icon" style="visibility: hidden;" ng-click="NowPlaying.share($event)"
+            <span class="glyphicon glyphicon-share-alt whiteTheme btn btn-icon" ng-style="{'visibility': allowShare ? 'visible' : 'hidden'}" ng-click="NowPlaying.share($event)"
                 role="button"></span>
             <div class="media-title ellipsis">
                 <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title}}</h4>

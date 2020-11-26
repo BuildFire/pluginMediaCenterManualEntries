@@ -174,6 +174,8 @@
                             var old=WidgetMedia.media.data.design.itemLayout;
                             WidgetMedia.media = event;
                             $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
+                            $rootScope.allowShare = WidgetMedia.media.data.content.allowShare;
+                            $rootScope.allowSource = WidgetMedia.media.data.content.allowSource;
                             WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
                             if(old == WidgetMedia.media.data.design.itemLayout)WidgetMedia.ApplayUpdates();
                             $scope.$apply();
