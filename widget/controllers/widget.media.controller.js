@@ -89,8 +89,8 @@
                 if (media) {
                     WidgetMedia.item = media;
                     WidgetMedia.mediaType = media.data.audioUrl ? 'AUDIO' : (media.data.videoUrl ?  'VIDEO' : null);
-                  //  WidgetMedia.item.title.length > 27 ? WidgetMedia.item.title = WidgetMedia.item.title.substring(0, 24) + "..." : WidgetMedia.item.title; 
-                    WidgetMedia.item.srcUrl = media.data.audioUrl ? media.data.audioUrl : media.data.videoUrl;
+                    WidgetMedia.item.srcUrl = media.data.srcUrl ? media.data.srcUrl 
+                    : (media.data.audioUrl ? media.data.audioUrl : media.data.videoUrl);
                     bookmarks.sync($scope);
                     WidgetMedia.changeVideoSrc();
                     WidgetMedia.iframeSrcUrl = $sce.trustAsUrl(WidgetMedia.item.data.srcUrl);
