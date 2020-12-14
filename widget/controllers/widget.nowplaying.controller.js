@@ -261,8 +261,8 @@
                 NowPlaying.removeFromPlaylist = function (track, index) {
                     Modals.removeTrackModal().then(function (data) {
                         console.log('Data-------------------in success of remove track popup-0-', data);
+                        buildfire.components.toast.showToastMessage({text: "Removed from playlist"}, console.log);
                         if (NowPlaying.playList) {
-                            buildfire.components.toast.showToastMessage({text: "Removed from playlist"}, console.log);
                             NowPlaying.playList.filter(function (val, index) {
                                 if (val.url == track.url) {
                                     audioPlayer.removeFromPlaylist(index);
