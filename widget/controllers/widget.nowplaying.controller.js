@@ -253,16 +253,20 @@
                     audioPlayer.settings.set(NowPlaying.settings);
                 };
                 NowPlaying.addToPlaylist = function (track) {
-                    if (track)
+                    if (track) {
+                        buildfire.components.toast.showToastMessage({text: "Added to playlist"}, console.log);
                         audioPlayer.addToPlaylist(track);
+                    }
                 };
                 NowPlaying.removeFromPlaylist = function (track, index) {
                     Modals.removeTrackModal().then(function (data) {
                         console.log('Data-------------------in success of remove track popup-0-', data);
+                        buildfire.components.toast.showToastMessage({text: "Removed from playlist"}, console.log);
                         if (NowPlaying.playList) {
                             NowPlaying.playList.filter(function (val, index) {
-                                if (val.url == track.url)
+                                if (val.url == track.url) {
                                     audioPlayer.removeFromPlaylist(index);
+                                }
                                 return index;
 
                             });
@@ -277,6 +281,7 @@
                     Modals.removeTrackModal().then(function (data) {
                         console.log('Data-------------------in success of remove track popup-1-', data);
                         audioPlayer.removeFromPlaylist(index);
+                        buildfire.components.toast.showToastMessage({text: "Removed from playlist"}, console.log);
                     },
                         function (err) {
                             // Do something on error
