@@ -835,6 +835,9 @@ input[type=range] {
 	filter: brightness(0.8);
 }
 
+.wysiwyg img{
+	filter: brightness(1) !important;
+}
 .li-actions i {
     font-size: 20px;
     display: inline-block;

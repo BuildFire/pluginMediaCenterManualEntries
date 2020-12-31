@@ -3,11 +3,11 @@
         <div class="media-center-banner clearfix">
             <div ng-style="WidgetHome.data.content.images.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}" id="carousel" build-fire-carousel=""></div>
         </div>
-        <div class="text-left padded padding-bottom-zero clearfix text-overlay" ng-if="WidgetHome.showDescription()">
+        <div class="text-left padded padding-bottom-zero clearfix text-overlay wysiwyg" ng-if="WidgetHome.showDescription()">
             <p ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">
             </p>
         </div>
-
+        
         <div class="list-layout"
              infinite-scroll="WidgetHome.loadMore()"
              infinite-scroll-distance="1"
