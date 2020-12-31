@@ -831,7 +831,7 @@ input[type=range] {
 }
 
 .li-actions-item i { padding: 5px; } 
-img {
+:not(.plugin-slide)>img{
 	filter: brightness(0.8);
 }
 
@@ -851,6 +851,10 @@ img {
 	border-radius: 40px;
 	width: 100%;
 	height: 40px;
+}
+.offset{
+	top:unset !important;
+	bottom: 30px;
 }
 .layout1 .li-actions-item i,
 .layout4 .li-actions-item i,

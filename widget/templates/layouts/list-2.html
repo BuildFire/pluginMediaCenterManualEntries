@@ -32,7 +32,7 @@
                         <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
                         
                         <div class="li-actions-item">
-                            <i class="glyphicon bookmark star" ng-class="{ 'glyphicon-star-empty' : !item.data.bookmarked, 'glyphicon-star' : item.data.bookmarked }" ng-click="WidgetHome.bookmark($event, item)" role="button"></i>
+                            <i class="glyphicon bookmark star" ng-class="{ 'glyphicon-star-empty' : !item.data.bookmarked, 'glyphicon-star' : item.data.bookmarked, 'offset' : item.data.mediaDate  }" ng-click="WidgetHome.bookmark($event, item)" role="button"></i>
                         </div>
                     </div>
                 </div>
