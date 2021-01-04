@@ -855,10 +855,6 @@ input[type=range] {
 	width: 100%;
 	height: 40px;
 }
-.offset{
-	top:unset !important;
-	bottom: 30px;
-}
 .layout1 .li-actions-item i,
 .layout4 .li-actions-item i,
 .layout3 .list-item-media .li-actions-item{
