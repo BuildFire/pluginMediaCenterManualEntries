@@ -49,11 +49,12 @@
                     </div>
                     <div class="li-actions">
                         <i class="glyphicon glyphicon glyphicon-edit" ng-click="WidgetMedia.addNote()" ng-click=""
-                            role="button"></i>
+                        role="button"></i>
                         <i class="share glyphicon glyphicon-share-alt" ng-if="allowShare" ng-click="WidgetMedia.share($event)" role="button"></i>
                         <i class="glyphicon icon bookmark" style="font-family: 'Glyphicons Halflings' !important;"
-                            ng-class="{ 'glyphicon-star-empty' : !WidgetMedia.item.data.bookmarked, 'glyphicon-star' : WidgetMedia.item.data.bookmarked }"
-                            ng-click="WidgetMedia.bookmark($event)" role="button"></i>
+                        ng-class="{ 'glyphicon-star-empty' : !WidgetMedia.item.data.bookmarked, 'glyphicon-star' : WidgetMedia.item.data.bookmarked }"
+                        ng-click="WidgetMedia.bookmark($event)" role="button"></i>
+                        <i ng-if="WidgetMedia.item.data.links.length" class="glyphicon glyphicon-align-justify" ng-click="WidgetMedia.openLinks(WidgetMedia.item.data.links)" role="button"></i>
                     </div>
                 </div>
                 <!-- <hr class="small"> -->
