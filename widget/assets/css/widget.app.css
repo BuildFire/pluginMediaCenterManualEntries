@@ -825,7 +825,7 @@ input[type=range] {
 .li-actions i, .li-actions-item i {
     position: relative;
     display: block;
-    padding: 16px;
+    padding: 9px;
     flex-shrink: 0;
     top: 0;
 }

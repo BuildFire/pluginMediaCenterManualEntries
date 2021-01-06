@@ -9,7 +9,7 @@
                     <!--ng-style="WidgetMedia.showVideo == false ? {'min-height': '192px'} : {}" style="width: 100% !important;max-height:192px !important"
                          -->
                     <img data-ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage || ( WidgetMedia.media.data.design.skipMediaPage && WidgetMedia.item.data.videoUrl )"
-                        load-image="16x9" style="min-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
+                        load-image="16x9" style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
                         crop-width="1280" crop-height="720" crop-type="crop"
                         data-final-src="{{WidgetMedia.item.data.topImage}}" />
 
@@ -43,6 +43,7 @@
                     <i class="glyphicon icon bookmark" style="font-family: 'Glyphicons Halflings' !important;"
                         ng-class="{ 'glyphicon-star-empty' : !WidgetMedia.item.data.bookmarked, 'glyphicon-star' : WidgetMedia.item.data.bookmarked }"
                         ng-click="WidgetMedia.bookmark($event)" role="button"></i>
+                        <i ng-if="WidgetMedia.item.data.links.length" class="glyphicon glyphicon-align-justify" ng-click="WidgetMedia.openLinks(WidgetMedia.item.data.links)" role="button"></i>
                 </div>
             </div>
             <!-- <hr class="small" ng-if="WidgetMedia.item.data.body"> -->
