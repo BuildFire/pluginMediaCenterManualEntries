@@ -51,6 +51,30 @@
     margin: 0 auto;
 }
 
+.layout3 .titleFlexBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.layout3 .titleFlexBox .li-actions-item .star {
+  position: relative;
+  line-height: 1;
+  margin-right: 0;
+}
+
+.layout3 .titleFlexBox .li-actions-item .share {
+  right: 10px;
+  top: 1px;
+}
+
+.layout3 .titleFlexBox .action {
+  margin-left: 15px;
+}
+.layout3 .titleFlexBox .li-actions-item {
+  display: flex;
+}
+
 @media (max-height: 600px) { 
     .holder.now-playing .media-holder, .holder.now-playing .media-holder .media-inner img {
         max-height: 120px;
