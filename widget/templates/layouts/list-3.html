@@ -20,18 +20,19 @@
                     </div>
                 </div>
                 <div class="padded text-left text-overlay">
-                    <p class="text-primary ellipsis margin-zero">
+                    <div class="titleFlexBox">
+                      <p class="text-primary ellipsis margin-zero">
                         <a class="text-primary">{{item.data.title}}</a>
-                    </p>
-                    <p class="margin-bottom-zero" style="font-size:13px;">{{item.data.summary}}</p>
-                    <span class="list-item-date" data-ng-if="item.data.mediaDate" style="font-size:11px; font-style:italic; margin-top:-4px;">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
-                    <div class="action">
+                      </p>
+                      <div class="action">
                         <div class="li-actions-item">
                             <i class="share glyphicon glyphicon-share-alt star" ng-if="allowShare" ng-click="WidgetHome.share($event, item)" role="button"></i>
                             <i class="glyphicon bookmark star" ng-class="{ 'glyphicon-star-empty' : !item.data.bookmarked, 'glyphicon-star' : item.data.bookmarked }" ng-click="WidgetHome.bookmark($event, item)" role="button"></i>
                         </div>
+                      </div>
                     </div>
-                    
+                    <p class="margin-bottom-zero" style="font-size:13px;">{{item.data.summary}}</p>
+                    <span class="list-item-date" data-ng-if="item.data.mediaDate" style="font-size:11px; font-style:italic; margin-top:-4px;">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
                 </div>
             </div>
         </div>
