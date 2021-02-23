@@ -12,7 +12,9 @@
                     media.data.audioUrl = media.data.audioUrl.replace("www.dropbox", "dl.dropbox").split("?dl=")[0];
                 }
                 NowPlaying.currentTrack = new Track(media.data);
-                NowPlaying.currentTrack.image = media.data.topImage;
+                NowPlaying.currentTrack.backgroundImage = media.data.image ? media.data.image : media.data.topImage;
+
+                NowPlaying.currentTrack.image = media.data.topImage;;
                 NowPlaying.currentTrack.title = media.data.title;
                 if ($rootScope.seekTime) NowPlaying.currentTrack.startAt = $rootScope.seekTime;
 
@@ -122,8 +124,11 @@
                             NowPlaying.duration = e.data.duration;
                             break;
                         case 'audioEnded':
-                            NowPlaying.playing = false;
-                            NowPlaying.paused = false;
+                            if(!NowPlaying.settings.autoPlayNext) {
+                                NowPlaying.playing = false;
+                                NowPlaying.paused = false;
+                            }
+                            
                             break;
                         case 'pause':
                             NowPlaying.playing = false;
@@ -166,6 +171,7 @@
                         setTimeout(() => {
                             try {
                                 audioPlayer.play(NowPlaying.currentTrack);
+                                audioPlayer.getPlaylist(console.log)
                             }
                             catch (err) {
                             }
@@ -249,6 +255,7 @@
                 NowPlaying.loopPlaylist = function () {
                     if (NowPlaying.settings) {
                         NowPlaying.settings.loopPlaylist = NowPlaying.settings.loopPlaylist ? false : true;
+                        NowPlaying.settings.autoPlayNext = !NowPlaying.settings.autoPlayNext;
                     }
                     audioPlayer.settings.set(NowPlaying.settings);
                 };
