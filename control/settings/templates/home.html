@@ -1,19 +1,39 @@
 <div class="item row clearfix">
-    <div class="labels col-md-3 padding-right-zero pull-left">
+    <div class="labels col-md-5 padding-right-zero pull-left">
         <span>Allow Sharing</span>
     </div>
-    <div class="main col-md-9 pull-right">
-    <input type="checkbox" name="allowShare" id="allowShare" ng-model="Settings.data.content.allowShare"
+    <div class="main col-md-7 pull-right">
+    <input type="checkbox" class="big-checkbox" name="allowShare" id="allowShare" ng-model="Settings.data.content.allowShare"
     ng-change="Settings.setSettings()">
     </div>
 </div>
 <br>
 <div class="item row clearfix">
-    <div class="labels col-md-3 padding-right-zero pull-left">
+    <div class="labels col-md-5 padding-right-zero pull-left">
         <span>Show Source Icon</span>
     </div>
-    <div class="main col-md-9 pull-right">
-    <input type="checkbox" name="allowShare" id="allowShare" ng-model="Settings.data.content.allowSource"
+    <div class="main col-md-7 pull-right">
+    <input type="checkbox" class="big-checkbox" name="allowShare" id="allowShare" ng-model="Settings.data.content.allowSource"
+    ng-change="Settings.setSettings()">
+    </div>
+</div>
+<br>
+<div class="item row clearfix">
+    <div class="labels col-md-5 padding-right-zero pull-left">
+        <span>Transfer Audio Content To The PlayList</span>
+    </div>
+    <div class="main col-md-7 pull-right">
+    <input type="checkbox" class="big-checkbox" name="transferAudioContentToPlayList" id="transferAudioContentToPlayList" ng-model="Settings.data.content.transferAudioContentToPlayList"
+    ng-change="Settings.setSettings()">
+    </div>
+</div>
+<br>
+<div class="item row clearfix">
+    <div class="labels col-md-5 padding-right-zero pull-left">
+        <span>Force Auto Play</span>
+    </div>
+    <div class="main col-md-7 pull-right">
+    <input type="checkbox" class="big-checkbox" name="forceAutoPlay" id="forceAutoPlay" ng-model="Settings.data.content.forceAutoPlay"
     ng-change="Settings.setSettings()">
     </div>
 </div>

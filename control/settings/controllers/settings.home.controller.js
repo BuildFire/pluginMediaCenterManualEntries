@@ -12,6 +12,10 @@
                     Settings.data.content.allowShare = true;
                 if (typeof (Settings.data.content.allowSource) == 'undefined')
                     Settings.data.content.allowSource = true;
+                if (typeof (Settings.data.content.transferAudioContentToPlayList) == 'undefined')
+                    Settings.data.content.transferAudioContentToPlayList = false;
+                if (typeof (Settings.data.content.forceAutoPlay) == 'undefined')
+                    Settings.data.content.forceAutoPlay = false;
             }, function (err) {
                 console.error(err);
             });

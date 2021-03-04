@@ -8,6 +8,8 @@
                 var NowPlaying = this;
                 NowPlaying.currentTime = 0;
                 NowPlaying.swiped = [];
+                NowPlaying.forceAutoPlay=$rootScope.forceAutoPlay;
+                NowPlaying.transferPlaylist=$rootScope.transferAudioContentToPlayList;
                 if (media.data.audioUrl.includes("www.dropbox") || media.data.audioUrl.includes("dl.dropbox.com")) {
                     media.data.audioUrl = media.data.audioUrl.replace("www.dropbox", "dl.dropbox").split("?dl=")[0];
                 }
@@ -37,11 +39,59 @@
                  * audioPlayer is Buildfire.services.media.audioPlayer.
                  */
                 var audioPlayer = Buildfire.services.media.audioPlayer;
-
                 audioPlayer.settings.get(function (err, setting) {
                     NowPlaying.settings = setting;
                     NowPlaying.volume = setting.volume;
+                    NowPlaying.forceAutoPlayer();
+                    audioPlayer.settings.set(NowPlaying.settings); 
+                    setTimeout(() => {
+                        NowPlaying.playTrack();
+                    }, 300);
                 });
+
+                NowPlaying.forceAutoPlayer = function (){
+                    if(!NowPlaying.settings.autoPlayNext&&NowPlaying.forceAutoPlay){
+                        NowPlaying.settings.autoPlayNext=true;
+                        NowPlaying.settings.autoJumpToLastPosition=true;
+                    }
+                     if(NowPlaying.transferPlaylist)
+                        audioPlayer.getPlaylist(function(err,userPlayList){
+                            var result= $rootScope.myItems;
+                            var filteredPlaylist=userPlayList.tracks.filter(el=>{return el.plugin && el.plugin == buildfire.context.pluginId;});
+
+                            var playlistSongs=filteredPlaylist.map(el=>{return el.url;}).join('');
+                            var playlistTitles=filteredPlaylist.map(el=>{return el.title;}).join('');
+
+                            var pluginSongs=result.filter(el=>el.data.audioUrl&&el.data.audioUrl.length>0);
+                            var pluginListSongs=pluginSongs.map(el=>{return el.data.audioUrl;}).join('');
+                            var pluginListTitles=pluginSongs.map(el=>{return el.data.title;}).join('');
+
+                            if(playlistSongs!=pluginListSongs||playlistTitles!=pluginListTitles){
+                                for(var i=(filteredPlaylist.length-1);i>=0;i--){
+                                    var index=NowPlaying.findTrackIndex(userPlayList,filteredPlaylist[i]);
+                                    if(index!=-1)
+                                        audioPlayer.removeFromPlaylist(index);
+                                } 
+                                pluginSongs=pluginSongs.map(el=>{
+                                        let obj=(!el.data)?el:el.data;
+                                        return {title:obj.title,url:obj.audioUrl,image:obj.topImage,
+                                        album:obj.title,startAt:0,lastPosition:0,backgroundImage:obj.image,
+                                        plugin:buildfire.context.pluginId, myId:el.id
+                                    };
+                                    });
+                                NowPlaying.playList=[];
+                                for(var i=0;i<pluginSongs.length;i++){
+                                    audioPlayer.addToPlaylist(pluginSongs[i]);
+                                    NowPlaying.playList.push(pluginSongs[i]);
+                                }
+                                NowPlaying.playlistPlay(pluginSongs[0], 0);
+                            }
+                        });
+                }
+
+                NowPlaying.findTrackIndex = function(officialList,element){
+                    return officialList.tracks.map(el=>{return (el.myId)?el.myId:"none";}).indexOf(element.myId);
+                }
 
                 NowPlaying.changeVolume = function (volume) {
                     audioPlayer.settings.get(function (err, setting) {
@@ -114,8 +164,25 @@
 
                 audioPlayer.onEvent(function (e) {
                     switch (e.event) {
+                        case 'play':
+                            NowPlaying.playing = true;
+                            if(NowPlaying.settings.autoPlayNext&&NowPlaying.transferPlaylist&&NowPlaying.forceAutoPlay){
+                                audioPlayer.settings.set({autoPlayNext:false});
+                                setTimeout(() => {
+                                    audioPlayer.settings.set({autoPlayNext:true});
+                                }, 500);
+                            }
+                            break;
                         case 'timeUpdate':
                             var ready = e.data.duration > 0;
+                            if(ready&&e.data.currentTime>=e.data.duration&&NowPlaying.transferPlaylist&&NowPlaying.forceAutoPlay){
+                                audioPlayer.pause();
+                                audioPlayer.setTime(0.1);
+                                setTimeout(() => {
+                                    NowPlaying.playing=true;
+                                    audioPlayer.play();
+                                }, 500);
+                            }
                             if (ready && first && NowPlaying.currentTrack.startAt) {
                                 NowPlaying.changeTime(NowPlaying.currentTrack.startAt);
                                 first = false;
@@ -128,7 +195,6 @@
                                 NowPlaying.playing = false;
                                 NowPlaying.paused = false;
                             }
-                            
                             break;
                         case 'pause':
                             NowPlaying.playing = false;
@@ -165,20 +231,34 @@
                         });
                     }
                     NowPlaying.playing = true;
+                    if(NowPlaying.transferPlaylist && NowPlaying.forceAutoPlay)
+                        audioPlayer.getPlaylist(function(err,data){
+                            console.log("koja je lista",data);
+                            var index=NowPlaying.findTrackIndex(data,{myId:NowPlaying.item.id});
+                            console.log("koji je index",index,NowPlaying.item);
+                            if(index!=-1)
+                                NowPlaying.callPlayFunction(index);
+                        });
+                    else  NowPlaying.callPlayFunction(-1);
+                };
+
+                NowPlaying.callPlayFunction = function(index){
                     if (NowPlaying.paused) {
                         audioPlayer.play();
                     } else {
                         setTimeout(() => {
                             try {
-                                audioPlayer.play(NowPlaying.currentTrack);
-                                audioPlayer.getPlaylist(console.log)
+                                if(index!=-1){
+                                    audioPlayer.play(index);
+                                }
+                                else audioPlayer.play(NowPlaying.currentTrack);
                             }
                             catch (err) {
                             }
                         }, 500);
 
                     }
-                };
+                }
 
 
                 NowPlaying.playlistPlay = function (track) {
@@ -322,6 +402,10 @@
                     });
                 };
                 NowPlaying.setSettings = function (settings) {
+                    if(!settings.autoPlayNext&&NowPlaying.forceAutoPlay){
+                        settings.autoJumpToLastPosition=true;
+                        settings.autoPlayNext=true;
+                    }
                     var newSettings = new AudioSettings(settings);
                     audioPlayer.settings.set(newSettings);
                 };
@@ -406,6 +490,13 @@
                                 $rootScope.design = event.data.design;
                                 $rootScope.allowShare = event.data.content.allowShare;
                                 $rootScope.allowSource = event.data.content.allowSource;
+                                $rootScope.transferAudioContentToPlayList = event.data.content.transferAudioContentToPlayList;
+                                $rootScope.forceAutoPlay = event.data.content.forceAutoPlay;
+                                NowPlaying.forceAutoPlay=$rootScope.forceAutoPlay;
+                                NowPlaying.transferPlaylist=$rootScope.transferAudioContentToPlayList;
+                                if (!$scope.$$phase) {
+                                    $scope.$digest();
+                                }
                             }
                             break;
                     }
@@ -468,9 +559,10 @@
                 /**
                  * Auto play the track
                  */
-                $timeout(function () {
-                    NowPlaying.playTrack();  
-                }, 0);
+/*                 $timeout(function () {
+                    if (NowPlaying.settings)
+                         NowPlaying.playTrack();  
+                }, 0);  */
             }
         ]);
 })(window.angular);

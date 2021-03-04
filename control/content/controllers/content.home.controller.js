@@ -23,6 +23,8 @@
                             rankOfLastItem: 0,
                             allowShare: true,
                             allowSource: true,
+                            transferAudioContentToPlayList:false,
+                            forceAutoPlay:false
                         },
                         design: {
                             listLayout: "list-1",
@@ -49,6 +51,10 @@
                 ContentHome.info.data.content.allowShare = true;
                 if (typeof (ContentHome.info.data.content.allowSource) == 'undefined')
                 ContentHome.info.data.content.allowSource = true;
+                if (typeof (ContentHome.info.data.content.transferAudioContentToPlayList) == 'undefined')
+                ContentHome.info.data.content.transferAudioContentToPlayList = false;
+                if (typeof (ContentHome.info.data.content.forceAutoPlay) == 'undefined')
+                ContentHome.info.data.content.forceAutoPlay = false;
                 MediaCenter.save(ContentHome.info.data).then(function (result) {});
 
                 AppConfig.setSettings(MediaCenterInfo.data);
