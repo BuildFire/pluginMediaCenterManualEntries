@@ -1,3 +1,4 @@
+<h4 style="margin-bottom:22px;">User control settings</h4>
 <div class="item row clearfix">
     <div class="labels col-md-5 padding-right-zero pull-left">
         <span>Allow Sharing</span>
@@ -17,17 +18,8 @@
     ng-change="Settings.setSettings()">
     </div>
 </div>
-<br>
-<div class="item row clearfix">
-    <div class="labels col-md-5 padding-right-zero pull-left">
-        <span>Transfer Audio Content To The PlayList</span>
-    </div>
-    <div class="main col-md-7 pull-right">
-    <input type="checkbox" class="big-checkbox" name="transferAudioContentToPlayList" id="transferAudioContentToPlayList" ng-model="Settings.data.content.transferAudioContentToPlayList"
-    ng-change="Settings.setSettings()">
-    </div>
-</div>
-<br>
+<hr class="ng-scope">
+<h4 style="margin-bottom:22px;">Playlist settings</h4>
 <div class="item row clearfix">
     <div class="labels col-md-5 padding-right-zero pull-left">
         <span>Force Auto Play</span>
@@ -37,3 +29,15 @@
     ng-change="Settings.setSettings()">
     </div>
 </div>
+<p class="info" style="margin-top:8px">Note: Users will be disabled from turning off the autoplay.</p>
+<br>
+<div class="item row clearfix">
+    <div class="labels col-md-5 padding-right-zero pull-left">
+        <span>Transfer Audio Content To The Playlist</span>
+    </div>
+    <div class="main col-md-7 pull-right">
+        <input type="checkbox" class="big-checkbox" name="transferAudioContentToPlayList" id="transferAudioContentToPlayList" ng-model="Settings.data.content.transferAudioContentToPlayList"
+        ng-change="Settings.setSettings()">
+    </div>
+</div>
+<p class="info" style="margin-top:8px">Note: Users will be disabled from adding or removing content to the playlist.</p>
