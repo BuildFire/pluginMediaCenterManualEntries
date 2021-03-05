@@ -22,22 +22,12 @@
 <h4 style="margin-bottom:22px;">Playlist settings</h4>
 <div class="item row clearfix">
     <div class="labels col-md-5 padding-right-zero pull-left">
-        <span>Force Auto Play</span>
+        <span>Play All</span>
     </div>
     <div class="main col-md-7 pull-right">
     <input type="checkbox" class="big-checkbox" name="forceAutoPlay" id="forceAutoPlay" ng-model="Settings.data.content.forceAutoPlay"
-    ng-change="Settings.setSettings()">
+    ng-change="Settings.setAutoPlay()">
     </div>
 </div>
-<p class="info" style="margin-top:8px">Note: Users will be disabled from turning off the autoplay.</p>
-<br>
-<div class="item row clearfix">
-    <div class="labels col-md-5 padding-right-zero pull-left">
-        <span>Transfer Audio Content To The Playlist</span>
-    </div>
-    <div class="main col-md-7 pull-right">
-        <input type="checkbox" class="big-checkbox" name="transferAudioContentToPlayList" id="transferAudioContentToPlayList" ng-model="Settings.data.content.transferAudioContentToPlayList"
-        ng-change="Settings.setSettings()">
-    </div>
-</div>
-<p class="info" style="margin-top:8px">Note: Users will be disabled from adding or removing content to the playlist.</p>
+<p class="info" style="margin-top:8px">Note: A complete list of audio files will be added to the user playlist.</p>
+<p class="info">Note: Users will be disabled from turning off the autoplay.</p>

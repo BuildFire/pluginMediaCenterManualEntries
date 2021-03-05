@@ -23,6 +23,11 @@
             Settings.setSettings = function () {
                 MediaCenter.save(Settings.data).then(function (result) {});
             }
+
+            Settings.setAutoPlay = function(){
+                Settings.data.content.transferAudioContentToPlayList=Settings.data.content.forceAutoPlay;
+                MediaCenter.save(Settings.data).then(function (result) {});
+            }
             // $scope.$watch(function () {
             //     return Settings.data.content.allowShare && Settings.data.content.allowSource;
             // }, function () {
