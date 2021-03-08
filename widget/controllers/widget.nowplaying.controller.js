@@ -28,6 +28,7 @@
                 NowPlaying.paused = false;
                 NowPlaying.showVolume = false;
                 NowPlaying.track = media.data.audioUrl;
+                NowPlaying.isItLast = false;
                 bookmarks.sync($scope);
 
                 /**
@@ -56,8 +57,7 @@
                     }
                     audioPlayer.getPlaylist(function(err,userPlayList){
                         var result= $rootScope.myItems;
-                        var filteredPlaylist=userPlayList.tracks.filter(el=>{return el.plugin && el.plugin == buildfire.context.pluginId;});
-
+                        var filteredPlaylist=userPlayList.tracks.filter(el=>{return el.plugin && el.plugin == buildfire.context.instanceId;});
                         var playlistSongs=filteredPlaylist.map(el=>{return el.url;}).join('');
                         var playlistTitles=filteredPlaylist.map(el=>{return el.title;}).join('');
 
@@ -70,12 +70,12 @@
                                     var index=NowPlaying.findTrackIndex(userPlayList,filteredPlaylist[i]);
                                     if(index!=-1)
                                         audioPlayer.removeFromPlaylist(index);
-                                } 
+                                }
                                 pluginSongs=pluginSongs.map(el=>{
                                         let obj=(!el.data)?el:el.data;
                                         return {title:obj.title,url:obj.audioUrl,image:obj.topImage,
                                         album:obj.title,startAt:0,lastPosition:0,backgroundImage:obj.image,
-                                        plugin:buildfire.context.pluginId, myId:el.id
+                                        plugin:buildfire.context.instanceId, myId:el.id
                                     };
                                     });
                                 NowPlaying.playList=[];
@@ -173,34 +173,57 @@
                 /**
                  * audioPlayer.onEvent callback calls when audioPlayer event fires.
                  */
-                var first = true;
-                var firstEnter = false;
+                //var first = true;
+                var ready=false;
+                var setOder=false;
                 audioPlayer.onEvent(function (e) {
                     switch (e.event) {
                         case 'play':
-                            NowPlaying.playing = true;
-                            if(NowPlaying.settings.autoPlayNext&&!firstEnter){
-                                audioPlayer.settings.set({autoPlayNext:false});
-                                setTimeout(() => {
-                                    audioPlayer.settings.set({autoPlayNext:true});
-                                }, 500);
-                            }
+                            audioPlayer.getPlaylist(function(err,data){
+                                if(e.data.track.lastPosition && e.data.track.lastPosition>0)
+                                    audioPlayer.setTime(e.data.track.lastPosition);
+                                
+                                NowPlaying.playing = true;
+                                NowPlaying.paused = false;
+
+                                var filteredPlaylist=data.tracks.filter(el=>{return el.plugin && el.plugin == buildfire.context.instanceId;});
+                                var index=NowPlaying.findTrackIndex({tracks:filteredPlaylist},{myId:(e.data.track.myId)?e.data.track.myId:"none"});
+
+                                NowPlaying.isItLast=(index==(filteredPlaylist.length-1));
+                                if(index==(filteredPlaylist.length-1)&&NowPlaying.forceAutoPlay){
+                                    audioPlayer.settings.set({autoPlayNext:false});
+                                }
+                                else if(NowPlaying.settings.autoPlayNext){
+                                    audioPlayer.settings.set({autoPlayNext:false});
+                                    var myInterval=setInterval(function(){ 
+                                        if(ready){
+                                            audioPlayer.settings.set({autoPlayNext:true});
+                                            setOder=true;
+                                            clearInterval(myInterval);
+                                        }
+                                    }, 100);
+                                }
+                            });
                             break;
                         case 'timeUpdate':
-                            var ready = e.data.duration > 0;
+                            ready = e.data.duration > 0;
                             if(ready&&e.data.currentTime>=e.data.duration&&NowPlaying.settings.autoPlayNext){
-                                firstEnter=true;
                                 audioPlayer.pause();
                                 audioPlayer.setTime(0.1);
-                                setTimeout(() => {
-                                    NowPlaying.playing=true;
-                                    audioPlayer.play();
-                                }, 500);
+                                if(!NowPlaying.isItLast||!NowPlaying.forceAutoPlay||NowPlaying.settings.loopPlaylist)
+                                    var myInterval=setInterval(() => {
+                                        if(setOder){
+                                            setOder=false;
+                                            NowPlaying.playing=true;
+                                            audioPlayer.play();
+                                            clearInterval(myInterval);
+                                        }
+                                    }, 100); 
                             }
-                            if (ready && first && NowPlaying.currentTrack.startAt) {
+/*                             if (ready && first && NowPlaying.currentTrack.startAt) {
                                 NowPlaying.changeTime(NowPlaying.currentTrack.startAt);
                                 first = false;
-                            }
+                            } */
                             NowPlaying.currentTime = e.data.currentTime;
                             NowPlaying.duration = e.data.duration;
                             break;
