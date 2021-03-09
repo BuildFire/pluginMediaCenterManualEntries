@@ -24,9 +24,26 @@
                 MediaCenter.save(Settings.data).then(function (result) {});
             }
 
-            Settings.setAutoPlay = function(){
-                Settings.data.content.transferAudioContentToPlayList=Settings.data.content.forceAutoPlay;
-                MediaCenter.save(Settings.data).then(function (result) {});
+            Settings.setAutoPlay = function(value){
+                if(value!=Settings.data.content.forceAutoPlay){
+                    Settings.data.content.forceAutoPlay=value;
+                    Settings.data.content.transferAudioContentToPlayList=Settings.data.content.forceAutoPlay;
+                    MediaCenter.save(Settings.data).then(function (result) {});
+                }
+            }
+
+            Settings.setAllowSource = function(value){
+                if(value!=Settings.data.content.allowSource){
+                    Settings.data.content.allowSource=value;
+                    MediaCenter.save(Settings.data).then(function (result) {});
+                }
+            }
+
+            Settings.setAllowShare = function(value){
+                if(value!=Settings.data.content.allowShare){
+                    Settings.data.content.allowShare=value;
+                    MediaCenter.save(Settings.data).then(function (result) {});
+                }
             }
             // $scope.$watch(function () {
             //     return Settings.data.content.allowShare && Settings.data.content.allowSource;

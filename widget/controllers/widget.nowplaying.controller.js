@@ -29,6 +29,7 @@
                 NowPlaying.showVolume = false;
                 NowPlaying.track = media.data.audioUrl;
                 NowPlaying.isItLast = false;
+                NowPlaying.keepPosition=0;
                 bookmarks.sync($scope);
 
                 /**
@@ -51,7 +52,7 @@
                 });
 
                 NowPlaying.forceAutoPlayer = function (){
-                    if((!NowPlaying.settings.autoPlayNext||!NowPlaying.settings.autoJumpToLastPosition)&&NowPlaying.forceAutoPlay){
+                    if((!NowPlaying.settings.autoPlayNext||!NowPlaying.settings.autoJumpToLastPosition)&&NowPlaying.forceAutoPlay&&!NowPlaying.isItLast){
                         NowPlaying.settings.autoPlayNext=true;
                         NowPlaying.settings.autoJumpToLastPosition=true;
                     }
@@ -174,63 +175,81 @@
                  * audioPlayer.onEvent callback calls when audioPlayer event fires.
                  */
                 //var first = true;
-                var ready=false;
-                var setOder=false;
+                var ready=false, setOder=false, first=false, open=true;
                 audioPlayer.onEvent(function (e) {
                     switch (e.event) {
                         case 'play':
-                            audioPlayer.getPlaylist(function(err,data){
-                                if(e.data.track.lastPosition && e.data.track.lastPosition>0)
-                                    audioPlayer.setTime(e.data.track.lastPosition);
-                                
-                                NowPlaying.playing = true;
-                                NowPlaying.paused = false;
+                            NowPlaying.playing = true;
+                            NowPlaying.paused = false;
+                            if(NowPlaying.forceAutoPlay)
+                                audioPlayer.getPlaylist(function(err,data){
+                                    first=false;
+                                    NowPlaying.keepPosition=e.data.track.lastPosition;
 
-                                var filteredPlaylist=data.tracks.filter(el=>{return el.plugin && el.plugin == buildfire.context.instanceId;});
-                                var index=NowPlaying.findTrackIndex({tracks:filteredPlaylist},{myId:(e.data.track.myId)?e.data.track.myId:"none"});
+                                    var filteredPlaylist=data.tracks.filter(el=>{return el.plugin && el.plugin == buildfire.context.instanceId;});
+                                    var index=NowPlaying.findTrackIndex({tracks:filteredPlaylist},{myId:(e.data.track.myId)?e.data.track.myId:"none"});
 
-                                NowPlaying.isItLast=(index==(filteredPlaylist.length-1));
-                                if(index==(filteredPlaylist.length-1)&&NowPlaying.forceAutoPlay){
-                                    audioPlayer.settings.set({autoPlayNext:false});
-                                }
-                                else if(NowPlaying.settings.autoPlayNext){
-                                    audioPlayer.settings.set({autoPlayNext:false});
-                                    var myInterval=setInterval(function(){ 
-                                        if(ready){
-                                            audioPlayer.settings.set({autoPlayNext:true});
-                                            setOder=true;
-                                            clearInterval(myInterval);
-                                        }
-                                    }, 100);
-                                }
-                            });
+                                    NowPlaying.isItLast=(index==(filteredPlaylist.length-1));
+                                    if(index>=(filteredPlaylist.length-1)&&NowPlaying.forceAutoPlay&&!NowPlaying.settings.loopPlaylist){
+                                        NowPlaying.settings.autoPlayNext=false;
+                                    //    audioPlayer.settings.set({autoPlayNext:false});
+                                    }
+                                   // else if(NowPlaying.settings.autoPlayNext){
+                                        audioPlayer.settings.set({autoPlayNext:false});
+                                        var myInterval=setInterval(function(){ 
+                                            if(ready){
+                                                if(!NowPlaying.isItLast){
+                                                    NowPlaying.settings.autoPlayNext=true;
+                                                    audioPlayer.settings.set({autoPlayNext:true});
+                                                }
+
+                                                setOder=true;
+                                                clearInterval(myInterval);
+                                            }
+                                        }, 100);
+                                   // }
+                                });
                             break;
                         case 'timeUpdate':
-                            ready = e.data.duration > 0;
-                            if(ready&&e.data.currentTime>=e.data.duration&&NowPlaying.settings.autoPlayNext){
-                                audioPlayer.pause();
-                                audioPlayer.setTime(0.1);
-                                if(!NowPlaying.isItLast||!NowPlaying.forceAutoPlay||NowPlaying.settings.loopPlaylist)
-                                    var myInterval=setInterval(() => {
-                                        if(setOder){
-                                            setOder=false;
-                                            NowPlaying.playing=true;
-                                            audioPlayer.play();
-                                            clearInterval(myInterval);
-                                        }
-                                    }, 100); 
+                            ready = e.data.duration && e.data.duration!=null && e.data.duration > 0;
+                            if(NowPlaying.forceAutoPlay)
+                                if(ready&&e.data.currentTime>=e.data.duration&&!first){
+                                    first=true;
+                                    audioPlayer.pause();
+                                    audioPlayer.setTime(0.1);
+                                    if(NowPlaying.forceAutoPlay)
+                                    setTimeout(() => {
+                                        var myInterval=setInterval(() => {
+                                            if(setOder){
+                                                setOder=false;
+                                                NowPlaying.playing=true;
+                                                audioPlayer.play();
+                                                clearInterval(myInterval);
+                                                first=false;
+                                            }
+                                        }, 100); 
+                                    }, 500);
+                                }else if(ready&&NowPlaying.settings.autoPlayNext)
+                                {
+                                    first=true;
+                                }
+                            if (ready && open && NowPlaying.keepPosition > 0) {
+                                NowPlaying.changeTime(NowPlaying.keepPosition);
+                                open = false;
                             }
-/*                             if (ready && first && NowPlaying.currentTrack.startAt) {
-                                NowPlaying.changeTime(NowPlaying.currentTrack.startAt);
-                                first = false;
-                            } */
                             NowPlaying.currentTime = e.data.currentTime;
                             NowPlaying.duration = e.data.duration;
                             break;
                         case 'audioEnded':
+                            ready=false;
                             if(!NowPlaying.settings.autoPlayNext) {
                                 NowPlaying.playing = false;
                                 NowPlaying.paused = false;
+                            }
+                            if(NowPlaying.forceAutoPlay&&NowPlaying.isItLast&&!NowPlaying.settings.loopPlaylist)
+                            {
+                                NowPlaying.playing = false;
+                                NowPlaying.paused = true;
                             }
                             break;
                         case 'pause':
@@ -256,6 +275,7 @@
                  * Player related method and variables
                  */
                 NowPlaying.playTrack = function () {
+                    NowPlaying.currentTime=0;
                     if (NowPlaying.settings) {
                         NowPlaying.settings.isPlayingCurrentTrack = true;
                         audioPlayer.settings.set(NowPlaying.settings);
@@ -284,6 +304,7 @@
                         setTimeout(() => {
                             try {
                                 if(index!=-1){
+
                                     audioPlayer.play(index);
                                 }
                                 else audioPlayer.play(NowPlaying.currentTrack);
@@ -437,7 +458,7 @@
                     });
                 };
                 NowPlaying.setSettings = function (settings) {
-                    if(!settings.autoPlayNext&&NowPlaying.forceAutoPlay){
+                    if(!settings.autoPlayNext&&NowPlaying.forceAutoPlay && !NowPlaying.isItLast){
                         settings.autoJumpToLastPosition=true;
                         settings.autoPlayNext=true;
                     }

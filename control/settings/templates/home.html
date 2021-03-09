@@ -1,33 +1,52 @@
-<h4 style="margin-bottom:22px;">User control settings</h4>
-<div class="item row clearfix">
-    <div class="labels col-md-5 padding-right-zero pull-left">
-        <span>Allow Sharing</span>
+<div class="settings-screen">
+    <div class="tabs">
+        <button type="button" class="active">General</button>
     </div>
-    <div class="main col-md-7 pull-right">
-    <input type="checkbox" class="big-checkbox" name="allowShare" id="allowShare" ng-model="Settings.data.content.allowShare"
-    ng-change="Settings.setSettings()">
+    <div class="general-screen">
+        <div>
+            <div class="setting-toggle">
+            <p class="setting-label">
+                Allow Sharing
+            </p>
+            <div class="buttons">
+                <button ng-class="{'active': Settings.data.content.allowShare}" ng-click="Settings.setAllowShare(true)">on</button>
+                <button class="toLeft" ng-class="{'active': !Settings.data.content.allowShare}" ng-click="Settings.setAllowShare(false)">off</button>
+            </div>
+            </div>
+            <div class="setting-toggle-children">
+            </div>
+        </div>
+        <div>
+            <div class="setting-toggle">
+            <p class="setting-label">
+                Show Source Icon
+            </p>
+            <div class="buttons">
+                <button ng-class="{'active': Settings.data.content.allowSource}" ng-click="Settings.setAllowSource(true)">on</button>
+                <button class="toLeft" ng-class="{'active': !Settings.data.content.allowSource}" ng-click="Settings.setAllowSource(false)">off</button>
+            </div>
+            </div>
+            <div class="setting-toggle-children">
+            </div>
+        </div>
+        <div>
+            <div class="setting-toggle">
+            <p class="setting-label">
+                Play All
+                <span class="customTooltipBox btn-primary">
+                <span class="customTooltipText">
+                    When a user plays any audio file, a full list of audio files from the instance will be added to the user’s playlist. 
+                    If this is turned on, the following settings will become hidden: autoplay, add item to playlist, remove item from playlist.
+                </span>
+                </span>
+            </p>
+            <div class="buttons">
+                <button ng-class="{'active': Settings.data.content.forceAutoPlay}" ng-click="Settings.setAutoPlay(true)">on</button>
+                <button class="toLeft" ng-class="{'active': !Settings.data.content.forceAutoPlay}" ng-click="Settings.setAutoPlay(false)">off</button>
+            </div>
+            </div>
+            <div class="setting-toggle-children">
+            </div>
+        </div>
     </div>
 </div>
-<br>
-<div class="item row clearfix">
-    <div class="labels col-md-5 padding-right-zero pull-left">
-        <span>Show Source Icon</span>
-    </div>
-    <div class="main col-md-7 pull-right">
-    <input type="checkbox" class="big-checkbox" name="allowShare" id="allowShare" ng-model="Settings.data.content.allowSource"
-    ng-change="Settings.setSettings()">
-    </div>
-</div>
-<hr class="ng-scope">
-<h4 style="margin-bottom:22px;">Playlist settings</h4>
-<div class="item row clearfix">
-    <div class="labels col-md-5 padding-right-zero pull-left">
-        <span>Play All</span>
-    </div>
-    <div class="main col-md-7 pull-right">
-    <input type="checkbox" class="big-checkbox" name="forceAutoPlay" id="forceAutoPlay" ng-model="Settings.data.content.forceAutoPlay"
-    ng-change="Settings.setAutoPlay()">
-    </div>
-</div>
-<p class="info" style="margin-top:8px">Note: A complete list of audio files will be added to the user playlist.</p>
-<p class="info">Note: Users will be disabled from turning off the autoplay, and adding or removing items from the playlist.</p>
