@@ -233,11 +233,11 @@
                                 }else if(ready&&NowPlaying.settings.autoPlayNext)
                                 {
                                     first=true;
+                                    if (ready && open && NowPlaying.keepPosition > 0 && iOS) {
+                                        NowPlaying.changeTime(NowPlaying.keepPosition);
+                                        open = false;
+                                    }
                                 }
-                            if (ready && open && NowPlaying.keepPosition > 0 && iOS) {
-                                NowPlaying.changeTime(NowPlaying.keepPosition);
-                                open = false;
-                            }
                             NowPlaying.currentTime = e.data.currentTime;
                             NowPlaying.duration = e.data.duration;
                             break;
