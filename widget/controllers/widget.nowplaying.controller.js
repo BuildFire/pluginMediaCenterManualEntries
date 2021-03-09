@@ -31,6 +31,7 @@
                 NowPlaying.track = media.data.audioUrl;
                 NowPlaying.isItLast = false;
                 NowPlaying.keepPosition=0;
+                NowPlaying.finished=false;
                 bookmarks.sync($scope);
 
                 /**
@@ -53,6 +54,7 @@
                 });
 
                 NowPlaying.forceAutoPlayer = function (){
+                    NowPlaying.currentTime=0;
                     if((!NowPlaying.settings.autoPlayNext||!NowPlaying.settings.autoJumpToLastPosition)&&NowPlaying.forceAutoPlay&&!NowPlaying.isItLast){
                         NowPlaying.settings.autoPlayNext=true;
                         NowPlaying.settings.autoJumpToLastPosition=true;
@@ -230,7 +232,7 @@
                                             }
                                         }, 100); 
                                     }, 500);
-                                }else if(ready&&NowPlaying.settings.autoPlayNext)
+                                }else if(ready&&(NowPlaying.settings.autoPlayNext||NowPlaying.forceAutoPlay))
                                 {
                                     first=true;
                                     if (ready && open && NowPlaying.keepPosition > 0 && iOS) {
@@ -251,7 +253,8 @@
                             {
                                 NowPlaying.playing = false;
                                 NowPlaying.paused = true;
-                            }
+                                NowPlaying.finished=true;
+                            }else NowPlaying.finished=false;
                             break;
                         case 'pause':
                             NowPlaying.playing = false;
@@ -276,7 +279,6 @@
                  * Player related method and variables
                  */
                 NowPlaying.playTrack = function () {
-                    NowPlaying.currentTime=0;
                     if (NowPlaying.settings) {
                         NowPlaying.settings.isPlayingCurrentTrack = true;
                         audioPlayer.settings.set(NowPlaying.settings);
@@ -292,8 +294,7 @@
                     if(NowPlaying.transferPlaylist && NowPlaying.forceAutoPlay)
                         audioPlayer.getPlaylist(function(err,data){
                             var index=NowPlaying.findTrackIndex(data,{myId:NowPlaying.item.id});
-                            if(index!=-1)
-                                NowPlaying.callPlayFunction(index);
+                            NowPlaying.callPlayFunction(index);
                         });
                     else  NowPlaying.callPlayFunction(-1);
                 };
@@ -301,11 +302,20 @@
                 NowPlaying.callPlayFunction = function(index){
                     if (NowPlaying.paused) {
                         audioPlayer.play();
-                    } else {
+                        if(NowPlaying.finished)
+                            setTimeout(() => {
+                                NowPlaying.finished=false;
+                                audioPlayer.pause();
+                                setTimeout(() => {
+                                    audioPlayer.play();
+                                    NowPlaying.paused=false;
+                                    NowPlaying.playing=true;
+                                }, 50);
+                            }, 50);
+                    } else {    
                         setTimeout(() => {
                             try {
                                 if(index!=-1){
-
                                     audioPlayer.play(index);
                                 }
                                 else audioPlayer.play(NowPlaying.currentTrack);
