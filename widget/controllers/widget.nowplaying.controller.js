@@ -7,7 +7,6 @@
                 $rootScope.showFeed = false;
                 var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
                 var NowPlaying = this;
-                NowPlaying.currentTime = 0;
                 NowPlaying.swiped = [];
                 NowPlaying.forceAutoPlay=$rootScope.forceAutoPlay;
                 NowPlaying.transferPlaylist=$rootScope.transferAudioContentToPlayList;
@@ -44,6 +43,7 @@
                  */
                 var audioPlayer = Buildfire.services.media.audioPlayer;
                 audioPlayer.settings.get(function (err, setting) {
+                    NowPlaying.currentTime = 0;
                     NowPlaying.settings = setting;
                     NowPlaying.volume = setting.volume;
                     NowPlaying.forceAutoPlayer();
