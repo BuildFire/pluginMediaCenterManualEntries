@@ -5,6 +5,7 @@
             function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS, $rootScope, $timeout, Location, EVENTS, PATHS, DB) {
                 $rootScope.blackBackground = true;
                 $rootScope.showFeed = false;
+                var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
                 var NowPlaying = this;
                 NowPlaying.currentTime = 0;
                 NowPlaying.swiped = [];
@@ -233,7 +234,7 @@
                                 {
                                     first=true;
                                 }
-                            if (ready && open && NowPlaying.keepPosition > 0) {
+                            if (ready && open && NowPlaying.keepPosition > 0 && iOS) {
                                 NowPlaying.changeTime(NowPlaying.keepPosition);
                                 open = false;
                             }
