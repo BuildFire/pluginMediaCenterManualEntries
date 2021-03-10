@@ -16,6 +16,8 @@
                     Settings.data.content.transferAudioContentToPlayList = false;
                 if (typeof (Settings.data.content.forceAutoPlay) == 'undefined')
                     Settings.data.content.forceAutoPlay = false;
+                if (typeof (Settings.data.design.skipMediaPage) == 'undefined')
+                    Settings.data.design.skipMediaPage=false;
             }, function (err) {
                 console.error(err);
             });
@@ -31,6 +33,13 @@
                     MediaCenter.save(Settings.data).then(function (result) {});
                 }
             }
+
+            Settings.changeSkipPage = function (value) {
+                if (value!=Settings.data.design.skipMediaPage){
+                    Settings.data.design.skipMediaPage=value;
+                    MediaCenter.save(Settings.data).then(function (result) {});
+                }
+            };
 
             Settings.setAllowSource = function(value){
                 if(value!=Settings.data.content.allowSource){

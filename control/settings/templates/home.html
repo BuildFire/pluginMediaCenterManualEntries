@@ -32,6 +32,22 @@
         <div>
             <div class="setting-toggle">
             <p class="setting-label">
+                Skip Info Page
+                <span class="customTooltipBox btn-primary">
+                <span class="customTooltipText">
+                    If the info page is skipped, the video URL will be prioritized.
+                </span>
+                </span>
+            </p>
+            <div class="buttons">
+                <button ng-class="{'active': Settings.data.design.skipMediaPage}" ng-click="Settings.changeSkipPage(true)">On</button>
+                <button class="toLeft" ng-class="{'active': !Settings.data.design.skipMediaPage}" ng-click="Settings.changeSkipPage(false)">Off</button>
+            </div>
+            </div>
+        </div>
+        <div>
+            <div class="setting-toggle">
+            <p class="setting-label">
                 Play All
                 <span class="customTooltipBox btn-primary">
                 <span class="customTooltipText">

@@ -54,11 +54,6 @@
                 }
             };
 
-            DesignHome.changeSkipPage = function (value) {
-                if (value!=DesignHome.mediaInfo.data.design.skipMediaPage)
-                    DesignHome.mediaInfo.data.design.skipMediaPage=value;
-            };
-
             background.onChange = function (url) {
                 DesignHome.mediaInfo.data.design.backgroundImage = url;
                 if (!$scope.$$phase && !$scope.$root.$$phase) {
