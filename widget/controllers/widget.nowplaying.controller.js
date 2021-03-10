@@ -47,7 +47,7 @@
                     NowPlaying.settings = setting;
                     NowPlaying.volume = setting.volume;
                     NowPlaying.forceAutoPlayer();
-                    audioPlayer.settings.set(NowPlaying.settings); 
+                    audioPlayer.settings.set(NowPlaying.settings);
                     setTimeout(() => {
                         NowPlaying.playTrack();
                     }, 300);
@@ -214,7 +214,7 @@
                                 });
                             break;
                         case 'timeUpdate':
-                            ready = e.data.duration && e.data.duration!=null && e.data.duration > 0;
+                            ready = e.data.duration && e.data.duration!=null && e.data.duration > 0;                            
                             if(NowPlaying.forceAutoPlay)
                                 if(ready&&e.data.currentTime>=e.data.duration&&!first){
                                     first=true;
@@ -312,7 +312,8 @@
                                     NowPlaying.playing=true;
                                 }, 50);
                             }, 50);
-                    } else {    
+                    } else {
+                        NowPlaying.currentTime=0;
                         setTimeout(() => {
                             try {
                                 if(index!=-1){
@@ -626,10 +627,10 @@
                 /**
                  * Auto play the track
                  */
-/*                 $timeout(function () {
+ /*                 $timeout(function () {
                     if (NowPlaying.settings)
                          NowPlaying.playTrack();  
                 }, 0);  */
-            }
+                        }
         ]);
 })(window.angular);
