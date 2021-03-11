@@ -5,9 +5,11 @@
             function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS, $rootScope, $timeout, Location, EVENTS, PATHS, DB) {
                 $rootScope.blackBackground = true;
                 $rootScope.showFeed = false;
+                var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
                 var NowPlaying = this;
-                NowPlaying.currentTime = 0;
                 NowPlaying.swiped = [];
+                NowPlaying.forceAutoPlay=$rootScope.forceAutoPlay;
+                NowPlaying.transferPlaylist=$rootScope.transferAudioContentToPlayList;
                 if (media.data.audioUrl.includes("www.dropbox") || media.data.audioUrl.includes("dl.dropbox.com")) {
                     media.data.audioUrl = media.data.audioUrl.replace("www.dropbox", "dl.dropbox").split("?dl=")[0];
                 }
@@ -26,6 +28,9 @@
                 NowPlaying.paused = false;
                 NowPlaying.showVolume = false;
                 NowPlaying.track = media.data.audioUrl;
+                NowPlaying.isItLast = false;
+                NowPlaying.keepPosition=0;
+                NowPlaying.finished=false;
                 bookmarks.sync($scope);
 
                 /**
@@ -37,11 +42,73 @@
                  * audioPlayer is Buildfire.services.media.audioPlayer.
                  */
                 var audioPlayer = Buildfire.services.media.audioPlayer;
-
                 audioPlayer.settings.get(function (err, setting) {
+                    NowPlaying.currentTime = 0;
                     NowPlaying.settings = setting;
                     NowPlaying.volume = setting.volume;
+                    NowPlaying.forceAutoPlayer();
+                    audioPlayer.settings.set(NowPlaying.settings);
+                    setTimeout(() => {
+                        NowPlaying.playTrack();
+                    }, 300);
                 });
+
+                NowPlaying.forceAutoPlayer = function (){
+                    NowPlaying.currentTime=0;
+                    if((!NowPlaying.settings.autoPlayNext||!NowPlaying.settings.autoJumpToLastPosition)&&NowPlaying.forceAutoPlay&&!NowPlaying.isItLast){
+                        NowPlaying.settings.autoPlayNext=true;
+                        NowPlaying.settings.autoJumpToLastPosition=true;
+                    }
+                    audioPlayer.getPlaylist(function(err,userPlayList){
+                        var result= $rootScope.myItems;
+                        var filteredPlaylist=userPlayList.tracks.filter(el=>{return el.plugin && el.plugin == buildfire.context.instanceId;});
+                        var playlistSongs=filteredPlaylist.map(el=>{return el.url;}).join('');
+                        var playlistTitles=filteredPlaylist.map(el=>{return el.title;}).join('');
+
+                        var pluginSongs=result.filter(el=>el.data.audioUrl&&el.data.audioUrl.length>0);
+                        var pluginListSongs=pluginSongs.map(el=>{return el.data.audioUrl;}).join('');
+                        var pluginListTitles=pluginSongs.map(el=>{return el.data.title;}).join('');
+                        if(NowPlaying.transferPlaylist){
+                            if(playlistSongs!=pluginListSongs||playlistTitles!=pluginListTitles){
+                                for(var i=(filteredPlaylist.length-1);i>=0;i--){
+                                    var index=NowPlaying.findTrackIndex(userPlayList,filteredPlaylist[i]);
+                                    if(index!=-1)
+                                        audioPlayer.removeFromPlaylist(index);
+                                }
+                                pluginSongs=pluginSongs.map(el=>{
+                                        let obj=(!el.data)?el:el.data;
+                                        return {title:obj.title,url:obj.audioUrl,image:obj.topImage,
+                                        album:obj.title,startAt:0,lastPosition:0,backgroundImage:obj.image,
+                                        plugin:buildfire.context.instanceId, myId:el.id
+                                    };
+                                    });
+                                NowPlaying.playList=[];
+                                for(var i=0;i<pluginSongs.length;i++){
+                                    audioPlayer.addToPlaylist(pluginSongs[i]);
+                                    NowPlaying.playList.push(pluginSongs[i]);
+                                }
+                                buildfire.dialog.alert({
+                                    title: "Info page",
+                                    message: `Audio files will be automatically added to the end of your playlist.`,
+                                    isMessageHTML: true
+                                }, (err, data) => {
+                                    if(err) console.error(err);
+                                });
+                                //NowPlaying.playlistPlay(pluginSongs[0], 0);
+                            }
+                        }else{
+                            for(var i=(filteredPlaylist.length-1);i>=0;i--){
+                                var index=NowPlaying.findTrackIndex(userPlayList,filteredPlaylist[i]);
+                                if(index!=-1)
+                                    audioPlayer.removeFromPlaylist(index);
+                            } 
+                        }
+                    });
+                }
+
+                NowPlaying.findTrackIndex = function(officialList,element){
+                    return officialList.tracks.map(el=>{return (el.myId)?el.myId:"none";}).indexOf(element.myId);
+                }
 
                 NowPlaying.changeVolume = function (volume) {
                     audioPlayer.settings.get(function (err, setting) {
@@ -110,25 +177,84 @@
                 /**
                  * audioPlayer.onEvent callback calls when audioPlayer event fires.
                  */
-                var first = true;
-
+                //var first = true;
+                var ready=false, setOder=false, first=false, open=true;
                 audioPlayer.onEvent(function (e) {
                     switch (e.event) {
+                        case 'play':
+                            NowPlaying.playing = true;
+                            NowPlaying.paused = false;
+                            if(NowPlaying.forceAutoPlay)
+                                audioPlayer.getPlaylist(function(err,data){
+                                    first=false;
+                                    NowPlaying.keepPosition=e.data.track.lastPosition;
+
+                                    var filteredPlaylist=data.tracks.filter(el=>{return el.plugin && el.plugin == buildfire.context.instanceId;});
+                                    var index=NowPlaying.findTrackIndex({tracks:filteredPlaylist},{myId:(e.data.track.myId)?e.data.track.myId:"none"});
+
+                                    NowPlaying.isItLast=(index==(filteredPlaylist.length-1));
+                                    if(index>=(filteredPlaylist.length-1)&&NowPlaying.forceAutoPlay&&!NowPlaying.settings.loopPlaylist){
+                                        NowPlaying.settings.autoPlayNext=false;
+                                    //    audioPlayer.settings.set({autoPlayNext:false});
+                                    }
+                                   // else if(NowPlaying.settings.autoPlayNext){
+                                        audioPlayer.settings.set({autoPlayNext:false});
+                                        var myInterval=setInterval(function(){ 
+                                            if(ready){
+                                                if(!NowPlaying.isItLast){
+                                                    NowPlaying.settings.autoPlayNext=true;
+                                                    audioPlayer.settings.set({autoPlayNext:true});
+                                                }
+
+                                                setOder=true;
+                                                clearInterval(myInterval);
+                                            }
+                                        }, 100);
+                                   // }
+                                });
+                            break;
                         case 'timeUpdate':
-                            var ready = e.data.duration > 0;
-                            if (ready && first && NowPlaying.currentTrack.startAt) {
-                                NowPlaying.changeTime(NowPlaying.currentTrack.startAt);
-                                first = false;
-                            }
+                            ready = e.data.duration && e.data.duration!=null && e.data.duration > 0;                            
+                            if(NowPlaying.forceAutoPlay)
+                                if(ready&&e.data.currentTime>=e.data.duration&&!first){
+                                    first=true;
+                                    audioPlayer.pause();
+                                    audioPlayer.setTime(0.1);
+                                    if(NowPlaying.forceAutoPlay)
+                                    setTimeout(() => {
+                                        var myInterval=setInterval(() => {
+                                            if(setOder){
+                                                setOder=false;
+                                                NowPlaying.playing=true;
+                                                audioPlayer.play();
+                                                clearInterval(myInterval);
+                                                first=false;
+                                            }
+                                        }, 100); 
+                                    }, 500);
+                                }else if(ready&&(NowPlaying.settings.autoPlayNext||NowPlaying.forceAutoPlay))
+                                {
+                                    first=true;
+                                    if (ready && open && NowPlaying.keepPosition > 0 && iOS) {
+                                        NowPlaying.changeTime(NowPlaying.keepPosition);
+                                        open = false;
+                                    }
+                                }
                             NowPlaying.currentTime = e.data.currentTime;
                             NowPlaying.duration = e.data.duration;
                             break;
                         case 'audioEnded':
+                            ready=false;
                             if(!NowPlaying.settings.autoPlayNext) {
                                 NowPlaying.playing = false;
                                 NowPlaying.paused = false;
                             }
-                            
+                            if(NowPlaying.forceAutoPlay&&NowPlaying.isItLast&&!NowPlaying.settings.loopPlaylist)
+                            {
+                                NowPlaying.playing = false;
+                                NowPlaying.paused = true;
+                                NowPlaying.finished=true;
+                            }else NowPlaying.finished=false;
                             break;
                         case 'pause':
                             NowPlaying.playing = false;
@@ -165,20 +291,42 @@
                         });
                     }
                     NowPlaying.playing = true;
+                    if(NowPlaying.transferPlaylist && NowPlaying.forceAutoPlay)
+                        audioPlayer.getPlaylist(function(err,data){
+                            var index=NowPlaying.findTrackIndex(data,{myId:NowPlaying.item.id});
+                            NowPlaying.callPlayFunction(index);
+                        });
+                    else  NowPlaying.callPlayFunction(-1);
+                };
+
+                NowPlaying.callPlayFunction = function(index){
                     if (NowPlaying.paused) {
                         audioPlayer.play();
+                        if(NowPlaying.finished)
+                            setTimeout(() => {
+                                NowPlaying.finished=false;
+                                audioPlayer.pause();
+                                setTimeout(() => {
+                                    audioPlayer.play();
+                                    NowPlaying.paused=false;
+                                    NowPlaying.playing=true;
+                                }, 50);
+                            }, 50);
                     } else {
+                        NowPlaying.currentTime=0;
                         setTimeout(() => {
                             try {
-                                audioPlayer.play(NowPlaying.currentTrack);
-                                audioPlayer.getPlaylist(console.log)
+                                if(index!=-1){
+                                    audioPlayer.play(index);
+                                }
+                                else audioPlayer.play(NowPlaying.currentTrack);
                             }
                             catch (err) {
                             }
                         }, 500);
 
                     }
-                };
+                }
 
 
                 NowPlaying.playlistPlay = function (track) {
@@ -322,6 +470,10 @@
                     });
                 };
                 NowPlaying.setSettings = function (settings) {
+                    if(!settings.autoPlayNext&&NowPlaying.forceAutoPlay && !NowPlaying.isItLast){
+                        settings.autoJumpToLastPosition=true;
+                        settings.autoPlayNext=true;
+                    }
                     var newSettings = new AudioSettings(settings);
                     audioPlayer.settings.set(newSettings);
                 };
@@ -406,6 +558,13 @@
                                 $rootScope.design = event.data.design;
                                 $rootScope.allowShare = event.data.content.allowShare;
                                 $rootScope.allowSource = event.data.content.allowSource;
+                                $rootScope.transferAudioContentToPlayList = event.data.content.transferAudioContentToPlayList;
+                                $rootScope.forceAutoPlay = event.data.content.forceAutoPlay;
+                                NowPlaying.forceAutoPlay= event.data.content.transferAudioContentToPlayList;
+                                NowPlaying.transferPlaylist=event.data.content.forceAutoPlay;
+                                if (!$scope.$$phase) {
+                                    $scope.$digest();
+                                }
                             }
                             break;
                     }
@@ -468,9 +627,10 @@
                 /**
                  * Auto play the track
                  */
-                $timeout(function () {
-                    NowPlaying.playTrack();  
-                }, 0);
-            }
+ /*                 $timeout(function () {
+                    if (NowPlaying.settings)
+                         NowPlaying.playTrack();  
+                }, 0);  */
+                        }
         ]);
 })(window.angular);

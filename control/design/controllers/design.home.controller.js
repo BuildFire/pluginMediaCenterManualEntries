@@ -15,6 +15,8 @@
                         rankOfLastItem: 0,
                         allowShare: true,
                         allowSource: true,
+                        transferAudioContentToPlayList:false,
+                        forceAutoPlay:false
                     },
                     design: {
                         listLayout: "list-1",

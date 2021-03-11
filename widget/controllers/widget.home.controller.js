@@ -16,6 +16,8 @@
                             rankOfLastItem: 0,
                             allowShare: true,
                             allowSource: true,
+                            transferAudioContentToPlayList:false,
+                            forceAutoPlay:false
                         },
                         design: {
                             listLayout: "list-1",
@@ -50,6 +52,8 @@
                     $rootScope.backgroundImage = MediaCenterInfo.data.design.backgroundImage;
                     $rootScope.allowShare = MediaCenterInfo.data.content.allowShare;
                     $rootScope.allowSource = MediaCenterInfo.data.content.allowSource;
+                    $rootScope.transferAudioContentToPlayList = MediaCenterInfo.data.content.transferAudioContentToPlayList;
+                    $rootScope.forceAutoPlay = MediaCenterInfo.data.content.forceAutoPlay;
                 },
                     function fail() {
                         MediaCenterInfo = _infoData;
@@ -157,6 +161,8 @@
                             $rootScope.backgroundImage = WidgetHome.media.data.design && WidgetHome.media.data.design.backgroundImage;
                             $rootScope.allowShare = WidgetHome.media.data.content.allowShare;
                             $rootScope.allowSource = WidgetHome.media.data.content.allowSource;
+                            $rootScope.transferAudioContentToPlayList =  WidgetHome.media.data.content.transferAudioContentToPlayList;
+                            $rootScope.forceAutoPlay =  WidgetHome.media.data.content.forceAutoPlay;
                             $scope.$apply();
                             if (view && event.data.content && event.data.content.images) {
                                 view.loadItems(event.data.content.images);
@@ -238,7 +244,7 @@
                         // $rootScope.seekTime = 10.22;
                         WidgetHome.items = WidgetHome.items ? WidgetHome.items.concat(result) : result;
                         WidgetHome.isBusy = false;
-
+                        $rootScope.myItems=WidgetHome.items;
                         bookmarks.sync($scope);
                         if (!$window.deeplinkingDone && buildfire.deeplink) {
                             buildfire.deeplink.getData(function (data) {

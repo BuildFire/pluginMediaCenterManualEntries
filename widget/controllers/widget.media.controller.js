@@ -176,6 +176,8 @@
                             $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
                             $rootScope.allowShare = WidgetMedia.media.data.content.allowShare;
                             $rootScope.allowSource = WidgetMedia.media.data.content.allowSource;
+                            $rootScope.transferAudioContentToPlayList = WidgetMedia.media.data.content.transferAudioContentToPlayList;
+                            $rootScope.forceAutoPlay = WidgetMedia.media.data.content.forceAutoPlay;
                             WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
                             if(old == WidgetMedia.media.data.design.itemLayout)WidgetMedia.ApplayUpdates();
                             $scope.$apply();

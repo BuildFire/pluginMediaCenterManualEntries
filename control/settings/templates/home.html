@@ -1,19 +1,68 @@
-<div class="item row clearfix">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Allow Sharing</span>
-    </div>
-    <div class="main col-md-9 pull-right">
-    <input type="checkbox" name="allowShare" id="allowShare" ng-model="Settings.data.content.allowShare"
-    ng-change="Settings.setSettings()">
-    </div>
-</div>
-<br>
-<div class="item row clearfix">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Show Source Icon</span>
-    </div>
-    <div class="main col-md-9 pull-right">
-    <input type="checkbox" name="allowShare" id="allowShare" ng-model="Settings.data.content.allowSource"
-    ng-change="Settings.setSettings()">
-    </div>
-</div>
+<!-- <div class="settings-screen"> -->
+<!--     <div class="tabs">
+        <button type="button" class="active">General</button>
+    </div> -->
+ <!--    <div class="general-screen"> -->
+        <div>
+            <div class="setting-toggle">
+            <p class="setting-label">
+                Allow Sharing
+            </p>
+            <div class="buttons">
+                <button ng-class="{'active': Settings.data.content.allowShare}" ng-click="Settings.setAllowShare(true)">On</button>
+                <button class="toLeft" ng-class="{'active': !Settings.data.content.allowShare}" ng-click="Settings.setAllowShare(false)">Off</button>
+            </div>
+            </div>
+            <div class="setting-toggle-children">
+            </div>
+        </div>
+        <div>
+            <div class="setting-toggle">
+            <p class="setting-label">
+                Show Source Icon
+            </p>
+            <div class="buttons">
+                <button ng-class="{'active': Settings.data.content.allowSource}" ng-click="Settings.setAllowSource(true)">On</button>
+                <button class="toLeft" ng-class="{'active': !Settings.data.content.allowSource}" ng-click="Settings.setAllowSource(false)">Off</button>
+            </div>
+            </div>
+            <div class="setting-toggle-children">
+            </div>
+        </div>
+        <div>
+            <div class="setting-toggle">
+            <p class="setting-label">
+                Skip Info Page
+                <span class="customTooltipBox btn-primary">
+                <span class="customTooltipText">
+                    If the info page is skipped, the video URL will be prioritized.
+                </span>
+                </span>
+            </p>
+            <div class="buttons">
+                <button ng-class="{'active': Settings.data.design.skipMediaPage}" ng-click="Settings.changeSkipPage(true)">On</button>
+                <button class="toLeft" ng-class="{'active': !Settings.data.design.skipMediaPage}" ng-click="Settings.changeSkipPage(false)">Off</button>
+            </div>
+            </div>
+        </div>
+        <div>
+            <div class="setting-toggle">
+            <p class="setting-label">
+                Play All
+                <span class="customTooltipBox btn-primary">
+                <span class="customTooltipText">
+                    When a user plays any audio file, a full list of audio files from the instance will be added to the user’s playlist. 
+                    If this is turned on, the following settings will become hidden: autoplay, add item to playlist, remove item from playlist.
+                </span>
+                </span>
+            </p>
+            <div class="buttons">
+                <button ng-class="{'active': Settings.data.content.forceAutoPlay}" ng-click="Settings.setAutoPlay(true)">On</button>
+                <button class="toLeft" ng-class="{'active': !Settings.data.content.forceAutoPlay}" ng-click="Settings.setAutoPlay(false)">Off</button>
+            </div>
+            </div>
+            <div class="setting-toggle-children">
+            </div>
+        </div>
+<!--     </div>
+</div> -->

@@ -40,7 +40,7 @@
         </div>
         <div class="slider">
             <div>
-                <div class="audio-plyer"><input type="range" min="0.0" max="{{NowPlaying.duration}}"
+                <div class="audio-plyer"><input style="height:45px !important" type="range" min="0.0" max="{{NowPlaying.duration}}"
                         ng-model="NowPlaying.currentTime" ng-change="NowPlaying.changeTime(NowPlaying.currentTime)" />
                 </div>
                 <div ng-if="NowPlaying.currentTime!=0" class="time-indicator" style="float:left">
@@ -163,11 +163,11 @@
                     <div class="text-center item">
                         <a ng-click="NowPlaying.getFromPlaylist()" class="whiteTheme">Go to Playlist</a>
                     </div>
-                    <div class="text-center item">
+                    <div class="text-center item" ng-if="!NowPlaying.transferPlaylist">
                         <a ng-click="NowPlaying.addToPlaylist(NowPlaying.currentTrack)" class="whiteTheme">Add to
                             Playlist</a>
                     </div>
-                    <div class="text-center item">
+                    <div class="text-center item" ng-if="!NowPlaying.transferPlaylist">
                         <a ng-click="NowPlaying.removeFromPlaylist(NowPlaying.currentTrack)" class="whiteTheme">Remove
                             from Playlist</a>
                     </div>
@@ -191,7 +191,7 @@
         <div class="overlay-content" style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
             <div class="media-player-settings">
                 <div class="settings-list padded padding-top-zero">
-                    <div class="item clearfix row">
+                    <div class="item clearfix row" ng-if="!NowPlaying.forceAutoPlay">
                         <div class="col-md-10 pull-left text-left">
                             <span class="whiteTheme">Automatically play next track</span>
                         </div>
@@ -215,7 +215,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="item clearfix row">
+                    <div class="item clearfix row" ng-if="!NowPlaying.forceAutoPlay">
                         <div class="col-md-10 pull-left text-left">
                             <span class="whiteTheme">Auto Jump To LastPosition</span>
                         </div>
@@ -227,8 +227,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="item clearfix row">
-                        <div class="col-md-10 pull-left text-left">
+                    <div class="item clearfix row" ng-if="!NowPlaying.transferPlaylist">
+                        <div class="col-md-10 pull-left text-left" >
                             <span class="whiteTheme">Shuffle Playlist</span>
                         </div>
                         <div class="col-md-2 pull-right text-right">
