@@ -10,9 +10,7 @@
                 NowPlaying.swiped = [];
                 NowPlaying.forceAutoPlay=$rootScope.forceAutoPlay;
                 NowPlaying.transferPlaylist=$rootScope.transferAudioContentToPlayList;
-                if (media.data.audioUrl.includes("www.dropbox") || media.data.audioUrl.includes("dl.dropbox.com")) {
-                    media.data.audioUrl = media.data.audioUrl.replace("www.dropbox", "dl.dropbox").replace("dl.dropbox.com", "dl.dropboxusercontent.com").split("?dl=")[0];
-                }
+                media.data.audioUrl = convertDropbox(media.data.audioUrl);
                 NowPlaying.currentTrack = new Track(media.data);
                 NowPlaying.currentTrack.backgroundImage = media.data.image ? media.data.image : media.data.topImage;
 
@@ -37,6 +35,13 @@
                  * slider to show the slider on now-playing page.
                  * @type {*|jQuery|HTMLElement}
                  */
+
+                function convertDropbox(obj){
+                    if (obj.includes("www.dropbox") || obj.includes("dl.dropbox.com")) {
+                        obj = obj.replace("www.dropbox", "dl.dropbox").replace("dl.dropbox.com", "dl.dropboxusercontent.com").split("?dl=")[0];
+                    }
+                    return obj;
+                }
 
                 /**
                  * audioPlayer is Buildfire.services.media.audioPlayer.
@@ -66,7 +71,7 @@
                         var playlistTitles=filteredPlaylist.map(el=>{return el.title;}).join('');
 
                         var pluginSongs=result.filter(el=>el.data.audioUrl&&el.data.audioUrl.length>0);
-                        var pluginListSongs=pluginSongs.map(el=>{return el.data.audioUrl;}).join('');
+                        var pluginListSongs=pluginSongs.map(el=>{el.data.audioUrl = convertDropbox(el.data.audioUrl); return el.data.audioUrl;}).join('');
                         var pluginListTitles=pluginSongs.map(el=>{return el.data.title;}).join('');
                         if(NowPlaying.transferPlaylist){
                             if(playlistSongs!=pluginListSongs||playlistTitles!=pluginListTitles){
