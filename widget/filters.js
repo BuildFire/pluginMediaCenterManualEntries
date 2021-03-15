@@ -69,7 +69,17 @@
         })
         .filter('secondsToDateTime', [function() {
             return function(seconds) {
-                return new Date(1970, 0, 1).setSeconds(seconds);
+                if(!seconds)
+                    return "--:--";
+                let date=new Date(1970, 0, 1);
+                date.setSeconds(seconds);
+                let hoursT = Number(date.getHours())<10?'0' + date.getHours() : date.getHours();
+                let minutesT = Number(date.getMinutes())<10?'0' + date.getMinutes() : date.getMinutes();
+                let secondsT = Number(date.getSeconds())<10?'0' + date.getSeconds() : date.getSeconds();
+                if(Number(hoursT)==0)
+                    return minutesT + ":" + secondsT;
+                else
+                    return hoursT + ":" + minutesT + ":" + secondsT;
             };
         }]);
 })(window.angular, window.buildfire, window.location);

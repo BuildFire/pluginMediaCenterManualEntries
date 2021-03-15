@@ -92,13 +92,6 @@
                                     audioPlayer.addToPlaylist(pluginSongs[i]);
                                     NowPlaying.playList.push(pluginSongs[i]);
                                 }
-                                buildfire.dialog.alert({
-                                    title: "Info page",
-                                    message: `Audio files will be automatically added to the end of your playlist.`,
-                                    isMessageHTML: true
-                                }, (err, data) => {
-                                    if(err) console.error(err);
-                                });
                                 //NowPlaying.playlistPlay(pluginSongs[0], 0);
                             }
                         }else{
@@ -219,7 +212,8 @@
                                 });
                             break;
                         case 'timeUpdate':
-                            ready = e.data.duration && e.data.duration!=null && e.data.duration > 0;                            
+                            ready = e.data.duration && e.data.duration!=null && e.data.duration > 0;  
+                           // console.log("koje je vreme",NowPlaying.currentTime);                          
                             if(NowPlaying.forceAutoPlay)
                                 if(ready&&e.data.currentTime>=e.data.duration&&!first){
                                     first=true;
