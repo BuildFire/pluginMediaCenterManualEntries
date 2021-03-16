@@ -69,12 +69,18 @@
                         var filteredPlaylist=userPlayList.tracks.filter(el=>{return el.plugin && el.plugin == buildfire.context.instanceId;});
                         var playlistSongs=filteredPlaylist.map(el=>{return el.url;}).join('');
                         var playlistTitles=filteredPlaylist.map(el=>{return el.title;}).join('');
+                        var playlistBackground=filteredPlaylist.map(el=>{return el.backgroundImage;}).join('');
+                        var playlistTopImage=filteredPlaylist.map(el=>{return el.image;}).join('');
 
                         var pluginSongs=result.filter(el=>el.data.audioUrl&&el.data.audioUrl.length>0);
                         var pluginListSongs=pluginSongs.map(el=>{el.data.audioUrl = convertDropbox(el.data.audioUrl); return el.data.audioUrl;}).join('');
                         var pluginListTitles=pluginSongs.map(el=>{return el.data.title;}).join('');
+
+                        var pluginListBackground=pluginSongs.map(el=>{return el.data.image;}).join('');
+                        var pluginListTopImage=pluginSongs.map(el=>{return el.data.topImage;}).join('');
                         if(NowPlaying.transferPlaylist){
-                            if(playlistSongs!=pluginListSongs||playlistTitles!=pluginListTitles){
+                            if(playlistSongs!=pluginListSongs||playlistTitles!=pluginListTitles
+                                ||playlistBackground!=pluginListBackground||playlistTopImage!=pluginListTopImage){
                                 for(var i=(filteredPlaylist.length-1);i>=0;i--){
                                     var index=NowPlaying.findTrackIndex(userPlayList,filteredPlaylist[i]);
                                     if(index!=-1)
