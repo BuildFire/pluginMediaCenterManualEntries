@@ -69,15 +69,31 @@
                         var filteredPlaylist=userPlayList.tracks.filter(el=>{return el.plugin && el.plugin == buildfire.context.instanceId;});
                         var playlistSongs=filteredPlaylist.map(el=>{return el.url;}).join('');
                         var playlistTitles=filteredPlaylist.map(el=>{return el.title;}).join('');
-                        var playlistBackground=filteredPlaylist.map(el=>{return el.backgroundImage;}).join('');
-                        var playlistTopImage=filteredPlaylist.map(el=>{return el.image;}).join('');
+                        var playlistBackground=filteredPlaylist.map(el=>{
+                            if(el.backgroundImage){
+                                return el.backgroundImage;
+                            }else {return "none";}
+                        }).join('');
+                        var playlistTopImage=filteredPlaylist.map(el=>{
+                            if(el.image){
+                                return el.image;
+                            }else {return "none";}
+                        }).join('');
 
                         var pluginSongs=result.filter(el=>el.data.audioUrl&&el.data.audioUrl.length>0);
                         var pluginListSongs=pluginSongs.map(el=>{el.data.audioUrl = convertDropbox(el.data.audioUrl); return el.data.audioUrl;}).join('');
                         var pluginListTitles=pluginSongs.map(el=>{return el.data.title;}).join('');
 
-                        var pluginListBackground=pluginSongs.map(el=>{return el.data.image;}).join('');
-                        var pluginListTopImage=pluginSongs.map(el=>{return el.data.topImage;}).join('');
+                        var pluginListBackground=pluginSongs.map(el=>{
+                            if(el.data.image){
+                                return el.data.image;
+                            }else {return "none";}
+                        }).join('');
+                        var pluginListTopImage=pluginSongs.map(el=>{
+                            if(el.data.topImage){
+                                return el.data.topImage;
+                            }else {return "none";}
+                        }).join('');
                         if(NowPlaying.transferPlaylist){
                             if(playlistSongs!=pluginListSongs||playlistTitles!=pluginListTitles
                                 ||playlistBackground!=pluginListBackground||playlistTopImage!=pluginListTopImage){
