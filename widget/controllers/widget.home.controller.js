@@ -288,9 +288,9 @@
                                 else if (data && WidgetHome.items.find(item => item.id === data.id)) {
                                     $window.deeplinkingDone = true;
                                     $rootScope.showFeed = false;
-                                    // window.setTimeout(() => {
-                                    //     WidgetHome.goTo(id);
-                                    // }, 0);
+                                     window.setTimeout(() => {
+                                         WidgetHome.goTo(data.id);
+                                     }, 0);
                                 } 
                             });
                         }
