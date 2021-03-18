@@ -44,13 +44,13 @@
                         ng-model="NowPlaying.currentTime" ng-change="NowPlaying.changeTime(NowPlaying.currentTime)" />
                 </div>
                 <div ng-if="NowPlaying.currentTime!=0" class="time-indicator" style="float:left">
-                    <span>{{NowPlaying.currentTime | secondsToDateTime |date: 'mm:ss'}}</span>
+                    <span>{{NowPlaying.currentTime | secondsToDateTime}}</span>
                 </div>
                 <div ng-if="NowPlaying.currentTime==0" class="time-indicator" style="float: left;">
                     <span>{{"--:--"}}</span>
                 </div>
                 <div ng-if="NowPlaying.duration" class="time-indicator" style="float: right;">
-                    <span>{{(NowPlaying.duration | secondsToDateTime | date: 'mm:ss')}}</span>
+                    <span>{{(NowPlaying.duration | secondsToDateTime)}}</span>
                 </div>
                 <div ng-if="!NowPlaying.duration" class="time-indicator" style="float: right;">
                     <span>{{"--:--"}}</span>

@@ -106,6 +106,9 @@
     </div>
     <div class="main col-md-9 pull-right">
         <input type="text" class="form-control" placeholder="Audio URL" ng-model="ContentMedia.item.data.audioUrl">
+        <p style="margin-bottom: -5px;"
+        ng-if="ContentMedia.item.data.audioUrl && ContentMedia.item.data.audioUrl.includes('.dropbox.com')" 
+        class="info margin-top-fifteen">Note: URL will be converted to "https://dl.dropboxusercontent.com/..." in the audio player</p>
     </div>
 </div>
 <hr class="none">

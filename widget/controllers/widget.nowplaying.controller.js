@@ -10,9 +10,7 @@
                 NowPlaying.swiped = [];
                 NowPlaying.forceAutoPlay=$rootScope.forceAutoPlay;
                 NowPlaying.transferPlaylist=$rootScope.transferAudioContentToPlayList;
-                if (media.data.audioUrl.includes("www.dropbox") || media.data.audioUrl.includes("dl.dropbox.com")) {
-                    media.data.audioUrl = media.data.audioUrl.replace("www.dropbox", "dl.dropbox").split("?dl=")[0];
-                }
+                media.data.audioUrl = convertDropbox(media.data.audioUrl);
                 NowPlaying.currentTrack = new Track(media.data);
                 NowPlaying.currentTrack.backgroundImage = media.data.image ? media.data.image : media.data.topImage;
 
@@ -37,6 +35,13 @@
                  * slider to show the slider on now-playing page.
                  * @type {*|jQuery|HTMLElement}
                  */
+
+                function convertDropbox(obj){
+                    if (obj.includes("www.dropbox") || obj.includes("dl.dropbox.com")) {
+                        obj = obj.replace("www.dropbox", "dl.dropbox").replace("dl.dropbox.com", "dl.dropboxusercontent.com").split("?dl=")[0];
+                    }
+                    return obj;
+                }
 
                 /**
                  * audioPlayer is Buildfire.services.media.audioPlayer.
@@ -64,12 +69,34 @@
                         var filteredPlaylist=userPlayList.tracks.filter(el=>{return el.plugin && el.plugin == buildfire.context.instanceId;});
                         var playlistSongs=filteredPlaylist.map(el=>{return el.url;}).join('');
                         var playlistTitles=filteredPlaylist.map(el=>{return el.title;}).join('');
+                        var playlistBackground=filteredPlaylist.map(el=>{
+                            if(el.backgroundImage){
+                                return el.backgroundImage;
+                            }else {return "none";}
+                        }).join('');
+                        var playlistTopImage=filteredPlaylist.map(el=>{
+                            if(el.image){
+                                return el.image;
+                            }else {return "none";}
+                        }).join('');
 
                         var pluginSongs=result.filter(el=>el.data.audioUrl&&el.data.audioUrl.length>0);
-                        var pluginListSongs=pluginSongs.map(el=>{return el.data.audioUrl;}).join('');
+                        var pluginListSongs=pluginSongs.map(el=>{el.data.audioUrl = convertDropbox(el.data.audioUrl); return el.data.audioUrl;}).join('');
                         var pluginListTitles=pluginSongs.map(el=>{return el.data.title;}).join('');
+
+                        var pluginListBackground=pluginSongs.map(el=>{
+                            if(el.data.image){
+                                return el.data.image;
+                            }else {return "none";}
+                        }).join('');
+                        var pluginListTopImage=pluginSongs.map(el=>{
+                            if(el.data.topImage){
+                                return el.data.topImage;
+                            }else {return "none";}
+                        }).join('');
                         if(NowPlaying.transferPlaylist){
-                            if(playlistSongs!=pluginListSongs||playlistTitles!=pluginListTitles){
+                            if(playlistSongs!=pluginListSongs||playlistTitles!=pluginListTitles
+                                ||playlistBackground!=pluginListBackground||playlistTopImage!=pluginListTopImage){
                                 for(var i=(filteredPlaylist.length-1);i>=0;i--){
                                     var index=NowPlaying.findTrackIndex(userPlayList,filteredPlaylist[i]);
                                     if(index!=-1)
@@ -87,13 +114,6 @@
                                     audioPlayer.addToPlaylist(pluginSongs[i]);
                                     NowPlaying.playList.push(pluginSongs[i]);
                                 }
-                                buildfire.dialog.alert({
-                                    title: "Info page",
-                                    message: `Audio files will be automatically added to the end of your playlist.`,
-                                    isMessageHTML: true
-                                }, (err, data) => {
-                                    if(err) console.error(err);
-                                });
                                 //NowPlaying.playlistPlay(pluginSongs[0], 0);
                             }
                         }else{
@@ -214,7 +234,8 @@
                                 });
                             break;
                         case 'timeUpdate':
-                            ready = e.data.duration && e.data.duration!=null && e.data.duration > 0;                            
+                            ready = e.data.duration && e.data.duration!=null && e.data.duration > 0;  
+                           // console.log("koje je vreme",NowPlaying.currentTime);                          
                             if(NowPlaying.forceAutoPlay)
                                 if(ready&&e.data.currentTime>=e.data.duration&&!first){
                                     first=true;
