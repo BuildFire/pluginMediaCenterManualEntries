@@ -248,6 +248,7 @@
                         bookmarks.sync($scope);
                         if (!$window.deeplinkingDone && buildfire.deeplink) {
                             buildfire.deeplink.getData(function (data) {
+                                var exists=data && data.id && WidgetHome.items.find(item => item.id === data.id);
                                 if (data && data.mediaId) {
                                     $rootScope.showFeed = false;
                                     $rootScope.fromSearch = true;
@@ -285,13 +286,16 @@
                                         WidgetHome.goTo(itemId);
                                     }, 0);
                                 }
-                                else if (data && WidgetHome.items.find(item => item.id === data.id)) {
+                                else if (data && exists) {
                                     $window.deeplinkingDone = true;
                                     $rootScope.showFeed = false;
-                                    // window.setTimeout(() => {
-                                    //     WidgetHome.goTo(id);
-                                    // }, 0);
-                                } 
+                                     window.setTimeout(() => {
+                                         WidgetHome.goTo(data.id);
+                                     }, 0);
+                                }else if( data && !exists){
+                                    const text = strings.get("deeplink.deeplinkMediaNotFound") ? strings.get("deeplink.deeplinkMediaNotFound") : "Media does not exist!";
+                                    buildfire.components.toast.showToastMessage({ text }, () => {});
+                                }
                             });
                         }
                     }, function fail() {

@@ -424,6 +424,7 @@
                                     page++;
                                     get();
                                 } else {
+                                    createNewDeeplink(records);
                                     records.forEach(function (record) {
                                         if (!record.data.searchEngineId) {
                                             record.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: record.id });
@@ -439,6 +440,26 @@
                     }
                     get();
                 }
+
+                    function createNewDeeplink(records){
+                        Deeplink.getAll({},function(err,deeplinks){
+                            if(err) return console.error(err);
+                            for(var i=0;i<records.length;i++){
+                                var exists=false
+                                for(var n=0;n<deeplinks.length;n++){
+                                    if(deeplinks[n].id && records[i].id && deeplinks[n].id==records[i].id)exists=true;
+                                }
+                                if(!exists && records[i].id && records[i].data.title){
+                                    new Deeplink({
+                                        deeplinkId:records[i].id,
+                                        name:records[i].data.title,
+                                        deeplinkData:{id:records[i].id},
+                                        imageUrl:(records[i].data.topImage)?records[i].data.topImage:null
+                                    }).save();
+                                }
+                            }
+                        });
+                    } 
 
                 /**
                  * ContentHome.searchListItem() used to search items list
@@ -476,6 +497,7 @@
                                 if (item.data.searchEngineId) {
                                     SearchEngineService.delete(item.data.searchEngineId);
                                 }
+                                removeDeeplink(item);
                                 MediaContent.delete(item.id).then(function (data) {
                                     ContentHome.items.splice(index, 1);
                                 }, function (err) {
@@ -512,6 +534,11 @@
                 };
 
                 updateSearchOptions();
+
+                function removeDeeplink(item){
+                    Deeplink.deleteById(item.id);
+                }
+
                 function updateMasterInfo(info) {
                     ContentHome.masterInfo = angular.copy(info);
                 }
