@@ -152,8 +152,6 @@
                             Location.goToHome();
                         });
                     }
-                    if(event.cmd=="refresh") /// message comes from the strings page on the control side
-                        location.reload();
                 };
 
                 var onUpdateCallback = function (event) {
@@ -250,7 +248,6 @@
                         bookmarks.sync($scope);
                         if (!$window.deeplinkingDone && buildfire.deeplink) {
                             buildfire.deeplink.getData(function (data) {
-                                var exists=data && data.id && WidgetHome.items.find(item => item.id === data.id);
                                 if (data && data.mediaId) {
                                     $rootScope.showFeed = false;
                                     $rootScope.fromSearch = true;
@@ -288,17 +285,13 @@
                                         WidgetHome.goTo(itemId);
                                     }, 0);
                                 }
-                                else if (data && exists) {
+                                else if (data && WidgetHome.items.find(item => item.id === data.id)) {
                                     $window.deeplinkingDone = true;
                                     $rootScope.showFeed = false;
-                                     window.setTimeout(() => {
-                                         WidgetHome.goTo(data.id);
-                                     }, 0);
-                                }else if( data && !exists){
-                                    WidgetHome.deepLink=true;
-                                    const text = strings.get("deeplink.deeplinkMediaNotFound") ? strings.get("deeplink.deeplinkMediaNotFound") : "Media does not exist!";
-                                    buildfire.components.toast.showToastMessage({ text }, () => {});
-                                }else WidgetHome.deepLink=true;
+                                    // window.setTimeout(() => {
+                                    //     WidgetHome.goTo(id);
+                                    // }, 0);
+                                } 
                             });
                         }
                     }, function fail() {
@@ -432,11 +425,11 @@
 
                     }
                 });
-                $rootScope.$watch('goingBack', function () {
-                    if ($rootScope.goingBack) {
-                        WidgetHome.deepLink = true;
-                    }
-                });
+                // $rootScope.$watch('goingBack', function () {
+                //     if ($rootScope.goingBack) {
+                //         WidgetHome.deepLink = true;
+                //     }
+                // });
                 /**
                  * Implementation of pull down to refresh
                  */
