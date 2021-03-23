@@ -145,7 +145,6 @@
         }])
         .run(['Location', '$location', '$rootScope', 'Messaging', 'EVENTS', 'PATHS', 'DB', 'COLLECTIONS', function (Location, $location, $rootScope, Messaging, EVENTS, PATHS, DB, COLLECTIONS) {
             buildfire.navigation.onBackButtonClick = function () {
-                $rootScope.goingBack = true;
                 console.log("BACK BUTTON CLICKED")
                 var navigate = function () {
                     buildfire.history.pop();

@@ -212,36 +212,12 @@
          * This addNewItem method will call the Builfire insert method to insert ContentMedia.item
          */
 
-        function createNewDeeplink(obj){
-          new Deeplink({
-            deeplinkId:obj.id,
-            name:obj.data.title,
-            deeplinkData:{id:obj.id},
-            imageUrl:(obj.data.topImage)?obj.data.topImage:null
-          }).save();
-        }
-
-        function updateDeeplink(obj){
-          Deeplink.getById(obj.id,function(err,deepLink){
-            if(err) return console.error(err);
-            if(deepLink == null){
-              createNewDeeplink(obj);
-            }else{
-              deepLink.name=obj.data.title;
-              deepLink.imageUrl=(obj.data.topImage)?obj.data.topImage:null;
-              deepLink.deeplinkData.id=obj.id;
-              deepLink.save();
-            }
-          });
-        }
-
         function addNewItem() {
           updating = true;
           ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
           SearchEngineService.insert(ContentMedia.item.data).then(function (searchEngineData) {
             ContentMedia.item.data.searchEngineId = searchEngineData.id;
             MediaContent.insert(ContentMedia.item.data).then(function (data) {
-              createNewDeeplink(data);
               MediaContent.getById(data.id).then(function (item) {
                 ContentMedia.item = item;
                 ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: item.id });
@@ -298,7 +274,6 @@
 
             tmrDelayForMedia = setTimeout(function () {
               if (item.id) {
-                updateDeeplink(item);
                 updateItemData();
               }
               else {
