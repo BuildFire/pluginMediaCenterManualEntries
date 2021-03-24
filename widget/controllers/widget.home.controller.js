@@ -295,6 +295,7 @@
                                          WidgetHome.goTo(data.id);
                                      }, 0);
                                 }else if( data && !exists){
+                                    $window.deeplinkingDone = true;
                                     WidgetHome.deepLink=true;
                                     const text = strings.get("deeplink.deeplinkMediaNotFound") ? strings.get("deeplink.deeplinkMediaNotFound") : "Media does not exist!";
                                     buildfire.components.toast.showToastMessage({ text }, () => {});
