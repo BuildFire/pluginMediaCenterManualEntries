@@ -441,25 +441,18 @@
                     get();
                 }
 
-                    function createNewDeeplink(records){
-                        Deeplink.getAll({},function(err,deeplinks){
-                            if(err) return console.error(err);
-                            for(var i=0;i<records.length;i++){
-                                var exists=false
-                                for(var n=0;n<deeplinks.length;n++){
-                                    if(deeplinks[n].id && records[i].id && deeplinks[n].id==records[i].id)exists=true;
-                                }
-                                if(!exists && records[i].id && records[i].data.title){
-                                    new Deeplink({
-                                        deeplinkId:records[i].id,
-                                        name:records[i].data.title,
-                                        deeplinkData:{id:records[i].id},
-                                        imageUrl:(records[i].data.topImage)?records[i].data.topImage:null
-                                    }).save();
-                                }
+                function createNewDeeplink(records){
+                        for(var i=0;i<records.length;i++){
+                            if(records[i].id && records[i].data.title){
+                                new Deeplink({
+                                    deeplinkId:records[i].id,
+                                    name:records[i].data.title,
+                                    deeplinkData:{id:records[i].id},
+                                    imageUrl:(records[i].data.topImage)?records[i].data.topImage:null
+                                }).save();
                             }
-                        });
-                    } 
+                        }
+                } 
 
                 /**
                  * ContentHome.searchListItem() used to search items list

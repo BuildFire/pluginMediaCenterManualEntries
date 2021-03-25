@@ -221,20 +221,6 @@
           }).save();
         }
 
-        function updateDeeplink(obj){
-          Deeplink.getById(obj.id,function(err,deepLink){
-            if(err) return console.error(err);
-            if(deepLink == null){
-              createNewDeeplink(obj);
-            }else{
-              deepLink.name=obj.data.title;
-              deepLink.imageUrl=(obj.data.topImage)?obj.data.topImage:null;
-              deepLink.deeplinkData.id=obj.id;
-              deepLink.save();
-            }
-          });
-        }
-
         function addNewItem() {
           updating = true;
           ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
@@ -298,7 +284,7 @@
 
             tmrDelayForMedia = setTimeout(function () {
               if (item.id) {
-                updateDeeplink(item);
+                createNewDeeplink(item);
                 updateItemData();
               }
               else {
