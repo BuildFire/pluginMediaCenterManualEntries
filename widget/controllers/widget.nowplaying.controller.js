@@ -315,6 +315,11 @@
                     if(NowPlaying.transferPlaylist && NowPlaying.forceAutoPlay)
                         audioPlayer.getPlaylist(function(err,data){
                             var index=NowPlaying.findTrackIndex(data,{myId:NowPlaying.item.id});
+                            if (!NowPlaying.forceAutoPlay) {
+                              index = data.tracks.find(
+                                (el) => el.url === NowPlaying.item.audioUrl
+                              );
+                            }
                             NowPlaying.callPlayFunction(index);
                         });
                     else  NowPlaying.callPlayFunction(-1);
@@ -423,8 +428,12 @@
                 };
                 NowPlaying.loopPlaylist = function () {
                     if (NowPlaying.settings) {
-                        NowPlaying.settings.loopPlaylist = NowPlaying.settings.loopPlaylist ? false : true;
-                        NowPlaying.settings.autoPlayNext = !NowPlaying.settings.autoPlayNext;
+                      NowPlaying.settings.loopPlaylist = NowPlaying.settings
+                        .loopPlaylist
+                        ? false
+                        : true;
+                      if (NowPlaying.settings.loopPlaylist)
+                        NowPlaying.settings.autoPlayNext = true;
                     }
                     audioPlayer.settings.set(NowPlaying.settings);
                 };
