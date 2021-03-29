@@ -22,6 +22,8 @@
     <script src="../../../scripts/angular/ui-bootstrap.min.js"></script>
     <script src="../../../scripts/owlCarousel/owlCarousel.js"></script>
     <!-- JS -->
+    <script src="js/shared/stringsConfig.js"></script>
+    <script src="js/shared/strings.js"></script>
     <script src="../../../scripts/angular/ng-infinite-scroll.custom.js"></script>
     <!--app js-->
     <script src="app.js"></script>
@@ -74,6 +76,8 @@
 </div>
 </body>
 <script>
+    window.strings = new buildfire.services.Strings("en-us", stringsConfig);
+    strings.init();
     function callPlayer(frame_id, func, args) {
         if (window.jQuery && frame_id instanceof jQuery) frame_id = frame_id.get(0).id;
         var iframe = document.getElementById(frame_id);

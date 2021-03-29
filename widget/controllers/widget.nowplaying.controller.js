@@ -31,6 +31,36 @@
                 NowPlaying.finished=false;
                 bookmarks.sync($scope);
 
+                var playListArrayOfStrings=[
+                    {key:"addedPlaylist",text:"Added to playlist"},
+                    {key:"removedFromPlaylist",text:"Removed from playlist"},
+                    {key:"goToPlaylist",text:"Go to Playlist"},
+                    {key:"addToPlaylist",text:"Add to Playlist"},
+                    {key:"removeFromPlaylist",text:"Remove from Playlist"},
+                    {key:"cancelPlaylist",text:"Cancel"},
+                    {key:"removePlayListButton",text:"Remove"},
+                    {key:"emptyPlaylist",text:"Playlist Is Empty Text"},
+                    {key:"donePlaylist",text:"Done"}
+                ];
+
+                var settingsArrayOfStrings=[
+                    {key:"automaticallyPlayNextTrack",text:"Automatically play next track"},
+                    {key:"loopPlaylist",text:"Loop playlist"},
+                    {key:"autoJumpToLastPositon",text:"Auto Jump To LastPosition"},
+                    {key:"shufflePlaylist",text:"Shuffle Playlist"},
+                    {key:"settingsDone",text:"Done"}
+                ];
+
+                NowPlaying.playListStrings={};
+                NowPlaying.settingsStrings={};
+                playListArrayOfStrings.forEach(function(el){
+                    NowPlaying.playListStrings[el.key] = strings.get("playlist."+el.key)?strings.get("playlist."+el.key):el.text;
+                });
+
+                settingsArrayOfStrings.forEach(function(el){
+                    NowPlaying.settingsStrings[el.key] = strings.get("settings."+el.key)?strings.get("settings."+el.key):el.text;
+                });
+               
                 /**
                  * slider to show the slider on now-playing page.
                  * @type {*|jQuery|HTMLElement}
@@ -430,14 +460,18 @@
                 };
                 NowPlaying.addToPlaylist = function (track) {
                     if (track) {
-                        buildfire.components.toast.showToastMessage({text: "Added to playlist"}, console.log);
+                        buildfire.dialog.toast({
+                            message: NowPlaying.playListStrings.addedPlaylist
+                        });
                         audioPlayer.addToPlaylist(track);
                     }
                 };
                 NowPlaying.removeFromPlaylist = function (track, index) {
                     Modals.removeTrackModal().then(function (data) {
                         console.log('Data-------------------in success of remove track popup-0-', data);
-                        buildfire.components.toast.showToastMessage({text: "Removed from playlist"}, console.log);
+                        buildfire.dialog.toast({
+                            message: NowPlaying.playListStrings.removedFromPlaylist
+                        });
                         if (NowPlaying.playList) {
                             NowPlaying.playList.filter(function (val, index) {
                                 if (val.url == track.url) {
@@ -457,7 +491,9 @@
                     Modals.removeTrackModal().then(function (data) {
                         console.log('Data-------------------in success of remove track popup-1-', data);
                         audioPlayer.removeFromPlaylist(index);
-                        buildfire.components.toast.showToastMessage({text: "Removed from playlist"}, console.log);
+                        buildfire.dialog.toast({
+                            message: NowPlaying.playListStrings.removedFromPlaylist
+                        });
                     },
                         function (err) {
                             // Do something on error
