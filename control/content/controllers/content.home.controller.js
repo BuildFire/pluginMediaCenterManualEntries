@@ -55,7 +55,7 @@
                 ContentHome.info.data.content.transferAudioContentToPlayList = false;
                 if (typeof (ContentHome.info.data.content.forceAutoPlay) == 'undefined')
                 ContentHome.info.data.content.forceAutoPlay = false;
-                MediaCenter.save(ContentHome.info.data).then(function (result) {});
+                //MediaCenter.save(ContentHome.info.data).then(function (result) {});
 
                 AppConfig.setSettings(MediaCenterInfo.data);
                 AppConfig.setAppId(MediaCenterInfo.id);
@@ -172,20 +172,58 @@
                     }
                     updateSearchOptions();
                     ContentHome.isBusy = true;
-                    MediaContent.find(searchOptions).then(function success(result) {
-                        if (result.length <= _limit) {// to indicate there are more
-                            ContentHome.noMore = true;
-                        }
-                        else {
-                            result.pop();
-                            searchOptions.skip = searchOptions.skip + _limit;
-                            ContentHome.noMore = false;
-                        }
-                        ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
-                        ContentHome.isBusy = false;
-                    }, function fail() {
-                        ContentHome.isBusy = false;
-                    });
+                    let pageSize = 50, page = 0, allItems = [];
+                    var get = function () {
+                        buildfire.datastore.search({ pageSize, page, recordCount: true }, "MediaContent", function (err, data) {
+                            if (data && data.result.length) {
+                                allItems = allItems.concat(data.result);
+                                if (data.totalRecord > allItems.length) {
+                                    page++;
+                                    get();
+                                }
+                                else {
+                                    if(searchOptions.sort?.titleOrder === 1) {
+                                        allItems = allItems.sort(function (a, b) {
+                                            if (a.data.title.toLowerCase() < b.data.title.toLowerCase()) { return -1; }
+                                            if (a.data.title.toLowerCase() > b.data.title.toLowerCase()) { return 1; }
+                                            return 0;
+                                        });
+                                    } else {
+                                        allItems = allItems.sort(function (a, b) {
+                                            if (a.data.title.toLowerCase() > b.data.title.toLowerCase()) { return -1; }
+                                            if (a.data.title.toLowerCase() < b.data.title.toLowerCase()) { return 1; }
+                                            return 0;
+                                        });
+                                    }
+                                    ContentHome.items = allItems;
+                                    buildfire.spinner.hide();
+                                    ContentHome.isBusy = false;
+                                    ContentHome.noMore = false;
+                                    $scope.$digest();
+                                }
+                            }
+                        })
+                    }
+                    if (searchOptions.sort?.titleOrder) {
+                        buildfire.spinner.show();
+                        get();
+                    } else {
+                        MediaContent.find(searchOptions).then(function success(result) {
+                            if (result.length <= _limit) {// to indicate there are more
+                                ContentHome.noMore = true;
+                            }
+                            else {
+                                result.pop();
+                                searchOptions.skip = searchOptions.skip + _limit;
+                                ContentHome.noMore = false;
+                            }
+                            ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
+                            ContentHome.isBusy = false;
+                        }, function fail() {
+                            ContentHome.isBusy = false;
+                        });
+                    }
+                    
                 };
 
                 /**

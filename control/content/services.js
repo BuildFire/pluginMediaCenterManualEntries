@@ -61,8 +61,8 @@
                 {id: 1, name: "Least", value: "Least Items", key: "title", order: -1},
                 {id: 1, name: "Media Date Asc", value: "Media Date Asc", key: "mediaDate", order: 1},
                 {id: 1, name: "Media Date Desc", value: "Media Date Desc", key: "mediaDate", order: -1},
-                {id: 1, name: "Media Title A-Z", value: "Media Title A-Z", key: "title", order: 1},
-                {id: 1, name: "Media Title Z-A", value: "Media Title Z-A", key: "title", order: -1}
+                {id: 1, name: "Media Title A-Z", value: "Media Title A-Z", key: "titleOrder", order: 1},
+                {id: 1, name: "Media Title Z-A", value: "Media Title Z-A", key: "titleOrder", order: -1}
             ];
 
             return {
