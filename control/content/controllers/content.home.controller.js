@@ -58,6 +58,16 @@
                     ContentHome.info.data.content.forceAutoPlay = false;
                 if (typeof (ContentHome.info.data.content.updatedRecords) == 'undefined')
                     ContentHome.info.data.content.updatedRecords = false;
+                if (typeof (ContentHome.info.data.content.sortBy) !== 'undefined'
+                    && ContentHome.info.data.content.sortBy === 'Most') {
+                    ContentHome.info.data.content.sortBy = 'Media Title A-Z';
+                    ContentHome.info.data.content.sortByValue = 'Media Title A-Z';
+                }
+                if (typeof (ContentHome.info.data.content.sortBy) !== 'undefined'
+                    && ContentHome.info.data.content.sortBy === 'Least') {
+                    ContentHome.info.data.content.sortBy = 'Media Title Z-A';
+                    ContentHome.info.data.content.sortByValue = 'Media Title Z-A';
+                }
                 //MediaCenter.save(ContentHome.info.data).then(function (result) {});
 
                 AppConfig.setSettings(MediaCenterInfo.data);
@@ -156,12 +166,12 @@
                         sort[order.key] = order.order;
                         if ((order.name == "Media Title A-Z" || order.name === "Media Title Z-A")) {
                             if (order.name == "Media Title A-Z") {
-                                ContentHome.info.data.content.updatedRecords ?  searchOptions.sort = { titleIndex: 1 }
-                                : searchOptions.sort = { title: 1 }
+                                ContentHome.info.data.content.updatedRecords ? searchOptions.sort = { titleIndex: 1 }
+                                    : searchOptions.sort = { title: 1 }
                             }
                             if (order.name == "Media Title Z-A") {
-                                ContentHome.info.data.content.updatedRecords ?  searchOptions.sort = { titleIndex: -1 }
-                                : searchOptions.sort = { title: -1 }
+                                ContentHome.info.data.content.updatedRecords ? searchOptions.sort = { titleIndex: -1 }
+                                    : searchOptions.sort = { title: -1 }
                             }
                         } else {
                             console.log("proso ovde")
@@ -181,22 +191,15 @@
                 /* Update all */
                 ContentHome.updateRecords = function (name) {
                     ContentHome.items = [];
-                    console.log("AA");
                     buildfire.notifications.alert({
-                        title: "UPDATE IN PROGGRESS",
-                        message: `We have made an update for alphabetically sorting of items. Please do not leave the plugin since while you are reading this plugin is making sure your update is received. It may take 5 to 20 seconds, depending on your number of media content you have.`,
-                        okButton: {text:'Ok'}
-                        },function(e,data){
-                             if(e) console.error(e); 
-                             if(data) console.log(data);
+                        title: "Update In Progress",
+                        message: `We have made an update to allow you to sort items alphabetically. For this update to occur successfully, please stay on this screen for 5 to 20 seconds until you receive an “Update Finished” message.`,
+                        okButton: { text: 'Ok' }
+                    }, function (e, data) {
+                        if (e) console.error(e);
+                        if (data) console.log(data);
                     });
-                    // buildfire.dialog.alert({
-                    //     subtitle: "",
-                    //     message: `We have made an update for alphabetically sorting of items. Please do not leave the plugin since while you are reading this plugin is making sure your update is received. It may take 5 to 20 seconds, depending on your number of media content you have.`,
-                    //     isMessageHTML: false
-                    // }, (err, data) => {
-                    //     if(err) console.error(err);
-                    // });
+
                     let pageSize = 50, page = 0, allItems = [];
                     var get = function () {
                         buildfire.datastore.search({ pageSize, page, recordCount: true }, "MediaContent", function (err, data) {
@@ -219,36 +222,23 @@
                                         buildfire.datastore.update(item.id, item.data, "MediaContent", (err, res) => {
                                             console.log(res.data.titleIndex)
                                             count++;
-                                            if(count === allItems.length) {
+                                            if (count === allItems.length) {
                                                 buildfire.notifications.alert({
-                                                    title: "UPDATE FINISHED",
-                                                    message: `Thank you for your patience, plugin has been updated! Please PUBLISH your app to receive this update on mobile devices.`,
-                                                    okButton: {text:'Ok'}
-                                                    },function(e,data){
-                                                         if(e) console.error(e); 
-                                                         window.location.reload();
-                                                }); 
+                                                    title: "Update Finished",
+                                                    message: `Your feature has been successfully updated! Please PUBLISH your app to see this update on mobile devices.`,
+                                                    okButton: { text: 'Ok' }
+                                                }, function (e, data) {
+                                                    if (e) console.error(e);
+                                                    window.location.reload();
+                                                });
                                             }
                                         })
                                     });
-                                    console.log('gotovo', allItems)
                                     var sortOrder = Orders.getOrder(name || Orders.ordersMap.Default);
                                     ContentHome.info.data.content.sortBy = name;
                                     ContentHome.info.data.content.sortByValue = sortOrder.value;
                                     ContentHome.info.data.content.updatedRecords = true;
-                                    console.log("GTOVO", ContentHome.info.data.content)
                                     updateData(ContentHome.info)
-
-                                    // setTimeout(() => {
-                                    //     buildfire.notifications.alert({
-                                    //         title: "UPDATE FINISHED",
-                                    //         message: `Thank you for your patience, plugin has been updated!`,
-                                    //         okButton: {text:'Ok'}
-                                    //         },function(e,data){
-                                    //              if(e) console.error(e); 
-                                    //              window.location.reload();
-                                    //     }); 
-                                    // }, 10000);
                                 }
                             } else {
 
@@ -261,8 +251,6 @@
                 if ((ContentHome.info.data.content.sortBy == "Media Title A-Z"
                     || ContentHome.info.data.content.sortBy === "Media Title Z-A")
                     && !ContentHome.info.data.content.updatedRecords) {
-                    console.log(ContentHome.info.data.content);
-                    console.log("AAAAAAAAAAAA")
                     ContentHome.updateRecords(ContentHome.info.data.content.sortBy);
                 }
 
@@ -275,8 +263,11 @@
                     }
                     updateSearchOptions();
                     ContentHome.isBusy = true;
-                    console.log("CP SEARCH OPTIONS", searchOptions)
                     MediaContent.find(searchOptions).then(function success(result) {
+                        if (!result.length) {
+                            ContentHome.info.data.content.updatedRecords = true;
+                        }
+
                         if (result.length <= _limit) {// to indicate there are more
                             ContentHome.noMore = true;
                         }
@@ -285,6 +276,7 @@
                             searchOptions.skip = searchOptions.skip + _limit;
                             ContentHome.noMore = false;
                         }
+
                         ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
                         ContentHome.isBusy = false;
                     }, function fail() {
@@ -303,7 +295,6 @@
 
                         if ((name === "Media Title A-Z" || name === "Media Title Z-A")
                             && !ContentHome.info.data.content.updatedRecords) {
-                            console.log("TOGGLE SORT ORDER", name);
                             ContentHome.info.data.content.sortBy = name;
                             ContentHome.info.data.content.sortByValue = sortOrder.value;
                             ContentHome.isBusy = false;
@@ -318,7 +309,7 @@
                             /* Reset skip to ensure search begins from scratch*/
 
                             ContentHome.isBusy = false;
-       
+
 
                             ContentHome.info.data.content.sortBy = name;
                             ContentHome.info.data.content.sortByValue = sortOrder.value;
@@ -492,7 +483,7 @@
                                 rows[index].links = [];
                                 rows[index].rank = rank;
                                 rows[index].body = rows[index].bodyHTML;
-                                rows[index].titleIndex = rows[index].title ? rows[index].titleIndex = rows[index].title : '';
+                                rows[index].titleIndex = rows[index].title ? rows[index].titleIndex = rows[index].title.toLowerCase() : '';
                             }
                             if (validateCsv(rows)) {
                                 MediaContent.insert(rows).then(function (data) {
@@ -661,6 +652,7 @@
                 }
 
                 function isUnchanged(info) {
+                    console.log(angular.equals(info, ContentHome.masterInfo))
                     return angular.equals(info, ContentHome.masterInfo);
                 }
 
@@ -668,7 +660,6 @@
                     if (!_info.id) {
                         MediaCenter.save(_info.data).then(function (data) {
                             MediaCenter.get().then(function (getData) {
-                                console.log("OVDE")
                                 /* ContentHome.masterInfo = angular.copy(_info);
                                  _info.id = getData.id;
                                  AppConfig.setSettings(_info.data);*/
@@ -698,7 +689,6 @@
                     if (tmrDelayForMedia) {
                         clearTimeout(tmrDelayForMedia);
                     }
-
                     if (!isUnchanged(_info)) {
                         tmrDelayForMedia = setTimeout(function () {
                             updateData(_info);

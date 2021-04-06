@@ -196,11 +196,11 @@
                         console.log(sort, order, WidgetHome.media.data.content.updatedRecords)
                         if ((order.name == "Media Title A-Z" || order.name === "Media Title Z-A")) {
                             if (order.name == "Media Title A-Z") {
-                                WidgetHome.media.data.content.updatedRecords ?  searchOptions.sort = { titleIndex: 1 }
+                                WidgetHome.media.data.content.updatedRecords ? searchOptions.sort = { titleIndex: 1 }
                                 : searchOptions.sort = { title: 1 }
                             }
                             if (order.name == "Media Title Z-A") {
-                                WidgetHome.media.data.content.updatedRecords ?  searchOptions.sort = { titleIndex: -1 }
+                                WidgetHome.media.data.content.updatedRecords ? searchOptions.sort = { titleIndex: -1 }
                                 : searchOptions.sort = { title: -1 }
                             }
                         } else {
