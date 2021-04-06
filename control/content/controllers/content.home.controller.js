@@ -23,8 +23,8 @@
                             rankOfLastItem: 0,
                             allowShare: true,
                             allowSource: true,
-                            transferAudioContentToPlayList:false,
-                            forceAutoPlay:false
+                            transferAudioContentToPlayList: false,
+                            forceAutoPlay: false
                         },
                         design: {
                             listLayout: "list-1",
@@ -38,6 +38,7 @@
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
                 var SearchEngineService = new SearchEngine(COLLECTIONS.MediaContent);
 
+
                 if (MediaCenterInfo) {
                     updateMasterInfo(MediaCenterInfo);
                     ContentHome.info = MediaCenterInfo;
@@ -48,14 +49,16 @@
                     ContentHome.info = _infoData;
                 }
                 if (typeof (ContentHome.info.data.content.allowShare) == 'undefined')
-                ContentHome.info.data.content.allowShare = true;
+                    ContentHome.info.data.content.allowShare = true;
                 if (typeof (ContentHome.info.data.content.allowSource) == 'undefined')
-                ContentHome.info.data.content.allowSource = true;
+                    ContentHome.info.data.content.allowSource = true;
                 if (typeof (ContentHome.info.data.content.transferAudioContentToPlayList) == 'undefined')
-                ContentHome.info.data.content.transferAudioContentToPlayList = false;
+                    ContentHome.info.data.content.transferAudioContentToPlayList = false;
                 if (typeof (ContentHome.info.data.content.forceAutoPlay) == 'undefined')
-                ContentHome.info.data.content.forceAutoPlay = false;
-                MediaCenter.save(ContentHome.info.data).then(function (result) {});
+                    ContentHome.info.data.content.forceAutoPlay = false;
+                if (typeof (ContentHome.info.data.content.updatedRecords) == 'undefined')
+                    ContentHome.info.data.content.updatedRecords = false;
+                //MediaCenter.save(ContentHome.info.data).then(function (result) {});
 
                 AppConfig.setSettings(MediaCenterInfo.data);
                 AppConfig.setAppId(MediaCenterInfo.id);
@@ -151,7 +154,20 @@
                     if (order) {
                         var sort = {};
                         sort[order.key] = order.order;
-                        searchOptions.sort = sort;
+                        if ((order.name == "Media Title A-Z" || order.name === "Media Title Z-A")) {
+                            if (order.name == "Media Title A-Z") {
+                                ContentHome.info.data.content.updatedRecords ?  searchOptions.sort = { titleIndex: 1 }
+                                : searchOptions.sort = { title: 1 }
+                            }
+                            if (order.name == "Media Title Z-A") {
+                                ContentHome.info.data.content.updatedRecords ?  searchOptions.sort = { titleIndex: -1 }
+                                : searchOptions.sort = { title: -1 }
+                            }
+                        } else {
+                            console.log("proso ovde")
+                            searchOptions.sort = sort;
+                        }
+
                         return true;
                     }
                     else {
@@ -162,6 +178,93 @@
                  * ContentHome.noMore tells if all data has been loaded
                  */
                 ContentHome.noMore = false;
+                /* Update all */
+                ContentHome.updateRecords = function (name) {
+                    ContentHome.items = [];
+                    console.log("AA");
+                    buildfire.notifications.alert({
+                        title: "UPDATE IN PROGGRESS",
+                        message: `We have made an update for alphabetically sorting of items. Please do not leave the plugin since while you are reading this plugin is making sure your update is received. It may take 5 to 20 seconds, depending on your number of media content you have.`,
+                        okButton: {text:'Ok'}
+                        },function(e,data){
+                             if(e) console.error(e); 
+                             if(data) console.log(data);
+                    });
+                    // buildfire.dialog.alert({
+                    //     subtitle: "",
+                    //     message: `We have made an update for alphabetically sorting of items. Please do not leave the plugin since while you are reading this plugin is making sure your update is received. It may take 5 to 20 seconds, depending on your number of media content you have.`,
+                    //     isMessageHTML: false
+                    // }, (err, data) => {
+                    //     if(err) console.error(err);
+                    // });
+                    let pageSize = 50, page = 0, allItems = [];
+                    var get = function () {
+                        buildfire.datastore.search({ pageSize, page, recordCount: true }, "MediaContent", function (err, data) {
+                            if (data && data.result && data.result.length) {
+                                allItems = allItems.concat(data.result);
+                                if (data.totalRecord > allItems.length) {
+                                    data.result.map(item => {
+                                        item.data.titleIndex = item.data.title.toLowerCase();
+                                        buildfire.datastore.update(item.id, item.data, "MediaContent", (err, res) => {
+                                            console.log(res.data.titleIndex)
+                                        })
+                                    });
+                                    page++;
+                                    get();
+                                }
+                                else {
+                                    let count = allItems.length - data.result.length;
+                                    data.result.map(item => {
+                                        item.data.titleIndex = item.data.title.toLowerCase();
+                                        buildfire.datastore.update(item.id, item.data, "MediaContent", (err, res) => {
+                                            console.log(res.data.titleIndex)
+                                            count++;
+                                            if(count === allItems.length) {
+                                                buildfire.notifications.alert({
+                                                    title: "UPDATE FINISHED",
+                                                    message: `Thank you for your patience, plugin has been updated! Please PUBLISH your app to receive this update on mobile devices.`,
+                                                    okButton: {text:'Ok'}
+                                                    },function(e,data){
+                                                         if(e) console.error(e); 
+                                                         window.location.reload();
+                                                }); 
+                                            }
+                                        })
+                                    });
+                                    console.log('gotovo', allItems)
+                                    var sortOrder = Orders.getOrder(name || Orders.ordersMap.Default);
+                                    ContentHome.info.data.content.sortBy = name;
+                                    ContentHome.info.data.content.sortByValue = sortOrder.value;
+                                    ContentHome.info.data.content.updatedRecords = true;
+                                    console.log("GTOVO", ContentHome.info.data.content)
+                                    updateData(ContentHome.info)
+
+                                    // setTimeout(() => {
+                                    //     buildfire.notifications.alert({
+                                    //         title: "UPDATE FINISHED",
+                                    //         message: `Thank you for your patience, plugin has been updated!`,
+                                    //         okButton: {text:'Ok'}
+                                    //         },function(e,data){
+                                    //              if(e) console.error(e); 
+                                    //              window.location.reload();
+                                    //     }); 
+                                    // }, 10000);
+                                }
+                            } else {
+
+                            }
+                        })
+                    }
+                    get();
+                }
+
+                if ((ContentHome.info.data.content.sortBy == "Media Title A-Z"
+                    || ContentHome.info.data.content.sortBy === "Media Title Z-A")
+                    && !ContentHome.info.data.content.updatedRecords) {
+                    console.log(ContentHome.info.data.content);
+                    console.log("AAAAAAAAAAAA")
+                    ContentHome.updateRecords(ContentHome.info.data.content.sortBy);
+                }
 
                 /**
                  * ContentHome.getMore is used to load the items
@@ -172,6 +275,7 @@
                     }
                     updateSearchOptions();
                     ContentHome.isBusy = true;
+                    console.log("CP SEARCH OPTIONS", searchOptions)
                     MediaContent.find(searchOptions).then(function success(result) {
                         if (result.length <= _limit) {// to indicate there are more
                             ContentHome.noMore = true;
@@ -195,19 +299,33 @@
                     if (!name) {
                         console.info('There was a problem sorting your data');
                     } else {
-                        ContentHome.items = [];
-
-                        /* reset Search options */
-                        ContentHome.noMore = false;
-                        searchOptions.skip = 0;
-                        /* Reset skip to ensure search begins from scratch*/
-
-                        ContentHome.isBusy = false;
                         var sortOrder = Orders.getOrder(name || Orders.ordersMap.Default);
-                        ContentHome.info.data.content.sortBy = name;
-                        ContentHome.info.data.content.sortByValue = sortOrder.value;
-                        ContentHome.getMore();
-                        ContentHome.itemSortableOptions.disabled = !(ContentHome.info.data.content.sortBy === Orders.ordersMap.Manually);
+
+                        if ((name === "Media Title A-Z" || name === "Media Title Z-A")
+                            && !ContentHome.info.data.content.updatedRecords) {
+                            console.log("TOGGLE SORT ORDER", name);
+                            ContentHome.info.data.content.sortBy = name;
+                            ContentHome.info.data.content.sortByValue = sortOrder.value;
+                            ContentHome.isBusy = false;
+
+                            ContentHome.updateRecords(name);
+                        } else {
+                            ContentHome.items = [];
+                            console.log(name)
+                            /* reset Search options */
+                            ContentHome.noMore = false;
+                            searchOptions.skip = 0;
+                            /* Reset skip to ensure search begins from scratch*/
+
+                            ContentHome.isBusy = false;
+       
+
+                            ContentHome.info.data.content.sortBy = name;
+                            ContentHome.info.data.content.sortByValue = sortOrder.value;
+                            ContentHome.getMore();
+                            ContentHome.itemSortableOptions.disabled = !(ContentHome.info.data.content.sortBy === Orders.ordersMap.Manually);
+                        }
+
                     }
                 };
                 ContentHome.itemSortableOptions = {
@@ -259,6 +377,7 @@
                     var templateData = [{
                         topImage: '',
                         title: '',
+                        titleIndex: '',
                         summary: '',
                         bodyHTML: '',
                         srcUrl: '',
@@ -373,6 +492,7 @@
                                 rows[index].links = [];
                                 rows[index].rank = rank;
                                 rows[index].body = rows[index].bodyHTML;
+                                rows[index].titleIndex = rows[index].title ? rows[index].titleIndex = rows[index].title : '';
                             }
                             if (validateCsv(rows)) {
                                 MediaContent.insert(rows).then(function (data) {
@@ -441,18 +561,18 @@
                     get();
                 }
 
-                function createNewDeeplink(records){
-                        for(var i=0;i<records.length;i++){
-                            if(records[i].id && records[i].data.title){
-                                new Deeplink({
-                                    deeplinkId:records[i].id,
-                                    name:records[i].data.title,
-                                    deeplinkData:{id:records[i].id},
-                                    imageUrl:(records[i].data.topImage)?records[i].data.topImage:null
-                                }).save();
-                            }
+                function createNewDeeplink(records) {
+                    for (var i = 0; i < records.length; i++) {
+                        if (records[i].id && records[i].data.title) {
+                            new Deeplink({
+                                deeplinkId: records[i].id,
+                                name: records[i].data.title,
+                                deeplinkData: { id: records[i].id },
+                                imageUrl: (records[i].data.topImage) ? records[i].data.topImage : null
+                            }).save();
                         }
-                } 
+                    }
+                }
 
                 /**
                  * ContentHome.searchListItem() used to search items list
@@ -528,7 +648,7 @@
 
                 updateSearchOptions();
 
-                function removeDeeplink(item){
+                function removeDeeplink(item) {
                     Deeplink.deleteById(item.id);
                 }
 
@@ -548,6 +668,7 @@
                     if (!_info.id) {
                         MediaCenter.save(_info.data).then(function (data) {
                             MediaCenter.get().then(function (getData) {
+                                console.log("OVDE")
                                 /* ContentHome.masterInfo = angular.copy(_info);
                                  _info.id = getData.id;
                                  AppConfig.setSettings(_info.data);*/
