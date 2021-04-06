@@ -157,7 +157,6 @@
                 };
 
                 var onUpdateCallback = function (event) {
-                    console.log("WIDGET UPDATE", event)
                     if (event.tag == "MediaCenter") {
                         if (event.data) {
                             WidgetHome.media.data = event.data;
@@ -206,7 +205,6 @@
                         } else {
                             searchOptions.sort = sort;
                         }
-                        console.log("WIDGET SEARCH OPTIONS", searchOptions)
                         return true;
                     }
                     else {

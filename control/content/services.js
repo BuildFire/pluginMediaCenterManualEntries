@@ -322,7 +322,6 @@
                     Settings.setAppId(newAppId);
                 },
                 getSettings: function () {
-                    console.log("ovde 2")
                     return Settings.getSetting();
                 },
                 getAppId: function () {

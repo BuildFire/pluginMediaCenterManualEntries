@@ -232,7 +232,6 @@
           SearchEngineService.insert(ContentMedia.item.data).then(function (searchEngineData) {
             ContentMedia.item.data.searchEngineId = searchEngineData.id;
             MediaContent.insert(ContentMedia.item.data).then(function (data) {
-              console.log("INSERT", data)
               createNewDeeplink(data);
               MediaContent.getById(data.id).then(function (item) {
                 ContentMedia.item = item;

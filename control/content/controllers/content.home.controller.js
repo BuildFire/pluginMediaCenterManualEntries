@@ -174,7 +174,6 @@
                                     : searchOptions.sort = { title: -1 }
                             }
                         } else {
-                            console.log("proso ovde")
                             searchOptions.sort = sort;
                         }
 
@@ -368,7 +367,6 @@
                     var templateData = [{
                         topImage: '',
                         title: '',
-                        titleIndex: '',
                         summary: '',
                         bodyHTML: '',
                         srcUrl: '',
@@ -652,7 +650,6 @@
                 }
 
                 function isUnchanged(info) {
-                    console.log(angular.equals(info, ContentHome.masterInfo))
                     return angular.equals(info, ContentHome.masterInfo);
                 }
 
