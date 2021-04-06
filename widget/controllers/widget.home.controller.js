@@ -422,6 +422,7 @@
                         listener = Buildfire.datastore.onUpdate(onUpdateCallback);
                         bookmarks.sync($scope);
                         console.log("SHOW FEED SYNC")
+                        if(!WidgetHome.items.length) WidgetHome.deepLink = true;
                         MediaCenter.get().then(function success(result) {
                             WidgetHome.media = result;
                             if (WidgetHome.media.data.design && WidgetHome.media.data.design.skipMediaPage) $rootScope.skipMediaPage = true;
