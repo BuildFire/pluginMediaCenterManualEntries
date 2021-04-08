@@ -23,8 +23,8 @@
                             rankOfLastItem: 0,
                             allowShare: true,
                             allowSource: true,
-                            transferAudioContentToPlayList:false,
-                            forceAutoPlay:false
+                            transferAudioContentToPlayList: false,
+                            forceAutoPlay: false
                         },
                         design: {
                             listLayout: "list-1",
@@ -38,6 +38,7 @@
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
                 var SearchEngineService = new SearchEngine(COLLECTIONS.MediaContent);
 
+
                 if (MediaCenterInfo) {
                     updateMasterInfo(MediaCenterInfo);
                     ContentHome.info = MediaCenterInfo;
@@ -48,14 +49,26 @@
                     ContentHome.info = _infoData;
                 }
                 if (typeof (ContentHome.info.data.content.allowShare) == 'undefined')
-                ContentHome.info.data.content.allowShare = true;
+                    ContentHome.info.data.content.allowShare = true;
                 if (typeof (ContentHome.info.data.content.allowSource) == 'undefined')
-                ContentHome.info.data.content.allowSource = true;
+                    ContentHome.info.data.content.allowSource = true;
                 if (typeof (ContentHome.info.data.content.transferAudioContentToPlayList) == 'undefined')
-                ContentHome.info.data.content.transferAudioContentToPlayList = false;
+                    ContentHome.info.data.content.transferAudioContentToPlayList = false;
                 if (typeof (ContentHome.info.data.content.forceAutoPlay) == 'undefined')
-                ContentHome.info.data.content.forceAutoPlay = false;
-                MediaCenter.save(ContentHome.info.data).then(function (result) {});
+                    ContentHome.info.data.content.forceAutoPlay = false;
+                if (typeof (ContentHome.info.data.content.updatedRecords) == 'undefined')
+                    ContentHome.info.data.content.updatedRecords = false;
+                if (typeof (ContentHome.info.data.content.sortBy) !== 'undefined'
+                    && ContentHome.info.data.content.sortBy === 'Most') {
+                    ContentHome.info.data.content.sortBy = 'Media Title A-Z';
+                    ContentHome.info.data.content.sortByValue = 'Media Title A-Z';
+                }
+                if (typeof (ContentHome.info.data.content.sortBy) !== 'undefined'
+                    && ContentHome.info.data.content.sortBy === 'Least') {
+                    ContentHome.info.data.content.sortBy = 'Media Title Z-A';
+                    ContentHome.info.data.content.sortByValue = 'Media Title Z-A';
+                }
+                //MediaCenter.save(ContentHome.info.data).then(function (result) {});
 
                 AppConfig.setSettings(MediaCenterInfo.data);
                 AppConfig.setAppId(MediaCenterInfo.id);
@@ -151,7 +164,19 @@
                     if (order) {
                         var sort = {};
                         sort[order.key] = order.order;
-                        searchOptions.sort = sort;
+                        if ((order.name == "Media Title A-Z" || order.name === "Media Title Z-A")) {
+                            if (order.name == "Media Title A-Z") {
+                                ContentHome.info.data.content.updatedRecords ? searchOptions.sort = { titleIndex: 1 }
+                                    : searchOptions.sort = { title: 1 }
+                            }
+                            if (order.name == "Media Title Z-A") {
+                                ContentHome.info.data.content.updatedRecords ? searchOptions.sort = { titleIndex: -1 }
+                                    : searchOptions.sort = { title: -1 }
+                            }
+                        } else {
+                            searchOptions.sort = sort;
+                        }
+
                         return true;
                     }
                     else {
@@ -162,6 +187,71 @@
                  * ContentHome.noMore tells if all data has been loaded
                  */
                 ContentHome.noMore = false;
+                /* Update all */
+                ContentHome.updateRecords = function (name) {
+                    ContentHome.items = [];
+                    buildfire.notifications.alert({
+                        title: "Update In Progress",
+                        message: `We have made an update to allow you to sort items alphabetically. For this update to occur successfully, please stay on this screen for 5 to 20 seconds until you receive an “Update Finished” message.`,
+                        okButton: { text: 'Ok' }
+                    }, function (e, data) {
+                        if (e) console.error(e);
+                        if (data) console.log(data);
+                    });
+
+                    let pageSize = 50, page = 0, allItems = [];
+                    var get = function () {
+                        buildfire.datastore.search({ pageSize, page, recordCount: true }, "MediaContent", function (err, data) {
+                            if (data && data.result && data.result.length) {
+                                allItems = allItems.concat(data.result);
+                                if (data.totalRecord > allItems.length) {
+                                    data.result.map(item => {
+                                        item.data.titleIndex = item.data.title.toLowerCase();
+                                        buildfire.datastore.update(item.id, item.data, "MediaContent", (err, res) => {
+                                            console.log(res.data.titleIndex)
+                                        })
+                                    });
+                                    page++;
+                                    get();
+                                }
+                                else {
+                                    let count = allItems.length - data.result.length;
+                                    data.result.map(item => {
+                                        item.data.titleIndex = item.data.title.toLowerCase();
+                                        buildfire.datastore.update(item.id, item.data, "MediaContent", (err, res) => {
+                                            console.log(res.data.titleIndex)
+                                            count++;
+                                            if (count === allItems.length) {
+                                                buildfire.notifications.alert({
+                                                    title: "Update Finished",
+                                                    message: `Your feature has been successfully updated! Please PUBLISH your app to see this update on mobile devices.`,
+                                                    okButton: { text: 'Ok' }
+                                                }, function (e, data) {
+                                                    if (e) console.error(e);
+                                                    window.location.reload();
+                                                });
+                                            }
+                                        })
+                                    });
+                                    var sortOrder = Orders.getOrder(name || Orders.ordersMap.Default);
+                                    ContentHome.info.data.content.sortBy = name;
+                                    ContentHome.info.data.content.sortByValue = sortOrder.value;
+                                    ContentHome.info.data.content.updatedRecords = true;
+                                    updateData(ContentHome.info)
+                                }
+                            } else {
+
+                            }
+                        })
+                    }
+                    get();
+                }
+
+                if ((ContentHome.info.data.content.sortBy == "Media Title A-Z"
+                    || ContentHome.info.data.content.sortBy === "Media Title Z-A")
+                    && !ContentHome.info.data.content.updatedRecords) {
+                    ContentHome.updateRecords(ContentHome.info.data.content.sortBy);
+                }
 
                 /**
                  * ContentHome.getMore is used to load the items
@@ -173,6 +263,10 @@
                     updateSearchOptions();
                     ContentHome.isBusy = true;
                     MediaContent.find(searchOptions).then(function success(result) {
+                        if (!result.length) {
+                            ContentHome.info.data.content.updatedRecords = true;
+                        }
+
                         if (result.length <= _limit) {// to indicate there are more
                             ContentHome.noMore = true;
                         }
@@ -181,6 +275,7 @@
                             searchOptions.skip = searchOptions.skip + _limit;
                             ContentHome.noMore = false;
                         }
+
                         ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
                         ContentHome.isBusy = false;
                     }, function fail() {
@@ -195,19 +290,32 @@
                     if (!name) {
                         console.info('There was a problem sorting your data');
                     } else {
-                        ContentHome.items = [];
-
-                        /* reset Search options */
-                        ContentHome.noMore = false;
-                        searchOptions.skip = 0;
-                        /* Reset skip to ensure search begins from scratch*/
-
-                        ContentHome.isBusy = false;
                         var sortOrder = Orders.getOrder(name || Orders.ordersMap.Default);
-                        ContentHome.info.data.content.sortBy = name;
-                        ContentHome.info.data.content.sortByValue = sortOrder.value;
-                        ContentHome.getMore();
-                        ContentHome.itemSortableOptions.disabled = !(ContentHome.info.data.content.sortBy === Orders.ordersMap.Manually);
+
+                        if ((name === "Media Title A-Z" || name === "Media Title Z-A")
+                            && !ContentHome.info.data.content.updatedRecords) {
+                            ContentHome.info.data.content.sortBy = name;
+                            ContentHome.info.data.content.sortByValue = sortOrder.value;
+                            ContentHome.isBusy = false;
+
+                            ContentHome.updateRecords(name);
+                        } else {
+                            ContentHome.items = [];
+                            console.log(name)
+                            /* reset Search options */
+                            ContentHome.noMore = false;
+                            searchOptions.skip = 0;
+                            /* Reset skip to ensure search begins from scratch*/
+
+                            ContentHome.isBusy = false;
+
+
+                            ContentHome.info.data.content.sortBy = name;
+                            ContentHome.info.data.content.sortByValue = sortOrder.value;
+                            ContentHome.getMore();
+                            ContentHome.itemSortableOptions.disabled = !(ContentHome.info.data.content.sortBy === Orders.ordersMap.Manually);
+                        }
+
                     }
                 };
                 ContentHome.itemSortableOptions = {
@@ -373,6 +481,7 @@
                                 rows[index].links = [];
                                 rows[index].rank = rank;
                                 rows[index].body = rows[index].bodyHTML;
+                                rows[index].titleIndex = rows[index].title ? rows[index].titleIndex = rows[index].title.toLowerCase() : '';
                             }
                             if (validateCsv(rows)) {
                                 MediaContent.insert(rows).then(function (data) {
@@ -441,18 +550,18 @@
                     get();
                 }
 
-                function createNewDeeplink(records){
-                        for(var i=0;i<records.length;i++){
-                            if(records[i].id && records[i].data.title){
-                                new Deeplink({
-                                    deeplinkId:records[i].id,
-                                    name:records[i].data.title,
-                                    deeplinkData:{id:records[i].id},
-                                    imageUrl:(records[i].data.topImage)?records[i].data.topImage:null
-                                }).save();
-                            }
+                function createNewDeeplink(records) {
+                    for (var i = 0; i < records.length; i++) {
+                        if (records[i].id && records[i].data.title) {
+                            new Deeplink({
+                                deeplinkId: records[i].id,
+                                name: records[i].data.title,
+                                deeplinkData: { id: records[i].id },
+                                imageUrl: (records[i].data.topImage) ? records[i].data.topImage : null
+                            }).save();
                         }
-                } 
+                    }
+                }
 
                 /**
                  * ContentHome.searchListItem() used to search items list
@@ -528,7 +637,7 @@
 
                 updateSearchOptions();
 
-                function removeDeeplink(item){
+                function removeDeeplink(item) {
                     Deeplink.deleteById(item.id);
                 }
 
@@ -577,7 +686,6 @@
                     if (tmrDelayForMedia) {
                         clearTimeout(tmrDelayForMedia);
                     }
-
                     if (!isUnchanged(_info)) {
                         tmrDelayForMedia = setTimeout(function () {
                             updateData(_info);

@@ -182,6 +182,8 @@
         function updateItemData() {
           updating = true;
           ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
+          ContentMedia.item.data && ContentMedia.item.data.title ? 
+          ContentMedia.item.data.titleIndex = ContentMedia.item.data.title.toLowerCase() : '';
           if (!ContentMedia.item.data.deepLinkUrl) {
             ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: ContentMedia.item.id });
           }
@@ -196,6 +198,7 @@
           function update() {
             MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then(function (data) {
               updateMasterItem(ContentMedia.item);
+              console.log("UPDATE", data)
               updating = false;
               Messaging.sendMessageToWidget({
                 name: EVENTS.ITEMS_CHANGE,
@@ -224,6 +227,8 @@
         function addNewItem() {
           updating = true;
           ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
+          ContentMedia.item.data && ContentMedia.item.data.title ? 
+          ContentMedia.item.data.titleIndex = ContentMedia.item.data.title.toLowerCase() : '';
           SearchEngineService.insert(ContentMedia.item.data).then(function (searchEngineData) {
             ContentMedia.item.data.searchEngineId = searchEngineData.id;
             MediaContent.insert(ContentMedia.item.data).then(function (data) {
