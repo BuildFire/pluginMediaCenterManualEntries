@@ -19,6 +19,7 @@
                 var Android = /(android)/i.test(navigator.userAgent);
                 if(!buildfire.isWeb() && Android )
                     document.onfullscreenchange = function ( event ) {
+                        document.exitFullscreen();
                         var calledFromBackButton=false;
                         WidgetMedia.handeFullScreen(calledFromBackButton);
                     };
@@ -27,8 +28,6 @@
 
                 WidgetMedia.handeFullScreen = function(calledFromBackButton){
                     if((document.fullscreenElement && (document.fullscreenElement.id=="ytPlayer"||document.fullscreenElement instanceof HTMLVideoElement))||calledFromBackButton){
-                        if(!calledFromBackButton)
-                            document.exitFullscreen();
                         WidgetMedia.fullScreen=!WidgetMedia.fullScreen;
                         $rootScope.fullScreen=WidgetMedia.fullScreen;
                         var video=document.getElementById("myVideo");
