@@ -19,15 +19,15 @@
                 var Android = /(android)/i.test(navigator.userAgent);
                 if(!buildfire.isWeb() && Android )
                     document.onfullscreenchange = function ( event ) {
-                        document.exitFullscreen();
-                        var calledFromBackButton=false;
-                        WidgetMedia.handeFullScreen(calledFromBackButton);
+                        if((document.fullscreenElement && (document.fullscreenElement.id=="ytPlayer"||document.fullscreenElement instanceof HTMLVideoElement))){
+                            document.exitFullscreen();
+                            WidgetMedia.handeFullScreen();
+                        }
                     };
 
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
 
-                WidgetMedia.handeFullScreen = function(calledFromBackButton){
-                    if((document.fullscreenElement && (document.fullscreenElement.id=="ytPlayer"||document.fullscreenElement instanceof HTMLVideoElement))||calledFromBackButton){
+                WidgetMedia.handeFullScreen = function(){
                         WidgetMedia.fullScreen=!WidgetMedia.fullScreen;
                         $rootScope.fullScreen=WidgetMedia.fullScreen;
                         var video=document.getElementById("myVideo");
@@ -75,7 +75,6 @@
                                     }
                                 });
                             }
-                        }
                 }
 
                 WidgetMedia.onPlayerReady = function ($API) {
@@ -427,8 +426,7 @@
                 $rootScope.$watch('goingBackFullScreen', function () {
                     if($rootScope.goingBackFullScreen){
                         $rootScope.fullScreen=false;
-                        var calledFromBackButton=true;
-                        WidgetMedia.handeFullScreen(calledFromBackButton);
+                        WidgetMedia.handeFullScreen();
                     }
                 });
 
