@@ -145,6 +145,13 @@
         }])
         .run(['Location', '$location', '$rootScope', 'Messaging', 'EVENTS', 'PATHS', 'DB', 'COLLECTIONS', function (Location, $location, $rootScope, Messaging, EVENTS, PATHS, DB, COLLECTIONS) {
             buildfire.navigation.onBackButtonClick = function () {
+                if($rootScope.fullScreen)
+                {
+                    $rootScope.goingBackFullScreen = true;
+                    $rootScope.$digest();
+                    return;
+                }
+                $rootScope.goingBackFullScreen=false;
                 $rootScope.goingBack = true;
                 console.log("BACK BUTTON CLICKED")
                 var navigate = function () {

@@ -1,12 +1,12 @@
 <div class="holder padding-zero text-overlay">
-    <div class="media-center-plugin layout2">
+    <div class="media-center-plugin layout2" id="backgroundImage">
         <div class="people-banner">
             <div class="people-bg clearfix">
                 <div class="people-holder clearfix">
                     <div class="people-media text-center">
 
 
-                        <div class="people-banner" data-ng-hide="WidgetMedia.showVideo"
+                        <div ng-if="!WidgetMedia.fullScreen" class="people-banner" data-ng-hide="WidgetMedia.showVideo"
                              style="background:url('{{WidgetMedia.item.data.topImage}}') no-repeat; background-position:center center; background-size:cover !important;height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
                             <div class="people-bg padding-bottom-fifteen clearfix" style="height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
                                 <div class="people-holder clearfix">
@@ -32,7 +32,7 @@
                     </div>
                 </div>
             </div>
-            <div class="padded">
+            <div class="padded" ng-if="!WidgetMedia.fullScreen">
                 <div class="item-actions">
                     <div class="link-list">
                         <a class="media-action video" ng-click="WidgetMedia.toggleShowVideo();"

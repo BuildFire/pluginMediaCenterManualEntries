@@ -1,5 +1,5 @@
 <div class="holder padding-zero text-overlay">
-    <div class="media-center-plugin layout1">
+    <div class="media-center-plugin layout1" id="backgroundImage">
         <div class="media-center-banner clearfix">
             <div ng-class="WidgetMedia.showVideo == false ? '' : 'video-container-background'"
                 style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
@@ -8,20 +8,20 @@
                     style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;" class="plugin-slide">
                     <!--ng-style="WidgetMedia.showVideo == false ? {'min-height': '192px'} : {}" style="width: 100% !important;max-height:192px !important"
                          -->
-                    <img data-ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage || ( WidgetMedia.media.data.design.skipMediaPage && WidgetMedia.item.data.videoUrl )"
+                    <img ng-if="!WidgetMedia.fullScreen" data-ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage || ( WidgetMedia.media.data.design.skipMediaPage && WidgetMedia.item.data.videoUrl )"
                         load-image="16x9" style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
                         crop-width="1280" crop-height="720" crop-type="crop"
                         data-final-src="{{WidgetMedia.item.data.topImage}}" />
 
-                    <div ng-include="'templates/layouts/video-player.html'"></div>
+                    <div id="myVideo" ng-include="'templates/layouts/video-player.html'"></div>
                 </div>
             </div>
         </div>
-        <div class="text-left padded padding-bottom-zero clearfix ">
+        <div class="text-left padded padding-bottom-zero clearfix " ng-if="!WidgetMedia.fullScreen">
             <h4 class="margin-top-zero" style="font-size: 16px;">{{WidgetMedia.item.data.title}}</h4>
             <h5 class="margin-bottom-zero">{{WidgetMedia.item.data.summary}}</h5>
         </div>
-        <div class="padded padding-top-zero">
+        <div class="padded padding-top-zero" ng-if="!WidgetMedia.fullScreen">
             <div class="item-actions">
                 <div class="link-list">
                     <a class="media-action video" ng-click="WidgetMedia.toggleShowVideo();"

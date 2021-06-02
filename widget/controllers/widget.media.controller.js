@@ -10,7 +10,72 @@
                 WidgetMedia.showVideo = false;
                 WidgetMedia.showSource = false;
                 WidgetMedia.loadingVideo = false;
+
+                WidgetMedia.fullScreen = false;
+                WidgetMedia.oldVideoStyle={position:"",width:"",height:"",marginTop:""};
+                WidgetMedia.oldiFrameStyle={height:""};
+                WidgetMedia.oldBackgroundStyle={height:"",color:""};
+
+                var Android = /(android)/i.test(navigator.userAgent);
+                if(!buildfire.isWeb() && Android )
+                    document.onfullscreenchange = function ( event ) {
+                        if((document.fullscreenElement && (document.fullscreenElement.id=="ytPlayer"||document.fullscreenElement instanceof HTMLVideoElement))){
+                            document.exitFullscreen();
+                            WidgetMedia.handeFullScreen();
+                        }
+                    };
+
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
+
+                WidgetMedia.handeFullScreen = function(){
+                        WidgetMedia.fullScreen=!WidgetMedia.fullScreen;
+                        $rootScope.fullScreen=WidgetMedia.fullScreen;
+                        var video=document.getElementById("myVideo");
+                        var backgroundImage=document.getElementById("backgroundImage");
+                        if(WidgetMedia.fullScreen){
+                                buildfire.appearance.fullScreenMode.enable(null, (err) => {
+                                    WidgetMedia.oldVideoStyle.position=video.style.position;
+                                    WidgetMedia.oldVideoStyle.width=video.style.width;
+                                    WidgetMedia.oldVideoStyle.height=video.style.height;
+                                    WidgetMedia.oldVideoStyle.marginTop=video.style.marginTop;
+                                    WidgetMedia.oldBackgroundStyle.height=backgroundImage.style.height;
+                                    WidgetMedia.oldBackgroundStyle.color=backgroundImage.style.backgroundColor;
+                                    video.style.webkitTransform = 'rotate(90deg)'; 
+                                    video.style.mozTransform = 'rotate(90deg)'; 
+                                    video.style.msTransform = 'rotate(90deg)'; 
+                                    video.style.oTransform = 'rotate(90deg)'; 
+                                    video.style.transform = "rotate(90deg)";
+                                    video.style.transformOrigin = "bottom left";
+                                    video.style.position = "absolute"; 
+                                    video.style.width = "calc(100vw*16/9)";
+                                    video.style.height = "100vw";
+                                    video.style.marginTop = "calc(-100vw + calc(100vh - calc(100vw * 16 / 9)) / 2)";
+                                    backgroundImage.style.height ="100vh";
+                                    backgroundImage.style.backgroundColor="black";
+                                    if(video.getElementsByTagName('iframe') && video.getElementsByTagName('iframe')[0]){
+                                        WidgetMedia.oldiFrameStyle.height=video.getElementsByTagName('iframe')[0].style.height;
+                                        video.getElementsByTagName('iframe')[0].style.height="100vw";
+                                    }
+                            });
+                            }else{
+                                    buildfire.appearance.fullScreenMode.disable(null, (err) => {
+                                    backgroundImage.style.height=WidgetMedia.oldBackgroundStyle.height;
+                                    backgroundImage.style.backgroundColor=WidgetMedia.oldBackgroundStyle.color;
+                                    video.style.webkitTransform = 'rotate(0deg)'; 
+                                    video.style.mozTransform = 'rotate(0deg)'; 
+                                    video.style.msTransform = 'rotate(0deg)'; 
+                                    video.style.oTransform = 'rotate(0deg)'; 
+                                    video.style.transform = "rotate(0deg)";
+                                    video.style.position=WidgetMedia.oldVideoStyle.position;
+                                    video.style.width=WidgetMedia.oldVideoStyle.width;
+                                    video.style.height=WidgetMedia.oldVideoStyle.height;
+                                    video.style.marginTop=WidgetMedia.oldVideoStyle.marginTop;
+                                    if(video.getElementsByTagName('iframe') && video.getElementsByTagName('iframe')[0]){
+                                        video.getElementsByTagName('iframe')[0].style.height=WidgetMedia.oldiFrameStyle.height;
+                                    }
+                                });
+                            }
+                }
 
                 WidgetMedia.onPlayerReady = function ($API) {
                     WidgetMedia.API = $API;
@@ -357,6 +422,14 @@
                         Location.goToHome();
                     });
                 });
+
+                $rootScope.$watch('goingBackFullScreen', function () {
+                    if($rootScope.goingBackFullScreen){
+                        $rootScope.fullScreen=false;
+                        WidgetMedia.handeFullScreen();
+                    }
+                });
+
 
                 $rootScope.$on('deviceLocked', function () {
                     // pause videogular video (if any)
