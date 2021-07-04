@@ -3,6 +3,19 @@
 <head lang="en">
     <meta charset="UTF-8">
 
+    <!-- In the head of your document with your other CSS includes... -->
+    <!-- Video.js base CSS -->
+    <link
+    href="https://unpkg.com/video.js@7/dist/video-js.min.css"
+    rel="stylesheet"
+    />
+
+    <!-- City -->
+    <link
+    href="https://unpkg.com/@videojs/themes@1/dist/city/index.css"
+    rel="stylesheet"
+    />
+
     <!-- CSS -->
     <!--<link href="../../../styles/bootstrap.css" rel="stylesheet">-->
     <link href="../../../styles/helper.css" rel="stylesheet">
@@ -25,6 +38,10 @@
     <script src="js/shared/stringsConfig.js"></script>
     <script src="js/shared/strings.js"></script>
     <script src="../../../scripts/angular/ng-infinite-scroll.custom.js"></script>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="https://player.vimeo.com/api/player.js"></script>
+
     <!--app js-->
     <script src="app.js"></script>
     <script src="enums.js"></script>
@@ -43,6 +60,8 @@
 
     <script src="assets/js/angular-sanitize.min.js"></script>
     <script src="assets/js/videogular.min.js"></script>
+    <script src="assets/js/vg-youtube.min.js"></script>
+    <script src="assets/js/vg-vimeo.min.js"></script>
     <script src="assets/js/vg-controls.min.js"></script>
     <script src="assets/js/vg-overlay-play.min.js"></script>
     <script src="../../../scripts/angular/angular-touch.js"></script>
@@ -53,7 +72,7 @@
     <script src="../../../scripts/buildfire/services/notifications/localNotifications.js"></script>
 
     <!--Video Embeder for Vimeo Youtube-->
-    <script src="assets/js/ng-videosharing-embed.min.js"></script>
+    <!-- <script src="assets/js/ng-videosharing-embed.min.js"></script> -->
 </head>
 <!--<body class="scrollable customBackground" ng-style="currentBackgroundImage"
       ng-class="blackBackground ? 'blackBackground': ''">-->
@@ -74,6 +93,46 @@
     <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>
 
 </div>
+    <div style="position: absolute; bottom: 0; right: 0; width: 100%;" ng-if="globalPlaylist && !loadingGlobalPlaylist && showGlobalPlaylistButtons">
+        <button
+            class="btn btn-primary"
+            ng-disabled="addAllToPlaylistLoading"
+            ng-click="addAllToGlobalPlaylist($event)"
+            style="
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+                border-top-left-radius: 0;
+                width: 49.5%;
+                float: left;
+            "
+        >
+            {{ addAllToPlaylistLoading ? areAllInGlobalPlaylist() ? 'Removing...' : 'Adding...' : areAllInGlobalPlaylist() ? 'Remove All From Playlist' : 'Add All To Playlist' }}
+        </button>
+        <button
+            class="btn btn-primary"
+            ng-if="globalPlaylist"
+            ng-click=""
+            style="
+                border-bottom-right-radius: 0;
+                border-bottom-left-radius: 0;
+                border-top-right-radius: 0;
+                width: 49.5%;
+                float: right;
+            "
+        >
+            Go To Playlist
+        </button>
+    </div>
+    
+    <div id="countdownOverlay" class="overlay" ng-class="{'half-screen': showCountdown}">
+        <div class="overlay-content">
+            <h5 class="margin-top-zero">{{delayCountdownText}}</h5>
+            <br />
+            <a class="btn btn-warning media-action margin-left-ten" ng-click="clearCountdown()">
+                Cancel
+            </a>
+        </div>
+    </div>
 </body>
 <script>
     window.strings = new buildfire.services.Strings("en-us", stringsConfig);
@@ -94,12 +153,12 @@
             }), "*");
         }
     }
-    function callVimeoPlayer(iframeId) {
-        var iframe = $('#' + iframeId)[0];
-        var url = 'https://player.vimeo.com';
-        /*   if (iframe.src.indexOf('https') == 0)
-         url = 'https://player.vimeo.com';*/
-        iframe.contentWindow.postMessage({method: 'pause'}, url);
-    }
+    // function callVimeoPlayer(iframeId) {
+    //     var iframe = $('#' + iframeId)[0];
+    //     var url = 'https://player.vimeo.com';
+    //     /*   if (iframe.src.indexOf('https') == 0)
+    //      url = 'https://player.vimeo.com';*/
+    //     iframe.contentWindow.postMessage({method: 'pause'}, url);
+    // }
 </script>
 </html>

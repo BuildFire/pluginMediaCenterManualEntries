@@ -16,7 +16,9 @@
             //"info.vietnamcode.nampnq.videogular.plugins.youtube",
             "com.2fdevs.videogular.plugins.controls",
             "com.2fdevs.videogular.plugins.overlayplay",
-            "videosharing-embed",
+            "rc-videogular.plugins.youtube",
+            "rc-videogular.plugins.vimeo",
+            // "videosharing-embed",
             "ngTouch"
         ])
         //injected ngRoute for routing
@@ -153,7 +155,6 @@
                 }
                 $rootScope.goingBackFullScreen=false;
                 $rootScope.goingBack = true;
-                console.log("BACK BUTTON CLICKED")
                 var navigate = function () {
                     buildfire.history.pop();
                     console.log($("#feedView").hasClass('notshowing'))
@@ -165,33 +166,43 @@
                             }
                         });
                         $("#showFeedBtn").click();
+                    $rootScope.showGlobalPlaylistButtons = true;
+                    if (!$rootScope.$$phase) $rootScope.$digest();
                     } else buildfire.navigation._goBackOne();
                 }
 
                 var path = $location.path();
                 if (path.indexOf('/media') == 0) {
                     navigate();
-                }
-                else if (path.indexOf('/nowplaying') == 0) {
+                } else if (path.indexOf('/nowplaying') == 0) {
                     if ($rootScope.playlist) {
                         $rootScope.playlist = false;
                         $rootScope.$digest();
-                    }
-                    else if($rootScope.skipMediaPage) 
-                    {
+                    } else if ($rootScope.skipMediaPage) {
                         navigate();
+                    } else {
+                        Location.go("#/media/" + path.split("/")[2]);
                     }
-                    else {
-                        Location.go('#/media/' + path.split('/')[2]);
-                    }
-                }
-                else if($rootScope.showEmptyState) {
+                    if (!$rootScope.$$phase) $rootScope.$digest();
+                } else if($rootScope.showEmptyState) {
                     angular.element('#emptyState').css('display', 'none');
                     angular.element('#home').css('display', 'block');
+                    $rootScope.showGlobalPlaylistButtons = true;
                     $rootScope.showEmptyState = false;
-                }
-                else buildfire.navigation._goBackOne(); 
+                } else {
+                    buildfire.navigation._goBackOne()
+                    if (!$rootScope.$$phase) $rootScope.$digest();
+                }; 
             }
+
+            $rootScope.$on('$routeChangeSuccess', () => { 
+                var path = $location.path();
+                if (path.indexOf('/media') == 0 || path.indexOf('/nowplaying') == 0) {
+                    $rootScope.showGlobalPlaylistButtons = false;
+                } else $rootScope.showGlobalPlaylistButtons = true;
+
+                if (!$rootScope.$$phase) $rootScope.$digest();
+              });
 
             buildfire.device.onAppBackgrounded(function () {
                 $rootScope.$emit('deviceLocked', {});

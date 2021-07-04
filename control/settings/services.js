@@ -100,5 +100,80 @@
                 return deferred.promise;
             };
             return DB;
+        }]).factory("AppDB", ['$rootScope', 'Buildfire', '$q', 'MESSAGES', 'CODES', function ($rootScope, Buildfire, $q, MESSAGES, CODES) {
+            function AppDB() {};
+
+            const getTagName = () => {
+                return 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId);
+            };
+
+            AppDB.prototype.get = () => {
+                const tagName = getTagName();
+                var deferred = $q.defer();
+                Buildfire.appData.get(tagName, (err, result) => {
+                    if (err && err.code == CODES.NOT_FOUND) {
+                        return deferred.resolve();
+                    }
+                    else if (err) {
+                        return deferred.reject(err);
+                    }
+                    else {
+                        return deferred.resolve(result);
+                    }
+                });
+                return deferred.promise;
+            };
+
+            AppDB.prototype.insertAndUpdate = (item) => {
+                const tagName = getTagName();
+                var deferred = $q.defer();
+                if (typeof item == 'undefined') {
+                    return deferred.reject(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
+                }
+
+                const _set = { $set: { [`playlist.${item.id}`]: item.data } };
+                
+                Buildfire.appData.update($rootScope.globalPlaylist.id, _set, tagName, (err, result) => {
+                    if (err) {
+                        return deferred.reject(err);
+                    }
+                    else if (result) {
+                        return deferred.resolve(result);
+                    } else {
+                        return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
+                    }
+                });
+                return deferred.promise;
+            };
+
+            AppDB.prototype.delete = (id) => {
+                const tagName = getTagName();
+                var deferred = $q.defer();
+                if (typeof id == 'undefined') {
+                    return deferred.reject(new Error(MESSAGES.ERROR.ID_NOT_DEFINED));
+                }
+
+                const itemId = `playlist.${id}`;
+
+                let unset = {
+                    $unset: {
+                        [itemId]: "",
+                    },
+                };
+
+                Buildfire.appData.update($rootScope.globalPlaylist.id, unset, tagName, (err, result) => {
+                    if (err) {
+                        return deferred.reject(err);
+                    }
+                    else if (result) {
+                        return deferred.resolve(result);
+                    } else {
+                        return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
+                    }
+                });
+                return deferred.promise;
+            };
+
+            return AppDB;
         }]);
 })(window.angular, window.buildfire, window.location);

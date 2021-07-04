@@ -1,15 +1,16 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'PATHS', '$rootScope','Location',
-            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, PATHS, $rootScope,Location) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope','Location',
+            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope,Location) {
 
                 var WidgetMedia = this;
                 WidgetMedia.API = null;
                 WidgetMedia.mediaType = null;
-                WidgetMedia.showVideo = false;
                 WidgetMedia.showSource = false;
                 WidgetMedia.loadingVideo = false;
+                WidgetMedia.autoPlayVideo = $rootScope.autoPlay && $rootScope.skipMediaPage;
+                WidgetMedia.showVideo = WidgetMedia.autoPlayVideo ? true: false;
 
                 WidgetMedia.fullScreen = false;
                 WidgetMedia.oldVideoStyle={position:"",width:"",height:"",marginTop:""};
@@ -25,7 +26,8 @@
                         }
                     };
 
-                var MediaCenter = new DB(COLLECTIONS.MediaCenter);
+                let MediaCenter = new DB(COLLECTIONS.MediaCenter),
+                    GlobalPlaylist = new AppDB();
 
                 WidgetMedia.handeFullScreen = function(){
                         WidgetMedia.fullScreen=!WidgetMedia.fullScreen;
@@ -80,7 +82,7 @@
                 WidgetMedia.onPlayerReady = function ($API) {
                     WidgetMedia.API = $API;
                     WidgetMedia.loadingVideo = true;              
-                    if(WidgetMedia.media.data.design.skipMediaPage&&WidgetMedia.item.data.videoUrl && !$rootScope.deepLinkNavigate)
+                    if(!WidgetMedia.autoPlayVideo && $rootScope.skipMediaPage && WidgetMedia.item.data.videoUrl && !$rootScope.deepLinkNavigate)
                         WidgetMedia.toggleShowVideo();
                     };
 
@@ -101,16 +103,18 @@
                             videoUrlToSend=videoUrlToSend.replace("www.dropbox","dl.dropboxusercontent").split("?dl=")[0];
                             videoUrlToSend=videoUrlToSend.replace("dl.dropbox.com","dl.dropboxusercontent.com");
                             myType=videoUrlToSend.split('.').pop();
-                        }else if(videoUrlToSend.includes("drive.google.com")){
-                            //var urlArray=videoUrlToSend.replace("/view","").replace("/preview","").split("/");
-                            //var urlId=urlArray[urlArray.length-1].split("?")[0];
-                            //videoUrlToSend="https://drive.google.com/uc?id="+urlId;
-                            videoUrlToSend=WidgetMedia.item.data.videoUrl.replace("/view","/preview").split("?")[0];
-                            WidgetMedia.item.data.videoUrl=videoUrlToSend;
-                            //var frame=document.getElementsByTagName("iframe")[0];
-                            //frame.setAttribute("src",WidgetMedia.item.data.videoUrl);
-                            myType="mp4";
                         }
+                        // else if(videoUrlToSend.includes("drive.google.com")){
+                        //     //var urlArray=videoUrlToSend.replace("/view","").replace("/preview","").split("/");
+                        //     //var urlId=urlArray[urlArray.length-1].split("?")[0];
+                        //     //videoUrlToSend="https://drive.google.com/uc?id="+urlId;
+                        //     videoUrlToSend=WidgetMedia.item.data.videoUrl.replace("/view","/preview").split("?")[0];
+                        //     WidgetMedia.item.data.videoUrl=videoUrlToSend;
+                        //     //var frame=document.getElementsByTagName("iframe")[0];
+                        //     //frame.setAttribute("src",WidgetMedia.item.data.videoUrl);
+                        //     myType="mp4";
+                        // }
+
                         else{
                             myType=videoUrlToSend.split('.').pop();
                         }
@@ -152,6 +156,8 @@
                     }
                 };
                 if (media) {
+                    if (!media.data.videoUrl && !media.data.audioUrl) return $rootScope.playNextItem();
+
                     WidgetMedia.item = media;
                     WidgetMedia.mediaType = media.data.audioUrl ? 'AUDIO' : (media.data.videoUrl ?  'VIDEO' : null);
                     WidgetMedia.item.srcUrl = media.data.srcUrl ? media.data.srcUrl 
@@ -227,22 +233,35 @@
                         }
                     }
                 });
-                WidgetMedia.onUpdateFn = Buildfire.datastore.onUpdate(function (event) {
+                WidgetMedia.onUpdateFn = Buildfire.datastore.onUpdate(function (event) {                            debugger
+
                     switch (event.tag) {
                         case COLLECTIONS.MediaContent:
                             if (event.data) {
                                 WidgetMedia.item = event;
                                 $scope.$digest();
+                                // Update item in globalPlaylist
+                                if($rootScope.globalPlaylist && $rootScope.isInGlobalPlaylist(event.id)) {
+                                    GlobalPlaylist.insertAndUpdate(event).then(() => {
+                                        $rootScope.globalPlaylist.playlist[event.id] = event.data;
+                                    });
+                                }
                             }
                             break;
                         case COLLECTIONS.MediaCenter:
-                            var old=WidgetMedia.media.data.design.itemLayout;
+                            var old = WidgetMedia.media.data.design.itemLayout;
                             WidgetMedia.media = event;
                             $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
                             $rootScope.allowShare = WidgetMedia.media.data.content.allowShare;
                             $rootScope.allowSource = WidgetMedia.media.data.content.allowSource;
                             $rootScope.transferAudioContentToPlayList = WidgetMedia.media.data.content.transferAudioContentToPlayList;
                             $rootScope.forceAutoPlay = WidgetMedia.media.data.content.forceAutoPlay;
+                            
+                            $rootScope.autoPlay = WidgetMedia.media.data.content.autoPlay;
+                            $rootScope.autoPlayDelay = WidgetMedia.media.data.content.autoPlayDelay;
+                            $rootScope.globalPlaylist = WidgetMedia.media.data.content.globalPlaylist;
+                            $rootScope.globalPlaylistLimit = WidgetMedia.media.data.content.globalPlaylistLimit;
+
                             WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
                             if(old == WidgetMedia.media.data.design.itemLayout)WidgetMedia.ApplayUpdates();
                             $scope.$apply();
@@ -253,9 +272,11 @@
                             break;
                     }
                 });
+
                 WidgetMedia.playAudio = function () {
                     Location.go('#/nowplaying/' + WidgetMedia.item.id, true);
                 }
+
                 WidgetMedia.ApplayUpdates = function () {
                     if(WidgetMedia.media.data.design.skipMediaPage&&!WidgetMedia.item.data.videoUrl&&WidgetMedia.item.data.audioUrl)
                     {
@@ -273,6 +294,10 @@
                         WidgetMedia.API.pause();
                     }
                 };
+
+                WidgetMedia.goToNextItem = () => {
+                    $rootScope.playNextItem();
+                }
 
                 WidgetMedia.toggleShowVideo = function () {
                     WidgetMedia.showVideo = !WidgetMedia.showVideo;
@@ -396,6 +421,9 @@
                 });
                 $scope.$on("$destroy", function () {
                     WidgetMedia.onUpdateFn.clear();
+                    if (WidgetMedia && WidgetMedia.clearCountdown) {
+                        WidgetMedia.clearCountdown();
+                    }
                 });
 
                 //Sync with Control section
@@ -418,6 +446,10 @@
                  */
                 $scope.$on('$destroy', function () {
                     onRefresh.clear();
+                    if (WidgetMedia && WidgetMedia.clearCountdown) {
+                        WidgetMedia.clearCountdown();
+                    }
+                    WidgetMedia= null;
                     Buildfire.datastore.onRefresh(function(){
                         Location.goToHome();
                     });

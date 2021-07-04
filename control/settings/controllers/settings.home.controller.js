@@ -5,6 +5,7 @@
         .controller('SettingsCtrl', ['$scope', 'COLLECTIONS', 'DB', 'MediaCenterInfo', '$timeout', 'Buildfire', 'EVENTS', 'Messaging', 'Orders', function ($scope, COLLECTIONS, DB, MediaCenterInfo, $timeout, Buildfire, EVENTS, Messaging, Orders) {
             var Settings = this;
             Settings.data = {};
+            $scope.inputs = {};
             var MediaCenter = new DB(COLLECTIONS.MediaCenter);
             MediaCenter.get().then(function (getData) {
                 Settings.data = getData.data;
@@ -18,6 +19,15 @@
                     Settings.data.content.forceAutoPlay = false;
                 if (typeof (Settings.data.design.skipMediaPage) == 'undefined')
                     Settings.data.design.skipMediaPage=false;
+                if (typeof (Settings.data.content.autoPlay) == 'undefined')
+                    Settings.data.content.autoPlay=false;
+                if (typeof (Settings.data.content.autoPlayDelay) == 'undefined')
+                    Settings.data.content.autoPlayDelay={ label: "Off", value: 0 };
+                if (typeof (Settings.data.content.globalPlaylist) == 'undefined')
+                    Settings.data.content.globalPlaylist=false;
+                if (typeof (Settings.data.content.globalPlaylistLimit) == 'undefined')
+                    $scope.inputs.limitInput = 0;
+                else $scope.inputs.limitInput = Settings.data.content.globalPlaylistLimit;
             }, function (err) {
                 console.error(err);
             });
@@ -26,7 +36,7 @@
                 MediaCenter.save(Settings.data).then(function (result) {});
             }
 
-            Settings.setAutoPlay = function(value){
+            Settings.setForceAutoPlay = function(value){
                 if(value!=Settings.data.content.forceAutoPlay){
                     Settings.data.content.forceAutoPlay=value;
                     Settings.data.content.transferAudioContentToPlayList=Settings.data.content.forceAutoPlay;
@@ -54,6 +64,47 @@
                     MediaCenter.save(Settings.data).then(function (result) {});
                 }
             }
+
+            Settings.setAutoPlay = function (value) {
+                if (value != Settings.data.content.autoPlay) {
+                    Settings.data.content.autoPlay = value;
+                    MediaCenter.save(Settings.data).then(function (result) { });
+                }
+            };
+
+            Settings.setAutoPlayDelay = function (option) {
+                if (option.value != Settings.data.content.autoPlayDelay.value) {
+                    Settings.data.content.autoPlayDelay = option;
+                    MediaCenter.save(Settings.data).then(function (result) { });
+                }
+            };
+
+            Settings.setGlobalPlaylist = function (value) {
+                if (value != Settings.data.content.globalPlaylist) {
+                    Settings.data.content.globalPlaylist = value;
+                    MediaCenter.save(Settings.data).then(function (result) { });
+                }
+            };
+
+            let limitSaveDelay;
+            Settings.setGlobalPlaylistLimit = function (e) {
+                if (limitSaveDelay) clearTimeout(limitSaveDelay);
+                if ($scope.inputs.limitInput != Settings.data.content.globalPlaylistLimit) {
+                    limitSaveDelay = setTimeout(function () {
+                        Settings.data.content.globalPlaylistLimit = $scope.inputs.limitInput;
+                        MediaCenter.save(Settings.data).then(function (result) { });
+                    }, 700);
+                }
+            };
+
+            Settings.autoPlayDelayOptions = [
+                { label: "Off", value: 0 },
+                { label: "1s", value: 1 },
+                { label: "2s", value: 2 },
+                { label: "3s", value: 3 },
+                { label: "5s", value: 5 },
+            ];
+
             // $scope.$watch(function () {
             //     return Settings.data.content.allowShare && Settings.data.content.allowSource;
             // }, function () {

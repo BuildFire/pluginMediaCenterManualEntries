@@ -4,8 +4,6 @@
             <div class="people-bg clearfix">
                 <div class="people-holder clearfix">
                     <div class="people-media text-center">
-
-
                         <div ng-if="!WidgetMedia.fullScreen" class="people-banner" data-ng-hide="WidgetMedia.showVideo"
                              style="background:url('{{WidgetMedia.item.data.topImage}}') no-repeat; background-position:center center; background-size:cover !important;height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
                             <div class="people-bg padding-bottom-fifteen clearfix" style="height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
@@ -27,8 +25,6 @@
                         </div>
 
                         <div id="myVideo" ng-include="'templates/layouts/video-player.html'"></div>
-
-
                     </div>
                 </div>
             </div>
@@ -55,6 +51,7 @@
                             ng-class="{ 'glyphicon-star-empty' : !WidgetMedia.item.data.bookmarked, 'glyphicon-star' : WidgetMedia.item.data.bookmarked }"
                             ng-click="WidgetMedia.bookmark($event)" role="button"></i>
                             <i ng-if="WidgetMedia.item.data.links.length" class="glyphicon glyphicon-align-justify" ng-click="WidgetMedia.openLinks(WidgetMedia.item.data.links)" role="button"></i>
+                            <i ng-if="globalPlaylist" class="glyphicon star" style="font-size: 17px;top: -3px;" ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(WidgetMedia.item.id), 'glyphicon-minus' : isInGlobalPlaylist(WidgetMedia.item.id) }" ng-click="toggleItemGlobalPlaylist($event, WidgetMedia.item)" role="button"></i>
                     </div>
                 </div>
                 <!-- <hr class="small"> -->

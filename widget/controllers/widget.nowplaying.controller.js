@@ -295,17 +295,21 @@
                             NowPlaying.duration = e.data.duration;
                             break;
                         case 'audioEnded':
-                            ready=false;
-                            if(!NowPlaying.settings.autoPlayNext) {
-                                NowPlaying.playing = false;
-                                NowPlaying.paused = false;
+                            ready = false;
+                            if ($rootScope.autoPlay && !NowPlaying.settings.loopPlaylist) {
+                                $rootScope.playNextItem();
+                            } else {
+                                if(!NowPlaying.settings.autoPlayNext) {
+                                    NowPlaying.playing = false;
+                                    NowPlaying.paused = false;
+                                }
+                                if(NowPlaying.forceAutoPlay&&NowPlaying.isItLast&&!NowPlaying.settings.loopPlaylist)
+                                {
+                                    NowPlaying.playing = false;
+                                    NowPlaying.paused = true;
+                                    NowPlaying.finished=true;
+                                }else NowPlaying.finished=false;
                             }
-                            if(NowPlaying.forceAutoPlay&&NowPlaying.isItLast&&!NowPlaying.settings.loopPlaylist)
-                            {
-                                NowPlaying.playing = false;
-                                NowPlaying.paused = true;
-                                NowPlaying.finished=true;
-                            }else NowPlaying.finished=false;
                             break;
                         case 'pause':
                             NowPlaying.playing = false;
@@ -314,6 +318,9 @@
                             if (e && e.data && e.data.track) {
                                 NowPlaying.currentTrack = e.data.track;
                                 NowPlaying.playing = true;
+                            } else {
+                                // param: userAction
+                                $rootScope.playNextItem({userInput: true});
                             }
                             break;
                         case 'removeFromPlaylist':

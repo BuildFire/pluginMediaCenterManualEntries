@@ -1,4 +1,4 @@
-<div class="holder padding-zero">
+<div class="holder padding-zero" ng-class="{'pb30': globalPlaylist}">
     <div class="media-center-plugin layout1 text-overlay">
         <div class="plugin-banner clearfix">
             <div ng-style="WidgetHome.data.content.images.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}" id="carousel" build-fire-carousel=""></div>
@@ -15,13 +15,14 @@
                      infinite-scroll-disabled="WidgetHome.noMore"
                         >
                     <div class="clickable col-xs-6 pull-left text-overlay" ng-repeat="item in WidgetHome.items"
-                         ng-click="WidgetHome.goTo(item.id)" ng-class-odd="list-item-odd"
+                         ng-click="WidgetHome.goToMedia($index)" ng-class-odd="list-item-odd"
                          ng-class-even="list-item-even">
                         <div class="list-item-media text-center border-radius-three overflow-hidden text-overlay">
                             <div play-btn="{{item.data.videoUrl.length > 0  || (WidgetHome.media.data.design.skipMediaPage && (item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0)) }}" class="list-media-holder text-overlay">
                                 <div class="li-actions-item">
                                     <i class="share glyphicon glyphicon-share-alt" ng-if="allowShare" ng-click="WidgetHome.share($event, item)" role="button"></i>
                                     <i class="bookmark glyphicon" style="right: 0; font-family: 'Glyphicons Halflings' !important;"  ng-class="{ 'glyphicon-star-empty' : !item.data.bookmarked, 'glyphicon-star' : item.data.bookmarked }" ng-click="WidgetHome.bookmark($event, item)" role="button"></i>
+                                    <i ng-if="globalPlaylist" class="glyphicon" style="right: 0; bottom: 0; top: unset; font-family: 'Glyphicons Halflings' !important; font-size: 17px;"  ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(item.id), 'glyphicon-minus' : isInGlobalPlaylist(item.id) }" ng-click="toggleItemGlobalPlaylist($event, item)" role="button"></i>
                                 </div>
                                 <img ng-if="item.data.topImage" load-image="16x9" crop-width="240" crop-height="135" crop-type="crop" data-final-src="{{item.data.topImage}}">
                                 <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png">
