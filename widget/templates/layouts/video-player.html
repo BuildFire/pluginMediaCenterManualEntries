@@ -1,7 +1,8 @@
 <div ng-style="WidgetMedia.fullScreen == false && {height: (WidgetMedia.deviceWidth*9)/16}" ng-show="WidgetMedia.showVideo" class="videogular-container">
     <img src="../../../styles/media/holder-16x9.gif"
         ng-if="WidgetMedia.loadingVideo">
-    <videogular id="videogularElement" vg-player-ready="WidgetMedia.onPlayerReady($API)"
+    <videogular id="videogularElement" 
+                vg-player-ready="WidgetMedia.onPlayerReady($API)"
                 vg-change-source="WidgetMedia.sourceChanged($source)"
                 vg-theme="WidgetMedia.videoPlayerConfig.theme.url"
                 vg-error="WidgetMedia.onVideoError($event)"
@@ -10,28 +11,26 @@
                 vg-complete="WidgetMedia.goToNextItem()"
                 >
         <vg-media 
+                vg-vimeo
+                vg-youtube
                 vg-native-controls="false"
                 vg-src="WidgetMedia.videoPlayerConfig.sources"
                 vg-tracks="WidgetMedia.videoPlayerConfig.tracks"
                 ng-show="!WidgetMedia.loadingVideo"
-                vg-youtube
-                vg-vimeo
                 >
         </vg-media>
+        <vg-overlay-play></vg-overlay-play>
+
         <vg-controls ng-if="WidgetMedia.item.data.videoUrl" vg-autohide="false" ng-show="!WidgetMedia.loadingVideo">
-            <div class="prev-item-btn">
+            <div class="prev-item-btn" ng-click="playPrevItem()">
                 <button class="iconButton">
-                    <i class="glyphicon glyphicon-step-backward"
-                        ng-click="toggleItemGlobalPlaylist($event, WidgetMedia.item)">
-                    </i>
+                    <i class="glyphicon glyphicon-step-backward"></i>
                 </button>
             </div>
             <vg-play-pause-button class="vid-play-pause-btn" ng-show="!WidgetMedia.loadingVideo"></vg-play-pause-button>
-            <div class="next-item-btn">
+            <div class="next-item-btn" ng-click="playNextItem(true)">
                 <button class="iconButton">
-                    <i class="glyphicon glyphicon-step-forward"
-                        ng-click="toggleItemGlobalPlaylist($event, WidgetMedia.item)">
-                    </i>
+                    <i class="glyphicon glyphicon-step-forward"></i>
                 </button>
             </div>
 

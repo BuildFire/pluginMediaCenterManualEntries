@@ -48,7 +48,7 @@
         <div>
             <div class="setting-toggle">
             <p class="setting-label">
-                Play All
+                Play All Audio Files
                 <span class="customTooltipBox btn-primary">
                 <span class="customTooltipText">
                     When a user plays any audio file, a full list of audio files from the instance will be added to the user’s playlist. 
@@ -115,19 +115,6 @@
             <div class="buttons">
                 <button ng-class="{'active': Settings.data.content.globalPlaylist}" ng-click="Settings.setGlobalPlaylist(true)">On</button>
                 <button class="toLeft" ng-class="{'active': !Settings.data.content.globalPlaylist}" ng-click="Settings.setGlobalPlaylist(false)">Off</button>
-            </div>
-        </div>
-        <div class="setting-toggle" ng-if="Settings.data.content.globalPlaylist">
-            <p class="setting-label">
-                Global Playlist Limit
-                <span class="customTooltipBox btn-primary">
-                    <span class="customTooltipText">
-                        Limit how many items a user can add to the global playlist, 0 = unlimited
-                    </span>
-                </span>
-            </p>
-            <div>
-                <input style="width: 200px; height: 42px;" type="number" class="form-control" placeholder="Global Playlist Limit" ng-model="inputs.limitInput" ng-change="Settings.setGlobalPlaylistLimit()" />
             </div>
         </div>
 

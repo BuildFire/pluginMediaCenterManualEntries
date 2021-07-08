@@ -247,57 +247,6 @@
                 return deferred.promise;
             };
 
-            // AppDB.prototype.insert = (items) => {
-            //     const tagName = getTagName();
-            //     var deferred = $q.defer();
-            //     if (typeof items == 'undefined') {
-            //         return deferred.reject(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
-            //     }
-            //     if (Array.isArray(items)) {
-            //         Buildfire.appData.bulkInsert(items, tagName, (err, result) => {
-            //             if (err) {
-            //                 return deferred.reject(err);
-            //             }
-            //             else if (result) {
-            //                 return deferred.resolve(result);
-            //             } else {
-            //                 return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
-            //             }
-            //         });
-            //     } else {
-            //         Buildfire.appData.insert(items, tagName, true, (err, result) => {
-            //             if (err) {
-            //                 return deferred.reject(err);
-            //             }
-            //             else if (result) {
-            //                 return deferred.resolve(result);
-            //             } else {
-            //                 return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
-            //             }
-            //         });
-            //     }
-            //     return deferred.promise;
-            // };
-
-            // AppDB.prototype.find = (options) => {
-            //     const tagName = getTagName();
-            //     var deferred = $q.defer();
-            //     if (typeof options == 'undefined') {
-            //         return deferred.reject(new Error(MESSAGES.ERROR.OPTION_REQUIRES));
-            //     }
-            //     Buildfire.appData.search(options, tagName, (err, result) => {
-            //         if (err) {
-            //             return deferred.reject(err);
-            //         }
-            //         else if (result) {
-            //             return deferred.resolve(result);
-            //         } else {
-            //             return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
-            //         }
-            //     });
-            //     return deferred.promise;
-            // };
-
             AppDB.prototype.insertAndUpdate = (item) => {
                 const tagName = getTagName();
                 var deferred = $q.defer();
@@ -393,15 +342,19 @@
                 return deferred.promise;
             };
 
-            AppDB.prototype.deleteAll = () => {
+            AppDB.prototype.deleteAll = (itemsIds) => {
                 const tagName = getTagName();
                 var deferred = $q.defer();
 
-                let set = {
-                    $set: { playlist: {}},
+                let unset = {
+                    $unset: {},
                 };
+
+                itemsIds.forEach(itemId => {
+                    unset['$unset'][`playlist.${itemId}`] = "";
+                });
                 
-                Buildfire.appData.update($rootScope.globalPlaylist.id, set, tagName, (err, result) => {
+                Buildfire.appData.update($rootScope.globalPlaylist.id, unset, tagName, (err, result) => {
                     if (err) {
                         return deferred.reject(err);
                     }
@@ -409,6 +362,24 @@
                         return deferred.resolve(result);
                     } else {
                         return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
+                    }
+                });
+                return deferred.promise;
+            };
+
+            // Global Playlist Limit get and set
+            AppDB.prototype.getGlobalPlaylistLimit = () => {
+                const tagName = "GlobalPlayListSettings";
+                var deferred = $q.defer();
+                Buildfire.appData.get(tagName, (err, result) => {
+                    if (err && err.code == CODES.NOT_FOUND) {
+                        return deferred.resolve();
+                    }
+                    else if (err) {
+                        return deferred.reject(err);
+                    }
+                    else {
+                        return deferred.resolve(result);
                     }
                 });
                 return deferred.promise;

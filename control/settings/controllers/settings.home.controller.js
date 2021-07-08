@@ -18,16 +18,13 @@
                 if (typeof (Settings.data.content.forceAutoPlay) == 'undefined')
                     Settings.data.content.forceAutoPlay = false;
                 if (typeof (Settings.data.design.skipMediaPage) == 'undefined')
-                    Settings.data.design.skipMediaPage=false;
+                    Settings.data.design.skipMediaPage = false;
                 if (typeof (Settings.data.content.autoPlay) == 'undefined')
-                    Settings.data.content.autoPlay=false;
+                    Settings.data.content.autoPlay = false;
                 if (typeof (Settings.data.content.autoPlayDelay) == 'undefined')
-                    Settings.data.content.autoPlayDelay={ label: "Off", value: 0 };
+                    Settings.data.content.autoPlayDelay = { label: "Off", value: 0 };
                 if (typeof (Settings.data.content.globalPlaylist) == 'undefined')
-                    Settings.data.content.globalPlaylist=false;
-                if (typeof (Settings.data.content.globalPlaylistLimit) == 'undefined')
-                    $scope.inputs.limitInput = 0;
-                else $scope.inputs.limitInput = Settings.data.content.globalPlaylistLimit;
+                    Settings.data.content.globalPlaylist = false;
             }, function (err) {
                 console.error(err);
             });
@@ -38,6 +35,9 @@
 
             Settings.setForceAutoPlay = function(value){
                 if(value!=Settings.data.content.forceAutoPlay){
+                    if (value === true && Settings.data.content.autoPlay) {
+                        Settings.data.content.autoPlay = false;
+                    }
                     Settings.data.content.forceAutoPlay=value;
                     Settings.data.content.transferAudioContentToPlayList=Settings.data.content.forceAutoPlay;
                     MediaCenter.save(Settings.data).then(function (result) {});
@@ -67,14 +67,11 @@
 
             Settings.setAutoPlay = function (value) {
                 if (value != Settings.data.content.autoPlay) {
+                    if (value === true && Settings.data.content.forceAutoPlay) {
+                        Settings.data.content.forceAutoPlay = false;
+                        Settings.data.content.transferAudioContentToPlayList = Settings.data.content.forceAutoPlay;
+                    }
                     Settings.data.content.autoPlay = value;
-                    MediaCenter.save(Settings.data).then(function (result) { });
-                }
-            };
-
-            Settings.setAutoPlayDelay = function (option) {
-                if (option.value != Settings.data.content.autoPlayDelay.value) {
-                    Settings.data.content.autoPlayDelay = option;
                     MediaCenter.save(Settings.data).then(function (result) { });
                 }
             };
@@ -85,15 +82,11 @@
                     MediaCenter.save(Settings.data).then(function (result) { });
                 }
             };
-
-            let limitSaveDelay;
-            Settings.setGlobalPlaylistLimit = function (e) {
-                if (limitSaveDelay) clearTimeout(limitSaveDelay);
-                if ($scope.inputs.limitInput != Settings.data.content.globalPlaylistLimit) {
-                    limitSaveDelay = setTimeout(function () {
-                        Settings.data.content.globalPlaylistLimit = $scope.inputs.limitInput;
-                        MediaCenter.save(Settings.data).then(function (result) { });
-                    }, 700);
+            
+            Settings.setAutoPlayDelay = function (option) {
+                if (option.value != Settings.data.content.autoPlayDelay.value) {
+                    Settings.data.content.autoPlayDelay = option;
+                    MediaCenter.save(Settings.data).then(function (result) { });
                 }
             };
 

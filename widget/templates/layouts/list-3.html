@@ -28,7 +28,7 @@
                         <div class="li-actions-item">
                             <i class="share glyphicon glyphicon-share-alt star" ng-if="allowShare" ng-click="WidgetHome.share($event, item)" role="button"></i>
                             <i class="glyphicon bookmark star" ng-class="{ 'glyphicon-star-empty' : !item.data.bookmarked, 'glyphicon-star' : item.data.bookmarked }" ng-click="WidgetHome.bookmark($event, item)" role="button"></i>
-                            <i ng-if="globalPlaylist" class="glyphicon star" style="font-size: 17px;top: 1px; margin-left: 11px;" ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(item.id), 'glyphicon-minus' : isInGlobalPlaylist(item.id) }" ng-click="toggleItemGlobalPlaylist($event, item)" role="button"></i>
+                            <i ng-if="globalPlaylist" class="glyphicon star" style="font-size: 17px;top: 1px; margin-left: 11px;" ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(item.id), 'glyphicon-minus' : isInGlobalPlaylist(item.id) }" ng-click="toggleGlobalPlaylistItem($event, item)" role="button"></i>
                         </div>
                       </div>
                     </div>

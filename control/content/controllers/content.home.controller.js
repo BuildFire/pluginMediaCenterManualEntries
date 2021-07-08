@@ -568,18 +568,17 @@
                  * @param value to be search.
                  */
                 ContentHome.searchListItem = function (value) {
-                    var title = '';
-
                     searchOptions.skip = 0;
                     /*reset the skip value*/
 
+                    debugger
                     ContentHome.isBusy = false;
                     ContentHome.items = [];
                     value = value.trim();
                     if (!value) {
                         value = '/*';
                     }
-                    searchOptions.filter = { "$json.title": { "$regex": value } };
+                    searchOptions.filter = { "$json.title": { "$regex": value, $options: "-i",} };
                     ContentHome.getMore();
                 };
 

@@ -51,7 +51,7 @@
                             ng-class="{ 'glyphicon-star-empty' : !WidgetMedia.item.data.bookmarked, 'glyphicon-star' : WidgetMedia.item.data.bookmarked }"
                             ng-click="WidgetMedia.bookmark($event)" role="button"></i>
                             <i ng-if="WidgetMedia.item.data.links.length" class="glyphicon glyphicon-align-justify" ng-click="WidgetMedia.openLinks(WidgetMedia.item.data.links)" role="button"></i>
-                            <i ng-if="globalPlaylist" class="glyphicon star" style="font-size: 17px;top: -3px;" ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(WidgetMedia.item.id), 'glyphicon-minus' : isInGlobalPlaylist(WidgetMedia.item.id) }" ng-click="toggleItemGlobalPlaylist($event, WidgetMedia.item)" role="button"></i>
+                            <i ng-if="globalPlaylist" class="glyphicon star" style="font-size: 17px;top: -3px;" ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(WidgetMedia.item.id), 'glyphicon-minus' : isInGlobalPlaylist(WidgetMedia.item.id) }" ng-click="toggleGlobalPlaylistItem($event, WidgetMedia.item)" role="button"></i>
                     </div>
                 </div>
                 <!-- <hr class="small"> -->

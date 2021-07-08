@@ -22,7 +22,7 @@
                                 <div class="li-actions-item">
                                     <i class="share glyphicon glyphicon-share-alt" ng-if="allowShare" ng-click="WidgetHome.share($event, item)" role="button"></i>
                                     <i class="bookmark glyphicon" style="right: 0; font-family: 'Glyphicons Halflings' !important;"  ng-class="{ 'glyphicon-star-empty' : !item.data.bookmarked, 'glyphicon-star' : item.data.bookmarked }" ng-click="WidgetHome.bookmark($event, item)" role="button"></i>
-                                    <i ng-if="globalPlaylist" class="glyphicon" style="right: 0; bottom: 0; top: unset; font-family: 'Glyphicons Halflings' !important; font-size: 17px;"  ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(item.id), 'glyphicon-minus' : isInGlobalPlaylist(item.id) }" ng-click="toggleItemGlobalPlaylist($event, item)" role="button"></i>
+                                    <i ng-if="globalPlaylist" class="glyphicon" style="right: 0; bottom: 0; top: unset; font-family: 'Glyphicons Halflings' !important; font-size: 17px;"  ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(item.id), 'glyphicon-minus' : isInGlobalPlaylist(item.id) }" ng-click="toggleGlobalPlaylistItem($event, item)" role="button"></i>
                                 </div>
                                 <img ng-if="item.data.topImage" load-image="16x9" crop-width="240" crop-height="135" crop-type="crop" data-final-src="{{item.data.topImage}}">
                                 <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png">

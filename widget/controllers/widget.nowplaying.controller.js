@@ -315,13 +315,19 @@
                             NowPlaying.playing = false;
                             break;
                         case 'next':
-                            if (e && e.data && e.data.track) {
+                            if ($rootScope.autoPlay) {
+                                // param: userInput
+                                $rootScope.playNextItem(true);
+                            } else if (e && e.data && e.data.track) {
                                 NowPlaying.currentTrack = e.data.track;
                                 NowPlaying.playing = true;
                             } else {
-                                // param: userAction
-                                $rootScope.playNextItem({userInput: true});
+                                // param: userInput
+                                $rootScope.playNextItem(true);
                             }
+                            break;
+                        case 'previous':
+                                $rootScope.playPrevItem();
                             break;
                         case 'removeFromPlaylist':
                             NowPlaying.playList = e.data && e.data.newPlaylist && e.data.newPlaylist.tracks;
@@ -633,13 +639,34 @@
                                 $rootScope.allowSource = event.data.content.allowSource;
                                 $rootScope.transferAudioContentToPlayList = event.data.content.transferAudioContentToPlayList;
                                 $rootScope.forceAutoPlay = event.data.content.forceAutoPlay;
-                                NowPlaying.forceAutoPlay= event.data.content.transferAudioContentToPlayList;
-                                NowPlaying.transferPlaylist=event.data.content.forceAutoPlay;
+                                NowPlaying.forceAutoPlay = event.data.content.transferAudioContentToPlayList;
+                                NowPlaying.transferPlaylist = event.data.content.forceAutoPlay;
+
+                                $rootScope.autoPlay = event.data.content.autoPlay;
+                                $rootScope.autoPlayDelay = event.data.content.autoPlayDelay;
+                                $rootScope.globalPlaylist = event.data.content.globalPlaylist;
                                 if (!$scope.$$phase) {
                                     $scope.$digest();
                                 }
                             }
                             break;
+                    }
+                });
+
+                Buildfire.appData.onUpdate(event => {
+                    // Tag name for global playlist
+                    const tagName = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : '');
+
+                    if (event) {
+                        if (event.tag === "GlobalPlayListSettings") {
+                            if (event.data && typeof event.data.globalPlayListLimit !== 'undefined') {
+                                $rootScope.globalPlayListLimit = event.data.globalPlayListLimit;
+                            }
+                        } else if (event.tag === tagName) {
+                            if (event.data.playlist && event.data.playlist[NowPlaying.item.id] && event.data.playlist[NowPlaying.item.id]) {
+                                NowPlaying.item.data = event.data.playlist[NowPlaying.item.id];
+                            }
+                        }
                     }
                 });
 

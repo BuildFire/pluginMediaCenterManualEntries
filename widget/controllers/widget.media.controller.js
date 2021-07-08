@@ -103,21 +103,10 @@
                             videoUrlToSend=videoUrlToSend.replace("www.dropbox","dl.dropboxusercontent").split("?dl=")[0];
                             videoUrlToSend=videoUrlToSend.replace("dl.dropbox.com","dl.dropboxusercontent.com");
                             myType=videoUrlToSend.split('.').pop();
-                        }
-                        // else if(videoUrlToSend.includes("drive.google.com")){
-                        //     //var urlArray=videoUrlToSend.replace("/view","").replace("/preview","").split("/");
-                        //     //var urlId=urlArray[urlArray.length-1].split("?")[0];
-                        //     //videoUrlToSend="https://drive.google.com/uc?id="+urlId;
-                        //     videoUrlToSend=WidgetMedia.item.data.videoUrl.replace("/view","/preview").split("?")[0];
-                        //     WidgetMedia.item.data.videoUrl=videoUrlToSend;
-                        //     //var frame=document.getElementsByTagName("iframe")[0];
-                        //     //frame.setAttribute("src",WidgetMedia.item.data.videoUrl);
-                        //     myType="mp4";
-                        // }
-
-                        else{
+                        } else {
                             myType=videoUrlToSend.split('.').pop();
                         }
+
                         WidgetMedia.videoPlayerConfig.sources = [{
                             src: $sce.trustAsResourceUrl(videoUrlToSend),
                             type: 'video/' + myType //"video/mp4"
@@ -233,7 +222,7 @@
                         }
                     }
                 });
-                WidgetMedia.onUpdateFn = Buildfire.datastore.onUpdate(function (event) {                            debugger
+                WidgetMedia.onUpdateFn = Buildfire.datastore.onUpdate(function (event) {
 
                     switch (event.tag) {
                         case COLLECTIONS.MediaContent:
@@ -243,7 +232,7 @@
                                 // Update item in globalPlaylist
                                 if($rootScope.globalPlaylist && $rootScope.isInGlobalPlaylist(event.id)) {
                                     GlobalPlaylist.insertAndUpdate(event).then(() => {
-                                        $rootScope.globalPlaylist.playlist[event.id] = event.data;
+                                         $rootScope.globalPlaylistItems.playlist[event.id] = event.data;
                                     });
                                 }
                             }
@@ -273,24 +262,40 @@
                     }
                 });
 
+                Buildfire.appData.onUpdate(event => {
+                    // Tag name for global playlist
+                    const tagName = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : '');
+
+                    if (event) {
+                        if (event.tag === "GlobalPlayListSettings") {
+                            if (event.data && typeof event.data.globalPlayListLimit !== 'undefined') {
+                                $rootScope.globalPlayListLimit = event.data.globalPlayListLimit;
+                            }
+                        } else if (event.tag === tagName) {
+                            if (event.data.playlist && event.data.playlist[WidgetMedia.item.id]) {
+                                WidgetMedia.item.data = event.data.playlist[WidgetMedia.item.id];
+                            }
+                        }
+                    }
+                });
+
                 WidgetMedia.playAudio = function () {
                     Location.go('#/nowplaying/' + WidgetMedia.item.id, true);
                 }
 
                 WidgetMedia.ApplayUpdates = function () {
-                    if(WidgetMedia.media.data.design.skipMediaPage&&!WidgetMedia.item.data.videoUrl&&WidgetMedia.item.data.audioUrl)
-                    {
-                        if(WidgetMedia.showVideo){
-                            WidgetMedia.showVideo=false;
+                    if (WidgetMedia.media.data.design.skipMediaPage && !WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl) {
+                        if (WidgetMedia.showVideo) {
+                            WidgetMedia.showVideo = false;
                             WidgetMedia.API.pause();
                         }
                         Location.go('#/nowplaying/' + WidgetMedia.item.id, true);
                     }
-                    else if(WidgetMedia.media.data.design.skipMediaPage&&WidgetMedia.item.data.videoUrl){
-                        WidgetMedia.showVideo=true;
+                    else if (WidgetMedia.media.data.design.skipMediaPage && WidgetMedia.item.data.videoUrl) {
+                        WidgetMedia.showVideo = true;
                         WidgetMedia.API.play();
-                    }else{
-                        WidgetMedia.showVideo=false;
+                    } else {
+                        WidgetMedia.showVideo = false;
                         WidgetMedia.API.pause();
                     }
                 };
