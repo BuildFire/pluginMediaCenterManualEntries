@@ -387,7 +387,6 @@
                 }
 
                 let delayInterval;
-                let delayTimeOut;
                 $rootScope.playNextItem = (userInput) => {
                     if (userInput) return WidgetHome.goToMedia($rootScope.currentIndex + 1);
 
@@ -402,19 +401,16 @@
                             
                             $rootScope.delayCountdownText = `Next will play in ${delay}`;
                             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            if (delayInterval) clearInterval(delayInterval);
                             delayInterval = setInterval(() => {
                                 --delay
                                 $rootScope.delayCountdownText = delay !== 0 ? `Next will play in ${delay}` : 'Loading next item...';
                                 if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                                 if (delay === 0) {
-                                    clearInterval(delayInterval);
+                                    $rootScope.clearCountdown();
+                                    WidgetHome.goToMedia($rootScope.currentIndex + 1);
                                 }
                             }, 1000);
-                            
-                            delayTimeOut = setTimeout(() => {
-                                $rootScope.showCountdown = false;
-                                WidgetHome.goToMedia($rootScope.currentIndex + 1);
-                            }, $rootScope.autoPlayDelay.value * 1000);
                         }
                     }
                 }
@@ -422,8 +418,7 @@
                 $rootScope.clearCountdown = () => {
                     $rootScope.showCountdown = false;
                     $rootScope.delayCountdownText = '';
-                    clearInterval(delayInterval);
-                    clearTimeout(delayTimeOut);
+                    if (delayInterval) clearInterval(delayInterval);
                     if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                 }
 

@@ -130,7 +130,6 @@
                     };
                 });
 
-
                 WidgetMedia.sourceChanged = function ($source) {
                     WidgetMedia.API.stop();
                 };
@@ -150,7 +149,8 @@
                         videoUrl: ""
                     }
                 };
-                if (media) {
+
+                if (media) { 
                     if (!media.data.videoUrl && !media.data.audioUrl) return $rootScope.playNextItem();
 
                     WidgetMedia.item = media;
@@ -257,6 +257,7 @@
                             $rootScope.autoPlayDelay = WidgetMedia.media.data.content.autoPlayDelay;
                             $rootScope.globalPlaylist = WidgetMedia.media.data.content.globalPlaylist;
                             $rootScope.globalPlaylistLimit = WidgetMedia.media.data.content.globalPlaylistLimit;
+                            $rootScope.globalPlaylistPluginName = WidgetMedia.media.data.content.globalPlaylistPluginName;
 
                             WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
                             if(old == WidgetMedia.media.data.design.itemLayout)WidgetMedia.ApplayUpdates();
