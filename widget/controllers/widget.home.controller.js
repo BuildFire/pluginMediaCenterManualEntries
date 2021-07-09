@@ -63,6 +63,7 @@
                         MediaCenterInfo = _infoData;
                     }
                     WidgetHome.media = MediaCenterInfo;
+
                     $rootScope.backgroundImage = MediaCenterInfo.data.design.backgroundImage;
                     $rootScope.allowShare = MediaCenterInfo.data.content.allowShare;
                     $rootScope.allowSource = MediaCenterInfo.data.content.allowSource;
@@ -73,6 +74,7 @@
                     $rootScope.autoPlay = MediaCenterInfo.data.content.autoPlay;
                     $rootScope.autoPlayDelay = MediaCenterInfo.data.content.autoPlayDelay;
                     $rootScope.globalPlaylist = MediaCenterInfo.data.content.globalPlaylist;
+                    $rootScope.globalPlaylistPluginName = MediaCenterInfo.data.content.globalPlaylistPluginName;
                 },
                     function fail() {
                         MediaCenterInfo = _infoData;
@@ -123,8 +125,8 @@
                     $rootScope.showFeed = false;
                     var navigate = function (item) {
                         if (item && item.data) {
-                            if (!WidgetHome.media.data.design.skipMediaPage || (WidgetHome.media.data.design.skipMediaPage && item.data.videoUrl)
-                                || (WidgetHome.media.data.design.skipMediaPage && !item.data.videoUrl && !item.data.audioUrl)) {
+                            if (!$rootScope.skipMediaPage || ($rootScope.skipMediaPage && item.data.videoUrl)
+                                || ($rootScope.skipMediaPage && !item.data.videoUrl && !item.data.audioUrl)) {
                                 Location.go('#/media/' + item.id, true);
                             } else {
                                 Location.go('#/nowplaying/' + item.id, true);
@@ -185,20 +187,22 @@
                             $rootScope.allowSource = WidgetHome.media.data.content.allowSource;
                             $rootScope.transferAudioContentToPlayList = WidgetHome.media.data.content.transferAudioContentToPlayList;
                             $rootScope.forceAutoPlay = WidgetHome.media.data.content.forceAutoPlay;
-                            $rootScope.skipMediaPage = WidgetHome.media.data.design.skipMediaPage
+                            $rootScope.skipMediaPage = WidgetHome.media.data.design.skipMediaPage;
 
                             $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                             $rootScope.autoPlayDelay = WidgetHome.media.data.content.autoPlayDelay;
                             $rootScope.globalPlaylist = WidgetHome.media.data.content.globalPlaylist;
+                            $rootScope.globalPlaylistPluginName = WidgetHome.media.data.content.globalPlaylistPluginName;
+
                             $scope.$apply();
                             if (view && event.data.content && event.data.content.images) {
                                 view.loadItems(event.data.content.images);
                             }
-                            WidgetHome.refreshItems();
+                            $rootScope.refreshItems();
                         }
                     }
                     else {
-                        WidgetHome.refreshItems();
+                        $rootScope.refreshItems();
                     }
                 };
 
@@ -209,16 +213,15 @@
 
                 Buildfire.appData.onUpdate(event => {
                     // Tag name for global playlist
-                    const tagName = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : '');
-
+                    const globalPlaylistTag = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : '');
                     if (event) {
                         if (event.tag === "GlobalPlayListSettings") {
                             if (event.data && typeof event.data.globalPlayListLimit !== 'undefined') {
                                 $rootScope.globalPlayListLimit = event.data.globalPlayListLimit;
                             }
-                        } else if (event.tag === tagName) {
+                        } else if (event.tag === globalPlaylistTag) {
                             if (event.data.playlist) {
-                                WidgetMedia.item.data = event.data.playlist[WidgetMedia.item.id];
+                                $rootScope.globalPlaylistItems.playlist = event.data.playlist;
                             }
                         }
                     }
@@ -282,18 +285,18 @@
                 // Check if an item is in the globalPlaylist
                 $rootScope.isInGlobalPlaylist = (itemId) => {
                     return (
-                        $rootScope.globalPlaylist &&
-                        $rootScope.globalPlaylist.playlist &&
-                        $rootScope.globalPlaylist.playlist[itemId]
+                        $rootScope.globalPlaylistItems &&
+                        $rootScope.globalPlaylistItems.playlist &&
+                        $rootScope.globalPlaylistItems.playlist[itemId]
                     );
                 };
 
                 // Check if all the items are in the globalPlaylist
                 $rootScope.areAllInGlobalPlaylist = () => {
                     return (
-                        $rootScope.globalPlaylist &&
-                        $rootScope.globalPlaylist.playlist &&
-                        Object.keys($rootScope.globalPlaylist.playlist)
+                        $rootScope.globalPlaylistItems &&
+                        $rootScope.globalPlaylistItems.playlist &&
+                        Object.keys($rootScope.globalPlaylistItems.playlist)
                             .length === WidgetHome.items.length
                     );
                 };
@@ -306,7 +309,7 @@
                     if ($rootScope.areAllInGlobalPlaylist()) {
                         let itemsIds = WidgetHome.items.map(item => item.id);
                         GlobalPlaylist.deleteAll(itemsIds).then(() => {
-                            $rootScope.globalPlaylist.playlist = {};
+                            $rootScope.globalPlaylistItems.playlist = {};
                             $rootScope.addAllToPlaylistLoading = false;
                             buildfire.dialog.toast({
                                 message: `Removed all items from playlist`,
@@ -327,7 +330,7 @@
                         } else {
                             GlobalPlaylist.insertAndUpdateAll(WidgetHome.items).then(() => {
                                 for (let item of WidgetHome.items) {
-                                    $rootScope.globalPlaylist.playlist[item.id] = item.data;
+                                    $rootScope.globalPlaylistItems.playlist[item.id] = item.data;
                                 }
 
                                 buildfire.dialog.toast({
@@ -344,9 +347,10 @@
 
                 $rootScope.toggleGlobalPlaylistItem = ($event, item) => {
                     $event.stopImmediatePropagation();
+                    
                     if ($rootScope.isInGlobalPlaylist(item.id)) {
                         GlobalPlaylist.delete(item.id).then(() => {
-                            delete $rootScope.globalPlaylist.playlist[item.id];
+                            delete $rootScope.globalPlaylistItems.playlist[item.id];
                             buildfire.dialog.toast({
                                 message: `Item removed from playlist`,
                                 type: 'success',
@@ -354,7 +358,7 @@
                             });
                         });
                     } else {
-                        if (typeof $rootScope.globalPlaylistLimit !== 'undefined' && Object.keys($rootScope.globalPlaylist.playlist).length >= $rootScope.globalPlaylistLimit)  {
+                        if (typeof $rootScope.globalPlaylistLimit !== 'undefined' && Object.keys($rootScope.globalPlaylistItems.playlist).length >= $rootScope.globalPlaylistLimit)  {
                             buildfire.dialog.toast({
                                 message: `Playlist items limit reached!`,
                                 type: 'warning',
@@ -363,7 +367,7 @@
                         } else {
                             // Save Item in the globalPlaylist
                             GlobalPlaylist.insertAndUpdate(item).then(() => {
-                                $rootScope.globalPlaylist.playlist[item.id] = item.data;
+                                $rootScope.globalPlaylistItems.playlist[item.id] = item.data;
                                 buildfire.dialog.toast({
                                     message: `Item added to playlist`,
                                     type: 'success',
@@ -516,7 +520,7 @@
                         });
                     }
 
-                    const getGlobalPlaylistData = () => {
+                    const getglobalPlaylistItems = () => {
                         return new Promise(resolve => {
                             $rootScope.loadingGlobalPlaylist = true;
                             GlobalPlaylist.get()
@@ -526,12 +530,12 @@
                                     GlobalPlaylist.save({ playlist: {}})
                                     .then(result => {
                                         result.data.id = result.id;
-                                        $rootScope.globalPlaylist = result.data
+                                        $rootScope.globalPlaylistItems = result.data
                                         resolve();
                                     });
                                     } else {
                                         result.data.id = result.id;
-                                        $rootScope.globalPlaylist = result.data
+                                        $rootScope.globalPlaylistItems = result.data
                                         resolve();
                                     }
                             }).catch(err => {
@@ -555,7 +559,7 @@
                         getGlobalPlaylistLimit();
 
                         getCurrentUser(() => {
-                            getGlobalPlaylistData()
+                            getglobalPlaylistItems()
                             .then(getMediaItems).finally(() => $rootScope.loadingGlobalPlaylist = false);
                         });
                     } else getMediaItems();
@@ -577,11 +581,12 @@
                     }
                 };
 
-                WidgetHome.refreshItems = function () {
+                $rootScope.refreshItems = function () {
                     searchOptions.skip = 0;
                     WidgetHome.items = [];
                     WidgetHome.noMore = false;
                     WidgetHome.glovalPlaylistLoaded = false;
+                    WidgetHome.globalPlaylistItems = { playlist: {} };
                     WidgetHome.loadMore();
                 };
 
@@ -602,8 +607,8 @@
 
                         $rootScope.currentIndex = ind;
 
-                        if (!WidgetHome.media.data.design.skipMediaPage || (WidgetHome.media.data.design.skipMediaPage && WidgetHome.items[ind].data.videoUrl)
-                            || (WidgetHome.media.data.design.skipMediaPage && !WidgetHome.items[ind].data.videoUrl && !WidgetHome.items[ind].data.audioUrl)) {
+                        if (!$rootScope.skipMediaPage || ($rootScope.skipMediaPage && WidgetHome.items[ind].data.videoUrl)
+                            || ($rootScope.skipMediaPage && !WidgetHome.items[ind].data.videoUrl && !WidgetHome.items[ind].data.audioUrl)) {
                                 Location.go('#/media/' + WidgetHome.items[ind].id, true);
                         } else {
                                 Location.go('#/nowplaying/' + WidgetHome.items[ind].id, true);
@@ -615,13 +620,13 @@
                 buildfire.auth.onLogin(function (user) {
                     bookmarks.sync($scope);
                     $rootScope.user = user;
-                    WidgetHome.refreshItems();
+                    $rootScope.refreshItems();
                 });
 
                 buildfire.auth.onLogout(function () {
                     bookmarks.sync($scope);
                     $rootScope.user = null;
-                    WidgetHome.refreshItems();
+                    $rootScope.refreshItems();
                 });
 
                 WidgetHome.bookmark = function ($event, item) {
@@ -686,7 +691,7 @@
                         if(!WidgetHome.items.length) WidgetHome.deepLink = true;
                         MediaCenter.get().then(function success(result) {
                             WidgetHome.media = result;
-                            if (WidgetHome.media.data.design && WidgetHome.media.data.design.skipMediaPage) $rootScope.skipMediaPage = true;
+                            if (WidgetHome.media.data.design && $rootScope.skipMediaPage) $rootScope.skipMediaPage = true;
                         },
                             function fail() {
                                 WidgetHome.media = _infoData;

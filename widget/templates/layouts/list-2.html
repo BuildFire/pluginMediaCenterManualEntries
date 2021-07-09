@@ -17,7 +17,7 @@
                  ng-click="WidgetHome.goToMedia($index)">
                 <div class="list-item-media text-left overflow-hidden">
                     <div class="list-media-holder pull-left text-overlay" ng-if="item.data.topImage"
-                         play-btn="{{item.data.videoUrl.length > 0  || (WidgetHome.media.data.design.skipMediaPage && (item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0)) }}">
+                         play-btn="{{item.data.videoUrl.length > 0  || (skipMediaPage && (item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0)) }}">
                          <div class="li-actions-item">
                             <i class="share glyphicon glyphicon-share-alt" style="color: white !important;" ng-if="allowShare" ng-click="WidgetHome.share($event, item)" role="button"></i>
                         </div>

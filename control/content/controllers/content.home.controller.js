@@ -571,7 +571,6 @@
                     searchOptions.skip = 0;
                     /*reset the skip value*/
 
-                    debugger
                     ContentHome.isBusy = false;
                     ContentHome.items = [];
                     value = value.trim();

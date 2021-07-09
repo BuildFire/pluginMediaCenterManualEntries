@@ -18,7 +18,7 @@
                          ng-click="WidgetHome.goToMedia($index)" ng-class-odd="list-item-odd"
                          ng-class-even="list-item-even">
                         <div class="list-item-media text-center border-radius-three overflow-hidden text-overlay">
-                            <div play-btn="{{item.data.videoUrl.length > 0  || (WidgetHome.media.data.design.skipMediaPage && (item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0)) }}" class="list-media-holder text-overlay">
+                            <div play-btn="{{item.data.videoUrl.length > 0  || (skipMediaPage && (item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0)) }}" class="list-media-holder text-overlay">
                                 <div class="li-actions-item">
                                     <i class="share glyphicon glyphicon-share-alt" ng-if="allowShare" ng-click="WidgetHome.share($event, item)" role="button"></i>
                                     <i class="bookmark glyphicon" style="right: 0; font-family: 'Glyphicons Halflings' !important;"  ng-class="{ 'glyphicon-star-empty' : !item.data.bookmarked, 'glyphicon-star' : item.data.bookmarked }" ng-click="WidgetHome.bookmark($event, item)" role="button"></i>

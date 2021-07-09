@@ -14,7 +14,7 @@
                 NowPlaying.currentTrack = new Track(media.data);
                 NowPlaying.currentTrack.backgroundImage = media.data.image ? media.data.image : media.data.topImage;
 
-                NowPlaying.currentTrack.image = media.data.topImage;;
+                NowPlaying.currentTrack.image = media.data.topImage;
                 NowPlaying.currentTrack.title = media.data.title;
                 if ($rootScope.seekTime) NowPlaying.currentTrack.startAt = $rootScope.seekTime;
 
@@ -641,6 +641,7 @@
                                 $rootScope.forceAutoPlay = event.data.content.forceAutoPlay;
                                 NowPlaying.forceAutoPlay = event.data.content.transferAudioContentToPlayList;
                                 NowPlaying.transferPlaylist = event.data.content.forceAutoPlay;
+                                $rootScope.skipMediaPage = event.data.design.skipMediaPage;
 
                                 $rootScope.autoPlay = event.data.content.autoPlay;
                                 $rootScope.autoPlayDelay = event.data.content.autoPlayDelay;
@@ -655,19 +656,31 @@
 
                 Buildfire.appData.onUpdate(event => {
                     // Tag name for global playlist
-                    const tagName = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : '');
+                    const globalPlaylistTag = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : '');
 
                     if (event) {
                         if (event.tag === "GlobalPlayListSettings") {
                             if (event.data && typeof event.data.globalPlayListLimit !== 'undefined') {
                                 $rootScope.globalPlayListLimit = event.data.globalPlayListLimit;
                             }
-                        } else if (event.tag === tagName) {
+                        } else if (event.tag === globalPlaylistTag) {
                             if (event.data.playlist && event.data.playlist[NowPlaying.item.id] && event.data.playlist[NowPlaying.item.id]) {
                                 NowPlaying.item.data = event.data.playlist[NowPlaying.item.id];
                             }
                         }
                     }
+                });
+
+                buildfire.auth.onLogin(function (user) {
+                    bookmarks.sync($scope);
+                    $rootScope.user = user;
+                    $rootScope.refreshItems();
+                });
+
+                buildfire.auth.onLogout(function () {
+                    bookmarks.sync($scope);
+                    $rootScope.user = null;
+                    $rootScope.refreshItems();
                 });
 
                 /**

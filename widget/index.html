@@ -102,9 +102,9 @@
                 border-bottom-left-radius: 0;
                 border-bottom-right-radius: 0;
                 border-top-left-radius: 0;
-                width: 49.5%;
                 float: left;
             "
+            ng-style="{'width': globalPlaylistPluginName ? '49.5%' : '100%'}"
         >
             {{ addAllToPlaylistLoading ? areAllInGlobalPlaylist() ? 'Removing...' : 'Adding...' : areAllInGlobalPlaylist() ? 'Remove All From Playlist' : 'Add All To Playlist' }}
         </button>
@@ -119,6 +119,7 @@
                 width: 49.5%;
                 float: right;
             "
+            ng-class="{'hidden': !globalPlaylistPluginName}"
         >
             Go To Playlist
         </button>

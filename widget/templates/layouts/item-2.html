@@ -10,7 +10,7 @@
                                 <div class="people-holder clearfix">
                                     <div class="people-media text-center padding-top-fifteen"
                                          data-ng-hide="WidgetMedia.showVideo">
-                                        <img data-ng-hide="WidgetMedia.media.data.design.skipMediaPage && WidgetMedia.item.data.videoUrl" load-image="16x9" style="width: 161px;height: 91px;"
+                                        <img data-ng-hide="skipMediaPage && WidgetMedia.item.data.videoUrl" load-image="16x9" style="width: 161px;height: 91px;"
                                              crop-width="161" crop-height="91" crop-type="crop"
                                              data-final-src="{{WidgetMedia.item.data.topImage}}">
                                     </div>
@@ -32,10 +32,10 @@
                 <div class="item-actions">
                     <div class="link-list">
                         <a class="media-action video" ng-click="WidgetMedia.toggleShowVideo();"
-                            ng-if="WidgetMedia.item.data.videoUrl&&!WidgetMedia.media.data.design.skipMediaPage">
+                            ng-if="WidgetMedia.item.data.videoUrl && !skipMediaPage">
                             <i class="btn btn-success glyphicon glyphicon-play"></i>
                         </a>
-                        <a class="media-action" ng-click="WidgetMedia.playAudio();" ng-if="WidgetMedia.item.data.audioUrl&&!WidgetMedia.media.data.design.skipMediaPage">
+                        <a class="media-action" ng-click="WidgetMedia.playAudio();" ng-if="WidgetMedia.item.data.audioUrl && !skipMediaPage">
                             <i class="btn btn-success glyphicon glyphicon-volume-up"></i>
                         </a>
                         <a ng-if="WidgetMedia.item.srcUrl && allowSource" ng-click="WidgetMedia.openLink(WidgetMedia.item.srcUrl)"

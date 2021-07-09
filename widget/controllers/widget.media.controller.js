@@ -1,16 +1,15 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope','Location',
-            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope,Location) {
+        .controller('WidgetMediaCtrl', ['$scope', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope','Location',
+            function ($scope, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope,Location) {
 
                 var WidgetMedia = this;
                 WidgetMedia.API = null;
                 WidgetMedia.mediaType = null;
                 WidgetMedia.showSource = false;
                 WidgetMedia.loadingVideo = false;
-                WidgetMedia.autoPlayVideo = $rootScope.autoPlay && $rootScope.skipMediaPage;
-                WidgetMedia.showVideo = WidgetMedia.autoPlayVideo ? true: false;
+                WidgetMedia.showVideo = false;
 
                 WidgetMedia.fullScreen = false;
                 WidgetMedia.oldVideoStyle={position:"",width:"",height:"",marginTop:""};
@@ -18,13 +17,14 @@
                 WidgetMedia.oldBackgroundStyle={height:"",color:""};
 
                 var Android = /(android)/i.test(navigator.userAgent);
-                if(!buildfire.isWeb() && Android )
+                if(!buildfire.isWeb() && Android ) {
                     document.onfullscreenchange = function ( event ) {
                         if((document.fullscreenElement && (document.fullscreenElement.id=="ytPlayer"||document.fullscreenElement instanceof HTMLVideoElement))){
                             document.exitFullscreen();
                             WidgetMedia.handeFullScreen();
                         }
                     };
+                }
 
                 let MediaCenter = new DB(COLLECTIONS.MediaCenter),
                     GlobalPlaylist = new AppDB();
@@ -59,7 +59,7 @@
                                         video.getElementsByTagName('iframe')[0].style.height="100vw";
                                     }
                             });
-                            }else{
+                            } else {
                                     buildfire.appearance.fullScreenMode.disable(null, (err) => {
                                     backgroundImage.style.height=WidgetMedia.oldBackgroundStyle.height;
                                     backgroundImage.style.backgroundColor=WidgetMedia.oldBackgroundStyle.color;
@@ -81,10 +81,16 @@
 
                 WidgetMedia.onPlayerReady = function ($API) {
                     WidgetMedia.API = $API;
-                    WidgetMedia.loadingVideo = true;              
-                    if(!WidgetMedia.autoPlayVideo && $rootScope.skipMediaPage && WidgetMedia.item.data.videoUrl && !$rootScope.deepLinkNavigate)
+                    WidgetMedia.loadingVideo = true;     
+                    
+                    if ($rootScope.autoPlay && WidgetMedia.item.data.videoUrl && !$rootScope.deepLinkNavigate) {
                         WidgetMedia.toggleShowVideo();
-                    };
+                    } else if($rootScope.skipMediaPage && WidgetMedia.item.data.videoUrl && !$rootScope.deepLinkNavigate) {
+                        WidgetMedia.toggleShowVideo();
+                    } 
+                };
+
+                WidgetMedia.onVideoError = (err) => console.error(err);
 
                 WidgetMedia.videoPlayerConfig = {
                     autoHide: false,
@@ -222,8 +228,8 @@
                         }
                     }
                 });
+                
                 WidgetMedia.onUpdateFn = Buildfire.datastore.onUpdate(function (event) {
-
                     switch (event.tag) {
                         case COLLECTIONS.MediaContent:
                             if (event.data) {
@@ -232,7 +238,7 @@
                                 // Update item in globalPlaylist
                                 if($rootScope.globalPlaylist && $rootScope.isInGlobalPlaylist(event.id)) {
                                     GlobalPlaylist.insertAndUpdate(event).then(() => {
-                                         $rootScope.globalPlaylistItems.playlist[event.id] = event.data;
+                                        $rootScope.globalPlaylistItems.playlist[event.id] = event.data;
                                     });
                                 }
                             }
@@ -245,6 +251,7 @@
                             $rootScope.allowSource = WidgetMedia.media.data.content.allowSource;
                             $rootScope.transferAudioContentToPlayList = WidgetMedia.media.data.content.transferAudioContentToPlayList;
                             $rootScope.forceAutoPlay = WidgetMedia.media.data.content.forceAutoPlay;
+                            $rootScope.skipMediaPage = WidgetMedia.media.data.design.skipMediaPage;
                             
                             $rootScope.autoPlay = WidgetMedia.media.data.content.autoPlay;
                             $rootScope.autoPlayDelay = WidgetMedia.media.data.content.autoPlayDelay;
@@ -273,7 +280,7 @@
                             }
                         } else if (event.tag === tagName) {
                             if (event.data.playlist && event.data.playlist[WidgetMedia.item.id]) {
-                                WidgetMedia.item.data = event.data.playlist[WidgetMedia.item.id];
+                                $rootScope.globalPlaylistItems.playlist[WidgetMedia.item.id] = event.data.playlist[WidgetMedia.item.id];
                             }
                         }
                     }
@@ -284,14 +291,24 @@
                 }
 
                 WidgetMedia.ApplayUpdates = function () {
-                    if (WidgetMedia.media.data.design.skipMediaPage && !WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl) {
+                    if ($rootScope.skipMediaPage && !WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl) {
                         if (WidgetMedia.showVideo) {
                             WidgetMedia.showVideo = false;
                             WidgetMedia.API.pause();
                         }
-                        Location.go('#/nowplaying/' + WidgetMedia.item.id, true);
+                        WidgetMedia.playAudio();
+                    }  else if ($rootScope.autoPlay && !WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl) {
+                        if (WidgetMedia.showVideo) {
+                            WidgetMedia.showVideo = false;
+                            WidgetMedia.API.pause();
+                        }
+                        WidgetMedia.playAudio()
                     }
-                    else if (WidgetMedia.media.data.design.skipMediaPage && WidgetMedia.item.data.videoUrl) {
+                    else if ($rootScope.autoPlay && WidgetMedia.item.data.videoUrl) {
+                        WidgetMedia.showVideo = true;
+                        WidgetMedia.API.play();
+                    }
+                    else if ($rootScope.skipMediaPage && WidgetMedia.item.data.videoUrl) {
                         WidgetMedia.showVideo = true;
                         WidgetMedia.API.play();
                     } else {
@@ -304,12 +321,25 @@
                     $rootScope.playNextItem();
                 }
 
+                // let interval;
                 WidgetMedia.toggleShowVideo = function () {
                     WidgetMedia.showVideo = !WidgetMedia.showVideo;
-                    if (WidgetMedia.showVideo)
-                        WidgetMedia.API.play();
-                    else
-                        WidgetMedia.API.pause();
+                    
+                    // Make sure the video is ready before playing it
+                    // interval = setInterval(() => {
+                    //     let video = document.querySelector("video");
+                    //     if (video && video.readyState === 4) {
+                    //         if (!$rootScope.autoPlay && WidgetMedia.showVideo) {
+                    //             WidgetMedia.API.play();
+                    //         } else {
+                    //             WidgetMedia.API.pause();
+                    //         }
+                    //         if (interval) clearInterval(interval);
+                    //     }
+                    // }, 100);
+
+                    // // Make sure the interval doesn't run forever
+                    // setTimeout(() => {if (interval) clearInterval(interval)} , 15000);
                 };
 
                 WidgetMedia.showSourceIframe = function () {
@@ -346,12 +376,16 @@
                     WidgetMedia.loadingVideo = false;
                 };
 
-                buildfire.auth.onLogin(function () {
+                buildfire.auth.onLogin(function (user) {
                     bookmarks.sync($scope);
+                    $rootScope.user = user;
+                    $rootScope.refreshItems();
                 });
 
                 buildfire.auth.onLogout(function () {
                     bookmarks.sync($scope);
+                    $rootScope.user = null;
+                    $rootScope.refreshItems();
                 });
 
                 WidgetMedia.bookmark = function ($event) {

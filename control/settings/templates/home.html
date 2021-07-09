@@ -69,7 +69,7 @@
                 Auto Play
                 <span class="customTooltipBox btn-primary">
                     <span class="customTooltipText">
-                        Allow Items Auto Play
+                        Allow items auto play, whin this option is on, it will skip info page by default.
                     </span>
                 </span>
             </p>
@@ -115,6 +115,20 @@
             <div class="buttons">
                 <button ng-class="{'active': Settings.data.content.globalPlaylist}" ng-click="Settings.setGlobalPlaylist(true)">On</button>
                 <button class="toLeft" ng-class="{'active': !Settings.data.content.globalPlaylist}" ng-click="Settings.setGlobalPlaylist(false)">Off</button>
+            </div>
+        </div>
+
+        <div class="setting-toggle">
+            <p class="setting-label">
+                Playlist Feature Name
+                <span class="customTooltipBox btn-primary">
+                    <span class="customTooltipText">
+                        This is the name of the Media Center Manual Playlist Instance in my features, where users can find thier playlist
+                    </span>
+                </span>
+            </p>
+            <div style="width: 40%">
+                <input type="text" class="form-control" name="Global Playlist Plugin Name" placeholder="Media Center Manual Playlist Name" ng-model="inputs.pluginInstanceName" ng-change="Settings.setGlobalPlaylistPluginName()">
             </div>
         </div>
 

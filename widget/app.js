@@ -13,12 +13,10 @@
             'infinite-scroll',
             "ngSanitize",
             "com.2fdevs.videogular",
-            //"info.vietnamcode.nampnq.videogular.plugins.youtube",
             "com.2fdevs.videogular.plugins.controls",
             "com.2fdevs.videogular.plugins.overlayplay",
             "rc-videogular.plugins.youtube",
             "rc-videogular.plugins.vimeo",
-            // "videosharing-embed",
             "ngTouch"
         ])
         //injected ngRoute for routing

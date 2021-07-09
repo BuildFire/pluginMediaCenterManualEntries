@@ -7,7 +7,7 @@
                 vg-theme="WidgetMedia.videoPlayerConfig.theme.url"
                 vg-error="WidgetMedia.onVideoError($event)"
                 vg-can-play="WidgetMedia.videoLoaded()"
-                vg-auto-play="WidgetMedia.autoPlayVideo"
+                vg-auto-play="autoPlay"
                 vg-complete="WidgetMedia.goToNextItem()"
                 >
         <vg-media 
@@ -19,7 +19,6 @@
                 ng-show="!WidgetMedia.loadingVideo"
                 >
         </vg-media>
-        <vg-overlay-play></vg-overlay-play>
 
         <vg-controls ng-if="WidgetMedia.item.data.videoUrl" vg-autohide="false" ng-show="!WidgetMedia.loadingVideo">
             <div class="prev-item-btn" ng-click="playPrevItem()">

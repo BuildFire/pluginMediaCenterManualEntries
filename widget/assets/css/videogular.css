@@ -457,4 +457,8 @@ videogular, [videogular] {
     top: 0;
     display: none; }
 
+  .overlayPlayContainer {
+    left: -19px;
+  }
+
 /*# sourceMappingURL=videogular.css.map */

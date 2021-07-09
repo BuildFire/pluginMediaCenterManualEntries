@@ -255,8 +255,7 @@
                 }
 
                 const _set = { $set: { [`playlist.${item.id}`]: item.data } };
-                
-                Buildfire.appData.update($rootScope.globalPlaylist.id, _set, tagName, (err, result) => {
+                Buildfire.appData.update($rootScope.globalPlaylistItems.id, _set, tagName, (err, result) => {
                     if (err) {
                         return deferred.reject(err);
                     }
@@ -281,7 +280,7 @@
                     _set.$set[`playlist.${item.id}`] = item.data;
                 }
 
-                Buildfire.appData.update($rootScope.globalPlaylist.id, _set, tagName, (err, result) => {
+                Buildfire.appData.update($rootScope.globalPlaylistItems.id, _set, tagName, (err, result) => {
                     if (err) {
                         return deferred.reject(err);
                     }
@@ -329,7 +328,7 @@
                     },
                 };
 
-                Buildfire.appData.update($rootScope.globalPlaylist.id, unset, tagName, (err, result) => {
+                Buildfire.appData.update($rootScope.globalPlaylistItems.id, unset, tagName, (err, result) => {
                     if (err) {
                         return deferred.reject(err);
                     }
@@ -354,7 +353,7 @@
                     unset['$unset'][`playlist.${itemId}`] = "";
                 });
                 
-                Buildfire.appData.update($rootScope.globalPlaylist.id, unset, tagName, (err, result) => {
+                Buildfire.appData.update($rootScope.globalPlaylistItems.id, unset, tagName, (err, result) => {
                     if (err) {
                         return deferred.reject(err);
                     }
