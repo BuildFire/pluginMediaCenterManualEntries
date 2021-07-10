@@ -75,6 +75,7 @@
                     $rootScope.autoPlayDelay = MediaCenterInfo.data.content.autoPlayDelay;
                     $rootScope.globalPlaylist = MediaCenterInfo.data.content.globalPlaylist;
                     $rootScope.globalPlaylistPluginName = MediaCenterInfo.data.content.globalPlaylistPluginName;
+                    $rootScope.globalPlaylistPluginInstalled = MediaCenterInfo.data.content.globalPlaylistPluginInstalled;
                 },
                     function fail() {
                         MediaCenterInfo = _infoData;
@@ -193,6 +194,7 @@
                             $rootScope.autoPlayDelay = WidgetHome.media.data.content.autoPlayDelay;
                             $rootScope.globalPlaylist = WidgetHome.media.data.content.globalPlaylist;
                             $rootScope.globalPlaylistPluginName = WidgetHome.media.data.content.globalPlaylistPluginName;
+                            $rootScope.globalPlaylistPluginInstalled = WidgetHome.media.data.content.globalPlaylistPluginInstalled;
 
                             $scope.$apply();
                             if (view && event.data.content && event.data.content.images) {

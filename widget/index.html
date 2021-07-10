@@ -3,25 +3,12 @@
 <head lang="en">
     <meta charset="UTF-8">
 
-    <!-- In the head of your document with your other CSS includes... -->
-    <!-- Video.js base CSS -->
-    <link
-    href="https://unpkg.com/video.js@7/dist/video-js.min.css"
-    rel="stylesheet"
-    />
-
-    <!-- City -->
-    <link
-    href="https://unpkg.com/@videojs/themes@1/dist/city/index.css"
-    rel="stylesheet"
-    />
-
     <!-- CSS -->
     <!--<link href="../../../styles/bootstrap.css" rel="stylesheet">-->
     <link href="../../../styles/helper.css" rel="stylesheet">
     <link href="../../../styles/siteIcons.css" rel="stylesheet">
     <link href="../../../scripts/owlCarousel/owlCarousel.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../../styles/transitionAnimation.css">
+    <link href="../../../styles/transitionAnimation.css" rel="stylesheet">
     <link href="assets/css/widget.app.css" rel="stylesheet">
     <link href="assets/css/videogular.css" rel="stylesheet">
     <link href="assets/css/media.css" rel="stylesheet">
@@ -70,12 +57,8 @@
     <!-- Audio player-->
     <script src="../../../scripts/buildfire/services/media/audioPlayer.js"></script>
     <script src="../../../scripts/buildfire/services/notifications/localNotifications.js"></script>
-
-    <!--Video Embeder for Vimeo Youtube-->
-    <!-- <script src="assets/js/ng-videosharing-embed.min.js"></script> -->
 </head>
-<!--<body class="scrollable customBackground" ng-style="currentBackgroundImage"
-      ng-class="blackBackground ? 'blackBackground': ''">-->
+
 <body class="body-scroll">
 <div class="main_view">
     <div ng-class="showFeed ? 'showing' : 'notshowing'" data-back-img="{{backgroundImage}}" id="feedView" class="content slide infinite-scroll-parent" >
@@ -105,7 +88,7 @@
                 float: left;
                 transition: none;
             "
-            ng-style="{'width': globalPlaylistPluginName ? '49.5%' : '100%'}"
+            ng-style="{'width': globalPlaylistPluginInstalled && globalPlaylistPluginName ? '49.5%' : '100%'}"
         >
             {{ addAllToPlaylistLoading ? areAllInGlobalPlaylist() ? 'Removing...' : 'Adding...' : areAllInGlobalPlaylist() ? 'Remove All From Playlist' : 'Add All To Playlist' }}
         </button>
@@ -121,7 +104,7 @@
                 float: right;
                 transition: none;
             "
-            ng-class="{'hidden': !globalPlaylistPluginName}"
+            ng-class="{'hidden': !globalPlaylistPluginInstalled || !globalPlaylistPluginName}"
         >
             Go To Playlist
         </button>

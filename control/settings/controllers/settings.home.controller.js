@@ -25,6 +25,8 @@
                     Settings.data.content.autoPlayDelay = { label: "Off", value: 0 };
                 if (typeof (Settings.data.content.globalPlaylist) == 'undefined')
                     Settings.data.content.globalPlaylist = false;
+                if (typeof (Settings.data.content.globalPlaylistPluginInstalled) == 'undefined')
+                    Settings.data.content.globalPlaylistPluginInstalled = false;
                 if (typeof (Settings.data.content.globalPlaylistPluginName) == 'undefined') {
                     Settings.data.content.globalPlaylistPluginName = '';
                     $scope.inputs.pluginInstanceName = ''
@@ -88,6 +90,15 @@
                 }
             };
 
+            Settings.setGlobalPlaylistPluginInstalled = function (value) {
+                if (value != Settings.data.content.globalPlaylistPluginInstalled) {
+                    if (!value) {
+                        Settings.data.content.globalPlaylistPluginName = '';
+                    }
+                    Settings.data.content.globalPlaylistPluginInstalled = value;
+                    MediaCenter.save(Settings.data).then(function (result) { });
+                }
+            };
 
             let delay;
             Settings.setGlobalPlaylistPluginName = function () {

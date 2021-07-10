@@ -120,15 +120,30 @@
 
         <div class="setting-toggle">
             <p class="setting-label">
-                Playlist Feature Name
+                Playlist Feature Installed
                 <span class="customTooltipBox btn-primary">
                     <span class="customTooltipText">
-                        This is the name of the Media Center Manual Playlist Instance in my features, where users can find thier playlist
+                        If you installed Media Center Manual Playlist feature, check this box and add it's name to allow the users to navigate to it through the this feature. 
                     </span>
                 </span>
             </p>
             <div style="width: 40%">
-                <input type="text" class="form-control" name="Global Playlist Plugin Name" placeholder="Media Center Manual Playlist Name" ng-model="inputs.pluginInstanceName" ng-change="Settings.setGlobalPlaylistPluginName()">
+                <button ng-class="{'active': Settings.data.content.globalPlaylistPluginInstalled}" ng-click="Settings.setGlobalPlaylistPluginInstalled(true)">Yes</button>
+                <button class="toLeft" ng-class="{'active': !Settings.data.content.globalPlaylistPluginInstalled}" ng-click="Settings.setGlobalPlaylistPluginInstalled(false)">No</button>
+            </div>
+        </div>
+
+        <div class="setting-toggle" ng-if="Settings.data.content.globalPlaylistPluginInstalled">
+            <p class="setting-label">
+                Playlist Feature Name
+                <span class="customTooltipBox btn-primary">
+                    <span class="customTooltipText">
+                        This is the name of the Media Center Manual Playlist Instance in my features page, where users can find the items they added to the playlist.
+                    </span>
+                </span>
+            </p>
+            <div style="width: 40%">
+                <input type="text" class="form-control" name="Global Playlist Plugin Name" placeholder="Media Center Manual Playlist Feature Name" ng-model="inputs.pluginInstanceName" ng-change="Settings.setGlobalPlaylistPluginName()">
             </div>
         </div>
 

@@ -258,6 +258,7 @@
                             $rootScope.globalPlaylist = WidgetMedia.media.data.content.globalPlaylist;
                             $rootScope.globalPlaylistLimit = WidgetMedia.media.data.content.globalPlaylistLimit;
                             $rootScope.globalPlaylistPluginName = WidgetMedia.media.data.content.globalPlaylistPluginName;
+                            $rootScope.globalPlaylistPluginInstalled = WidgetMedia.media.data.content.globalPlaylistPluginInstalled;
 
                             WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
                             if(old == WidgetMedia.media.data.design.itemLayout)WidgetMedia.ApplayUpdates();

@@ -647,6 +647,7 @@
                                 $rootScope.autoPlayDelay = event.data.content.autoPlayDelay;
                                 $rootScope.globalPlaylist = event.data.content.globalPlaylist;
                                 $rootScope.globalPlaylistPluginName = event.data.content.globalPlaylistPluginName;
+                                $rootScope.globalPlaylistPluginInstalled = event.data.content.globalPlaylistPluginInstalled;
                                 if (!$scope.$$phase) {
                                     $scope.$digest();
                                 }
