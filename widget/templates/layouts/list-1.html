@@ -7,6 +7,7 @@
             <p ng-if="WidgetHome.showDescription()" ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">
             </p>
         </div>
+        <div id="emptyContainer" class="padded" ng-if="!loadingData && (!WidgetHome.items || (WidgetHome.items && WidgetHome.items.length === 0))"></div>
         <div class="padded padding-top-zero text-overlay">
             <div class="list-layout">
                 <div class="row" infinite-scroll="WidgetHome.loadMore()"

@@ -60,22 +60,22 @@
 </head>
 
 <body class="body-scroll">
-<div class="main_view">
-    <div ng-class="showFeed ? 'showing' : 'notshowing'" data-back-img="{{backgroundImage}}" id="feedView" class="content slide infinite-scroll-parent" >
-        <div ng-controller="WidgetHomeCtrl as WidgetHome">
-            <div ng-include="'templates/home.html'">
+    <div class="main_view">
+        <div ng-class="showFeed ? 'showing' : 'notshowing'" data-back-img="{{backgroundImage}}" id="feedView" class="content slide infinite-scroll-parent" >
+            <div ng-controller="WidgetHomeCtrl as WidgetHome">
+                <div ng-include="'templates/home.html'">
+                </div>
             </div>
         </div>
+        <div ng-class="WidgetHome.deepLink ? 'noSlide' : 'slide'"
+            data-back-img="{{backgroundImage}}"
+            ng-view=""
+            class="content"
+            ng-if="!showFeed"></div>
+
+        <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>
     </div>
-    <div ng-class="WidgetHome.deepLink ? 'noSlide' : 'slide'"
-         data-back-img="{{backgroundImage}}"
-         ng-view=""
-         class="content"
-         ng-if="!showFeed"></div>
 
-    <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>
-
-</div>
     <div style="position: absolute; bottom: 0; right: 0; width: 100%;" ng-if="globalPlaylist && !loadingGlobalPlaylist && showGlobalPlaylistButtons">
         <button
             class="btn btn-primary"
@@ -95,7 +95,7 @@
         <button
             class="btn btn-primary"
             ng-if="globalPlaylist"
-            ng-click=""
+            ng-click="goToPlaylistPlugin()"
             style="
                 border-bottom-right-radius: 0;
                 border-bottom-left-radius: 0;
@@ -110,13 +110,13 @@
         </button>
     </div>
     
-    <div id="countdownOverlay" class="overlay" ng-class="{'half-screen': showCountdown}">
+    <div id="countdownOverlay" ng-class="{'h30': showCountdown}">
         <div class="overlay-content">
             <h5 class="margin-top-zero">{{delayCountdownText}}</h5>
             <br />
-            <a class="btn btn-warning media-action margin-left-ten" ng-click="clearCountdown()">
+            <button class="btn btn-warning media-action margin-zero" ng-if="showCountdown" ng-click="clearCountdown()">
                 Cancel
-            </a>
+            </button>
         </div>
     </div>
 </body>

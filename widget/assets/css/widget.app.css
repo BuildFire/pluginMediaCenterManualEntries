@@ -957,5 +957,16 @@ input[type=range]::-ms-track {
 }
   
 .pb30 {
-	padding-bottom: 20px !important;
+	padding-bottom: 30px !important;
 }
+
+.pb35 {
+	padding-bottom: 35px !important;
+}
+
+#emptyContainer {
+	background-image: url(../.images/empty_page.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+	height: 50vh;
+  }

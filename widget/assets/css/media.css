@@ -68,6 +68,10 @@
   top: 1px;
 }
 
+.layout3 .titleFlexBox .li-actions-item i {
+    margin-left: 10px;
+}
+
 .layout3 .titleFlexBox .action {
   margin-left: 15px;
 }
@@ -341,26 +345,25 @@ button.btn-icon.btn-lg {
     position: fixed;
     z-index: 1;
     left: 0;
-    top: 0;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0, 0.9);
+    bottom: 0;
+    background-color: rgba(0,0,0, 0.8);
     overflow-x: hidden;
     transition: 0.3s;
-    border-bottom-left-radius: 75% ;
-    border-bottom-right-radius: 75%;
+    border-top-left-radius: 8% ;
+    border-top-right-radius: 8%;
 }
   
-.overlay-content {
+#countdownOverlay  .overlay-content {
     position: relative;
     top: 25%;
     width: 100%;
     text-align: center;
-    margin-top: 30px;
+    margin-top: 10px;
     color: white;
 }
 
-.overlay-content h5,
-.overlay-content button  {
+#countdownOverlay .overlay-content h5,
+#countdownOverlay  .overlay-content button  {
     font-size: 18px !important;
     color: white !important;
 }
@@ -369,8 +372,8 @@ button.btn-icon.btn-lg {
     padding: 10px 15px;
 }
 
-#countdownOverlay.half-screen {
-    height: 35%;
+#countdownOverlay.h30 {
+    height: 30%;
 }
 
 #videogularElement .vid-play-pause-btn,

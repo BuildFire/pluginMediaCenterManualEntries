@@ -7,6 +7,7 @@
                 $rootScope.showFeed = true;
                 var WidgetHome = this;
                 WidgetHome.deepLink = false;
+                $rootScope.loadingData = true;
 
                 var _infoData = {
                     data: {
@@ -33,6 +34,8 @@
                     }
                 };
                 var view = null;
+
+                buildfire.spinner.show();
 
                 /**
                  * Create instance of MediaContent, MediaCenter db collection
@@ -303,6 +306,47 @@
                     );
                 };
 
+                $rootScope.goToPlaylistPlugin = () => {
+                    buildfire.spinner.show();
+
+                    if (!$rootScope.globalPlaylistPluginInstalled || !$rootScope.globalPlaylistPluginName) return buildfire.spinner.hide();
+
+                    buildfire.pluginInstance.search({ title: $rootScope.globalPlaylistPluginName }, (err, instances) => {
+                        if (!err && instances.length > 0) {
+                            const actionItem = {
+                                action: "linkToApp",
+                                title: instances.result[0].data.title,
+                                iconUrl: instances.result[0].data.iconUrl,
+                                instanceId: instances.result[0].data.instanceId,
+                                iconClassName: instances.result[0].data.iconClassName,
+                            };
+                            // Navigate to the playlist plugin
+                            buildfire.actionItems.execute(
+                                actionItem,
+                                (err) => {
+                                    if (err) {
+                                        console.error(err);
+                                        return buildfire.dialog.toast({
+                                            message: `Couldn't navigate to the playlist feature`,
+                                            type: 'warning',
+                                            duration: 2000
+                                        });
+                                    };
+                                }
+                            );
+                            buildfire.spinner.hide();
+                        } else {
+                            if (err) console.error(err);
+                            buildfire.spinner.hide();
+                            return buildfire.dialog.toast({
+                                message: `Couldn't navigate to the playlist feature`,
+                                type: 'warning',
+                                duration: 2000
+                            });
+                        }
+                    });
+                }
+
                 $rootScope.addAllToGlobalPlaylist = ($event) => {
                     $event.stopImmediatePropagation();
                                             
@@ -420,12 +464,14 @@
                 $rootScope.clearCountdown = () => {
                     $rootScope.showCountdown = false;
                     $rootScope.delayCountdownText = '';
-                    if (delayInterval) clearInterval(delayInterval);
                     if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                    if (delayInterval) clearInterval(delayInterval);
                 }
 
                 WidgetHome.loadMore = function () {
                     if (WidgetHome.isBusy || WidgetHome.noMore) {
+                        buildfire.spinner.hide();
+                        $rootScope.loadingData = false;
                         return;
                     }
                     updateGetOptions()
@@ -439,8 +485,11 @@
 
                     const getMediaItems = () => {
                         MediaContent.find(searchOptions).then(function success(result) {
-                            if (WidgetHome.noMore)
+                            if (WidgetHome.noMore) {
+                                buildfire.spinner.hide();
+                                $rootScope.loadingData = false;
                                 return;
+                            }
 
                             if (result.length <= _limit) {// to indicate there is no more
                                 WidgetHome.noMore = true;
@@ -456,6 +505,9 @@
                             WidgetHome.isBusy = false;
                             $rootScope.myItems = WidgetHome.items;
                             bookmarks.sync($scope);
+
+                            buildfire.spinner.hide();
+                            $rootScope.loadingData = false;
 
                             if (!$window.deeplinkingDone && buildfire.deeplink) {
                                 buildfire.deeplink.getData(function (data) {
@@ -513,6 +565,8 @@
                             }
                         }, function fail() {
                             WidgetHome.isBusy = false;
+                            buildfire.spinner.hide();
+                            $rootScope.loadingData = false;
                             console.error('error');
                         });
                     }
