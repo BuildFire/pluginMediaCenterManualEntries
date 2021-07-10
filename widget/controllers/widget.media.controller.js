@@ -151,7 +151,7 @@
                 };
 
                 if (media) { 
-                    if (!media.data.videoUrl && !media.data.audioUrl) return $rootScope.playNextItem();
+                    if (!media.data.videoUrl && !media.data.audioUrl && $rootScope.autoPlay) return $rootScope.playNextItem();
 
                     WidgetMedia.item = media;
                     WidgetMedia.mediaType = media.data.audioUrl ? 'AUDIO' : (media.data.videoUrl ?  'VIDEO' : null);
