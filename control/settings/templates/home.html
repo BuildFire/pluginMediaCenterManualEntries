@@ -118,7 +118,7 @@
             </div>
         </div>
 
-        <div class="setting-toggle">
+        <div class="setting-toggle" ng-if="Settings.data.content.globalPlaylist">
             <p class="setting-label">
                 Playlist Feature Installed
                 <span class="customTooltipBox btn-primary">
@@ -134,7 +134,7 @@
             </div>
         </div>
 
-        <div class="setting-toggle" ng-if="Settings.data.content.globalPlaylistPluginInstalled">
+        <div class="setting-toggle" ng-if="Settings.data.content.globalPlaylist && Settings.data.content.globalPlaylistPluginInstalled">
             <p class="setting-label">
                 Playlist Feature Name
                 <span class="customTooltipBox btn-primary">

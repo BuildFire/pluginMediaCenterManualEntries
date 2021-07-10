@@ -348,7 +348,7 @@ button.btn-icon.btn-lg {
     bottom: 0;
     background-color: rgba(0,0,0, 0.8);
     overflow-x: hidden;
-    transition: 0.3s;
+    transition: 0.2s;
     border-top-left-radius: 8% ;
     border-top-right-radius: 8%;
 }
@@ -382,11 +382,16 @@ button.btn-icon.btn-lg {
 #videogularElement .volume-btn,
 #videogularElement .fullscreen-btn {
     width: 20px;
-    padding: 0 0.5rem;
+    padding: 0 0.3rem;
     display: table-cell;
     vertical-align: middle;
     text-align: center;
     cursor: pointer;
+}
+
+videogular vg-scrub-bar, [videogular] vg-scrub-bar {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
 }
 
 #videogularElement vg-mute-button {
@@ -402,12 +407,20 @@ button.btn-icon.btn-lg {
     vertical-align: text-top;
 }
 
+#videogularElement .next-item-btn .iconButton i,
+#videogularElement .prev-item-btn .iconButton i {
+    color: white !important;
+    top: -2px;
+}
+
 #videogularElement vg-volume-bar .verticalVolumeBar {
     position: fixed !important;
 }
 
+videogular .iconButton, [videogular] .iconButton,
 #videogularElement .next-item-btn .iconButton {
-    margin-right: 10px;
+    margin-right: 5px;
+    padding: 6px 4px !important;
 }
 
 #videogularElement .iconButton i {
@@ -416,6 +429,8 @@ button.btn-icon.btn-lg {
 }
 
 #videogularElement .vid-time {
-    font-size: 16px;
-    width: 65px;
+    font-size: 15px;
+    width: 55px;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
 }

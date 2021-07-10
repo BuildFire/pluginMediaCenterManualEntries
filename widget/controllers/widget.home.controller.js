@@ -469,6 +469,7 @@
                 }
 
                 WidgetHome.loadMore = function () {
+                    $rootScope.loadingData = true;
                     if (WidgetHome.isBusy || WidgetHome.noMore) {
                         buildfire.spinner.hide();
                         $rootScope.loadingData = false;

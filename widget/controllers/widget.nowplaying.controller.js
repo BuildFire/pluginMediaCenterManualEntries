@@ -17,6 +17,7 @@
                 NowPlaying.currentTrack.image = media.data.topImage;
                 NowPlaying.currentTrack.title = media.data.title;
                 if ($rootScope.seekTime) NowPlaying.currentTrack.startAt = $rootScope.seekTime;
+                NowPlaying.currentTime = 0;
 
                 $rootScope.deepLinkNavigate = null;
                 $rootScope.seekTime = null;
@@ -84,8 +85,10 @@
                     NowPlaying.forceAutoPlayer();
                     audioPlayer.settings.set(NowPlaying.settings);
                     setTimeout(() => {
-                        NowPlaying.playTrack();
-                    }, 300);
+                        if ($rootScope.autoPlay) {
+                            NowPlaying.playTrack();
+                        }
+                    }, 0);
                 });
 
                 NowPlaying.forceAutoPlayer = function (){

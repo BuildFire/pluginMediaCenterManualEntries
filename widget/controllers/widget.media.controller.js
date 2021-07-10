@@ -90,7 +90,7 @@
                     } 
                 };
 
-                WidgetMedia.onVideoError = (err) => console.error(err);
+                WidgetMedia.onVideoError = (err) => {};
 
                 WidgetMedia.videoPlayerConfig = {
                     autoHide: false,
