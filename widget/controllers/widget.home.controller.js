@@ -393,7 +393,6 @@
 
                 $rootScope.toggleGlobalPlaylistItem = ($event, item) => {
                     $event.stopImmediatePropagation();
-                    
                     if ($rootScope.isInGlobalPlaylist(item.id)) {
                         GlobalPlaylist.delete(item.id).then(() => {
                             delete $rootScope.globalPlaylistItems.playlist[item.id];
@@ -582,12 +581,12 @@
                                     GlobalPlaylist.save({ playlist: {}})
                                     .then(result => {
                                         result.data.id = result.id;
-                                        $rootScope.globalPlaylistItems = result.data
+                                        $rootScope.globalPlaylistItems = result.data;
                                         resolve();
                                     });
                                     } else {
                                         result.data.id = result.id;
-                                        $rootScope.globalPlaylistItems = result.data
+                                        $rootScope.globalPlaylistItems = result.data;
                                         resolve();
                                     }
                             }).catch(err => {
@@ -608,11 +607,13 @@
                     };
 
                     if ($rootScope.globalPlaylist) {
-                        getGlobalPlaylistLimit();
-
                         getCurrentUser(() => {
+                            // Get limit from appData
+                            getGlobalPlaylistLimit();
+                            
                             getglobalPlaylistItems()
-                            .then(getMediaItems).finally(() => $rootScope.loadingGlobalPlaylist = false);
+                            .then(getMediaItems)
+                            .finally(() => $rootScope.loadingGlobalPlaylist = false);
                         });
                     } else getMediaItems();
                 };
@@ -637,8 +638,9 @@
                     searchOptions.skip = 0;
                     WidgetHome.items = [];
                     WidgetHome.noMore = false;
+                    $rootScope.loadingData = true;
                     WidgetHome.glovalPlaylistLoaded = false;
-                    WidgetHome.globalPlaylistItems = { playlist: {} };
+                    if ($rootScope.globalPlaylist) $rootScope.globalPlaylistItems = { playlist: {} };
                     WidgetHome.loadMore();
                 };
 

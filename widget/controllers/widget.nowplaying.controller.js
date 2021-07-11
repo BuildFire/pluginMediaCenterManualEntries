@@ -621,7 +621,6 @@
                     switch (event.tag) {
                         case COLLECTIONS.MediaContent:
                             if (event.data) {
-
                                 NowPlaying.item = event;
                                 if (!$scope.$$phase) {
                                     $scope.$digest();
@@ -651,6 +650,9 @@
                                 $rootScope.globalPlaylist = event.data.content.globalPlaylist;
                                 $rootScope.globalPlaylistPluginName = event.data.content.globalPlaylistPluginName;
                                 $rootScope.globalPlaylistPluginInstalled = event.data.content.globalPlaylistPluginInstalled;
+
+                                // Update Data in media contoller
+                                $rootScope.refreshItems();
                                 if (!$scope.$$phase) {
                                     $scope.$digest();
                                 }

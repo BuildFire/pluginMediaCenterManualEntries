@@ -259,6 +259,8 @@
                             $rootScope.globalPlaylistLimit = WidgetMedia.media.data.content.globalPlaylistLimit;
                             $rootScope.globalPlaylistPluginName = WidgetMedia.media.data.content.globalPlaylistPluginName;
                             $rootScope.globalPlaylistPluginInstalled = WidgetMedia.media.data.content.globalPlaylistPluginInstalled;
+                            // Update Data in media contoller
+                            $rootScope.refreshItems();
 
                             WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
                             if(old == WidgetMedia.media.data.design.itemLayout)WidgetMedia.ApplayUpdates();
@@ -306,13 +308,12 @@
                         }
                         WidgetMedia.playAudio()
                     }
-                    else if ($rootScope.autoPlay && WidgetMedia.item.data.videoUrl) {
+                    else if ($rootScope.autoPlay  && WidgetMedia.item.data.videoUrl) {
                         WidgetMedia.showVideo = true;
                         WidgetMedia.API.play();
                     }
                     else if ($rootScope.skipMediaPage && WidgetMedia.item.data.videoUrl) {
                         WidgetMedia.showVideo = true;
-                        WidgetMedia.API.play();
                     } else {
                         WidgetMedia.showVideo = false;
                         WidgetMedia.API.pause();
