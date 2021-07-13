@@ -190,6 +190,14 @@
           if (ContentMedia.item.data.searchEngineId) {
             SearchEngineService.update(ContentMedia.item.data.searchEngineId, ContentMedia.item.data).then(function () {
               update();
+            },function(){
+              SearchEngineService.insert(ContentMedia.item.data).then(function(result) {
+                if(result && result.id)
+                  ContentMedia.item.data.searchEngineId=result.id;
+                update();
+              }, function() {
+                update();
+              });;
             });
           } else {
             update();
