@@ -8,7 +8,7 @@
                 vg-error="WidgetMedia.onVideoError($event)"
                 vg-can-play="WidgetMedia.videoLoaded()"
                 vg-auto-play="autoPlay"
-                vg-complete="WidgetMedia.goToNextItem()"
+                vg-complete="playNextItem()"
                 >
         <vg-media 
                 vg-vimeo
@@ -33,9 +33,11 @@
                 </button>
             </div>
 
+            <div class="empty-space"></div>
             <vg-scrub-bar>
                 <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
             </vg-scrub-bar>
+            <div class="empty-space"></div>
             <vg-time-display class="vid-time">{{ timeLeft | date:'mm:ss':'+0000' | timeCorrect }}</vg-time-display>
 
             <vg-volume class="volume-btn">
@@ -47,8 +49,7 @@
         <vg-overlay-play></vg-overlay-play>
     </videogular>
 
-
-    <!-- <embed-video data-ng-if="WidgetMedia.item.data.videoUrl | isDriveLink" data-ng-href="{{WidgetMedia.item.data.videoUrl}}" controls="0"></embed-video> -->
+    <!-- <embed-video data-ng-if="WidgetMedia.isYoutubeVideo" data-ng-href="{{WidgetMedia.item.data.videoUrl}}" controls="0"></embed-video> -->
 </div>
 
 <!--

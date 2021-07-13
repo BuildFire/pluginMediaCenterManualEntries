@@ -90,7 +90,7 @@
                     } 
                 };
 
-                WidgetMedia.onVideoError = (err) => {};
+                WidgetMedia.onVideoError = (err) => console.error(err);
 
                 WidgetMedia.videoPlayerConfig = {
                     autoHide: false,
@@ -151,7 +151,7 @@
                 };
 
                 if (media) { 
-                    if (!media.data.videoUrl && !media.data.audioUrl && $rootScope.autoPlay) return $rootScope.playNextItem();
+                    if (!media.data.videoUrl && !media.data.audioUrl && $rootScope.autoPlay) return setTimeout($rootScope.playNextItem, 1500); // Wait for the page to load before moving
 
                     WidgetMedia.item = media;
                     WidgetMedia.mediaType = media.data.audioUrl ? 'AUDIO' : (media.data.videoUrl ?  'VIDEO' : null);
@@ -308,9 +308,10 @@
                         }
                         WidgetMedia.playAudio()
                     }
-                    else if ($rootScope.autoPlay  && WidgetMedia.item.data.videoUrl) {
-                        WidgetMedia.showVideo = true;
-                        WidgetMedia.API.play();
+                    else if ($rootScope.autoPlay && WidgetMedia.item.data.videoUrl) {
+                        // WidgetMedia.showVideo = true;
+                        // WidgetMedia.API.play();
+                        WidgetMedia.toggleShowVideo(true);
                     }
                     else if ($rootScope.skipMediaPage && WidgetMedia.item.data.videoUrl) {
                         WidgetMedia.showVideo = true;
@@ -325,24 +326,29 @@
                 }
 
                 // let interval;
-                WidgetMedia.toggleShowVideo = function () {
-                    WidgetMedia.showVideo = !WidgetMedia.showVideo;
-                    
+                WidgetMedia.toggleShowVideo = function (forceShow) {
+                    WidgetMedia.showVideo = forceShow ? true : !WidgetMedia.showVideo;
+                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+
                     // Make sure the video is ready before playing it
                     // interval = setInterval(() => {
-                    //     let video = document.querySelector("video");
+                    //     let video = document.querySelector("#videogularElement video");
                     //     if (video && video.readyState === 4) {
-                    //         if (!$rootScope.autoPlay && WidgetMedia.showVideo) {
+                    //         if (!WidgetMedia || !WidgetMedia.showVideo) {
+                    //             clearInterval(interval); return;
+                    //         }
+                    //         if (!WidgetMedia.showVideo) return clearInterval(interval);
+                    //         if ($rootScope.autoPlay && WidgetMedia.showVideo) {
                     //             WidgetMedia.API.play();
                     //         } else {
                     //             WidgetMedia.API.pause();
                     //         }
-                    //         if (interval) clearInterval(interval);
+                    //         clearInterval(interval);
                     //     }
                     // }, 100);
 
-                    // // Make sure the interval doesn't run forever
-                    // setTimeout(() => {if (interval) clearInterval(interval)} , 15000);
+                    // Make sure the interval doesn't run forever
+                    // setTimeout(() => clearInterval(interval) , 15000);
                 };
 
                 WidgetMedia.showSourceIframe = function () {

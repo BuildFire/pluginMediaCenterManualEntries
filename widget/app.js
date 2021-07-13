@@ -17,6 +17,7 @@
             "com.2fdevs.videogular.plugins.overlayplay",
             "rc-videogular.plugins.youtube",
             "rc-videogular.plugins.vimeo",
+            // "videosharing-embed",
             "ngTouch"
         ])
         //injected ngRoute for routing
