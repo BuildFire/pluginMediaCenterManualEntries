@@ -17,23 +17,25 @@
                 </div>
             </div>
         </div>
-        <div class="text-left padded padding-bottom-zero clearfix ">
-            <h4 class="margin-top-zero" style="font-size: 16px;">{{WidgetMedia.item.data.title}}</h4>
-            <h5 class="margin-bottom-zero">{{WidgetMedia.item.data.summary}}</h5>
+        <div class="item-main-header">
+            <div class="text-left padded word-break">
+                <h5 class="margin-top-zero word-break">{{WidgetMedia.item.data.title}}</h5>
+                <p class="margin-bottom-zero word-break">{{WidgetMedia.item.data.summary}}</p>
+            </div>
         </div>
         <div class="padded padding-top-zero">
             <div class="item-actions">
                 <div class="link-list">
                     <a class="media-action" ng-click="WidgetMedia.playAudio();" ng-if="WidgetMedia.mediaType == 'AUDIO'">
-                        <i class="btn btn-success glyphicon glyphicon-volume-up"></i>
+                        <i class="btn btn-success glyphicon glyphicon-headphones"></i>
                     </a>
                     <a class="media-action video" ng-click="WidgetMedia.toggleShowVideo();"
                         ng-if="WidgetMedia.mediaType == 'VIDEO'">
-                        <i class="btn btn-success glyphicon glyphicon-play"></i>
+                        <i class="btn btn-success glyphicon glyphicon-film"></i>
                     </a>
                     <a ng-if="WidgetMedia.item.srcUrl && allowSource" ng-click="WidgetMedia.openLink(WidgetMedia.item.srcUrl)"
                         target="_blank">
-                        <i class="glyphicon share glyphicon-screenshot"></i>
+                        <i class="glyphicon share glyphicon-link"></i>
                     </a>
                 </div>
                 <div class="li-actions">
