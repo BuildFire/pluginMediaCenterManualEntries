@@ -54,16 +54,7 @@
                             <i ng-if="globalPlaylist" class="glyphicon star" style="font-size: 17px;top: -3px;" ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(WidgetMedia.item.id), 'glyphicon-minus' : isInGlobalPlaylist(WidgetMedia.item.id) }" ng-click="toggleGlobalPlaylistItem($event, WidgetMedia.item)" role="button"></i>
                     </div>
                 </div>
-                <!-- <hr class="small"> -->
                 <p class="wysiwyg" ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
-
-                <!--<div class="dynamic-links" ng-repeat="link in WidgetMedia.item.data.links">
-                    <p ng-click="WidgetMedia.executeAction(link)" >
-                        <span ng-if="!link.iconUrl" class="icon icon-cog"></span>
-                        <span ng-if="link.iconUrl" class="icon"><img load-image="1x1" crop-width="17" crop-height="17" crop-type="crop" data-final-src="{{link.iconUrl}}"/></span>
-                        {{link.title}}
-                    </p>
-                </div>-->
             </div>
         </div>
     </div>

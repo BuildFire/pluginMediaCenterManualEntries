@@ -1,7 +1,3 @@
-<!--<div class="overlay background"
-     ng-if="WidgetMedia.media.data.design.backgroundImage && WidgetMedia.deviceWidth != 0 && WidgetMedia.deviceHeight != 0">
-    <img ng-src="{{WidgetMedia.media.data.design.backgroundImage |cropImage : WidgetMedia.deviceWidth : WidgetMedia.deviceHeight}}">
-</div>-->
 <div>
     <div ng-if="WidgetMedia.media.data.design.listLayout"
          ng-include="'templates/layouts/' + WidgetMedia.media.data.design.itemLayout+ '.html'">

@@ -92,7 +92,6 @@
             <span class="icon icon-repeat icon-sm primaryTheme hidden whiteTheme"></span>
         </div>
         <div class="media-player-action-btns">
-            <!--<span class="icon icon-volume-high icon-sm" ng-click="NowPlaying.showVolume=!NowPlaying.showVolume"></span>-->
             <span ng-if="!globalPlaylist" class="glyphicon glyphicon-option-horizontal whiteTheme"
                 ng-click="NowPlaying.openMoreInfoOverlay()"></span>
             <span class="glyphicon glyphicon-cog whiteTheme" ng-click="NowPlaying.getSettings()"></span>
@@ -121,8 +120,6 @@
                                     {{track.title}}</p>
                             </div>
                             <div class="btns text-center">
-                                <!--<a ng-if="!track.playing" class="icon icon-play-circle" ng-click="NowPlaying.playlistPlay(track)"></a>
-                                <a ng-if="track.playing" class="icon icon-pause-circle primaryTheme" ng-click="NowPlaying.playlistPause(track)"></a>-->
                                 <a ng-class="track.playing ? 'icon-pause-circle' : 'icon-play-circle'"
                                     class="icon primaryTheme" ng-click="NowPlaying.playlistPlayPause(track)"></a>
                             </div>

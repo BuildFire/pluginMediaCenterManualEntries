@@ -318,8 +318,6 @@
                         WidgetMedia.playAudio()
                     }
                     else if ($rootScope.autoPlay && WidgetMedia.item.data.videoUrl) {
-                        // WidgetMedia.showVideo = true;
-                        // WidgetMedia.API.play();
                         WidgetMedia.toggleShowVideo(true);
                     }
                     else if ($rootScope.skipMediaPage && WidgetMedia.item.data.videoUrl) {
@@ -346,12 +344,6 @@
                         link = "http://" + link;
                     }
                     Buildfire.navigation.openWindow(link, '_system');
-                    /* WidgetMedia.showSource = !WidgetMedia.showSource;
-                     if (WidgetMedia.showSource) {
-                     $timeout(function () {
-                     angular.element('#sourceIframe').attr('src', WidgetMedia.item.data.srcUrl);
-                     }, 1000);
-                     }*/
                 };
 
                 WidgetMedia.openLinks = function (actionItems) {

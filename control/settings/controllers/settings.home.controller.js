@@ -85,6 +85,10 @@
 
             Settings.setGlobalPlaylist = function (value) {
                 if (value != Settings.data.content.globalPlaylist) {
+                    if (!value) {
+                        Settings.data.content.globalPlaylistPluginInstalle = false;
+                        Settings.data.content.globalPlaylistPluginName = '';
+                    }
                     Settings.data.content.globalPlaylist = value;
                     MediaCenter.save(Settings.data).then(function (result) { });
                 }

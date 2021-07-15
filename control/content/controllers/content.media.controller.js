@@ -454,7 +454,7 @@
             });
             Location.goToHome();
             
-            }, 1000);
+            }, 200);
         };
           
           ContentMedia.cancelAdd = function () {

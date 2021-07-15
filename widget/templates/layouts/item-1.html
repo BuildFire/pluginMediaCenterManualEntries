@@ -6,8 +6,6 @@
                 class="plugin-slider text-center">
                 <div ng-class="WidgetMedia.showVideo == false ? '' : 'video-container-background'"
                     style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;" class="plugin-slide">
-                    <!--ng-style="WidgetMedia.showVideo == false ? {'min-height': '192px'} : {}" style="width: 100% !important;max-height:192px !important"
-                         -->
                     <img ng-if="!WidgetMedia.fullScreen" data-ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage || ( skipMediaPage && WidgetMedia.item.data.videoUrl )"
                         load-image="16x9" style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
                         crop-width="1280" crop-height="720" crop-type="crop"
@@ -49,17 +47,7 @@
                         <i ng-if="globalPlaylist" class="glyphicon star" style="font-size: 17px;top: -3px;" ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(WidgetMedia.item.id), 'glyphicon-minus' : isInGlobalPlaylist(WidgetMedia.item.id) }" ng-click="toggleGlobalPlaylistItem($event, WidgetMedia.item)" role="button"></i>
                 </div>
             </div>
-            <!-- <hr class="small" ng-if="WidgetMedia.item.data.body"> -->
             <p class="wysiwyg" ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
-
-
-            <!--<div class="dynamic-links" ng-repeat="link in WidgetMedia.item.data.links">
-                <p ng-click="WidgetMedia.executeAction(link)" >
-                    <span ng-if="!link.iconUrl" class="icon icon-cog"></span>
-                    <span ng-if="link.iconUrl" class="icon"><img load-image="1x1" crop-width="17" crop-height="17" crop-type="crop" data-final-src="{{link.iconUrl}}"/></span>
-                    {{link.title}}
-                </p>
-            </div>-->
         </div>
     </div>
 </div>

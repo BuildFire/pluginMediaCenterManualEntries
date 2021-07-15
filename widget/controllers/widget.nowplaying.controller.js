@@ -147,7 +147,6 @@
                                     audioPlayer.addToPlaylist(pluginSongs[i]);
                                     NowPlaying.playList.push(pluginSongs[i]);
                                 }
-                                //NowPlaying.playlistPlay(pluginSongs[0], 0);
                             }
                         }else{
                             for(var i=(filteredPlaylist.length-1);i>=0;i--){
@@ -248,27 +247,23 @@
                                     NowPlaying.isItLast=(index==(filteredPlaylist.length-1));
                                     if(index>=(filteredPlaylist.length-1)&&NowPlaying.forceAutoPlay&&!NowPlaying.settings.loopPlaylist){
                                         NowPlaying.settings.autoPlayNext=false;
-                                    //    audioPlayer.settings.set({autoPlayNext:false});
                                     }
-                                   // else if(NowPlaying.settings.autoPlayNext){
-                                        audioPlayer.settings.set({autoPlayNext:false});
-                                        var myInterval=setInterval(function(){ 
-                                            if(ready){
-                                                if(!NowPlaying.isItLast){
-                                                    NowPlaying.settings.autoPlayNext=true;
-                                                    audioPlayer.settings.set({autoPlayNext:true});
-                                                }
-
-                                                setOder=true;
-                                                clearInterval(myInterval);
+                                    audioPlayer.settings.set({autoPlayNext:false});
+                                    var myInterval=setInterval(function(){ 
+                                        if(ready){
+                                            if(!NowPlaying.isItLast){
+                                                NowPlaying.settings.autoPlayNext=true;
+                                                audioPlayer.settings.set({autoPlayNext:true});
                                             }
-                                        }, 100);
-                                   // }
+
+                                            setOder=true;
+                                            clearInterval(myInterval);
+                                        }
+                                    }, 100);
                                 });
                             break;
                         case 'timeUpdate':
                             ready = e.data.duration && e.data.duration!=null && e.data.duration > 0;  
-                           // console.log("koje je vreme",NowPlaying.currentTime);                          
                             if(NowPlaying.forceAutoPlay)
                                 if(ready&&e.data.currentTime>=e.data.duration&&!first){
                                     first=true;
@@ -460,7 +455,6 @@
                     audioPlayer.settings.set(NowPlaying.settings);
                 };
                 NowPlaying.changeVolume = function (volume) {
-                    //audioPlayer.setVolume(volume);
                     audioPlayer.settings.get(function (err, setting) {
                         if (setting) {
                             setting.volume = volume;
@@ -493,7 +487,6 @@
                 };
                 NowPlaying.removeFromPlaylist = function (track, index) {
                     Modals.removeTrackModal().then(function (data) {
-                        console.log('Data-------------------in success of remove track popup-0-', data);
                         buildfire.dialog.toast({
                             message: NowPlaying.playListStrings.removedFromPlaylist
                         });
@@ -514,14 +507,13 @@
                 };
                 NowPlaying.removeTrackFromPlayList = function (index) {
                     Modals.removeTrackModal().then(function (data) {
-                        console.log('Data-------------------in success of remove track popup-1-', data);
                         audioPlayer.removeFromPlaylist(index);
                         buildfire.dialog.toast({
                             message: NowPlaying.playListStrings.removedFromPlaylist
                         });
                     },
                         function (err) {
-                            // Do something on error
+                           console.error(err);
                         });
 
                 };
@@ -744,14 +736,6 @@
                         Location.goToHome();
                     });
                 });
-
-                /**
-                 * Auto play the track
-                 */
- /*                 $timeout(function () {
-                    if (NowPlaying.settings)
-                         NowPlaying.playTrack();  
-                }, 0);  */
-                        }
+            }
         ]);
 })(window.angular);
