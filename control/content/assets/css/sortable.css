@@ -1,0 +1,119 @@
+.draggable-list-view.no-media .d-item,
+.draggable-list-view .d-item{
+  display: flex;
+  align-items: center;
+}
+.draggable-list-view.no-media .d-item::after,
+.draggable-list-view .d-item::after{
+  display: none;
+}
+.draggable-list-view .d-item.square-icon .media-holder{
+  margin-right: .5rem;
+}
+.draggable-list-view.no-media .d-item .copy{
+  display: flex;
+  top: auto;
+  align-items: center;
+}
+.draggable-list-view .d-item.double-line .copy{
+  /* top: auto; */
+  display: flex;
+  align-items: center;
+}
+.draggable-list-view .d-item span.title,
+.draggable-list-view .d-item span.icon{
+  top: auto;
+}
+.draggable-list-view.has-btn.links-list .d-item.double-line .copy .pull-right span.btn-icon{
+  top: auto;
+}
+.draggable-list-view .pull-right .btn-icon{
+  width: 2.5rem;
+  height: 2.5rem; 
+  border-radius: .25rem;
+  font-size: 1.125rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: unset;
+  background-color: transparent;
+  color: #000;
+  /* margin: 0 !important; */
+  top: auto;
+}
+.draggable-list-view .pull-right .btn-edit-icon:after{
+  font-size: 1.25rem;
+}
+.draggable-list-view .pull-right .btn-icon:hover{
+  background-color: #f2f2f2;
+}
+html[buildfire] .d-item .btn-delete-icon:after{
+  content: "\e60e";
+  font-family: "icomoon";
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: auto;
+  transition: color ease-in-out .2s;
+}
+html[buildfire] .d-item .btn-edit-icon::after {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: auto;
+  transition: color ease-in-out .3s;
+}
+html[buildfire] .d-item .btn-delete-icon:hover::after{
+  color: var(--c-danger);
+}
+html[buildfire] .d-item .btn-edit-icon:hover::after{
+  color: var(--c-primary);
+}
+.draggable-list-view .d-item.double-line .copy .pull-right span.btn-icon{
+  top: auto;
+}
+.draggable-list-view .d-item.double-line .copy .pull-right{
+  display: flex;
+  align-items: center;
+  top: auto;
+}
+
+
+.carousel-items .d-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  top: 0 !important;
+}
+
+.carousel-items .d-item .copy {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  top: 2px !important;
+  width: 100%;
+}
+
+.carousel-items .d-item .copy div {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.carousel-items .d-item .btn-delete-icon {
+  top: -2px !important;
+}
+.carousel-items .d-item .btn-delete-icon:after {
+  top: 10px !important;
+}
+
+.carousel-items .d-item .btn-delete-icon,
+.d-item .copy span.btn-icon {
+  margin-left: 18px !important;
+  border-radius: 50%;
+}
+
+.d-item .copy a.text-primary {
+  flex-grow: 1 !important;
+}

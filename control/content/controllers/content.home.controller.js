@@ -515,7 +515,7 @@
                         }
                     }, function (error) {
                         ContentHome.loading = false;
-                        $scope.apply();
+                        $scope.$apply();
                         //do something on cancel
                     });
                 };
@@ -580,6 +580,10 @@
                     searchOptions.filter = { "$json.title": { "$regex": value, $options: "-i",} };
                     ContentHome.getMore();
                 };
+
+                ContentHome.onEnterKey = (keyEvent) => {
+                    if (keyEvent.which === 13) ContentHome.searchListItem($scope.search);
+                }
 
                 /**
                  * ContentHome.removeListItem() used to delete an item from item list

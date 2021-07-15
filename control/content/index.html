@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html ng-app="mediaCenterContent">
 <head lang="en">
-    <!-- CSS -->
-    <!-- <link rel="stylesheet" href="assets/css/jquery-ui.css"/> -->
-    <link href="../../../../styles/helper.css" rel="stylesheet">
-    <link href="../../../../styles/siteIcons.css" rel="stylesheet">
-    <link href="assets/css/control.content.css" rel="stylesheet">
 
     <!--SDK js-->
     <script src="../../../../scripts/buildfire.min.js"></script>
@@ -43,10 +38,19 @@
     <script src="controllers/content.media.controller.js"></script>
     <link rel="stylesheet" href="../../../../styles/transitionAnimation.css">
     <meta charset="UTF-8">
+
+    <!-- CSS -->
+    <!-- <link rel="stylesheet" href="assets/css/jquery-ui.css"/> -->
+    <link href="../../../../styles/helper.css" rel="stylesheet">
+    <link href="../../../../styles/siteIcons.css" rel="stylesheet">
+    <!-- <link href="assets/css/control.content.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="../content/assets/css/reset.css">
+    <link rel="stylesheet" href="../content/assets/css/bf_base.css">
+    <link rel="stylesheet" href="../content/assets/css/sortable.css">
 </head>
 <body style="overflow:auto; overflow:initial;">
 <div class="main_view">
-    <div class="content infinite-scroll-parent" ng-view=""></div>
+    <div class="content infinite-scroll-parent padded-sm" ng-view=""></div>
 </div>
 </body>
 </html>

@@ -576,22 +576,6 @@ videogular, [videogular] {
 .list-items .list-item{
 	position:relative;
 }
-.list-items .list-item:before,
-.layout3 .list-layout .list-item:after{
-	content:'';
-	border-top:1px solid #ddd !important;
-	opacity:0.25;
-	top:0;
-	left:0;
-	width:100%;
-	position:absolute;
-}
-.layout3 .list-layout .list-item:after{
-	border-top:none !important;
-	top:inherit;
-	bottom:0;
-	border-bottom:1px solid #ddd !important;
-}
 .list-items .list-item + .list-item{
 	padding-top:10px;
 	margin-top:10px;
@@ -723,9 +707,6 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	min-height:71px;
 	position:relative;
 }
-.layout3 .list-layout .list-item-copy{
-	padding:6px 10px 5px;
-}
 
 /* Play Btn */
 .play-btn{
@@ -762,9 +743,13 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 
 .link-list i{
-	font-size: 20px;
+	font-size: 1.25rem;
 	display: inline-block;
-	padding: 5px 16px;
+	padding: .75rem;
+}
+
+.link-list a + a{
+	margin-left:.75rem;
 }
 
 .list-layout.has-btns .list-item{
@@ -837,22 +822,21 @@ input[type=range]::-ms-track {
 .item-actions{
 	margin: 16px 0;
 	padding: 0;
-	border-top: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	position: relative;
 }
 .item-actions, .li-actions .li-actions{
-    display: flex;
-    position: relative;
+	display: flex;
+	position: relative;
 }
 
 .li-actions i, .li-actions-item i 
 .li-actions i, .li-actions-item i {
     position: relative;
     display: block;
+    padding: .65rem;
     flex-shrink: 0;
     top: 0;
 }
@@ -886,6 +870,7 @@ input[type=range]::-ms-track {
 .layout4 .li-actions-item i,
 .layout3 .list-item-media .li-actions-item{
 	position: absolute;
+	font-size: 1.25rem;
 }
 
 .layout1 .li-actions-item i,
