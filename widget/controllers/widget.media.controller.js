@@ -3,7 +3,7 @@
         .module('mediaCenterWidget')
         .controller('WidgetMediaCtrl', ['$scope', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope','Location',
             function ($scope, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope,Location) {
-
+                
                 var WidgetMedia = this;
                 WidgetMedia.API = null;
                 WidgetMedia.mediaType = null;
@@ -81,7 +81,12 @@
 
                 WidgetMedia.onPlayerReady = function ($API) {
                     WidgetMedia.API = $API;
-                    WidgetMedia.loadingVideo = true;     
+                    WidgetMedia.loadingVideo = true;
+                    
+                    if ($rootScope.autoPlay) {
+                        // Make sure the audio is turned off
+                        Buildfire.services.media.audioPlayer.pause();
+                    }
                     
                     if ($rootScope.autoPlay && WidgetMedia.item.data.videoUrl && !$rootScope.deepLinkNavigate) {
                         WidgetMedia.toggleShowVideo();
@@ -90,7 +95,12 @@
                     } 
                 };
 
-                WidgetMedia.onVideoError = (err) => console.error(err);
+                $scope.onVideoStateChange = function(state) {
+                    if (state === 'play') { // The video started playing
+                        // Make sure the audio is turned off
+                        Buildfire.services.media.audioPlayer.pause();
+                    }
+                };
 
                 WidgetMedia.videoPlayerConfig = {
                     autoHide: false,
@@ -275,16 +285,15 @@
 
                 Buildfire.appData.onUpdate(event => {
                     // Tag name for global playlist
-                    const tagName = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : '');
-
+                    const globalPlaylistTag = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : 'globalPlaylist');
                     if (event) {
                         if (event.tag === "GlobalPlayListSettings") {
                             if (event.data && typeof event.data.globalPlayListLimit !== 'undefined') {
                                 $rootScope.globalPlayListLimit = event.data.globalPlayListLimit;
                             }
-                        } else if (event.tag === tagName) {
-                            if (event.data.playlist && event.data.playlist[WidgetMedia.item.id]) {
-                                $rootScope.globalPlaylistItems.playlist[WidgetMedia.item.id] = event.data.playlist[WidgetMedia.item.id];
+                        } else if (event.tag === globalPlaylistTag) {
+                            if (event.data.playlist && event.data.playlist) {
+                                $rootScope.globalPlaylistItems.playlist = event.data.playlist;
                             }
                         }
                     }
@@ -329,26 +338,6 @@
                 WidgetMedia.toggleShowVideo = function (forceShow) {
                     WidgetMedia.showVideo = forceShow ? true : !WidgetMedia.showVideo;
                     if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-
-                    // Make sure the video is ready before playing it
-                    // interval = setInterval(() => {
-                    //     let video = document.querySelector("#videogularElement video");
-                    //     if (video && video.readyState === 4) {
-                    //         if (!WidgetMedia || !WidgetMedia.showVideo) {
-                    //             clearInterval(interval); return;
-                    //         }
-                    //         if (!WidgetMedia.showVideo) return clearInterval(interval);
-                    //         if ($rootScope.autoPlay && WidgetMedia.showVideo) {
-                    //             WidgetMedia.API.play();
-                    //         } else {
-                    //             WidgetMedia.API.pause();
-                    //         }
-                    //         clearInterval(interval);
-                    //     }
-                    // }, 100);
-
-                    // Make sure the interval doesn't run forever
-                    // setTimeout(() => clearInterval(interval) , 15000);
                 };
 
                 WidgetMedia.showSourceIframe = function () {
@@ -386,12 +375,14 @@
                 };
 
                 buildfire.auth.onLogin(function (user) {
+                    buildfire.spinner.show();
                     bookmarks.sync($scope);
                     $rootScope.user = user;
                     $rootScope.refreshItems();
                 });
 
                 buildfire.auth.onLogout(function () {
+                    buildfire.spinner.show();
                     bookmarks.sync($scope);
                     $rootScope.user = null;
                     $rootScope.refreshItems();

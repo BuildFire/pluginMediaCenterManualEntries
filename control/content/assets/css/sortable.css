@@ -16,7 +16,7 @@
   align-items: center;
 }
 .draggable-list-view .d-item.double-line .copy{
-  top: auto;
+  /* top: auto; */
   display: flex;
   align-items: center;
 }
@@ -38,7 +38,7 @@
   min-width: unset;
   background-color: transparent;
   color: #000;
-  margin: 0 !important;
+  /* margin: 0 !important; */
   top: auto;
 }
 .draggable-list-view .pull-right .btn-edit-icon:after{
@@ -77,4 +77,43 @@ html[buildfire] .d-item .btn-edit-icon:hover::after{
   display: flex;
   align-items: center;
   top: auto;
+}
+
+
+.carousel-items .d-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  top: 0 !important;
+}
+
+.carousel-items .d-item .copy {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  top: 2px !important;
+  width: 100%;
+}
+
+.carousel-items .d-item .copy div {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.carousel-items .d-item .btn-delete-icon {
+  top: -2px !important;
+}
+.carousel-items .d-item .btn-delete-icon:after {
+  top: 10px !important;
+}
+
+.carousel-items .d-item .btn-delete-icon,
+.d-item .copy span.btn-icon {
+  margin-left: 18px !important;
+  border-radius: 50%;
+}
+
+.d-item .copy a.text-primary {
+  flex-grow: 1 !important;
 }

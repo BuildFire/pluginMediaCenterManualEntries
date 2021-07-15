@@ -1,14 +1,14 @@
 <div ng-style="WidgetMedia.fullScreen == false && {height: (WidgetMedia.deviceWidth*9)/16}" ng-show="WidgetMedia.showVideo" class="videogular-container">
     <img src="../../../styles/media/holder-16x9.gif"
         ng-if="WidgetMedia.loadingVideo">
-    <videogular id="videogularElement" 
+    <videogular id="videogularElement"
                 vg-player-ready="WidgetMedia.onPlayerReady($API)"
                 vg-change-source="WidgetMedia.sourceChanged($source)"
                 vg-theme="WidgetMedia.videoPlayerConfig.theme.url"
-                vg-error="WidgetMedia.onVideoError($event)"
+                vg-update-state="onVideoStateChange($state)"
                 vg-can-play="WidgetMedia.videoLoaded()"
-                vg-auto-play="autoPlay"
                 vg-complete="playNextItem()"
+                vg-auto-play="autoPlay"
                 >
         <vg-media 
                 vg-vimeo

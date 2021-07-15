@@ -1,8 +1,8 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('NowPlayingCtrl', ['$scope', '$routeParams', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', '$timeout', 'Location', 'EVENTS', 'PATHS', 'DB',
-            function ($scope, $routeParams, media, Buildfire, Modals, COLLECTIONS, $rootScope, $timeout, Location, EVENTS, PATHS, DB) {
+        .controller('NowPlayingCtrl', ['$scope', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', 'Location', 'EVENTS', 'PATHS', 'DB',
+            function ($scope, media, Buildfire, Modals, COLLECTIONS, $rootScope, Location, EVENTS, PATHS, DB) {
                 $rootScope.blackBackground = true;
                 $rootScope.showFeed = false;
                 var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
@@ -663,28 +663,29 @@
 
                 Buildfire.appData.onUpdate(event => {
                     // Tag name for global playlist
-                    const globalPlaylistTag = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : '');
-
+                    const globalPlaylistTag = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : 'globalPlaylist');
                     if (event) {
                         if (event.tag === "GlobalPlayListSettings") {
                             if (event.data && typeof event.data.globalPlayListLimit !== 'undefined') {
                                 $rootScope.globalPlayListLimit = event.data.globalPlayListLimit;
                             }
                         } else if (event.tag === globalPlaylistTag) {
-                            if (event.data.playlist && event.data.playlist[NowPlaying.item.id] && event.data.playlist[NowPlaying.item.id]) {
-                                NowPlaying.item.data = event.data.playlist[NowPlaying.item.id];
+                            if (event.data.playlist && event.data.playlist) {
+                                $rootScope.globalPlaylistItems.playlist = event.data.playlist;
                             }
                         }
                     }
                 });
 
                 buildfire.auth.onLogin(function (user) {
+                    buildfire.spinner.show();
                     bookmarks.sync($scope);
                     $rootScope.user = user;
                     $rootScope.refreshItems();
                 });
 
                 buildfire.auth.onLogout(function () {
+                    buildfire.spinner.show();
                     bookmarks.sync($scope);
                     $rootScope.user = null;
                     $rootScope.refreshItems();

@@ -836,7 +836,7 @@ input[type=range]::-ms-track {
 .li-actions i, .li-actions-item i {
     position: relative;
     display: block;
-    padding: .75rem;
+    padding: .65rem;
     flex-shrink: 0;
     top: 0;
 }

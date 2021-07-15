@@ -8,7 +8,7 @@
         <div class="col-md-9 main ">
             <div class="screens clearfix margin-bottom-five">
                 <div class="screen logoicon pull-left">
-                    <a class="border-grey border-radius-three default-background-hover" style="width: 160px; height: 90px;" ng-click="ContentMedia.addListImage()">
+                    <a class="border-grey border-radius-three default-background-hover" style="width: 122px; height: 90px;" ng-click="ContentMedia.addListImage()">
                         <span ng-if="!ContentMedia.item.data.topImage" class="add-icon">+</span>
                         <img ng-if="ContentMedia.item.data.topImage" ng-src="{{ContentMedia.item.data.topImage }}">
                     </a>
@@ -19,8 +19,6 @@
         </div>
     </div>
     
-    
-    
     <hr class="none">
     <div class="item clearfix row">
         <div class="labels col-md-3 padding-right-zero pull-left">
@@ -29,11 +27,6 @@
         <div class="main col-md-9 pull-right">
             <input type="text" class="form-control" placeholder="Item Title" ng-model="ContentMedia.item.data.title">
         </div>
-    </div>
-    <div class="main col-md-9 pull-right">
-        <input type="text" class="form-control" video-url placeholder="Video URL" ng-model="ContentMedia.item.data.videoUrl">
-        <p style="margin-bottom: -10px;" class="info margin-top-fifteen">Note: Supported video formats are MP4, WebM, Ogg.</p>
-        <p style="margin-bottom: -10px;" class="info margin-top-fifteen">Note: Supported share links are YouTube, Dropbox and Vimeo.</p>
     </div>
     <hr class="none">
     <div class="item clearfix row">
@@ -133,16 +126,13 @@
     <div id="actionItems" style="margin-bottom:50px;"></div>
 </div>
 <div class="bottom-actions">
-    <a class="btn btn-success margin-right-ten" ng-click="ContentMedia.done()"
-        ng-disabled="!ContentMedia.isItemValid" href="javaScript:void(0);">Save</a>
+    <a class="btn btn-default btn-outlined margin-right-ten" style="border: 1px solid #ddd;" ng-disabled="ContentMedia.saving" ng-click="ContentMedia.cancelAdd()" href="javaScript:void(0);">Cancel</a>
+    <a class="btn btn-success margin-right-ten" ng-click="ContentMedia.updateItem()" ng-disabled="ContentMedia.saving" href="javaScript:void(0);">{{ContentMedia.saving ? 'Saving...' : 'Save'}}</a>
 </div>
-
-
 
 <script>
     $(function(){
         if ( $('#datePickerMCM')[0].type != 'date' ) $('#datePickerMCM').datepicker();
-        else console.log("DATEEEEEEEE");
         $('#ui-datepicker-div').css('background-color','beige');
-    })
+    });
 </script>

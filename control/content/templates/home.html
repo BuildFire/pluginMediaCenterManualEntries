@@ -18,7 +18,7 @@
 <h1>Add Media Content</h1>
 <div class="search-bar-container margin-bottom-thirty">
     <div class="search-bar">
-        <input type="text" class="form-control" placeholder="Search Item Name" ng-model="search">
+        <input type="text" class="form-control" placeholder="Search Item Name" ng-model="search" ng-keyup="ContentHome.onEnterKey($event)">
         <a class="btn btn-info" ng-click="ContentHome.searchListItem(search)"><span class="search-icon"></span></a>
     </div>
 </div>
@@ -61,7 +61,7 @@
              data-infinite-container=".infinite-scroll-parent"
              infinite-scroll-disabled="ContentHome.noMore">
             <div ui-sortable="ContentHome.itemSortableOptions" ng-model="ContentHome.items">
-                <div class="well text-center margin-bottom-zero border-none empty-state" ng-if="ContentHome.items.length <1">
+                <div class="well text-center margin-bottom-zero border-none empty-state" ng-if="ContentHome.items.length < 1 && !ContentHome.isBusy">
                     <p class="margin-zero">No items</p>
                 </div>
                 <div class="d-item double-line square-icon clearfix" ng-if="ContentHome.items.length"
@@ -83,6 +83,9 @@
                           ng-click="ContentHome.removeListItem($index,$event)"></span>
                         </div>
                     </div>
+                </div>
+                <div class="well text-center margin-bottom-zero border-none empty-state" ng-if="ContentHome.isBusy">
+                    <p class="margin-zero">Loading...</p>
                 </div>
             </div>
         </div>

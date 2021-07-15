@@ -218,7 +218,7 @@
 
                 Buildfire.appData.onUpdate(event => {
                     // Tag name for global playlist
-                    const globalPlaylistTag = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : '');
+                    const globalPlaylistTag = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : 'globalPlaylist');
                     if (event) {
                         if (event.tag === "GlobalPlayListSettings") {
                             if (event.data && typeof event.data.globalPlayListLimit !== 'undefined') {
@@ -672,12 +672,14 @@
                 };
 
                 buildfire.auth.onLogin(function (user) {
+                    buildfire.spinner.show();
                     bookmarks.sync($scope);
                     $rootScope.user = user;
                     $rootScope.refreshItems();
                 });
 
                 buildfire.auth.onLogout(function () {
+                    buildfire.spinner.show();
                     bookmarks.sync($scope);
                     $rootScope.user = null;
                     $rootScope.refreshItems();
