@@ -182,8 +182,10 @@
                         location.reload();
                 };
 
+                let updateDelay;
                 var onUpdateCallback = function (event) {
                     buildfire.spinner.show();
+                    clearTimeout(updateDelay);
                     if (event.tag == "MediaCenter") {
                         if (event.data) {
                             WidgetHome.media.data = event.data;
@@ -204,11 +206,15 @@
                             if (view && event.data.content && event.data.content.images) {
                                 view.loadItems(event.data.content.images);
                             }
-                            $rootScope.refreshItems();
+                            updateDelay = setTimeout(() => {
+                                $rootScope.refreshItems();
+                            }, 700);
                         }
                     }
                     else {
-                        $rootScope.refreshItems();
+                        updateDelay = setTimeout(() => {
+                            $rootScope.refreshItems();
+                        }, 700);
                     }
                 };
 
@@ -229,8 +235,24 @@
                             if (event.data.playlist) {
                                 $rootScope.globalPlaylistItems.playlist = event.data.playlist;
                             }
+                        } 
+                        // Means an Item have been deleted
+                        else if (event.tag === "$$deeplinks") {
+                            // Delayed delete
+                            setTimeout(() => {
+                                let itemsIds = WidgetHome.items.map(item => item.id);
+                                
+                                for (let itemId in $rootScope.globalPlaylistItems.playlist) {
+                                    if (itemsIds.indexOf(itemId) === -1) {
+                                        GlobalPlaylist.delete(itemId).then(() => {
+                                            delete $rootScope.globalPlaylistItems.playlist[itemId];
+                                        });
+                                    }
+                                }
+                            }, 2500);
                         }
                     }
+                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                 });
 
                 /**
@@ -479,10 +501,10 @@
                     WidgetHome.isBusy = true;
 
                     // For auto play and globalPlaylist option, we need to get the full list of items.
-                    if($rootScope.autoPlay || $rootScope.globalPlaylist) {
+                    // if($rootScope.autoPlay || $rootScope.globalPlaylist) {
                         searchOptions.limit = 9999999;
                         searchOptions.skip = 0;
-                    }
+                    // }
 
                     const getMediaItems = () => {
                         MediaContent.find(searchOptions).then(function success(result) {
@@ -502,7 +524,8 @@
                             }
                             // $rootScope.deepLinkNavigate = true;
                             // $rootScope.seekTime = 10.22;
-                            WidgetHome.items = WidgetHome.items ? WidgetHome.items.concat(result) : result;
+                            // WidgetHome.items = WidgetHome.items ? WidgetHome.items.concat(result) : result;
+                            WidgetHome.items = result;
                             WidgetHome.isBusy = false;
                             $rootScope.myItems = WidgetHome.items;
                             bookmarks.sync($scope);
@@ -572,7 +595,7 @@
                         });
                     }
 
-                    const getglobalPlaylistItems = () => {
+                    const getGlobalPlaylistItems = () => {
                         return new Promise(resolve => {
                             $rootScope.loadingGlobalPlaylist = true;
                             GlobalPlaylist.get()
@@ -612,11 +635,11 @@
                             // Get limit from appData
                             getGlobalPlaylistLimit();
                             
-                            getglobalPlaylistItems()
+                            getGlobalPlaylistItems()
                             .then(getMediaItems)
                             .finally(() => $rootScope.loadingGlobalPlaylist = false);
                         });
-                    } else getMediaItems();
+                    } else getGlobalPlaylistItems().then(getMediaItems);
                 };
 
                 WidgetHome.openLinks = function (actionItems, $event) {
