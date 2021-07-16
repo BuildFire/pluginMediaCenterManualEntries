@@ -294,7 +294,7 @@
                             break;
                         case 'audioEnded':
                             ready = false;
-                            if ($rootScope.autoPlay && !NowPlaying.settings.loopPlaylist) {
+                            if ($rootScope.autoPlay) {
                                 $rootScope.playNextItem();
                             } else {
                                 if(!NowPlaying.settings.autoPlayNext) {
@@ -306,7 +306,7 @@
                                     NowPlaying.playing = false;
                                     NowPlaying.paused = true;
                                     NowPlaying.finished=true;
-                                }else NowPlaying.finished=false;
+                                } else NowPlaying.finished=false;
                             }
                             break;
                         case 'pause':
@@ -448,6 +448,15 @@
                     else
                         audioPlayer.setTime(0);
                 };
+
+                NowPlaying.next = function () {
+                    $rootScope.playNextItem(true);
+                };
+
+                NowPlaying.prev = function () {
+                    $rootScope.playPrevItem();
+                };
+
                 NowPlaying.shufflePlaylist = function () {
                     if (NowPlaying.settings) {
                         NowPlaying.settings.shufflePlaylist = NowPlaying.settings.shufflePlaylist ? false : true;

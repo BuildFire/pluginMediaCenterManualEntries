@@ -70,8 +70,9 @@
                 ng-class="(NowPlaying.settings && NowPlaying.settings.shufflePlaylist) ? 'primaryTheme bold' : 'whiteTheme'"
                 class="icon icon-shuffle icon-sm " ng-click="NowPlaying.shufflePlaylist()"></span>
             <div class="player-btns">
-                <span class="btn btn-icon" ng-click="NowPlaying.backward()"><img
+                <span ng-if="!autoPlay" class="btn btn-icon" ng-click="NowPlaying.backward()"><img
                         src="assets/css/icons/ic_fast_rewind.svg" alt=""></span>
+                <span ng-if="autoPlay" class="btn btn-icon" ng-click="NowPlaying.prev()"><i style="font-size: 18px; color: #D7D7D8;" class="glyphicon glyphicon-step-backward" role="button"></i></span>
                 <button class="btn btn-icon btn-lg btn-primary">
                     <span ng-if="!NowPlaying.playing" class="icon icon-main whiteTheme"
                         ng-click="NowPlaying.playTrack()">
@@ -82,8 +83,9 @@
                         <img src="assets/css/icons/ic_pause_2.svg" alt="">
                     </span>
                 </button>
-                <span class="btn btn-icon" ng-click="NowPlaying.forward()"><img
+                <span ng-if="!autoPlay" class="btn btn-icon" ng-click="NowPlaying.forward()"><img
                         src="assets/css/icons/ic_fast_forward.svg" alt=""></span>
+                <span ng-if="autoPlay" class="btn btn-icon" ng-click="NowPlaying.next()"><i style="font-size: 18px; color: #D7D7D8;" class="glyphicon glyphicon-step-forward" role="button"></i></span>
             </div>
             <span
                 ng-class="(NowPlaying.settings && NowPlaying.settings.loopPlaylist) ? 'primaryTheme bold' : 'whiteTheme'"
