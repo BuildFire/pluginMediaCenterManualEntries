@@ -235,21 +235,6 @@
                             if (event.data.playlist) {
                                 $rootScope.globalPlaylistItems.playlist = event.data.playlist;
                             }
-                        } 
-                        // Means an Item have been deleted
-                        else if (event.tag === "$$deeplinks") {
-                            // Delayed delete
-                            setTimeout(() => {
-                                let itemsIds = WidgetHome.items.map(item => item.id);
-                                
-                                for (let itemId in $rootScope.globalPlaylistItems.playlist) {
-                                    if (itemsIds.indexOf(itemId) === -1) {
-                                        GlobalPlaylist.delete(itemId).then(() => {
-                                            delete $rootScope.globalPlaylistItems.playlist[itemId];
-                                        });
-                                    }
-                                }
-                            }, 2500);
                         }
                     }
                     if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
