@@ -453,8 +453,7 @@
               }
             });
             Location.goToHome();
-            
-            }, 200);
+            }, 0);
         };
           
           ContentMedia.cancelAdd = function () {

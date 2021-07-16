@@ -1,0 +1,24 @@
+body > div > div > div.has-bottom-actions.ng-scope > div.row.flex > div.col-md-9.main > div > div {
+width: unset;
+}
+
+#audioImage > div > div.main.col-md-9.pull-right > div > div,
+#audioImage > div > div.main.col-md-9.pull-right > div > div > a {
+    max-width: 124px;
+}
+
+#audioImage > div > div.main.col-md-9.pull-right > div > div > a > img {
+    width: 100%;
+}
+
+#carousel > div > div > div.carousel-items.hide-empty.draggable-list-view.margin-top-twenty.border-radius-four.border-grey > div > div.copy.pull-right > div > span {
+    left: 4px;
+}
+
+.draggable-list-view .d-item.double-line .copy .pull-right span.btn-icon {
+    top: 4px !important;
+}
+
+#carousel > div > div > div.carousel-items.hide-empty.draggable-list-view.margin-top-twenty.border-radius-four.border-grey > div > div.copy.pull-right > div {
+    flex-grow: 1;
+}

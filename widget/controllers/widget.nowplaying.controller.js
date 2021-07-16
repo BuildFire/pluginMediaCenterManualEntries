@@ -628,6 +628,7 @@
                             break;
                         case COLLECTIONS.MediaCenter:
                             if (event.data) {
+                                buildfire.spinner.show();
                                 $rootScope.design = event.data.design;
                                 $rootScope.allowShare = event.data.content.allowShare;
                                 $rootScope.allowSource = event.data.content.allowSource;

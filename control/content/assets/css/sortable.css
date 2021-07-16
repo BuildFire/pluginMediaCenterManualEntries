@@ -79,7 +79,6 @@ html[buildfire] .d-item .btn-edit-icon:hover::after{
   top: auto;
 }
 
-
 .carousel-items .d-item {
   display: flex !important;
   align-items: center !important;
@@ -95,6 +94,22 @@ html[buildfire] .d-item .btn-edit-icon:hover::after{
   width: 100%;
 }
 
+.carousel-items div.d-item > span.icon.icon-menu {
+  flex-grow: 1;
+}
+
+.carousel-items.draggable-list-view .d-item span.icon {
+  margin-right: 0 !important;
+}
+
+.carousel-items.draggable-list-view .d-item .media-holder {
+  background: transparent !important;
+}
+
+.draggable-list-view .d-item .media-holder {
+  flex: 2;
+}
+
 .carousel-items .d-item .copy div {
   display: flex !important;
   align-items: center !important;
@@ -104,6 +119,7 @@ html[buildfire] .d-item .btn-edit-icon:hover::after{
 .carousel-items .d-item .btn-delete-icon {
   top: -2px !important;
 }
+
 .carousel-items .d-item .btn-delete-icon:after {
   top: 10px !important;
 }
@@ -111,7 +127,7 @@ html[buildfire] .d-item .btn-edit-icon:hover::after{
 .carousel-items .d-item .btn-delete-icon,
 .d-item .copy span.btn-icon {
   margin-left: 18px !important;
-  border-radius: 50%;
+  border-radius: 10%;
 }
 
 .d-item .copy a.text-primary {

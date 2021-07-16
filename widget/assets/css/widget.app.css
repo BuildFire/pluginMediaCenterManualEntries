@@ -463,22 +463,22 @@
 }
 
 .layout1 .list-layout .list-item-odd {
-    padding-left: 15px;
-    padding-right: 1%;
+    padding-left: 12px;
+    padding-right: 10px;
 }
 
 .layout1 .list-layout .list-item-even {
-    padding-left: 1%;
-    padding-right: 15px;
+    padding-left: 10px;
+    padding-right: 12px;
 }
 
 .layout4 .list-layout .list-item-odd {
     padding-left: 15px;
-    padding-right: 1%;
+    padding-right: 8px;
 }
 
 .layout4 .list-layout .list-item-even {
-    padding-left: 1%;
+    padding-left: 8px;
     padding-right: 15px;
 }
 
@@ -576,6 +576,22 @@ videogular, [videogular] {
 .list-items .list-item{
 	position:relative;
 }
+.list-items .list-item:before,
+.layout3 .list-layout .list-item:after{
+	content:'';
+	border-top:1px solid #ddd !important;
+	opacity:0.25;
+	top:0;
+	left:0;
+	width:100%;
+	position:absolute;
+}
+.layout3 .list-layout .list-item:after{
+	border-top:none !important;
+	top:inherit;
+	bottom:0;
+}
+
 .list-items .list-item + .list-item{
 	padding-top:10px;
 	margin-top:10px;
@@ -941,6 +957,10 @@ input[type=range]::-ms-track {
 	width: 100%;
 }
   
+.pb15 {
+	padding-bottom: 15px !important;
+}
+
 .pb30 {
 	padding-bottom: 30px !important;
 }

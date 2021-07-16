@@ -100,7 +100,7 @@ input[type="text"],
 input[type="date"],
 input[type="email"],
 input[type="number"],
-textarea{
+textarea {
   font-family: 'Conv_apercu_regular','Helvetica','Sans-Serif','Arial';
   font-size: .875rem;
   padding: .375rem .75rem;
@@ -118,6 +118,27 @@ textarea {
 ::placeholder{
   color: var(--c-gray4);
 }
+
+textarea::-webkit-input-placeholder {
+  color: var(--c-gray4) !important;
+}
+
+textarea:-moz-placeholder { /* Firefox 18- */
+  color: var(--c-gray4) !important;  
+}
+
+textarea::-moz-placeholder {  /* Firefox 19+ */
+  color: var(--c-gray4) !important;  
+}
+
+textarea:-ms-input-placeholder {
+  color: var(--c-gray4) !important;  
+}
+
+textarea::placeholder {
+  color: var(--c-gray4) !important;  
+}
+
 input[type="date"] {
     font-size: .75rem;  
 }

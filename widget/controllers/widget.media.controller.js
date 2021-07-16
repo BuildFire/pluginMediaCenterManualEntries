@@ -254,6 +254,7 @@
                             }
                             break;
                         case COLLECTIONS.MediaCenter:
+                            buildfire.spinner.show();
                             var old = WidgetMedia.media.data.design.itemLayout;
                             WidgetMedia.media = event;
                             $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;

@@ -1,22 +1,33 @@
 <div class="header clearfix border-bottom-grey">
-    <h5 class="item-link-header">Import CSV File</h5>
-    <span class="icon icon-cross2 close-modal" ng-click="ImportCSVPopup.cancel()"></span>
+    <h4 class="margin-zero">Import CSV File</h4>
+    <span class="icon icon-cross2 close-modal" ng-click="ImportCSVPopup.cancel();"></span>
 </div>
-<div class="modal-body">
-    <div class="item clearfix row">
-        <div class="labels col-md-3 padding-right-zero pull-left">
-            <span>Choose File</span>
-        </div>
-        <div class="main col-md-9 pull-right">
-            <input type="file" class="btn btn-primary" accept=".csv" file-reader result="ImportCSVPopup.fileData"/>
+<div class="padded clearfix">
+    <div class="content">
+        <div class="item clearfix row" style="display: flex; justify-content: center; align-items: center;">
+            <div class="labels col-md-2 padding-right-zero pull-left">
+                <span>CSV File</span>
+            </div>
+            <div class="main col-md-10 pull-right">
+                <input type="file" id="fileInput" class="btn btn-primary" accept=".csv" file-reader result="ImportCSVPopup.fileData" style="display: none;"/>
+                <div class="col-md-9 pull-left padding-zero">
+                    <input type="text" class="form-control" readonly="true" ng-disabled="true" placeholder="{{ImportCSVPopup.fileData ? 'File Selected': 'No File Selected'}}">
+                </div>
+                <div class="col-md-3 pull-right padding-right-zero">
+                    <a class="btn btn-primary stretch" ng-click="ImportCSVPopup.filePicker()">Select File</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<div class="bottom border-top-grey clearfix">
-    <div class="col-md-6 pull-left text-center">
-        <a class="text-danger default-background-hover transition-third" ng-click="ImportCSVPopup.cancel()">Cancel</a>
-    </div>
-    <div class="col-md-6 pull-right text-center border-left-grey">
-        <a class="text-success default-background-hover transition-third" ng-click="ImportCSVPopup.ok()">Import</a>
+
+
+<div class="content">
+    <div class="item clearfix row" style="display: flex; justify-content: center; align-items: center; width: 100%; padding: 15px; margin: 0;">
+        <div class="labels col-md-2 padding-right-zero pull-left"></div>
+        <div class="main col-md-10 pull-right" style="padding: 0; padding-left: 60px;">
+            <button class="btn btn-success col-md-3 pull-right  margin-left-fifteen" ng-click="ImportCSVPopup.ok()">Import</button>
+            <button class="btn btn-outlined btn-secondary flex-left-auto col-md-3 pull-right" ng-click="ImportCSVPopup.cancel()">Cancel</button>
+        </div>
     </div>
 </div>

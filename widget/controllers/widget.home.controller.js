@@ -183,6 +183,7 @@
                 };
 
                 var onUpdateCallback = function (event) {
+                    buildfire.spinner.show();
                     if (event.tag == "MediaCenter") {
                         if (event.data) {
                             WidgetHome.media.data = event.data;
