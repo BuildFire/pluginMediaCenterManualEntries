@@ -185,6 +185,7 @@
                 let updateDelay;
                 var onUpdateCallback = function (event) {
                     buildfire.spinner.show();
+                    
                     clearTimeout(updateDelay);
                     if (event.tag == "MediaCenter") {
                         if (event.data) {
@@ -212,6 +213,14 @@
                         }
                     }
                     else {
+                        // Make sure to delete from globalPlaylist if exists
+                        if (event.tag === "MediaContent" && !event.data) {
+                            if ($rootScope.isInGlobalPlaylist(event.id)) {
+                                GlobalPlaylist.delete(event.id).then(() => {
+                                    delete $rootScope.globalPlaylistItems.playlist[itemId];
+                                });
+                            }
+                        }
                         updateDelay = setTimeout(() => {
                             $rootScope.refreshItems();
                         }, 700);
