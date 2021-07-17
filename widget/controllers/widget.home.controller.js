@@ -214,11 +214,18 @@
                     }
                     else {
                         // Make sure to delete from globalPlaylist if exists
-                        if (event.tag === "MediaContent" && !event.data) {
+                        if (event.tag === "MediaContent") {
                             if ($rootScope.isInGlobalPlaylist(event.id)) {
-                                GlobalPlaylist.delete(event.id).then(() => {
-                                    delete $rootScope.globalPlaylistItems.playlist[itemId];
-                                });
+                                if (event.data) {
+                                    GlobalPlaylist.insertAndUpdate(event).then(() => {
+                                        $rootScope.globalPlaylistItems.playlist[event.id] = event.data;
+                                    });
+                                } else {
+                                    // If there is no data, it means the the item has been deleted
+                                    GlobalPlaylist.delete(event.id).then(() => {
+                                        delete $rootScope.globalPlaylistItems.playlist[event.id];
+                                    });
+                                }
                             }
                         }
                         updateDelay = setTimeout(() => {
