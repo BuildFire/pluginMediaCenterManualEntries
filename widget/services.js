@@ -234,7 +234,6 @@
                 const tagName = getTagName();
                 var deferred = $q.defer();
                 Buildfire.appData.getById(id, tagName, (err, result) => {
-                    console.log("GET BY ID", result)
                     if (err) {
                         return deferred.reject(err);
                     }

@@ -3,7 +3,6 @@
         .module('mediaCenterWidget')
         .controller('WidgetMediaCtrl', ['$scope', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope','Location',
             function ($scope, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope,Location) {
-                
                 var WidgetMedia = this;
                 WidgetMedia.API = null;
                 WidgetMedia.mediaType = null;
@@ -246,10 +245,17 @@
                                 WidgetMedia.item = event;
                                 $scope.$digest();
                                 // Update item in globalPlaylist
-                                if($rootScope.globalPlaylist && $rootScope.isInGlobalPlaylist(event.id)) {
-                                    GlobalPlaylist.insertAndUpdate(event).then(() => {
-                                        $rootScope.globalPlaylistItems.playlist[event.id] = event.data;
-                                    });
+                                if ($rootScope.isInGlobalPlaylist(event.id)) {
+                                    if (event.data) {
+                                        GlobalPlaylist.insertAndUpdate(event).then(() => {
+                                            $rootScope.globalPlaylistItems.playlist[event.id] = event.data;
+                                        });
+                                    } else {
+                                        // If there is no data, it means the the item has been deleted
+                                        GlobalPlaylist.delete(event.id).then(() => {
+                                            delete $rootScope.globalPlaylistItems.playlist[event.id];
+                                        });
+                                    }
                                 }
                             }
                             break;
@@ -267,7 +273,6 @@
                             $rootScope.autoPlay = WidgetMedia.media.data.content.autoPlay;
                             $rootScope.autoPlayDelay = WidgetMedia.media.data.content.autoPlayDelay;
                             $rootScope.globalPlaylist = WidgetMedia.media.data.content.globalPlaylist;
-                            $rootScope.globalPlaylistLimit = WidgetMedia.media.data.content.globalPlaylistLimit;
                             $rootScope.globalPlaylistPluginName = WidgetMedia.media.data.content.globalPlaylistPluginName;
                             $rootScope.globalPlaylistPluginInstalled = WidgetMedia.media.data.content.globalPlaylistPluginInstalled;
                             // Update Data in media contoller
@@ -289,8 +294,8 @@
                     const globalPlaylistTag = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : 'globalPlaylist');
                     if (event) {
                         if (event.tag === "GlobalPlayListSettings") {
-                            if (event.data && typeof event.data.globalPlayListLimit !== 'undefined') {
-                                $rootScope.globalPlayListLimit = event.data.globalPlayListLimit;
+                            if (event.data && typeof event.data.globalPlaylistLimit !== 'undefined') {
+                                $rootScope.globalPlaylistLimit = event.data.globalPlaylistLimit;
                             }
                         } else if (event.tag === globalPlaylistTag) {
                             if (event.data.playlist && event.data.playlist) {

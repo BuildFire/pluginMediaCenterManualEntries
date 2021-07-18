@@ -209,10 +209,9 @@
                             }
                             updateDelay = setTimeout(() => {
                                 $rootScope.refreshItems();
-                            }, 700);
+                            }, 300);
                         }
-                    }
-                    else {
+                    } else {
                         // Make sure to delete from globalPlaylist if exists
                         if (event.tag === "MediaContent") {
                             if ($rootScope.isInGlobalPlaylist(event.id)) {
@@ -230,7 +229,7 @@
                         }
                         updateDelay = setTimeout(() => {
                             $rootScope.refreshItems();
-                        }, 700);
+                        }, 300);
                     }
                 };
 
@@ -244,8 +243,8 @@
                     const globalPlaylistTag = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : 'globalPlaylist');
                     if (event) {
                         if (event.tag === "GlobalPlayListSettings") {
-                            if (event.data && typeof event.data.globalPlayListLimit !== 'undefined') {
-                                $rootScope.globalPlayListLimit = event.data.globalPlayListLimit;
+                            if (event.data && typeof event.data.globalPlaylistLimit !== 'undefined') {
+                                $rootScope.globalPlaylistLimit = event.data.globalPlaylistLimit;
                             }
                         } else if (event.tag === globalPlaylistTag) {
                             if (event.data.playlist) {
@@ -322,12 +321,24 @@
 
                 // Check if all the items are in the globalPlaylist
                 $rootScope.areAllInGlobalPlaylist = () => {
-                    return (
-                        $rootScope.globalPlaylistItems &&
-                        $rootScope.globalPlaylistItems.playlist &&
-                        Object.keys($rootScope.globalPlaylistItems.playlist)
-                            .length === WidgetHome.items.length
-                    );
+                    if ($rootScope.globalPlaylistItems && $rootScope.globalPlaylistItems.playlist) {
+                        let playlistItems = [];
+                        let widgetItems = [];
+
+                        for (let item of WidgetHome.items) {
+                            widgetItems.push(item.id);
+                        }
+
+                        for (let itemId in $rootScope.globalPlaylistItems.playlist) {
+                            if (widgetItems.indexOf(itemId) !== -1) {
+                                playlistItems.push(itemId);
+                            }
+                        }
+
+                        if (widgetItems.length === 0) return false;
+
+                        return playlistItems.length === widgetItems.length;
+                    }
                 };
 
                 $rootScope.goToPlaylistPlugin = () => {
@@ -426,7 +437,9 @@
                                 duration: 2000
                             });
                         });
-                    } else {
+                    } else {debugger
+                        console.error($rootScope.globalPlaylistLimit)
+                        console.error(Object.keys($rootScope.globalPlaylistItems.playlist).length)
                         if (typeof $rootScope.globalPlaylistLimit !== 'undefined' && Object.keys($rootScope.globalPlaylistItems.playlist).length >= $rootScope.globalPlaylistLimit)  {
                             buildfire.dialog.toast({
                                 message: `Playlist items limit reached!`,
@@ -623,10 +636,11 @@
 
                     const getGlobalPlaylistLimit = () => {
                         GlobalPlaylist.getGlobalPlaylistLimit().then((result) => {
-                            if (result && typeof result.globalPlayListLimit !== 'undefined') {
-                                $rootScope.globalPlayListLimit = result.globalPlayListLimit;
+                            debugger
+                            if (result && result.data && typeof result.data.globalPlaylistLimit !== 'undefined') {
+                                $rootScope.globalPlaylistLimit = result.data.globalPlaylistLimit;
                             } else {
-                                $rootScope.globalPlayListLimit = 0;
+                                $rootScope.globalPlaylistLimit = 0;
                             };
                         });
                     };

@@ -1,8 +1,8 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('NowPlayingCtrl', ['$scope', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', 'Location', 'EVENTS', 'PATHS', 'DB',
-            function ($scope, media, Buildfire, Modals, COLLECTIONS, $rootScope, Location, EVENTS, PATHS, DB) {
+        .controller('NowPlayingCtrl', ['$scope', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', 'Location', 'EVENTS', 'PATHS', 'DB', 'AppDB',
+            function ($scope, media, Buildfire, Modals, COLLECTIONS, $rootScope, Location, EVENTS, PATHS, DB, AppDB) {
                 $rootScope.blackBackground = true;
                 $rootScope.showFeed = false;
                 var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
@@ -617,12 +617,26 @@
                     this.isPlayingCurrentTrack = settings.isPlayingCurrentTrack;// tells whether current track is playing or not
                 }
 
+                var GlobalPlaylist = new AppDB();
 
                 Buildfire.datastore.onUpdate(function (event) {
                     switch (event.tag) {
                         case COLLECTIONS.MediaContent:
                             if (event.data) {
                                 NowPlaying.item = event;
+                                 // Update item in globalPlaylist
+                                if ($rootScope.isInGlobalPlaylist(event.id)) {
+                                    if (event.data) {
+                                        GlobalPlaylist.insertAndUpdate(event).then(() => {
+                                            $rootScope.globalPlaylistItems.playlist[event.id] = event.data;
+                                        });
+                                    } else {
+                                        // If there is no data, it means the the item has been deleted
+                                        GlobalPlaylist.delete(event.id).then(() => {
+                                            delete $rootScope.globalPlaylistItems.playlist[event.id];
+                                        });
+                                    }
+                                }
                                 if (!$scope.$$phase) {
                                     $scope.$digest();
                                 }
@@ -668,8 +682,8 @@
                     const globalPlaylistTag = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : 'globalPlaylist');
                     if (event) {
                         if (event.tag === "GlobalPlayListSettings") {
-                            if (event.data && typeof event.data.globalPlayListLimit !== 'undefined') {
-                                $rootScope.globalPlayListLimit = event.data.globalPlayListLimit;
+                            if (event.data && typeof event.data.globalPlaylistLimit !== 'undefined') {
+                                $rootScope.globalPlaylistLimit = event.data.globalPlaylistLimit;
                             }
                         } else if (event.tag === globalPlaylistTag) {
                             if (event.data.playlist && event.data.playlist) {

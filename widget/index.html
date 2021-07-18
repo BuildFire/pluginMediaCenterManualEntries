@@ -74,7 +74,7 @@
         <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>
     </div>
 
-    <div style="position: absolute; bottom: 0; right: 0; width: 100%;" ng-if="globalPlaylist && !loadingGlobalPlaylist && showGlobalPlaylistButtons">
+    <div style="position: absolute; bottom: 0; right: 0; width: 100%;" ng-if="globalPlaylist && !loadingGlobalPlaylist && showGlobalPlaylistButtons && myItems.length > 0">
         <button
             class="btn btn-primary"
             ng-disabled="addAllToPlaylistLoading"
