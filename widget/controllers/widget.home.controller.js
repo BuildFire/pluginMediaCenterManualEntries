@@ -347,7 +347,7 @@
                     if (!$rootScope.globalPlaylistPluginInstalled || !$rootScope.globalPlaylistPluginName) return buildfire.spinner.hide();
 
                     buildfire.pluginInstance.search({ title: $rootScope.globalPlaylistPluginName }, (err, instances) => {
-                        if (!err && instances.length > 0) {
+                        if (!err && instances.result && instances.result.length > 0) {
                             const actionItem = {
                                 action: "linkToApp",
                                 title: instances.result[0].data.title,
@@ -401,7 +401,7 @@
                             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                         });
                     } else {
-                        if (typeof $rootScope.globalPlaylistLimit !== 'undefined' && WidgetHome.items.length > $rootScope.globalPlaylistLimit) {
+                        if (typeof $rootScope.globalPlaylistLimit !== 'undefined' && $rootScope.globalPlaylistLimit > 0 && WidgetHome.items.length > $rootScope.globalPlaylistLimit) {
                             buildfire.dialog.toast({
                                 message: `Playlist items limit reached!`,
                                 type: 'warning'
@@ -437,10 +437,8 @@
                                 duration: 2000
                             });
                         });
-                    } else {debugger
-                        console.error($rootScope.globalPlaylistLimit)
-                        console.error(Object.keys($rootScope.globalPlaylistItems.playlist).length)
-                        if (typeof $rootScope.globalPlaylistLimit !== 'undefined' && Object.keys($rootScope.globalPlaylistItems.playlist).length >= $rootScope.globalPlaylistLimit)  {
+                    } else {
+                        if (typeof $rootScope.globalPlaylistLimit !== 'undefined' && $rootScope.globalPlaylistLimit > 0 && Object.keys($rootScope.globalPlaylistItems.playlist).length >= $rootScope.globalPlaylistLimit)  {
                             buildfire.dialog.toast({
                                 message: `Playlist items limit reached!`,
                                 type: 'warning',
@@ -636,7 +634,6 @@
 
                     const getGlobalPlaylistLimit = () => {
                         GlobalPlaylist.getGlobalPlaylistLimit().then((result) => {
-                            debugger
                             if (result && result.data && typeof result.data.globalPlaylistLimit !== 'undefined') {
                                 $rootScope.globalPlaylistLimit = result.data.globalPlaylistLimit;
                             } else {
@@ -654,7 +651,13 @@
                             .then(getMediaItems)
                             .finally(() => $rootScope.loadingGlobalPlaylist = false);
                         });
-                    } else getGlobalPlaylistItems().then(getMediaItems);
+                    } else getGlobalPlaylistItems().then(getMediaItems).finally(() => {
+                        buildfire.spinner.hide();
+                        buildfire.spinner.hide();
+                        WidgetHome.isBusy = false;
+                        $rootScope.loadingData = false;
+                        $rootScope.loadingGlobalPlaylist = false;
+                    });
                 };
 
                 WidgetHome.openLinks = function (actionItems, $event) {
