@@ -10,7 +10,7 @@
         <div id="emptyContainer" class="padded" ng-if="!loadingData && (!WidgetHome.items || (WidgetHome.items && WidgetHome.items.length === 0))"></div>
         <div class="padded padding-top-zero text-overlay">
             <div class="list-layout">
-                <div class="row" infinite-scroll="WidgetHome.loadMore()"
+                <div class="row layout-1" infinite-scroll="WidgetHome.loadMore()"
                      infinite-scroll-distance="1"
                      data-infinite-container=".infinite-scroll-parent"
                      infinite-scroll-disabled="WidgetHome.noMore"

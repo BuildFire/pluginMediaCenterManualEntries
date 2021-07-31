@@ -77,8 +77,8 @@
                     $rootScope.autoPlay = MediaCenterInfo.data.content.autoPlay;
                     $rootScope.autoPlayDelay = MediaCenterInfo.data.content.autoPlayDelay;
                     $rootScope.globalPlaylist = MediaCenterInfo.data.content.globalPlaylist;
-                    $rootScope.globalPlaylistPluginName = MediaCenterInfo.data.content.globalPlaylistPluginName;
-                    $rootScope.globalPlaylistPluginInstalled = MediaCenterInfo.data.content.globalPlaylistPluginInstalled;
+                    $rootScope.globalPlaylistPlugin = MediaCenterInfo.data.content.globalPlaylistPlugin;
+                    $rootScope.showGlobalPlaylistNavButton = MediaCenterInfo.data.content.showGlobalPlaylistNavButton;
                 },
                     function fail() {
                         MediaCenterInfo = _infoData;
@@ -185,7 +185,6 @@
                 let updateDelay;
                 var onUpdateCallback = function (event) {
                     buildfire.spinner.show();
-                    
                     clearTimeout(updateDelay);
                     if (event.tag == "MediaCenter") {
                         if (event.data) {
@@ -200,8 +199,8 @@
                             $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                             $rootScope.autoPlayDelay = WidgetHome.media.data.content.autoPlayDelay;
                             $rootScope.globalPlaylist = WidgetHome.media.data.content.globalPlaylist;
-                            $rootScope.globalPlaylistPluginName = WidgetHome.media.data.content.globalPlaylistPluginName;
-                            $rootScope.globalPlaylistPluginInstalled = WidgetHome.media.data.content.globalPlaylistPluginInstalled;
+                            $rootScope.globalPlaylistPlugin = WidgetHome.media.data.content.globalPlaylistPlugin;
+                            $rootScope.showGlobalPlaylistNavButton = WidgetHome.media.data.content.showGlobalPlaylistNavButton;
 
                             $scope.$apply();
                             if (view && event.data.content && event.data.content.images) {
@@ -209,7 +208,7 @@
                             }
                             updateDelay = setTimeout(() => {
                                 $rootScope.refreshItems();
-                            }, 300);
+                            }, 700);
                         }
                     } else {
                         // Make sure to delete from globalPlaylist if exists
@@ -229,7 +228,7 @@
                         }
                         updateDelay = setTimeout(() => {
                             $rootScope.refreshItems();
-                        }, 300);
+                        }, 700);
                     }
                 };
 
@@ -344,42 +343,47 @@
                 $rootScope.goToPlaylistPlugin = () => {
                     buildfire.spinner.show();
 
-                    if (!$rootScope.globalPlaylistPluginInstalled || !$rootScope.globalPlaylistPluginName) return buildfire.spinner.hide();
+                    if (!$rootScope.showGlobalPlaylistNavButton || !$rootScope.globalPlaylistPlugin) {
+                        buildfire.dialog.toast({
+                            message: `Couldn't navigate to the playlist feature`,
+                            type: 'warning',
+                            duration: 2000
+                        });
+                        return buildfire.spinner.hide();
+                    }
+                    try {
+                        const actionItem = {
+                            action: "linkToApp",
+                            title: $rootScope.globalPlaylistPlugin.title,
+                            iconUrl: $rootScope.globalPlaylistPlugin.iconUrl,
+                            instanceId: $rootScope.globalPlaylistPlugin.instanceId,
+                            iconClassName: $rootScope.globalPlaylistPlugin.iconClassName,
+                        };
 
-                    buildfire.pluginInstance.search({ title: $rootScope.globalPlaylistPluginName }, (err, instances) => {
-                        if (!err && instances.result && instances.result.length > 0) {
-                            const actionItem = {
-                                action: "linkToApp",
-                                title: instances.result[0].data.title,
-                                iconUrl: instances.result[0].data.iconUrl,
-                                instanceId: instances.result[0].data.instanceId,
-                                iconClassName: instances.result[0].data.iconClassName,
-                            };
-                            // Navigate to the playlist plugin
-                            buildfire.actionItems.execute(
-                                actionItem,
-                                (err) => {
-                                    if (err) {
-                                        console.error(err);
-                                        return buildfire.dialog.toast({
-                                            message: `Couldn't navigate to the playlist feature`,
-                                            type: 'warning',
-                                            duration: 2000
-                                        });
-                                    };
-                                }
-                            );
-                            buildfire.spinner.hide();
-                        } else {
-                            if (err) console.error(err);
-                            buildfire.spinner.hide();
-                            return buildfire.dialog.toast({
-                                message: `Couldn't navigate to the playlist feature`,
-                                type: 'warning',
-                                duration: 2000
-                            });
-                        }
-                    });
+                        // Navigate to the playlist plugin
+                        buildfire.actionItems.execute(
+                            actionItem,
+                            (err) => {
+                                if (err) {
+                                    console.error(err);
+                                    buildfire.dialog.toast({
+                                        message: `Couldn't navigate to the playlist feature`,
+                                        type: 'warning',
+                                        duration: 2000
+                                    });
+                                };
+                            }
+                        );
+                        buildfire.spinner.hide();
+                    } catch (err) {
+                        console.error(err);
+                        buildfire.dialog.toast({
+                            message: `Couldn't navigate to the playlist feature`,
+                            type: 'warning',
+                            duration: 2000
+                        });
+                        buildfire.spinner.hide();
+                    }
                 }
 
                 $rootScope.addAllToGlobalPlaylist = ($event) => {
@@ -513,10 +517,8 @@
                     WidgetHome.isBusy = true;
 
                     // For auto play and globalPlaylist option, we need to get the full list of items.
-                    // if($rootScope.autoPlay || $rootScope.globalPlaylist) {
-                        searchOptions.limit = 9999999;
-                        searchOptions.skip = 0;
-                    // }
+                    searchOptions.limit = 9999999;
+                    searchOptions.skip = 0;
 
                     const getMediaItems = () => {
                         MediaContent.find(searchOptions).then(function success(result) {
@@ -652,11 +654,13 @@
                             .finally(() => $rootScope.loadingGlobalPlaylist = false);
                         });
                     } else getGlobalPlaylistItems().then(getMediaItems).finally(() => {
-                        buildfire.spinner.hide();
-                        buildfire.spinner.hide();
-                        WidgetHome.isBusy = false;
-                        $rootScope.loadingData = false;
-                        $rootScope.loadingGlobalPlaylist = false;
+                        setTimeout(() => {
+                            buildfire.spinner.hide();
+                            WidgetHome.isBusy = false;
+                            $rootScope.loadingData = false;
+                            $rootScope.loadingGlobalPlaylist = false;
+                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                        }, 0);
                     });
                 };
 

@@ -329,8 +329,8 @@
     }
 }
 
-.overlayPlayContainer {
-    margin-left: -157px;
+vg-overlay-play {
+    left: 0;
 }
 
 /*# sourceMappingURL=main.css.map */
@@ -974,4 +974,8 @@ input[type=range]::-ms-track {
 	background-repeat: no-repeat;
 	background-position: center;
 	height: 50vh;
-  }
+}
+
+.list-layout .layout-1 .col-xs-6:nth-child(odd) {
+    clear: both !important;
+}

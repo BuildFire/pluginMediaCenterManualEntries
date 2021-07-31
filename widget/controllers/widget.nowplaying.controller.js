@@ -664,8 +664,8 @@
                                 $rootScope.autoPlay = event.data.content.autoPlay;
                                 $rootScope.autoPlayDelay = event.data.content.autoPlayDelay;
                                 $rootScope.globalPlaylist = event.data.content.globalPlaylist;
-                                $rootScope.globalPlaylistPluginName = event.data.content.globalPlaylistPluginName;
-                                $rootScope.globalPlaylistPluginInstalled = event.data.content.globalPlaylistPluginInstalled;
+                                $rootScope.globalPlaylistPlugin = event.data.content.globalPlaylistPlugin;
+                                $rootScope.showGlobalPlaylistNavButton = event.data.content.showGlobalPlaylistNavButton;
 
                                 // Update Data in media contoller
                                 $rootScope.refreshItems();

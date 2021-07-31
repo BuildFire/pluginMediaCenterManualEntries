@@ -9,7 +9,7 @@
     <link href="../../../scripts/owlCarousel/owlCarousel.css" rel="stylesheet">
     <link href="../../../styles/transitionAnimation.css" rel="stylesheet">
     <link href="assets/css/widget.app.css" rel="stylesheet">
-    <link href="assets/css/videogular.css" rel="stylesheet">
+    <!-- <link href="assets/css/videogular.css" rel="stylesheet"> -->
     <link href="assets/css/media.css" rel="stylesheet">
     <!--SDK js-->
     <script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
@@ -86,7 +86,7 @@
                 float: left;
                 transition: none;
             "
-            ng-style="{'width': globalPlaylistPluginInstalled && globalPlaylistPluginName ? '49.5%' : '100%'}"
+            ng-style="{'width': showGlobalPlaylistNavButton && globalPlaylistPlugin ? '49.5%' : '100%'}"
         >
             {{ addAllToPlaylistLoading ? areAllInGlobalPlaylist() ? 'Removing...' : 'Adding...' : areAllInGlobalPlaylist() ? 'Remove All From Playlist' : 'Add All To Playlist' }}
         </button>
@@ -102,7 +102,7 @@
                 float: right;
                 transition: none;
             "
-            ng-class="{'hidden': !globalPlaylistPluginInstalled || !globalPlaylistPluginName}"
+            ng-class="{'hidden': !showGlobalPlaylistNavButton || !globalPlaylistPlugin}"
         >
             Go To Playlist
         </button>

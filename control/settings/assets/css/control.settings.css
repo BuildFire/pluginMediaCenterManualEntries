@@ -239,4 +239,28 @@
     background-color: transparent;
     border: none;
   }
+
+  .input-group {
+    z-index: 0;
+  }
+
+  .input-group input {
+    height: 40px;
+  }
+
+  .input-group-addon {
+    color: #ffffff !important;
+    background-color: #1d2326 !important;
+    border: 1px solid #1d2326 !important;
+    cursor: pointer;
+    -webkit-user-select: none; /* Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; 
+  }
+  
+  .input-group-addon:hover {
+    background-color: #3c3c3c !important;
+  }
+  
   

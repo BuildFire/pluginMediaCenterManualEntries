@@ -98,8 +98,14 @@
                     if (state === 'play') { // The video started playing
                         // Make sure the audio is turned off
                         Buildfire.services.media.audioPlayer.pause();
+                        $scope.videoPlayed = true;
                     }
                 };
+
+                // To overcome an issue with google showing it's play button on their videos
+                $scope.videoAlreadyPlayed = () => {
+                    return (WidgetMedia.item.data.videoUrl.indexOf('youtu.be') >= 0 || media.data.videoUrl.indexOf('youtube.com') >= 0) && !$scope.videoPlayed;
+                }
 
                 WidgetMedia.videoPlayerConfig = {
                     autoHide: false,
@@ -110,6 +116,7 @@
                         url: "./assets/css/videogular.css"
                     }
                 };
+                
                 WidgetMedia.changeVideoSrc = function () {
                     if (WidgetMedia.item.data.videoUrl){
                         var myType;
@@ -121,6 +128,8 @@
                         } else {
                             myType=videoUrlToSend.split('.').pop();
                         }
+
+                        $scope.videoPlayed = false;
 
                         WidgetMedia.videoPlayerConfig.sources = [{
                             src: $sce.trustAsResourceUrl(videoUrlToSend),
@@ -273,8 +282,8 @@
                             $rootScope.autoPlay = WidgetMedia.media.data.content.autoPlay;
                             $rootScope.autoPlayDelay = WidgetMedia.media.data.content.autoPlayDelay;
                             $rootScope.globalPlaylist = WidgetMedia.media.data.content.globalPlaylist;
-                            $rootScope.globalPlaylistPluginName = WidgetMedia.media.data.content.globalPlaylistPluginName;
-                            $rootScope.globalPlaylistPluginInstalled = WidgetMedia.media.data.content.globalPlaylistPluginInstalled;
+                            $rootScope.globalPlaylistPlugin = WidgetMedia.media.data.content.globalPlaylistPlugin;
+                            $rootScope.showGlobalPlaylistNavButton = WidgetMedia.media.data.content.showGlobalPlaylistNavButton;
                             // Update Data in media contoller
                             $rootScope.refreshItems();
 
