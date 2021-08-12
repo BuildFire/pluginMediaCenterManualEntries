@@ -1,154 +1,129 @@
-<!-- <div class="settings-screen"> -->
-<!--     <div class="tabs">
-        <button type="button" class="active">General</button>
-    </div> -->
- <!--    <div class="general-screen"> -->
-        <div>
-            <div class="setting-toggle">
-            <p class="setting-label">
-                Allow Sharing
-            </p>
-            <div class="buttons">
-                <button ng-class="{'active': Settings.data.content.allowShare}" ng-click="Settings.setAllowShare(true)">On</button>
-                <button class="toLeft" ng-class="{'active': !Settings.data.content.allowShare}" ng-click="Settings.setAllowShare(false)">Off</button>
-            </div>
-            </div>
-            <div class="setting-toggle-children">
-            </div>
-        </div>
-        <div>
-            <div class="setting-toggle">
-                <p class="setting-label">
-                    Show Source Icon
-                </p>
-                <div class="buttons">
-                    <button ng-class="{'active': Settings.data.content.allowSource}" ng-click="Settings.setAllowSource(true)">On</button>
-                    <button class="toLeft" ng-class="{'active': !Settings.data.content.allowSource}" ng-click="Settings.setAllowSource(false)">Off</button>
-                </div>
-            </div>
-            <div class="setting-toggle-children">
-            </div>
-        </div>
-        <div ng-show="!Settings.data.content.autoPlay">
-            <div class="setting-toggle">
-                <p class="setting-label">
-                    Skip Info Page
-                    <span class="customTooltipBox btn-primary">
-                        <span class="customTooltipText">
-                            If the info page is skipped, the video URL will be prioritized.
-                        </span>
-                    </span>
-                </p>
-                <div class="buttons">
-                    <button ng-class="{'active': Settings.data.design.skipMediaPage}" ng-click="Settings.changeSkipPage(true)">On</button>
-                    <button class="toLeft" ng-class="{'active': !Settings.data.design.skipMediaPage}" ng-click="Settings.changeSkipPage(false)">Off</button>
-                </div>
-            </div>
-        </div>
-        <div ng-show="!Settings.data.content.autoPlay">
-            <div class="setting-toggle">
-            <p class="setting-label">
-                Play All Audio Files
-                <span class="customTooltipBox btn-primary">
-                    <span class="customTooltipText">
-                        When a user plays any audio file, a full list of audio files from the instance will be added to the user’s playlist. 
-                        If this is turned on, the following settings will become hidden: autoplay, add item to playlist, remove item from playlist.
-                    </span>
-                </span>
-            </p>
-            <div class="buttons">
-                <button ng-class="{'active': Settings.data.content.forceAutoPlay}" ng-click="Settings.setForceAutoPlay(true)">On</button>
-                <button class="toLeft" ng-class="{'active': !Settings.data.content.forceAutoPlay}" ng-click="Settings.setForceAutoPlay(false)">Off</button>
-            </div>
-            </div>
-            <div class="setting-toggle-children">
-            </div>
-        </div>
-        <div class="setting-toggle">
-            <p class="setting-label">
-                Auto Play
-                <span class="customTooltipBox btn-primary">
-                    <span class="customTooltipText">
-                        Allow items auto play, whin this option is on, it will skip info page by default.
-                    </span>
-                </span>
-            </p>
-            <div class="buttons">
-                <button ng-class="{'active': Settings.data.content.autoPlay}" ng-click="Settings.setAutoPlay(true)">On</button>
-                <button class="toLeft" ng-class="{'active': !Settings.data.content.autoPlay}" ng-click="Settings.setAutoPlay(false)">Off</button>
-            </div>
-        </div>
-        <div class="setting-toggle" ng-show="Settings.data.content.autoPlay">
-            <p class="setting-label">
-                Delay
-                <span class="customTooltipBox btn-primary">
-                    <span class="customTooltipText">
-                        The delay before playing the next item.
-                    </span>
-                </span>    
-            </p>
-            <div class="dropdown padding-zero" dropdown is-open="status.isOpen">
-                <button 
-                    style="width: 200px;" 
-                    class="btn btn-default text-left dropdown-toggle" 
-                    dropdown-toggle
-                    aria-expanded="true">
-                    <span class="pull-left">{{Settings.data.content.autoPlayDelay.label || 'Off'}}</span>
-                    <span class="chevron icon-chevron-down pull-right"></span>
-                </button>
-                <ul class="dropdown-menu extended" role="menu">
-                    <li ng-repeat="option in Settings.autoPlayDelayOptions" ng-click="Settings.setAutoPlayDelay(option)">
-                        <a class="transition-third">{{option.label}}</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="setting-toggle">
-            <p class="setting-label">
-                Global Playlist
-                <span class="customTooltipBox btn-primary">
-                    <span class="customTooltipText">
-                        Allow the user to add items to a global playlist, and the items added can be viewed in the Media Center Manual Playlist feature.
-                    </span>
-                </span>
-            </p>
-            <div class="buttons">
-                <button ng-class="{'active': Settings.data.content.globalPlaylist}" ng-click="Settings.setGlobalPlaylist(true)">On</button>
-                <button class="toLeft" ng-class="{'active': !Settings.data.content.globalPlaylist}" ng-click="Settings.setGlobalPlaylist(false)">Off</button>
-            </div>
-        </div>
+<div class="input-control side-label margin-bottom-thirty">
+    <label for="">Allow Sharing</label>
+    <div class="button-switch">
+        <input id="allowSharerSwitch" type="checkbox" ng-click="Settings.setAllowShare($event)" ng-checked="Settings.data.content.allowShare">
+        <label for="allowSharerSwitch" class="label-success"></label>
+    </div>
+</div>
 
-        <div class="setting-toggle" ng-show="Settings.data.content.globalPlaylist">
-            <p class="setting-label">
-                Global Playlist Nav Button
-                <span class="customTooltipBox btn-primary">
-                    <span class="customTooltipText">
-                        Enable this to show a button that allow users to navigate to the global playlist feature
-                    </span>
-                </span>
-            </p>
-            <div style="width: 40%">
-                <button ng-class="{'active': Settings.data.content.showGlobalPlaylistNavButton}" ng-click="Settings.setShowGlobalPlaylistNavButton(true)">On</button>
-                <button class="toLeft" ng-class="{'active': !Settings.data.content.showGlobalPlaylistNavButton}" ng-click="Settings.setShowGlobalPlaylistNavButton(false)">Off</button>
-            </div>
-        </div>
+<div class="input-control side-label margin-bottom-thirty">
+    <label for="">Show Source Icon</label>
+    <div class="button-switch">
+        <input id="showSourceIconSwitch" type="checkbox" ng-click="Settings.setAllowSource($event)" ng-checked="Settings.data.content.allowSource">
+        <label for="showSourceIconSwitch" class="label-success"></label>
+    </div>
+</div>
 
-        <div class="setting-toggle" ng-if="Settings.data.content.globalPlaylist && Settings.data.content.showGlobalPlaylistNavButton">
-            <p class="setting-label">
-                Global Playlist Feature
-                <span class="customTooltipBox btn-primary">
-                    <span class="customTooltipText">
-                        Here you can select the global playlist which you have already installed on your app.
-                    </span>
-                </span>
-            </p>
-            <div style="width: 40%">
-                <div class="input-group">
-                    <input type="text" class="form-control" readonly placeholder="Global Playlist" ng-model="Settings.data.content.globalPlaylistPlugin.title">
-                    <span class="input-group-addon" ng-click="Settings.showPluginsDialog()"><i class="glyphicon glyphicon-option-horizontal"></i></span>
-                </div>
-            </div>
-        </div>
+<div class="input-control side-label margin-bottom-thirty" ng-show="!Settings.data.content.autoPlay">
+    <label for="">Skip Info Page
+        <span class="customTooltipBox btn-primary">
+            <span class="customTooltipText">
+                If the info page is skipped, the video URL will be prioritized.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch">
+        <input id="skipInfoSwitch" type="checkbox" ng-click="Settings.changeSkipPage($event)" ng-checked="Settings.data.design.skipMediaPage">
+        <label for="skipInfoSwitch" class="label-success"></label>
+    </div>
+</div>
 
-<!--     </div>
-</div> -->
+<div class="input-control side-label margin-bottom-thirty" ng-show="!Settings.data.content.autoPlay">
+    <label for="">Play All Audio Files
+        <span class="customTooltipBox btn-primary">
+            <span class="customTooltipText">
+                When a user plays any audio file, a full list of audio files from the instance will be added to the user’s playlist. 
+                If this is turned on, the following settings will become hidden: autoplay, add item to playlist, remove item from playlist.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch">
+        <input id="playAllAudioSwitch" type="checkbox" ng-click="Settings.setForceAutoPlay($event)" ng-checked="Settings.data.content.forceAutoPlay">
+        <label for="playAllAudioSwitch" class="label-success"></label>
+    </div>
+</div>
+
+<div class="input-control side-label margin-bottom-thirty">
+    <label for="">Auto Play
+        <span class="customTooltipBox btn-primary">
+            <span class="customTooltipText">
+                Allow items auto play, whin this option is on, it will skip info page by default.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch">
+        <input id="autoPlaySwitch" type="checkbox" ng-click="Settings.setAutoPlay($event)" ng-checked="Settings.data.content.autoPlay">
+        <label for="autoPlaySwitch" class="label-success"></label>
+    </div>
+</div>
+
+<div class="setting-toggle margin-bottom-thirty" ng-show="Settings.data.content.autoPlay">
+    <p class="setting-label">
+        Auto Play Delay
+        <span class="customTooltipBox btn-primary">
+            <span class="customTooltipText">
+                The delay before playing the next item.
+            </span>
+        </span>    
+    </p>
+    <div class="dropdown padding-zero" dropdown is-open="status.isOpen">
+        <button 
+            style="width: 200px; height: 40px;" 
+            class="btn btn-default text-left dropdown-toggle" 
+            dropdown-toggle
+            aria-expanded="true">
+            <span class="pull-left">{{Settings.data.content.autoPlayDelay.label || 'Off'}}</span>
+            <span class="chevron icon-chevron-down pull-right"></span>
+        </button>
+        <ul class="dropdown-menu extended" role="menu">
+            <li ng-repeat="option in Settings.autoPlayDelayOptions" ng-click="Settings.setAutoPlayDelay(option)">
+                <a class="transition-third">{{option.label}}</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="input-control side-label margin-bottom-thirty">
+    <label for="">Global Playlist
+        <span class="customTooltipBox btn-primary">
+            <span class="customTooltipText">
+                Allow the user to add items to a global playlist, and the items added can be viewed in the Media Center Manual Playlist feature.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch">
+        <input id="globalPlaylistSwitch" type="checkbox" ng-click="Settings.setGlobalPlaylist($event)" ng-checked="Settings.data.content.globalPlaylist">
+        <label for="globalPlaylistSwitch" class="label-success"></label>
+    </div>
+</div>
+
+<div class="setting-toggle margin-bottom-thirty" ng-if="Settings.data.content.globalPlaylist">
+    <p class="setting-label">
+        Global Playlist Feature
+        <span class="customTooltipBox btn-primary">
+            <span class="customTooltipText">
+                Here you can select the global playlist which you have already installed on your app.
+            </span>
+        </span>
+    </p>
+    <div style="width: 40%">
+        <div class="input-group">
+            <input type="text" class="form-control" readonly placeholder="Global Playlist" ng-model="Settings.data.content.globalPlaylistPlugin.title">
+            <span class="input-group-addon" ng-click="Settings.showPluginsDialog()">Add Feature</span>
+        </div>
+    </div>
+</div>
+
+<div class="input-control side-label margin-bottom-thirty" ng-show="Settings.data.content.globalPlaylist && Settings.data.content.globalPlaylistPlugin">
+    <label for="">Global Playlist Nav Button
+        <span class="customTooltipBox btn-primary">
+            <span class="customTooltipText">
+                Enable this to show a button that allow users to navigate to the global playlist feature.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch">
+        <input id="globalPlaylistNavButtonSwitch" type="checkbox" ng-click="Settings.setGlobalPlaylistNavButton($event)" ng-checked="Settings.data.content.showGlobalPlaylistNavButton">
+        <label for="globalPlaylistNavButtonSwitch" class="label-success"></label>
+    </div>
+</div>

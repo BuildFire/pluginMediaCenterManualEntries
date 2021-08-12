@@ -196,7 +196,7 @@ span.required{
 .input-control.side-label .label-wrap{
   width: 30%;
   min-width: 10rem;
-  max-width: 13rem;
+  max-width: 15rem;
   margin: .5rem 1rem 0 0;
 }
 .input-control.side-label .label-wrap label{

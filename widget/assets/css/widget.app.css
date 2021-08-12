@@ -969,13 +969,53 @@ input[type=range]::-ms-track {
 	padding-bottom: 35px !important;
 }
 
+.pb40 {
+	padding-bottom: 40px !important;
+}
+.pb45 {
+	padding-bottom: 45px !important;
+}
+.pb50 {
+	padding-bottom: 50px !important;
+}
+.pb60 {
+	padding-bottom: 60px !important;
+}
+
 #emptyContainer {
 	background-image: url(../.images/empty_page.svg);
 	background-repeat: no-repeat;
 	background-position: center;
-	height: 50vh;
+	height: 80vh;
 }
 
 .list-layout .layout-1 .col-xs-6:nth-child(odd) {
     clear: both !important;
+}
+
+.playlist-actions {
+	position: absolute; 
+	bottom: 0; 
+	right: 0; 
+	width: 100%;
+}
+
+.playlist-actions button {
+	padding: 20px 0;
+}
+
+.playlist-actions button.add-button {
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+	border-top-left-radius: 0;
+	float: left;
+	transition: none;
+}
+.playlist-actions button.go-to-button {
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 0;
+	border-top-right-radius: 0;
+	width: 49.5%;
+	float: right;
+	transition: none;    
 }

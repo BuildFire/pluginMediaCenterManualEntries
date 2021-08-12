@@ -74,34 +74,19 @@
         <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>
     </div>
 
-    <div style="position: absolute; bottom: 0; right: 0; width: 100%;" ng-if="globalPlaylist && !loadingGlobalPlaylist && showGlobalPlaylistButtons && myItems.length > 0">
+    <div class="playlist-actions" ng-if="globalPlaylist && !loadingGlobalPlaylist && showGlobalPlaylistButtons && myItems.length > 0">
         <button
-            class="btn btn-primary"
+            class="btn btn-primary add-button"
             ng-disabled="addAllToPlaylistLoading"
             ng-click="addAllToGlobalPlaylist($event)"
-            style="
-                border-bottom-left-radius: 0;
-                border-bottom-right-radius: 0;
-                border-top-left-radius: 0;
-                float: left;
-                transition: none;
-            "
             ng-style="{'width': showGlobalPlaylistNavButton && globalPlaylistPlugin ? '49.5%' : '100%'}"
         >
             {{ addAllToPlaylistLoading ? areAllInGlobalPlaylist() ? 'Removing...' : 'Adding...' : areAllInGlobalPlaylist() ? 'Remove All From Playlist' : 'Add All To Playlist' }}
         </button>
         <button
-            class="btn btn-primary"
+            class="btn btn-primary go-to-button"
             ng-if="globalPlaylist"
             ng-click="goToPlaylistPlugin()"
-            style="
-                border-bottom-right-radius: 0;
-                border-bottom-left-radius: 0;
-                border-top-right-radius: 0;
-                width: 49.5%;
-                float: right;
-                transition: none;
-            "
             ng-class="{'hidden': !showGlobalPlaylistNavButton || !globalPlaylistPlugin}"
         >
             Go To Playlist

@@ -253,9 +253,9 @@
     background-color: #1d2326 !important;
     border: 1px solid #1d2326 !important;
     cursor: pointer;
-    -webkit-user-select: none; /* Safari */        
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* IE10+/Edge */
+    -webkit-user-select: none;       
+    -moz-user-select: none; 
+    -ms-user-select: none; 
     user-select: none; 
   }
   
@@ -263,4 +263,6 @@
     background-color: #3c3c3c !important;
   }
   
-  
+  .setting-label {
+    color: var(--c-info);
+  }

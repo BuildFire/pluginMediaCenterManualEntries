@@ -104,7 +104,9 @@
 
                 // To overcome an issue with google showing it's play button on their videos
                 $scope.videoAlreadyPlayed = () => {
-                    return (WidgetMedia.item.data.videoUrl.indexOf('youtu.be') >= 0 || media.data.videoUrl.indexOf('youtube.com') >= 0) && !$scope.videoPlayed;
+                    if (WidgetMedia.item && WidgetMedia.item.data && WidgetMedia.item.data.videoUrl) {
+                        return (WidgetMedia.item.data.videoUrl.indexOf('youtu.be') >= 0 || media.data.videoUrl.indexOf('youtube.com') >= 0) && !$scope.videoPlayed;
+                    } else return false;
                 }
 
                 WidgetMedia.videoPlayerConfig = {

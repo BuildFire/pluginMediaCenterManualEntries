@@ -2,6 +2,11 @@
 html{
 	font-size: 16px !important;
 }
+
+.slide {
+    padding-top: env(safe-area-inset-top) !important;
+}
+
 .caption {
 	font-size: .75rem;
 	line-height: 1.25rem;
