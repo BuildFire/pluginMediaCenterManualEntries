@@ -1,4 +1,4 @@
-<div class="holder padding-zero" ng-class="{'pb60': globalPlaylist}">
+<div class="holder padding-zero" ng-class="{'pb75': globalPlaylist}">
     <div class="media-center-plugin layout3 list-3 text-overlay">
         <div class="plugin-banner clearfix text-overlay">
             <div ng-style="WidgetHome.data.content.images.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}" id="carousel" build-fire-carousel=""></div>
@@ -16,7 +16,7 @@
             <div class="clickable text-overlay" ng-repeat="item in WidgetHome.items"
                  ng-click="WidgetHome.goToMedia($index)">
                 <div class="plugin-banner clearfix text-overlay">
-                    <div class="text-overlay" ng-if="item.data.topImage" play-btn="{{item.data.videoUrl.length > 0 || (skipMediaPage && (item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0)) }}">
+                    <div class="text-overlay" play-btn="{{item.data.videoUrl.length > 0 || (skipMediaPage && (item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0)) }}">
                         <img ng-if="item.data.topImage" load-image="16x9" style="width:100%;" crop-width="340" crop-height="190" crop-type="crop" data-final-src="{{item.data.topImage}}">
                         <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png" style="width:100%;">
                     </div>
@@ -34,7 +34,9 @@
                         </div>
                       </div>
                     </div>
-                    <p class="margin-bottom-zero" style="font-size:13px;">{{item.data.summary}}</p>
+                    <div class="summary">
+                        <p class="margin-bottom-zero">{{item.data.summary}}</p>
+                    </div>
                     <span class="list-item-date" data-ng-if="item.data.mediaDate" style="font-size:11px; font-style:italic; margin-top:-4px;">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
                 </div>
             </div>

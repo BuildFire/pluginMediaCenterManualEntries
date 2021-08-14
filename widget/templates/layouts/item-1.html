@@ -10,6 +10,7 @@
                         load-image="16x9" style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
                         crop-width="1280" crop-height="720" crop-type="crop"
                         data-final-src="{{WidgetMedia.item.data.topImage}}" />
+                        <img ng-if="!WidgetMedia.item.data.topImage" src="../../../styles/media/holder-16x9.png" style="width:100%;">
 
                     <div id="myVideo" ng-include="'templates/layouts/video-player.html'"></div>
                 </div>

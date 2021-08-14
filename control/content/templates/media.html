@@ -8,8 +8,8 @@
         <div class="col-md-9 main ">
             <div class="screens clearfix margin-bottom-five">
                 <div class="screen logoicon pull-left">
-                    <a class="border-grey border-radius-three default-background-hover" style="width: 122px; height: 90px; display: flex; align-items: center" ng-click="ContentMedia.addListImage()">
-                        <span ng-if="!ContentMedia.item.data.topImage" class="add-icon">+</span>
+                    <a class="border-grey border-radius-three default-background-hover" style="width: 122px; height: 90px; display: flex; align-items: center; justify-content: center;" ng-click="ContentMedia.addListImage()">
+                        <span ng-if="!ContentMedia.item.data.topImage" class="add-icon" style="height: 85%;">+</span>
                         <img ng-if="ContentMedia.item.data.topImage" ng-src="{{ContentMedia.item.data.topImage }}">
                     </a>
                     <span ng-if="ContentMedia.item.data.topImage" class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentMedia.removeListImage()"></span>

@@ -295,7 +295,7 @@
               createNewDeeplink(ContentMedia.item);
               updateItemData();
             } else {
-              ContentMedia.item.data.dateCreated = +new Date();
+              ContentMedia.item.data.dateCreated = new Date();
               addNewItem((err) => {
                 if (err) {
                   console.error(err)

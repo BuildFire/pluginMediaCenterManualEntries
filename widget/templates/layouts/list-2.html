@@ -1,4 +1,4 @@
-<div class="holder padding-zero" ng-class="{'pb45': globalPlaylist}">
+<div class="holder padding-zero" ng-class="{'pb70': globalPlaylist}">
     <div class="media-center-plugin layout3 text-overlay">
         <div class="media-center-banner clearfix">
             <div ng-style="WidgetHome.data.content.images.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}" id="carousel" build-fire-carousel=""></div>
@@ -17,7 +17,7 @@
             <div class="clickable list-item text-overlay" ng-repeat="item in WidgetHome.items"
                  ng-click="WidgetHome.goToMedia($index)">
                 <div class="list-item-media text-left overflow-hidden">
-                    <div class="list-media-holder pull-left text-overlay" ng-if="item.data.topImage"
+                    <div class="list-media-holder pull-left text-overlay" 
                          play-btn="{{item.data.videoUrl.length > 0  || (skipMediaPage && (item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0)) }}">
                          <div class="li-actions-item">
                             <i class="share glyphicon glyphicon-share-alt" style="color: white !important;" ng-if="allowShare" ng-click="WidgetHome.share($event, item)" role="button"></i>
@@ -26,7 +26,7 @@
                         <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png">
                     </div>
 
-                    <div class="list-item-copy text-left padding-left-ten padding-right-ten text-overlay">
+                    <div class="list-item-copy text-left padding-left-ten padding-right-ten text-overlay" style="padding-right: 75px !important;">
                         <p class="ellipsis margin-zero text-primary"><a class="text-primary">{{item.data.title}}</a></p>
 
                         <p class="summary ellipsis margin-zero">{{item.data.summary}}</p>

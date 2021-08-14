@@ -182,10 +182,8 @@
                         location.reload();
                 };
 
-                let updateDelay;
                 var onUpdateCallback = function (event) {
                     buildfire.spinner.show();
-                    clearTimeout(updateDelay);
                     if (event.tag == "MediaCenter") {
                         if (event.data) {
                             WidgetHome.media.data = event.data;
@@ -202,33 +200,40 @@
                             $rootScope.globalPlaylistPlugin = WidgetHome.media.data.content.globalPlaylistPlugin;
                             $rootScope.showGlobalPlaylistNavButton = WidgetHome.media.data.content.showGlobalPlaylistNavButton;
 
-                            $scope.$apply();
                             if (view && event.data.content && event.data.content.images) {
                                 view.loadItems(event.data.content.images);
                             }
-                            updateDelay = setTimeout(() => {
-                                $rootScope.refreshItems();
-                            }, 700);
-                        }
-                    } else {
-                        // Make sure to delete from globalPlaylist if exists
-                        if (event.tag === "MediaContent") {
-                            if ($rootScope.isInGlobalPlaylist(event.id)) {
-                                if (event.data) {
-                                    GlobalPlaylist.insertAndUpdate(event).then(() => {
-                                        $rootScope.globalPlaylistItems.playlist[event.id] = event.data;
-                                    });
-                                } else {
-                                    // If there is no data, it means the the item has been deleted
-                                    GlobalPlaylist.delete(event.id).then(() => {
-                                        delete $rootScope.globalPlaylistItems.playlist[event.id];
-                                    });
-                                }
-                            }
-                        }
-                        updateDelay = setTimeout(() => {
                             $rootScope.refreshItems();
-                        }, 700);
+                            buildfire.spinner.hide();
+                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                        } else {
+                            buildfire.spinner.hide();
+                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                        }
+                    } else if (event.tag === "MediaContent") {
+                        // Make sure to delete from globalPlaylist if exists
+                        if ($rootScope.isInGlobalPlaylist(event.id)) {
+                            if (event.data) {
+                                GlobalPlaylist.insertAndUpdate(event).then(() => {
+                                    $rootScope.globalPlaylistItems.playlist[event.id] = event.data;
+                                    $rootScope.refreshItems();
+                                    buildfire.spinner.hide();
+                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                });
+                            } else {
+                                // If there is no data, it means the the item has been deleted
+                                // so we need to remove it from the globalPlaylist
+                                GlobalPlaylist.delete(event.id).then(() => {
+                                    delete $rootScope.globalPlaylistItems.playlist[event.id];
+                                    $rootScope.refreshItems();
+                                    buildfire.spinner.hide();
+                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                });
+                            }
+                        } else {
+                            $rootScope.refreshItems();
+                            buildfire.spinner.hide();
+                        }
                     }
                 };
 
@@ -251,6 +256,7 @@
                             }
                         }
                     }
+                    buildfire.spinner.hide();
                     if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                 });
 
@@ -507,14 +513,18 @@
                 }
 
                 WidgetHome.loadMore = function () {
-                    $rootScope.loadingData = true;
                     if (WidgetHome.isBusy || WidgetHome.noMore) {
                         buildfire.spinner.hide();
                         $rootScope.loadingData = false;
+                        if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                         return;
                     }
-                    updateGetOptions()
+
+                    updateGetOptions();
+                    $rootScope.loadingData = true;
                     WidgetHome.isBusy = true;
+                    buildfire.spinner.show();
+                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
 
                     // For auto play and globalPlaylist option, we need to get the full list of items.
                     searchOptions.limit = 9999999;
@@ -546,7 +556,7 @@
 
                             buildfire.spinner.hide();
                             $rootScope.loadingData = false;
-
+                            
                             if (!$window.deeplinkingDone && buildfire.deeplink) {
                                 buildfire.deeplink.getData(function (data) {
                                     var exists = data && data.id && WidgetHome.items.find(item => item.id === data.id);
@@ -601,6 +611,7 @@
                                     } else WidgetHome.deepLink = true;
                                 });
                             }
+                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                         }, function fail() {
                             WidgetHome.isBusy = false;
                             buildfire.spinner.hide();
@@ -651,7 +662,10 @@
                             
                             getGlobalPlaylistItems()
                             .then(getMediaItems)
-                            .finally(() => $rootScope.loadingGlobalPlaylist = false);
+                            .finally(() => {
+                                buildfire.spinner.hide();
+                                $rootScope.loadingGlobalPlaylist = false
+                            });
                         });
                     } else getGlobalPlaylistItems().then(getMediaItems).finally(() => {
                         setTimeout(() => {
@@ -681,12 +695,13 @@
                 };
 
                 $rootScope.refreshItems = function () {
+                    buildfire.spinner.show();
                     searchOptions.skip = 0;
                     WidgetHome.items = [];
                     WidgetHome.noMore = false;
-                    $rootScope.loadingData = true;
                     WidgetHome.glovalPlaylistLoaded = false;
                     if ($rootScope.globalPlaylist) $rootScope.globalPlaylistItems = { playlist: {} };
+                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                     WidgetHome.loadMore();
                 };
 
@@ -752,7 +767,7 @@
                     var link = {};
                     link.title = item.data.title;
                     link.type = "website";
-                    link.description = item.data.summary ? item.data.summary : null;
+                    link.description = item.data.summary ? item.data.summary : '';
                     //link.imageUrl = item.data.topImage ? item.data.topImage : null;
 
                     link.data = {
@@ -789,7 +804,6 @@
                         listener.clear();
                         listener = Buildfire.datastore.onUpdate(onUpdateCallback);
                         bookmarks.sync($scope);
-                        console.log("SHOW FEED SYNC")
                         if(!WidgetHome.items.length) WidgetHome.deepLink = true;
                         MediaCenter.get().then(function success(result) {
                             WidgetHome.media = result;

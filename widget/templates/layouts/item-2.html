@@ -5,14 +5,17 @@
                 <div class="people-holder clearfix">
                     <div class="people-media text-center">
                         <div ng-if="!WidgetMedia.fullScreen" class="people-banner" data-ng-hide="WidgetMedia.showVideo"
-                             style="background:url('{{WidgetMedia.item.data.topImage}}') no-repeat; background-position:center center; background-size:cover !important;height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
+                             style="background:url('{{WidgetMedia.item.data.topImage || WidgetMedia.emptyBG}}') no-repeat; background-position:center center; background-size:cover !important;height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
                             <div class="people-bg padding-bottom-fifteen clearfix" style="height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
                                 <div class="people-holder clearfix">
                                     <div class="people-media text-center padding-top-fifteen"
                                          data-ng-hide="WidgetMedia.showVideo">
-                                        <img data-ng-hide="skipMediaPage && WidgetMedia.item.data.videoUrl" load-image="16x9" style="width: 161px;height: 91px;"
+                                        <img ng-if="WidgetMedia.item.data.topImage" data-ng-hide="skipMediaPage && WidgetMedia.item.data.videoUrl" load-image="16x9" style="width: 161px;height: 91px;"
                                              crop-width="161" crop-height="91" crop-type="crop"
                                              data-final-src="{{WidgetMedia.item.data.topImage}}">
+                                        <img ng-if="!WidgetMedia.item.data.topImage" style="width: 161px;height: 91px;"
+                                             crop-width="161" crop-height="91" crop-type="crop"
+                                             src="../../../styles/media/holder-16x9.png">
                                     </div>
                                     <div class="people-info text-center col-xs-12">
                                         <h5 class="ellipsis margin-top-fifteen whiteTheme" style="font-size: 16px;">

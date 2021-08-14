@@ -206,7 +206,7 @@
                     var link = {};
                     link.title = NowPlaying.item.data.title;
                     link.type = "website";
-                    link.description = NowPlaying.item.data.summary ? NowPlaying.item.data.summary : null;
+                    link.description = NowPlaying.item.data.summary ? NowPlaying.item.data.summary : '';
                     link.data = {
                         "mediaId": NowPlaying.item.id
                     };

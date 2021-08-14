@@ -79,7 +79,7 @@
             class="btn btn-primary add-button"
             ng-disabled="addAllToPlaylistLoading"
             ng-click="addAllToGlobalPlaylist($event)"
-            ng-style="{'width': showGlobalPlaylistNavButton && globalPlaylistPlugin ? '49.5%' : '100%'}"
+            ng-class="{'add-button-only': !showGlobalPlaylistNavButton || !globalPlaylistPlugin }"
         >
             {{ addAllToPlaylistLoading ? areAllInGlobalPlaylist() ? 'Removing...' : 'Adding...' : areAllInGlobalPlaylist() ? 'Remove All From Playlist' : 'Add All To Playlist' }}
         </button>
