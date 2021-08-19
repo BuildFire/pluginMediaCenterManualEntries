@@ -286,7 +286,7 @@
           if (!ContentMedia.isItemValid) {
             return buildfire.dialog.toast({
               message: "Item title is required",
-              type: "warning",
+              type: "danger",
             });
           } else {
             ContentMedia.saving = true;

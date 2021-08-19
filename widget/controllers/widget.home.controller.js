@@ -9,6 +9,14 @@
                 WidgetHome.deepLink = false;
                 $rootScope.loadingData = true;
 
+                const isLauncher = window.location.href.includes('launcherPlugin');
+                const slideElement = document.querySelector(".slide")
+                if (isLauncher) {
+                    slideElement.classList.add("safe-area");
+                } else {
+                    slideElement.classList.remove("safe-area");
+                }
+
                 var _infoData = {
                     data: {
                         content: {

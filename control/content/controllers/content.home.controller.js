@@ -590,14 +590,23 @@
                  * @param _index tells the index of item to be deleted.
                  */
                 ContentHome.removeListItem = function (index, $event) {
-
                     if ("undefined" == typeof index) {
                         return;
                     }
                     var item = ContentHome.items[index];
                     if ("undefined" !== typeof item) {
-                        Modals.removePopupModal({ title: '', event: $event }).then(function (result) {
-                            if (result) {
+                        buildfire.dialog.confirm(
+                            {
+                              title: "Delete Item",
+                              message: 'Are you sure you want to delete this item?',
+                              isMessageHTML: true,
+                              confirmButton: {
+                                type: "danger",
+                                text: "Delete"
+                              }
+                            },
+                            (err, isConfirmed) => {
+                              if (isConfirmed) {
                                 if (item.data.searchEngineId) {
                                     SearchEngineService.delete(item.data.searchEngineId);
                                 }
@@ -607,20 +616,9 @@
                                 }, function (err) {
                                     console.error('Error while deleting an item-----', err);
                                 });
+                              }
                             }
-                            else {
-                                console.info('Unable to load data.');
-                            }
-                        }, function (cancelData) {
-                            //do something on cancel
-                        });
-                        /*$timeout(function () {
-                            var top = $($event.currentTarget).offset().top;
-                            if (top > 100)
-                                top -= 100;
-                            $('.modal-dialog.modal-sm').offset({top: top, left: 0});
-                        }, 500);*/
-
+                          );
                     }
                 };
 

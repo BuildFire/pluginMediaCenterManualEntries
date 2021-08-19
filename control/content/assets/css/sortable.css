@@ -103,7 +103,8 @@ html[buildfire] .d-item .btn-edit-icon:hover::after{
 }
 
 .carousel-items.draggable-list-view .d-item .media-holder {
-  background: transparent !important;
+  background: #eef0f0 !important;
+  width: 100%;
 }
 
 .draggable-list-view .d-item .media-holder {
@@ -132,4 +133,18 @@ html[buildfire] .d-item .btn-edit-icon:hover::after{
 
 .d-item .copy a.text-primary {
   flex-grow: 1 !important;
+}
+
+.draggable-list-view.carousel-items .d-item span.title {
+  width: 50%;
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+.draggable-list-view .d-item.double-line .copy .pull-right {
+  top: -4px
+}
+
+a.text-primary.text {
+  top: 5px !important
 }

@@ -942,7 +942,7 @@ input[type=range]::-ms-track {
 }
 
 .bitmap {
-	background-image: url('../.images/empty_page.svg');
+	background-image: url('../images/empty_page.svg');
 	background-repeat: no-repeat;
 	background-attachment: absolute;
 	background-position: center;
@@ -989,7 +989,7 @@ input[type=range]::-ms-track {
 }
 
 #emptyContainer {
-	background-image: url(../.images/empty_page.svg);
+	background-image: url('../images/empty_page.svg');
 	background-repeat: no-repeat;
 	background-position: center;
 	height: 80vh;

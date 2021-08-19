@@ -25,25 +25,16 @@
             <span>Title <span class="required">*</span></span>
         </div>
         <div class="main col-md-9 pull-right">
-            <input type="text" class="form-control" ng-model="ContentMedia.item.data.title">
+            <input type="text" class="form-control" ng-model="ContentMedia.item.data.title" maxlength="70">
         </div>
     </div>
-    <!-- <hr class="none">
-    <div class="item clearfix row">
-        <div class="labels col-md-3 padding-right-zero pull-left">
-            <span>Deep Link URL</span>
-        </div>
-        <div class="main col-md-9 pull-right">
-            <span>{{ContentMedia.item.data.deepLinkUrl}}</span>
-        </div>
-    </div> -->
     <hr class="none">
     <div class="item clearfix row">
         <div class="labels col-md-3 padding-right-zero pull-left">
             <span>Summary Text</span>
         </div>
         <div class="main col-md-9 pull-right">
-            <textarea class="form-control wysiwyg" ng-model="ContentMedia.item.data.summary"></textarea>
+            <textarea class="form-control wysiwyg" ng-model="ContentMedia.item.data.summary" maxlength="250"></textarea>
         </div>
     </div>
     <hr class="none">
@@ -86,12 +77,12 @@
             <span>Audio Title</span>
         </div>
         <div class="main col-md-9 pull-right">
-            <input type="text" class="form-control" ng-model="ContentMedia.item.data.audioTitle">
+            <input type="text" class="form-control" ng-model="ContentMedia.item.data.audioTitle" maxlength="70">
         </div>
     </div>
     <hr class="none">
     <div class="item clearfix row">
-        <div class="labels col-md-3 padding-right-zero pull-left">
+        <div class="labels col-md-3 padding-right-zero pull-left" maxlength="70">
             <span>Album Artists</span>
         </div>
         <div class="main col-md-9 pull-right">
