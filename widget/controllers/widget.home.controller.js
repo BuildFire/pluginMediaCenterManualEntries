@@ -94,11 +94,11 @@
                     }
                 );
                 var _skip = 0,
-                    _limit = 15,
+                    _limit = 50,
                     searchOptions = {
                         filter: { "$json.title": { "$regex": '/*' } },
                         skip: _skip,
-                        limit: _limit + 1 // the plus one is to check if there are any more
+                        limit: _limit // the plus one is to check if there are any more
                     };
                 /**
                  * WidgetHome.isBusy is used for infinite scroll.
@@ -534,10 +534,6 @@
                     buildfire.spinner.show();
                     if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
 
-                    // For auto play and globalPlaylist option, we need to get the full list of items.
-                    searchOptions.limit = 9999999;
-                    searchOptions.skip = 0;
-
                     const getMediaItems = () => {
                         MediaContent.find(searchOptions).then(function success(result) {
                             if (WidgetHome.noMore) {
@@ -546,24 +542,24 @@
                                 return;
                             }
 
-                            if (result.length <= _limit) {// to indicate there is no more
+                            // $rootScope.deepLinkNavigate = true;
+                            // $rootScope.seekTime = 10.22;
+                            WidgetHome.items = WidgetHome.items ? WidgetHome.items.concat(result) : result;
+                            // WidgetHome.items = result;
+                            WidgetHome.isBusy = false;
+                            $rootScope.myItems = WidgetHome.items;
+                            bookmarks.sync($scope);
+
+                            if (result.length < _limit) {// to indicate there is no more
                                 WidgetHome.noMore = true;
                             }
                             else {
                                 result.pop();
                                 searchOptions.skip = searchOptions.skip + _limit;
                                 WidgetHome.noMore = false;
+                                // In order to get all the items
+                                return getMediaItems();
                             }
-                            // $rootScope.deepLinkNavigate = true;
-                            // $rootScope.seekTime = 10.22;
-                            // WidgetHome.items = WidgetHome.items ? WidgetHome.items.concat(result) : result;
-                            WidgetHome.items = result;
-                            WidgetHome.isBusy = false;
-                            $rootScope.myItems = WidgetHome.items;
-                            bookmarks.sync($scope);
-
-                            buildfire.spinner.hide();
-                            $rootScope.loadingData = false;
                             
                             if (!$window.deeplinkingDone && buildfire.deeplink) {
                                 buildfire.deeplink.getData(function (data) {
@@ -619,6 +615,9 @@
                                     } else WidgetHome.deepLink = true;
                                 });
                             }
+                            WidgetHome.isBusy = false;
+                            buildfire.spinner.hide();
+                            $rootScope.loadingData = false;
                             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                         }, function fail() {
                             WidgetHome.isBusy = false;
