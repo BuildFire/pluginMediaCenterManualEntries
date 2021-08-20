@@ -41,7 +41,6 @@
 
             Settings.setForceAutoPlay = (e) => {
                 let value = e.target.checked;
-                console.error('setForceAutoPlay', value)
                 if(value!=Settings.data.content.forceAutoPlay){
                     if (value === true && Settings.data.content.autoPlay) {
                         Settings.data.content.autoPlay = false;
@@ -54,7 +53,6 @@
 
             Settings.changeSkipPage = (e) => {
                 let value = e.target.checked;
-                console.error('changeSkipPage',value)
                 if (value!=Settings.data.design.skipMediaPage){
                     if (value === false) {
                         Settings.data.content.autoPlay = false;
@@ -66,7 +64,6 @@
 
             Settings.setAllowSource = (e) => {
                 let value = e.target.checked;
-                console.error('setAllowSource',value)
                 if(value!=Settings.data.content.allowSource){
                     Settings.data.content.allowSource=value;
                     MediaCenter.save(Settings.data).then(() => {});
@@ -75,7 +72,6 @@
 
             Settings.setAllowShare = (e) => {
                 let value = e.target.checked;
-                console.error('setAllowShare', value)
                 if(value!=Settings.data.content.allowShare){
                     Settings.data.content.allowShare=value;
                     MediaCenter.save(Settings.data).then(() => {});
@@ -84,7 +80,6 @@
 
             Settings.setAutoPlay = (e) => {
                 let value = e.target.checked;
-                console.error('setAutoPlay', value)
                 if (value != Settings.data.content.autoPlay) {
                     if (value === true && Settings.data.content.forceAutoPlay) {
                         Settings.data.content.forceAutoPlay = false;
@@ -105,7 +100,6 @@
 
             Settings.setGlobalPlaylist = (e) => {
                 let value = e.target.checked;
-                console.error('setGlobalPlaylist', value)
                 if (value != Settings.data.content.globalPlaylist) {
                     Settings.data.content.globalPlaylist = value;
                     MediaCenter.save(Settings.data).then(() => {});
@@ -114,7 +108,6 @@
 
             Settings.setGlobalPlaylistNavButton = (e) => {
                 let value = e.target.checked;
-                console.error('setGlobalPlaylistNavButton',value)
                 if (value != Settings.data.content.showGlobalPlaylistNavButton) {
                     Settings.data.content.showGlobalPlaylistNavButton = value;
                     MediaCenter.save(Settings.data).then(() => {});

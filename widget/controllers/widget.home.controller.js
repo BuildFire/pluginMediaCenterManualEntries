@@ -17,6 +17,10 @@
                     slideElement.classList.remove("safe-area");
                 }
 
+                buildfire.navigation.onAppLauncherActive(() => {
+                    $rootScope.refreshItems();
+                });
+
                 var _infoData = {
                     data: {
                         content: {
