@@ -38,7 +38,6 @@
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
                 var SearchEngineService = new SearchEngine(COLLECTIONS.MediaContent);
 
-
                 if (MediaCenterInfo) {
                     updateMasterInfo(MediaCenterInfo);
                     ContentHome.info = MediaCenterInfo;

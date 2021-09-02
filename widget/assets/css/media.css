@@ -21,9 +21,15 @@ h5{
     font-weight: bold;
 }
 .list-layout{
-	padding: 1rem 0;
+    padding: 1rem 0;
     padding-top: 0;
 }
+
+#listLayout2::after,
+#listLayout2::before {
+    border-top: none !important ;
+}
+
 .list-item{
 	cursor: pointer;
 }

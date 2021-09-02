@@ -992,7 +992,16 @@ input[type=range]::-ms-track {
 	background-image: url('../images/empty_page.svg');
 	background-repeat: no-repeat;
 	background-position: center;
+	height: 100vh;
+}
+
+.list-layout-1 #emptyContainer,
+.list-layout-4 #emptyContainer {
 	height: 80vh;
+}
+.list-layout-2 #emptyContainer,
+.list-layout-3 #emptyContainer {
+	height: 85vh;
 }
 
 .list-layout .layout-1 .col-xs-6:nth-child(odd) {

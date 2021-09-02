@@ -8,6 +8,18 @@
                 var WidgetHome = this;
                 WidgetHome.deepLink = false;
                 $rootScope.loadingData = true;
+                buildfire.spinner.hide();
+
+                $rootScope.globalPlaylistStrings = {
+                    itemAdded: strings.get('globalPlaylist.itemAdded'),
+                    itemRemoved: strings.get('globalPlaylist.itemRemoved'),
+                    addAllToPlaylist: strings.get('globalPlaylist.addAllToPlaylist'),
+                    addedAllItemsToPlaylist: strings.get('globalPlaylist.addedAllItemsToPlaylist'),
+                    removeAllFromPlaylist: strings.get('globalPlaylist.removeAllFromPlaylist'),
+                    removedAllItemsFromPlaylist: strings.get('globalPlaylist.removedAllItemsFromPlaylist'),
+                    goToPlaylist: strings.get('globalPlaylist.goToPlaylist'),
+                    playlistLimitReached: strings.get('globalPlaylist.playlistLimitReached'),
+                }
 
                 const isLauncher = window.location.href.includes('launcherPlugin');
                 const slideElement = document.querySelector(".slide")
@@ -46,8 +58,6 @@
                     }
                 };
                 var view = null;
-
-                buildfire.spinner.show();
 
                 /**
                  * Create instance of MediaContent, MediaCenter db collection
@@ -256,10 +266,10 @@
 
                 Buildfire.appData.onUpdate(event => {
                     // Tag name for global playlist
-                    const globalPlaylistTag = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : 'globalPlaylist');
+                    // const globalPlaylistTag = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : 'globalPlaylist');
                     if (event) {
                         if (event.tag === "GlobalPlayListSettings") {
-                            if (event.data && typeof event.data.globalPlaylistLimit !== 'undefined') {
+                            if (event.data) {
                                 $rootScope.globalPlaylistLimit = event.data.globalPlaylistLimit;
                             }
                         } else if (event.tag === globalPlaylistTag) {
@@ -415,7 +425,7 @@
                             $rootScope.globalPlaylistItems.playlist = {};
                             $rootScope.addAllToPlaylistLoading = false;
                             buildfire.dialog.toast({
-                                message: `Removed all items from playlist`,
+                                message: $rootScope.globalPlaylistStrings.removedAllItemsFromPlaylist,
                                 type: 'success',
                                 duration: 2000
                             });
@@ -423,9 +433,9 @@
                             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                         });
                     } else {
-                        if (typeof $rootScope.globalPlaylistLimit !== 'undefined' && $rootScope.globalPlaylistLimit > 0 && WidgetHome.items.length > $rootScope.globalPlaylistLimit) {
+                        if (typeof $rootScope.globalPlaylistLimit === 'number' && WidgetHome.items.length > $rootScope.globalPlaylistLimit) {
                             buildfire.dialog.toast({
-                                message: `Playlist items limit reached!`,
+                                message: $rootScope.globalPlaylistStrings.playlistLimitReached,
                                 type: 'warning'
                             });
                             $rootScope.addAllToPlaylistLoading = false;
@@ -437,7 +447,7 @@
                                 }
 
                                 buildfire.dialog.toast({
-                                    message: `Add all items to playlist`,
+                                    message: $rootScope.globalPlaylistStrings.addedAllItemsToPlaylist,
                                     type: 'success',
                                     duration: 2000
                                 });
@@ -454,15 +464,15 @@
                         GlobalPlaylist.delete(item.id).then(() => {
                             delete $rootScope.globalPlaylistItems.playlist[item.id];
                             buildfire.dialog.toast({
-                                message: `Item removed from playlist`,
+                                message: $rootScope.globalPlaylistStrings.itemRemoved,
                                 type: 'success',
                                 duration: 2000
                             });
                         });
                     } else {
-                        if (typeof $rootScope.globalPlaylistLimit !== 'undefined' && $rootScope.globalPlaylistLimit > 0 && Object.keys($rootScope.globalPlaylistItems.playlist).length >= $rootScope.globalPlaylistLimit)  {
+                        if (typeof $rootScope.globalPlaylistLimit === 'number' && Object.keys($rootScope.globalPlaylistItems.playlist).length >= $rootScope.globalPlaylistLimit)  {
                             buildfire.dialog.toast({
-                                message: `Playlist items limit reached!`,
+                                message: $rootScope.globalPlaylistStrings.playlistLimitReached,
                                 type: 'warning',
                                 duration: 3000
                             });
@@ -471,7 +481,7 @@
                             GlobalPlaylist.insertAndUpdate(item).then(() => {
                                 $rootScope.globalPlaylistItems.playlist[item.id] = item.data;
                                 buildfire.dialog.toast({
-                                    message: `Item added to playlist`,
+                                    message: $rootScope.globalPlaylistStrings.itemAdded,
                                     type: 'success',
                                     duration: 2000
                                 });
@@ -619,15 +629,17 @@
                                     } else WidgetHome.deepLink = true;
                                 });
                             }
+                            setTimeout(() => {
+                                WidgetHome.isBusy = false;
+                                $rootScope.loadingData = false;
+                                buildfire.spinner.hide();
+                                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            }, 0);
+                        }, function fail(err) {
                             WidgetHome.isBusy = false;
-                            buildfire.spinner.hide();
                             $rootScope.loadingData = false;
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                        }, function fail() {
-                            WidgetHome.isBusy = false;
                             buildfire.spinner.hide();
-                            $rootScope.loadingData = false;
-                            console.error('error');
+                            console.error(err);
                         });
                     }
 
@@ -661,7 +673,7 @@
                             if (result && result.data && typeof result.data.globalPlaylistLimit !== 'undefined') {
                                 $rootScope.globalPlaylistLimit = result.data.globalPlaylistLimit;
                             } else {
-                                $rootScope.globalPlaylistLimit = 0;
+                                $rootScope.globalPlaylistLimit = undefined;
                             };
                         });
                     };

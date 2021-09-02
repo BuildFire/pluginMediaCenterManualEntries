@@ -1,4 +1,4 @@
-<div class="holder padding-zero" ng-class="{'pb70': globalPlaylist}">
+<div class="holder padding-zero list-layout-2" ng-class="{'pb70': globalPlaylist}">
     <div class="media-center-plugin layout3 text-overlay">
         <div class="media-center-banner clearfix">
             <div ng-style="WidgetHome.data.content.images.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}" id="carousel" build-fire-carousel=""></div>
@@ -9,7 +9,7 @@
         </div>
         
         <div id="emptyContainer" class="padded" ng-if="!loadingData && (!WidgetHome.items || (WidgetHome.items && WidgetHome.items.length === 0))"></div>
-        <div class="list-layout"
+        <div class="list-layout" id="listLayout2"
              infinite-scroll="WidgetHome.loadMore()"
              infinite-scroll-distance="1"
              data-infinite-container=".infinite-scroll-parent"

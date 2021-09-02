@@ -272,7 +272,6 @@
                             }
                             break;
                         case COLLECTIONS.MediaCenter:
-                            buildfire.spinner.show();
                             var old = WidgetMedia.media.data.design.itemLayout;
                             WidgetMedia.media = event;
                             $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
@@ -308,7 +307,7 @@
                     const globalPlaylistTag = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : 'globalPlaylist');
                     if (event) {
                         if (event.tag === "GlobalPlayListSettings") {
-                            if (event.data && typeof event.data.globalPlaylistLimit !== 'undefined') {
+                            if (event.data) {
                                 $rootScope.globalPlaylistLimit = event.data.globalPlaylistLimit;
                             }
                         } else if (event.tag === globalPlaylistTag) {
@@ -352,7 +351,6 @@
                     $rootScope.playNextItem();
                 }
 
-                // let interval;
                 WidgetMedia.toggleShowVideo = function (forceShow) {
                     WidgetMedia.showVideo = forceShow ? true : !WidgetMedia.showVideo;
                     if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();

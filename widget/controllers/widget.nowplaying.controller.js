@@ -651,7 +651,6 @@
                             break;
                         case COLLECTIONS.MediaCenter:
                             if (event.data) {
-                                buildfire.spinner.show();
                                 $rootScope.design = event.data.design;
                                 $rootScope.allowShare = event.data.content.allowShare;
                                 $rootScope.allowSource = event.data.content.allowSource;
@@ -682,7 +681,7 @@
                     const globalPlaylistTag = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : 'globalPlaylist');
                     if (event) {
                         if (event.tag === "GlobalPlayListSettings") {
-                            if (event.data && typeof event.data.globalPlaylistLimit !== 'undefined') {
+                            if (event.data) {
                                 $rootScope.globalPlaylistLimit = event.data.globalPlaylistLimit;
                             }
                         } else if (event.tag === globalPlaylistTag) {

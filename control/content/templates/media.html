@@ -20,12 +20,15 @@
     </div>
     
     <hr class="none">
-    <div class="item clearfix row">
+    <div class="item clearfix row" id="titleInput">
         <div class="labels col-md-3 padding-right-zero pull-left">
             <span>Title <span class="required">*</span></span>
         </div>
         <div class="main col-md-9 pull-right">
-            <input type="text" class="form-control" ng-model="ContentMedia.item.data.title" maxlength="70">
+            <input type="text" class="form-control" ng-model="ContentMedia.item.data.title" maxlength="70" ng-class="{'border-danger': titleRequired}" />
+            <div class="text-left text-danger margin-top-five text-small" ng-show="titleRequired">
+                {{titleRequired}}
+            </div>
         </div>
     </div>
     <hr class="none">

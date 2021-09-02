@@ -15,10 +15,15 @@ width: unset;
     left: 4px;
 }
 
-.draggable-list-view .d-item.double-line .copy .pull-right span.btn-icon {
-    top: 4px !important;
-}
-
 #carousel > div > div > div.carousel-items.hide-empty.draggable-list-view.margin-top-twenty.border-radius-four.border-grey > div > div.copy.pull-right > div {
     flex-grow: 1;
+}
+
+.border-danger {
+    border: 1px solid #ed4b4b !important;
+}
+
+.text-small {
+    font-size: 12px !important;
+    margin-left: 2px;
 }

@@ -676,6 +676,7 @@ color: var(--c-info);
 }
 /* Bottom Actions */
 .bottom-actions{
+  z-index: 2;
   position: fixed;
   width: 100%;
   display: flex;

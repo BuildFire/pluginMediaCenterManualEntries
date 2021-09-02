@@ -10,6 +10,7 @@
      */
     .controller('ContentMediaCtrl', ['$scope', 'Buildfire', 'SearchEngine', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig', 'Orders',
       function ($scope, Buildfire, SearchEngine, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig, Orders) {
+        window.scrollTo(0, 0);
         /**
          * Breadcrumbs  related implementation
          */
@@ -284,11 +285,11 @@
           if (ContentMedia.saving) return;
           ContentMedia.isItemValid = isValidItem(ContentMedia.item.data);
           if (!ContentMedia.isItemValid) {
-            return buildfire.dialog.toast({
-              message: "Item title is required",
-              type: "danger",
-            });
+            $scope.titleRequired = 'Required';
+            var scrollDiv = document.getElementById("titleInput").offsetTop;
+            return window.scrollTo({ top: scrollDiv, behavior: 'smooth'});
           } else {
+            $scope.titleRequired = false;
             ContentMedia.saving = true;
             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
             if (ContentMedia.item.id) {
@@ -457,6 +458,12 @@
         };
           
           ContentMedia.cancelAdd = function () {
+            Messaging.sendMessageToWidget({
+              name: EVENTS.ROUTE_CHANGE,
+              message: {
+                path: PATHS.HOME
+              }
+            });
           Location.goToHome();
         };
         /**

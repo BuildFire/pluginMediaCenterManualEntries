@@ -81,7 +81,7 @@
             ng-click="addAllToGlobalPlaylist($event)"
             ng-class="{'add-button-only': !showGlobalPlaylistNavButton || !globalPlaylistPlugin }"
         >
-            {{ addAllToPlaylistLoading ? areAllInGlobalPlaylist() ? 'Removing...' : 'Adding...' : areAllInGlobalPlaylist() ? 'Remove All From Playlist' : 'Add All To Playlist' }}
+            {{ addAllToPlaylistLoading ? areAllInGlobalPlaylist() ? 'Removing...' : 'Adding...' : areAllInGlobalPlaylist() ? globalPlaylistStrings.removeAllFromPlaylist : globalPlaylistStrings.addAllToPlaylist}}
         </button>
         <button
             class="btn btn-primary go-to-button"
@@ -89,7 +89,7 @@
             ng-click="goToPlaylistPlugin()"
             ng-class="{'hidden': !showGlobalPlaylistNavButton || !globalPlaylistPlugin}"
         >
-            Go To Playlist
+            {{ globalPlaylistStrings.goToPlaylist }}
         </button>
     </div>
     
