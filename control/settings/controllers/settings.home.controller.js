@@ -2,7 +2,7 @@
     'use strict';
     angular
         .module('mediaCenterDesign')
-        .controller('SettingsCtrl', ['$scope', 'COLLECTIONS','PLAYLISTINSTANCES', 'DB', function ($scope, COLLECTIONS, DB) {
+        .controller('SettingsCtrl', ['$scope', 'COLLECTIONS','PLAYLISTINSTANCES', 'DB', function ($scope, COLLECTIONS,PLAYLISTINSTANCES, DB) {
             var Settings = this;
             Settings.data = {};
             $scope.inputs = {};
