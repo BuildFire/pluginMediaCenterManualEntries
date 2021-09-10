@@ -2,7 +2,7 @@
     'use strict';
     angular
         .module('mediaCenterDesign')
-        .controller('SettingsCtrl', ['$scope', 'COLLECTIONS', 'DB', function ($scope, COLLECTIONS, DB) {
+        .controller('SettingsCtrl', ['$scope', 'COLLECTIONS','PLAYLISTINSTANCES', 'DB', function ($scope, COLLECTIONS, DB) {
             var Settings = this;
             Settings.data = {};
             $scope.inputs = {};
@@ -129,7 +129,6 @@
 
             Settings.showPluginsDialog = () => {
                 // MCM Playlist plugin unique Id
-                const globalPlaylistPluginTypeId = "5adb9753-58df-437c-96c6-efc6c3af9b4b";
                 buildfire.pluginInstance.showDialog({}, (err, instances) => {
                     if (err) {
                         return buildfire.dialog.toast({
@@ -138,7 +137,7 @@
                         });
                     }
                     if (instances && instances.length > 0) {
-                        if (instances[0].pluginTypeId === globalPlaylistPluginTypeId) {
+                        if (instances[0].pluginTypeId === PLAYLISTINSTANCES.DEV || instances[0].pluginTypeId === PLAYLISTINSTANCES.QA || instances[0].pluginTypeId === PLAYLISTINSTANCES.PROD ) {
                             Settings.setGlobalPlaylistPlugin(instances[0]);
                         } else {
                             buildfire.dialog.toast({

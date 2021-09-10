@@ -27,5 +27,9 @@
         .constant('PATHS', {
             MEDIA: "MEDIA",
             HOME: "HOME"
+        }).constant('PLAYLISTINSTANCES', {
+            DEV: "5adb9753-58df-437c-96c6-efc6c3af9b4b",
+            QA: "TODO: Hit Me Baby",
+            PROD: "TODO: Hit Me Baby One More Time"
         });
 })(window.angular, undefined);
