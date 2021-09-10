@@ -29,7 +29,7 @@
             HOME: "HOME"
         }).constant('PLAYLISTINSTANCES', {
             DEV: "5adb9753-58df-437c-96c6-efc6c3af9b4b",
-            QA: "TODO: Hit Me Baby",
+            QA: "4fdc96ea-1251-11ec-9fe6-12a56cc33887",
             PROD: "TODO: Hit Me Baby One More Time"
         });
 })(window.angular, undefined);
