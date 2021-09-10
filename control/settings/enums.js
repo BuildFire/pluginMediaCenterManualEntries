@@ -29,7 +29,7 @@
             HOME: "HOME"
         }).constant('PLAYLISTINSTANCES', {
             DEV: "5adb9753-58df-437c-96c6-efc6c3af9b4b",
-            QA: "4fdc96ea-1251-11ec-9fe6-12a56cc33887",
+            QA: "71cb89ca-43b7-4f7a-813e-8075dafc5e3a",
             PROD: "TODO: Hit Me Baby One More Time"
         });
 })(window.angular, undefined);
