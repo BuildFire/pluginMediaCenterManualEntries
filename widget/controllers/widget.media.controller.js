@@ -19,7 +19,7 @@
                 var Android = /(android)/i.test(navigator.userAgent);
                 if(!buildfire.isWeb() && Android ) {
                     document.onfullscreenchange = function ( event ) {
-                        if((document.fullscreenElement && (document.fullscreenElement.id=="ytPlayer"||document.fullscreenElement instanceof HTMLVideoElement))){
+                        if((document.fullscreenElement && document.fullscreenElement.id && (document.fullscreenElement.id=="videogularElement"||document.fullscreenElement instanceof HTMLVideoElement))){
                             document.exitFullscreen();
                             WidgetMedia.handeFullScreen();
                         }
@@ -77,6 +77,7 @@
                                     }
                                 });
                             }
+                            $scope.$apply();
                 }
 
                 WidgetMedia.onPlayerReady = function ($API) {
@@ -380,7 +381,12 @@
                     Buildfire.actionItems.execute(actionItem);
                 };
 
-                WidgetMedia.videoLoaded = function () {                    
+                WidgetMedia.videoLoaded = function () {         
+                    if(!buildfire.isWeb() && Android ) {//set next video to fullscreen mode
+                        if($rootScope.fullScreen && !WidgetMedia.fullScreen){
+                            WidgetMedia.handeFullScreen();
+                        }
+                    }             
                     WidgetMedia.loadingVideo = false;
                 };
 
