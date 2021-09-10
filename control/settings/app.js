@@ -7,7 +7,8 @@
             'mediaCenterEnums',
             'mediaCenterDesignServices',
             'ngAnimate',
-            'ngRoute'
+            'ngRoute',
+            'ui.bootstrap'
         ])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component

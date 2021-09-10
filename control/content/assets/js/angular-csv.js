@@ -220,5 +220,9 @@
             ImportCSVPopup.cancel = function () {
                 $modalInstance.dismiss('Dismiss');
             };
+
+            ImportCSVPopup.filePicker = () => {
+                setTimeout(() => document.getElementById('fileInput').click(), 0)
+            }
         }])
 })(window.angular, window.URL, window.navigator);

@@ -8,8 +8,9 @@
     /**
      * Inject dependency
      */
-    .controller('ContentMediaCtrl', ['$scope', '$window', 'Buildfire', 'SearchEngine', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig', 'Orders',
-      function ($scope, $window, Buildfire, SearchEngine, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig, Orders) {
+    .controller('ContentMediaCtrl', ['$scope', 'Buildfire', 'SearchEngine', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig', 'Orders',
+      function ($scope, Buildfire, SearchEngine, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig, Orders) {
+        window.scrollTo(0, 0);
         /**
          * Breadcrumbs  related implementation
          */
@@ -20,7 +21,6 @@
          * Using Control as syntax this
          */
         var ContentMedia = this;
-        var tmrDelayForMedia = null;
         /**
          * Create instance of MediaContent, MediaCenter db collection
          * @type {DB}
@@ -63,7 +63,7 @@
          */
         var selectImageOptions = { showIcons: false, multiSelection: false };
 
-        var updating = false;
+        ContentMedia.saving = false;
 
         /**
          * Init bootstrapping data
@@ -179,8 +179,7 @@
         /**
          * This updateItemData method will call the Builfire update method to update the ContentMedia.item
          */
-        function updateItemData() {
-          updating = true;
+        function updateItemData() {          
           ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
           ContentMedia.item.data && ContentMedia.item.data.title ? 
           ContentMedia.item.data.titleIndex = ContentMedia.item.data.title.toLowerCase() : '';
@@ -204,17 +203,25 @@
           }
 
           function update() {
-            MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then(function (data) {
+            MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then((data) => {
               updateMasterItem(ContentMedia.item);
-              console.log("UPDATE", data)
-              updating = false;
+              ContentMedia.saving = false;
+              if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
               Messaging.sendMessageToWidget({
                 name: EVENTS.ITEMS_CHANGE,
                 message: {}
               });
-            }, function (err) {
+              buildfire.dialog.toast({
+                message: "Item updated successfully",
+                type: "success",
+              });
+              ContentMedia.done();
+            }, (err) => {
               resetItem();
-              console.error('Error-------', err);
+              return buildfire.dialog.toast({
+                message: "Error while updating",
+                type: "danger",
+              });
             });
           }
         }
@@ -232,33 +239,31 @@
           }).save();
         }
 
-        function addNewItem() {
-          updating = true;
+        function addNewItem(callback) {
           ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
           ContentMedia.item.data && ContentMedia.item.data.title ? 
           ContentMedia.item.data.titleIndex = ContentMedia.item.data.title.toLowerCase() : '';
           SearchEngineService.insert(ContentMedia.item.data).then(function (searchEngineData) {
             ContentMedia.item.data.searchEngineId = searchEngineData.id;
-            MediaContent.insert(ContentMedia.item.data).then(function (data) {
+            MediaContent.insert(ContentMedia.item.data).then((data) => {
               createNewDeeplink(data);
-              MediaContent.getById(data.id).then(function (item) {
+              MediaContent.getById(data.id).then((item) => {
                 ContentMedia.item = item;
                 ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: item.id });
                 updateMasterItem(item);
-                updating = false;
+                ContentMedia.saving = false;
+                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                 MediaCenterSettings.content.rankOfLastItem = item.data.rank;
                 if (appId && MediaCenterSettings) {
-                  MediaCenter.update(appId, MediaCenterSettings).then(function (data) {
-                    console.info("Updated MediaCenter rank");
-                  }, function (err) {
-                    console.error('Error-------', err);
+                  MediaCenter.update(appId, MediaCenterSettings).then((data) => {
+                  }, (err) => {
+                    callback(err);
                   });
-                }
-                else {
-                  MediaCenter.insert(MediaCenterSettings).then(function (data) {
+                }else {
+                  MediaCenter.insert(MediaCenterSettings).then((data) => {
                     console.info("Inserted MediaCenter rank");
-                  }, function (err) {
-                    console.error('Error-------', err);
+                  }, (err) => {
+                    callback(err);
                   });
                 }
                 Messaging.sendMessageToWidget({
@@ -266,12 +271,12 @@
                   message: {}
                 });
 
-              }, function (err) {
-                resetItem();
-                console.error('Error while getting----------', err);
+                callback()
+              }, (err) => {
+                resetItem(err);
               });
-            }, function (err) {
-              console.error('---------------Error while inserting data------------', err);
+            }, (err) => {
+              callback(err);
             });
           });
         }
@@ -281,30 +286,41 @@
         }
 
         /**
-         * updateItemsWithDelay called when ever there is some change in current media item
+         * updateItem called when ever there is some change in current media item
          * @param item
          */
-        function updateItemsWithDelay(item) {
-          if (updating) {
-            //console.log(' came but updating is going on');
-            return;
-          }
-          if (tmrDelayForMedia) {
-            clearTimeout(tmrDelayForMedia);
-          }
+         ContentMedia.updateItem = () => {
+          if (ContentMedia.saving) return;
           ContentMedia.isItemValid = isValidItem(ContentMedia.item.data);
-          if (!isUnChanged(ContentMedia.item) && ContentMedia.isItemValid) {
-
-            tmrDelayForMedia = setTimeout(function () {
-              if (item.id) {
-                createNewDeeplink(item);
-                updateItemData();
-              }
-              else {
-                ContentMedia.item.data.dateCreated = +new Date();
-                addNewItem();
-              }
-            }, 1000);
+          if (!ContentMedia.isItemValid) {
+            $scope.titleRequired = 'Required';
+            var scrollDiv = document.getElementById("titleInput").offsetTop;
+            return window.scrollTo({ top: scrollDiv, behavior: 'smooth'});
+          } else {
+            $scope.titleRequired = false;
+            ContentMedia.saving = true;
+            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+            if (ContentMedia.item.id) {
+              createNewDeeplink(ContentMedia.item);
+              updateItemData();
+            } else {
+              ContentMedia.item.data.dateCreated = new Date();
+              addNewItem((err) => {
+                if (err) {
+                  console.error(err)
+                  buildfire.dialog.toast({
+                    message: "Error while saving item",
+                    type: "danger",
+                  });
+                } else {
+                  buildfire.dialog.toast({
+                    message: "Item saved successfully",
+                    type: "success",
+                  });
+                  ContentMedia.done();
+                }
+              });
+            }
           }
         }
 
@@ -438,13 +454,24 @@
         ContentMedia.done = function () {
           //console.log('Done called------------------------------------------------------------------------');
           //Buildfire.history.pop();
-
-          Messaging.sendMessageToWidget({
-            name: EVENTS.ROUTE_CHANGE,
-            message: {
-              path: PATHS.HOME
-            }
-          });
+          setTimeout(() => {
+            Messaging.sendMessageToWidget({
+              name: EVENTS.ROUTE_CHANGE,
+              message: {
+                path: PATHS.HOME
+              }
+            });
+            Location.goToHome();
+            }, 0);
+        };
+          
+          ContentMedia.cancelAdd = function () {
+            Messaging.sendMessageToWidget({
+              name: EVENTS.ROUTE_CHANGE,
+              message: {
+                path: PATHS.HOME
+              }
+            });
           Location.goToHome();
         };
         /**
@@ -461,11 +488,5 @@
         //     id: ContentMedia.item.id || null
         //   }
         // });
-        /**
-         * Watch on ContentMedia.item to see changes and call updateItemsWithDelay
-         */
-        $scope.$watch(function () {
-          return ContentMedia.item;
-        }, updateItemsWithDelay, true);
       }]);
 })(window.angular, window.tinymce);

@@ -39,35 +39,38 @@ const stringsUI = {
     buildSection(container, sectionProp, sectionObj) {
       let sec = this.createAndAppend("section", "", [], container);
   
-      this.createIfNotEmpty("h3", sectionObj.title, [], sec);
+      this.createIfNotEmpty("h1", sectionObj.title, ["section-title"], sec);
       this.createIfNotEmpty("div", sectionObj.subtitle, ["subTitle"], sec);
       for (let key in sectionObj.labels)
         this.buildLabel(sec, sectionProp + "." + key, sectionObj.labels[key]);
       container.appendChild(sec);
     },
     buildLabel(container, prop, labelObj) {
-      let div = this.createAndAppend("div", "", ["form-group"], container);
-      this.createAndAppend("label", labelObj.title, [], div);
+      let rowDiv = this.createAndAppend('div', '', ["item", "row", "margin-bottom-fifteen"], container);
+      let labelDiv = this.createAndAppend('div', '', [], rowDiv);
+      this.createAndAppend('span', labelObj.title, ["col-md-3", "labels", "pull-left"], labelDiv); // Label Text Span
+      
+      let inputDiv = this.createAndAppend('div', '', ["col-md-9", "pull-left"], rowDiv);
+
       let inputElement;
       let id = prop;
       let inputType = labelObj.inputType ? labelObj.inputType.toLowerCase() : "";
-  
-      if (labelObj.inputType && ["textarea", "wysiwyg"].indexOf(inputType) >= 0)
-        inputElement = this.createAndAppend(
-          "textarea",
-          "",
-          ["form-control", "bf" + inputType],
-          div
-        );
+
+      if (
+        labelObj.inputType &&
+        ["textarea", "wysiwyg"].indexOf(inputType) >= 0
+      )
+        inputElement = this.createAndAppend('textarea', '', ["form-control", "bf" + inputType], inputDiv);
       else {
-        inputElement = this.createAndAppend("input", "", ["form-control"], div);
+        inputElement = this.createAndAppend('input', '', ["form-control"], inputDiv);
         inputElement.type = labelObj.inputType || "text";
       }
-  
+
       inputElement.id = id;
-  
+
       inputElement.autocomplete = false;
       inputElement.placeholder = labelObj.placeholder || "";
+      inputElement.value = labelObj.value ? labelObj.value : labelObj.defaultValue;
   
       if (labelObj.maxLength > 0) inputElement.maxLength = labelObj.maxLength;
   
