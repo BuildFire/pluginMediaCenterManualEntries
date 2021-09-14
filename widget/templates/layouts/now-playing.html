@@ -16,8 +16,9 @@
     'z-index': '0'}"></div>
     <div class="media-center-plugin" ng-if="!(NowPlaying.openMoreInfo || NowPlaying.openSettings)">
         <div class="media-header-link">
-            <span class="btn btn-icon" ng-click="NowPlaying.getFromPlaylist()"><img
-                    src="assets/css/icons/ic_playlist.svg" alt="playlist"></span>
+            <span ng-if="!globalPlaylist" class="btn btn-icon" ng-click="NowPlaying.getFromPlaylist()">
+                <img src="assets/css/icons/ic_playlist.svg" alt="playlist">
+            </span>
         </div>
         <div class="media-holder">
             <div class="media-inner text-center">
@@ -69,20 +70,22 @@
                 ng-class="(NowPlaying.settings && NowPlaying.settings.shufflePlaylist) ? 'primaryTheme bold' : 'whiteTheme'"
                 class="icon icon-shuffle icon-sm " ng-click="NowPlaying.shufflePlaylist()"></span>
             <div class="player-btns">
-                <span class="btn btn-icon" ng-click="NowPlaying.backward()"><img
+                <span ng-if="!autoPlay" class="btn btn-icon" ng-click="NowPlaying.backward()"><img
                         src="assets/css/icons/ic_fast_rewind.svg" alt=""></span>
+                <span ng-if="autoPlay" class="btn btn-icon" ng-click="NowPlaying.prev()"><i style="font-size: 18px; color: #D7D7D8;" class="glyphicon glyphicon-step-backward" role="button"></i></span>
                 <button class="btn btn-icon btn-lg btn-primary">
-                    <span ng-if="!NowPlaying.playing" class="icon  icon-main whiteTheme"
+                    <span ng-if="!NowPlaying.playing" class="icon icon-main whiteTheme"
                         ng-click="NowPlaying.playTrack()">
                         <img src="assets/css/icons/ic_play2.svg" alt="">
                     </span>
-                    <span ng-if="NowPlaying.playing" class="icon  icon-main whiteTheme"
+                    <span ng-if="NowPlaying.playing" class="icon icon-main whiteTheme"
                         ng-click="NowPlaying.pauseTrack()">
                         <img src="assets/css/icons/ic_pause_2.svg" alt="">
                     </span>
                 </button>
-                <span class="btn btn-icon" ng-click="NowPlaying.forward()"><img
+                <span ng-if="!autoPlay" class="btn btn-icon" ng-click="NowPlaying.forward()"><img
                         src="assets/css/icons/ic_fast_forward.svg" alt=""></span>
+                <span ng-if="autoPlay" class="btn btn-icon" ng-click="NowPlaying.next()"><i style="font-size: 18px; color: #D7D7D8;" class="glyphicon glyphicon-step-forward" role="button"></i></span>
             </div>
             <span
                 ng-class="(NowPlaying.settings && NowPlaying.settings.loopPlaylist) ? 'primaryTheme bold' : 'whiteTheme'"
@@ -91,10 +94,10 @@
             <span class="icon icon-repeat icon-sm primaryTheme hidden whiteTheme"></span>
         </div>
         <div class="media-player-action-btns">
-            <!--<span class="icon icon-volume-high icon-sm" ng-click="NowPlaying.showVolume=!NowPlaying.showVolume"></span>-->
-            <span class="glyphicon glyphicon-option-horizontal whiteTheme"
+            <span ng-if="!globalPlaylist" class="glyphicon glyphicon-option-horizontal whiteTheme"
                 ng-click="NowPlaying.openMoreInfoOverlay()"></span>
             <span class="glyphicon glyphicon-cog whiteTheme" ng-click="NowPlaying.getSettings()"></span>
+            <i ng-if="globalPlaylist" class="btn btn-icon glyphicon whiteTheme" style="font-size: 17px; opacity: .5;" ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(NowPlaying.item.id), 'glyphicon-minus' : isInGlobalPlaylist(NowPlaying.item.id) }" ng-click="toggleGlobalPlaylistItem($event, NowPlaying.item)" role="button"></i>
             <span class="glyphicon glyphicon-edit whiteTheme" ng-click="NowPlaying.addNote()"></span>
         </div>
     </div>
@@ -119,8 +122,6 @@
                                     {{track.title}}</p>
                             </div>
                             <div class="btns text-center">
-                                <!--<a ng-if="!track.playing" class="icon icon-play-circle" ng-click="NowPlaying.playlistPlay(track)"></a>
-                                <a ng-if="track.playing" class="icon icon-pause-circle primaryTheme" ng-click="NowPlaying.playlistPause(track)"></a>-->
                                 <a ng-class="track.playing ? 'icon-pause-circle' : 'icon-play-circle'"
                                     class="icon primaryTheme" ng-click="NowPlaying.playlistPlayPause(track)"></a>
                             </div>
@@ -169,12 +170,6 @@
                     <div class="text-center item" ng-if="!NowPlaying.transferPlaylist">
                         <a ng-click="NowPlaying.removeFromPlaylist(NowPlaying.currentTrack)" class="whiteTheme">{{NowPlaying.playListStrings.removeFromPlaylist}}</a>
                     </div>
-                    <!--<div class="text-center item">
-                        <a>Purchase</a>
-                    </div>
-                    <div class="text-center item">
-                        <a>Share</a>
-                    </div>-->
                     <div class="text-center item">
                         <a ng-click="NowPlaying.closeMoreInfoOverlay()" class="whiteTheme">{{NowPlaying.playListStrings.cancelPlaylist}}</a>
                     </div>
@@ -189,7 +184,7 @@
         <div class="overlay-content" style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
             <div class="media-player-settings">
                 <div class="settings-list padded padding-top-zero">
-                    <div class="item clearfix row" ng-if="!NowPlaying.forceAutoPlay">
+                    <div class="item clearfix row" ng-if="!NowPlaying.forceAutoPlay && !globalPlaylist">
                         <div class="col-md-10 pull-left text-left">
                             <span class="whiteTheme">{{NowPlaying.settingsStrings.automaticallyPlayNextTrack}}</span>
                         </div>

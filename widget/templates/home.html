@@ -1,14 +1,8 @@
-<!--<div class="overlay background"
-     ng-if="WidgetHome.media.data.design.backgroundImage && WidgetHome.deviceWidth != 0 && WidgeHome.deviceHeight != 0">
-    <img ng-src="{{WidgetHome.media.data.design.backgroundImage |cropImage : WidgetHome.deviceWidth : WidgetHome.deviceHeight}}">
-</div>-->
 <div id="home">
-    <div ng-if="WidgetHome.media.data.design.listLayout"
-         ng-style="WidgetHome.deepLink ? {'visibility':'visible'} : {'visibility':'hidden'}"
-         ng-include="'templates/layouts/' + WidgetHome.media.data.design.listLayout+ '.html'">
-    </div>
+    <div
+        ng-if="WidgetHome.media.data.design.listLayout"
+        ng-style="WidgetHome.deepLink ? {'visibility':'visible'} : {'visibility':'hidden'}"
+        ng-include="'templates/layouts/' + WidgetHome.media.data.design.listLayout+ '.html'"
+    ></div>
 </div>
-<div id="emptyState" class="bitmap" style="display: none;">
-
-</div>
-
+<div id="emptyState" class="bitmap" style="display: none"></div>

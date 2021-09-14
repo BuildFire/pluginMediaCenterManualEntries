@@ -1,144 +1,132 @@
-<h4>Manual Item Entry Details Content</h4><br>
-<div class="col-md-3 labels pull-left">
-    <span>Top Image</span>
-</div>
-<div class="col-md-9 main ">
-    <div class="screens clearfix">
-        <div class="screen logoicon pull-left text-center">
-            <a class="border-grey border-radius-three default-background-hover" ng-click="ContentMedia.addListImage()">
-                <span ng-if="!ContentMedia.item.data.topImage" class="add-icon">+</span>
-                <img ng-if="ContentMedia.item.data.topImage" ng-src="{{ContentMedia.item.data.topImage }}">
-            </a>
-            <span ng-if="ContentMedia.item.data.topImage" class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentMedia.removeListImage()"></span>
+<div class="has-bottom-actions">
+
+    <h1>Item Content Details</h1>
+    <div class="row flex">
+        <div class="col-md-3">
+            <span>Top Image</span>
         </div>
-
-        <br>  <br>  <br>  <br>
-        </div>
-    <span style="margin-left:50%"> 1200x675</span>
-
-</div>
-
-
-
-<hr class="none">
-<div class="item clearfix row">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Title</span>
-    </div>
-    <div class="main col-md-9 pull-right">
-        <input type="text" class="form-control" placeholder="Item Title" ng-model="ContentMedia.item.data.title">
-    </div>
-</div>
-<hr class="none">
-<div class="item clearfix row">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Deep Link URL</span>
-    </div>
-    <div class="main col-md-9 pull-right">
-        <span>{{ContentMedia.item.data.deepLinkUrl}}</span>
-    </div>
-</div>
-<hr class="none">
-<div class="item clearfix row">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Summary</span>
-    </div>
-    <div class="main col-md-9 pull-right">
-        <textarea class="form-control wysiwyg" placeholder="Summary Text" ng-model="ContentMedia.item.data.summary"></textarea>
-    </div>
-</div>
-<hr class="none">
-<div class="item clearfix row">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Body Content</span>
-    </div>
-</div>
-<hr class="none">
-<div class="item clearfix row">
-    <div class="main col-md-12 pull-right">
-        <textarea class="form-control wysiwyg" placeholder="WYSIWYG" ui-tinymce="ContentMedia.bodyContentWYSIWYGOptions"
-                  ng-model="ContentMedia.item.data.body"></textarea>
-    </div>
-</div>
-<hr class="none">
-<div class="item clearfix row">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Source URL</span>
-    </div>
-    <div class="main col-md-9 pull-right">
-        <input type="text" class="form-control" placeholder="Source URL" ng-model="ContentMedia.item.data.srcUrl">
-    </div>
-</div>
-<hr class="none">
-<div class="item clearfix row">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Video URL</span>
-    </div>
-    <div class="main col-md-9 pull-right">
-        <input type="text" class="form-control" video-url placeholder="Video URL"
-               ng-model="ContentMedia.item.data.videoUrl">
-               <p style="margin-bottom: -10px;" class="info margin-top-fifteen">Note: Supported video formats are MP4, WebM, Ogg.</p>
-               <p style="margin-bottom: -10px;" class="info margin-top-fifteen">Note: Supported share links are YouTube, Dropbox and Google Drive.</p>
-    </div>
-</div>
-<hr class="none">
-<div class="item clearfix row">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Audio Title</span>
-    </div>
-    <div class="main col-md-9 pull-right">
-        <input type="text" class="form-control" placeholder="Audio Title" ng-model="ContentMedia.item.data.audioTitle">
-    </div>
-</div>
-<hr class="none">
-<div class="item clearfix row">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Album Artists</span>
-    </div>
-    <div class="main col-md-9 pull-right">
-        <input type="text" class="form-control" placeholder="Album Artists" ng-model="ContentMedia.item.data.artists">
-    </div>
-</div>
-<hr class="none">
-<div class="item clearfix row">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Audio URL</span>
-    </div>
-    <div class="main col-md-9 pull-right">
-        <input type="text" class="form-control" placeholder="Audio URL" ng-model="ContentMedia.item.data.audioUrl">
-        <p style="margin-bottom: -5px;"
-        ng-if="ContentMedia.item.data.audioUrl && ContentMedia.item.data.audioUrl.includes('.dropbox.com')" 
-        class="info margin-top-fifteen">Note: URL will be converted to "https://dl.dropboxusercontent.com/..." in the audio player</p>
-    </div>
-</div>
-<hr class="none">
-<div id="audioImage"></div>
-<hr>
-<div class="item clearfix row">
-    <div class="labels col-md-3 padding-right-zero pull-left">
-        <span>Media Date</span>
-    </div>
-    <div class="main col-md-9 pull-right">
-        <input id="datePickerMCM" dt="{{ContentMedia.item.data.mediaDate}}" type="date" class="form-control"
-               ng-model="ContentMedia.item.data.mediaDate"/>
-    </div>
-</div>
-<hr class="none">
-<div id="actionItems" style="margin-bottom:50px;"></div>
-<hr class="none">
-<div style="width:100%; position:fixed; background-color:white; bottom:0px; z-index:0;">
-    <div class="main col-md-9 pull-right" style="margin-right: 1px; margin-top: 5px;">
-        <div class="col-md-6 pull-right padding-right-zero padding-left-ten">
-            <a class="btn btn-success pull-right" style="width:100px; height:35px; padding-top: 7px;" ng-click="ContentMedia.done()"
-               ng-disabled="!ContentMedia.isItemValid" href="javaScript:void(0);">Done</a>
+        <div class="col-md-9 main ">
+            <div class="screens clearfix margin-bottom-five">
+                <div class="screen logoicon pull-left">
+                    <a class="border-grey border-radius-three default-background-hover" style="width: 122px; height: 90px; display: flex; align-items: center; justify-content: center;" ng-click="ContentMedia.addListImage()">
+                        <span ng-if="!ContentMedia.item.data.topImage" class="add-icon" style="height: 85%;">+</span>
+                        <img ng-if="ContentMedia.item.data.topImage" ng-src="{{ContentMedia.item.data.topImage }}">
+                    </a>
+                    <span ng-if="ContentMedia.item.data.topImage" class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentMedia.removeListImage()"></span>
+                </div>
+            </div>
+            <p class="caption"> Recommended: 1200x675</p>
         </div>
     </div>
+    
+    <hr class="none">
+    <div class="item clearfix row" id="titleInput">
+        <div class="labels col-md-3 padding-right-zero pull-left">
+            <span>Title <span class="required">*</span></span>
+        </div>
+        <div class="main col-md-9 pull-right">
+            <input type="text" class="form-control" ng-model="ContentMedia.item.data.title" maxlength="70" ng-class="{'border-danger': titleRequired}" />
+            <div class="text-left text-danger margin-top-five text-small" ng-show="titleRequired">
+                {{titleRequired}}
+            </div>
+        </div>
+    </div>
+    <hr class="none">
+    <div class="item clearfix row">
+        <div class="labels col-md-3 padding-right-zero pull-left">
+            <span>Summary Text</span>
+        </div>
+        <div class="main col-md-9 pull-right">
+            <textarea class="form-control wysiwyg" ng-model="ContentMedia.item.data.summary" maxlength="250"></textarea>
+        </div>
+    </div>
+    <hr class="none">
+    <div class="item clearfix row">
+        <div class="labels col-md-3 padding-right-zero pull-left">
+            <span>Body Content</span>
+        </div>
+    </div>
+    <hr class="none">
+    <div class="item clearfix row">
+        <div class="main col-md-12 pull-right">
+            <textarea class="form-control wysiwyg" ui-tinymce="ContentMedia.bodyContentWYSIWYGOptions"
+                      ng-model="ContentMedia.item.data.body"></textarea>
+        </div>
+    </div>
+    <hr class="none">
+    <div class="item clearfix row">
+        <div class="labels col-md-3 padding-right-zero pull-left">
+            <span>Source URL</span>
+        </div>
+        <div class="main col-md-9 pull-right">
+            <input type="text" class="form-control" ng-model="ContentMedia.item.data.srcUrl">
+        </div>
+    </div>
+    <hr class="none">
+    <div class="item clearfix row">
+        <div class="labels col-md-3 padding-right-zero pull-left">
+            <span>Video URL</span>
+        </div>
+        <div class="main col-md-9 pull-right">
+            <input type="text" class="form-control margin-bottom-ten" video-url
+                   ng-model="ContentMedia.item.data.videoUrl">
+                   <p class="info-note margin-bottom-ten">Supported video formats are MP4, WebM, Ogg.</p>
+                   <p class="info-note margin-bottom-zero">Supported share links are YouTube, Dropbox and Vimeo.</p>
+        </div>
+    </div>
+    <hr class="none">
+    <div class="item clearfix row">
+        <div class="labels col-md-3 padding-right-zero pull-left">
+            <span>Audio Title</span>
+        </div>
+        <div class="main col-md-9 pull-right">
+            <input type="text" class="form-control" ng-model="ContentMedia.item.data.audioTitle" maxlength="70">
+        </div>
+    </div>
+    <hr class="none">
+    <div class="item clearfix row">
+        <div class="labels col-md-3 padding-right-zero pull-left" maxlength="70">
+            <span>Album Artists</span>
+        </div>
+        <div class="main col-md-9 pull-right">
+            <input type="text" class="form-control" ng-model="ContentMedia.item.data.artists" maxlength="70">
+        </div>
+    </div>
+    <hr class="none">
+    <div class="item clearfix row">
+        <div class="labels col-md-3 padding-right-zero pull-left">
+            <span>Audio URL</span>
+        </div>
+        <div class="main col-md-9 pull-right">
+            <input type="text" class="form-control" ng-model="ContentMedia.item.data.audioUrl">
+            <p style="margin-bottom: -5px;"
+            ng-if="ContentMedia.item.data.audioUrl && ContentMedia.item.data.audioUrl.includes('.dropbox.com')" 
+            class="info margin-top-fifteen">Note: URL will be converted to "https://dl.dropboxusercontent.com/..." in the audio player</p>
+        </div>
+    </div>
+    <hr class="none">
+    <div id="audioImage"></div>
+    <hr>
+    <div class="item clearfix row">
+        <div class="labels col-md-3 padding-right-zero pull-left">
+            <span>Media Date</span>
+        </div>
+        <div class="main col-md-9 pull-right">
+            <input id="datePickerMCM" dt="{{ContentMedia.item.data.mediaDate}}" type="date" class="form-control"
+                   ng-model="ContentMedia.item.data.mediaDate"/>
+        </div>
+    </div>
+    <hr class="none">
+    <div id="actionItems" style="margin-bottom:50px;"></div>
 </div>
-        <script>
-            $(function(){
-                if ( $('#datePickerMCM')[0].type != 'date' ) $('#datePickerMCM').datepicker();
-                else console.log("DATEEEEEEEE");
-                $('#ui-datepicker-div').css('background-color','beige');
-            })
+<div class="bottom-actions">
+    <a class="btn btn-default btn-outlined margin-right-ten" style="border: 1px solid #ddd;" ng-disabled="ContentMedia.saving" ng-click="ContentMedia.cancelAdd()" href="javaScript:void(0);">Cancel</a>
+    <a class="btn btn-success margin-right-ten" ng-click="ContentMedia.updateItem()" ng-disabled="ContentMedia.saving" href="javaScript:void(0);">{{ContentMedia.saving ? 'Saving...' : 'Save'}}</a>
+</div>
 
-        </script>
+<script>
+    $(function(){
+        if ( $('#datePickerMCM')[0].type != 'date' ) $('#datePickerMCM').datepicker();
+        $('#ui-datepicker-div').css('background-color','beige');
+    });
+</script>

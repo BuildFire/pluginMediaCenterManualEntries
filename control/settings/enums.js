@@ -27,5 +27,9 @@
         .constant('PATHS', {
             MEDIA: "MEDIA",
             HOME: "HOME"
+        }).constant('PLAYLISTINSTANCES', {
+            DEV: "5adb9753-58df-437c-96c6-efc6c3af9b4b",
+            QA: "71cb89ca-43b7-4f7a-813e-8075dafc5e3a",
+            PROD: "b0509fa5-8f67-4613-84ef-ff506beb63bd"
         });
 })(window.angular, undefined);

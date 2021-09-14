@@ -38,7 +38,6 @@
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
                 var SearchEngineService = new SearchEngine(COLLECTIONS.MediaContent);
 
-
                 if (MediaCenterInfo) {
                     updateMasterInfo(MediaCenterInfo);
                     ContentHome.info = MediaCenterInfo;
@@ -477,7 +476,7 @@
                             var rank = ContentHome.info.data.content.rankOfLastItem || 0;
                             for (var index = 0; index < rows.length; index++) {
                                 rank += 10;
-                                rows[index].dateCreated = +new Date();
+                                rows[index].dateCreated = new Date();
                                 rows[index].links = [];
                                 rows[index].rank = rank;
                                 rows[index].body = rows[index].bodyHTML;
@@ -515,7 +514,7 @@
                         }
                     }, function (error) {
                         ContentHome.loading = false;
-                        $scope.apply();
+                        $scope.$apply();
                         //do something on cancel
                     });
                 };
@@ -568,8 +567,6 @@
                  * @param value to be search.
                  */
                 ContentHome.searchListItem = function (value) {
-                    var title = '';
-
                     searchOptions.skip = 0;
                     /*reset the skip value*/
 
@@ -579,23 +576,36 @@
                     if (!value) {
                         value = '/*';
                     }
-                    searchOptions.filter = { "$json.title": { "$regex": value } };
+                    searchOptions.filter = { "$json.title": { "$regex": value, $options: "-i",} };
                     ContentHome.getMore();
                 };
+
+                ContentHome.onEnterKey = (keyEvent) => {
+                    if (keyEvent.which === 13) ContentHome.searchListItem($scope.search);
+                }
 
                 /**
                  * ContentHome.removeListItem() used to delete an item from item list
                  * @param _index tells the index of item to be deleted.
                  */
                 ContentHome.removeListItem = function (index, $event) {
-
                     if ("undefined" == typeof index) {
                         return;
                     }
                     var item = ContentHome.items[index];
                     if ("undefined" !== typeof item) {
-                        Modals.removePopupModal({ title: '', event: $event }).then(function (result) {
-                            if (result) {
+                        buildfire.dialog.confirm(
+                            {
+                              title: "Delete Item",
+                              message: 'Are you sure you want to delete this item?',
+                              isMessageHTML: true,
+                              confirmButton: {
+                                type: "danger",
+                                text: "Delete"
+                              }
+                            },
+                            (err, isConfirmed) => {
+                              if (isConfirmed) {
                                 if (item.data.searchEngineId) {
                                     SearchEngineService.delete(item.data.searchEngineId);
                                 }
@@ -605,20 +615,9 @@
                                 }, function (err) {
                                     console.error('Error while deleting an item-----', err);
                                 });
+                              }
                             }
-                            else {
-                                console.info('Unable to load data.');
-                            }
-                        }, function (cancelData) {
-                            //do something on cancel
-                        });
-                        /*$timeout(function () {
-                            var top = $($event.currentTarget).offset().top;
-                            if (top > 100)
-                                top -= 100;
-                            $('.modal-dialog.modal-sm').offset({top: top, left: 0});
-                        }, 500);*/
-
+                          );
                     }
                 };
 

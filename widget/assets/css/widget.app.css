@@ -329,8 +329,8 @@
     }
 }
 
-.overlayPlayContainer {
-    margin-left: -160px;
+vg-overlay-play {
+    left: 0;
 }
 
 /*# sourceMappingURL=main.css.map */
@@ -463,22 +463,22 @@
 }
 
 .layout1 .list-layout .list-item-odd {
-    padding-left: 15px;
-    padding-right: 1%;
+    padding-left: 12px;
+    padding-right: 10px;
 }
 
 .layout1 .list-layout .list-item-even {
-    padding-left: 1%;
-    padding-right: 15px;
+    padding-left: 10px;
+    padding-right: 12px;
 }
 
 .layout4 .list-layout .list-item-odd {
     padding-left: 15px;
-    padding-right: 1%;
+    padding-right: 8px;
 }
 
 .layout4 .list-layout .list-item-even {
-    padding-left: 1%;
+    padding-left: 8px;
     padding-right: 15px;
 }
 
@@ -590,8 +590,8 @@ videogular, [videogular] {
 	border-top:none !important;
 	top:inherit;
 	bottom:0;
-	border-bottom:1px solid #ddd !important;
 }
+
 .list-items .list-item + .list-item{
 	padding-top:10px;
 	margin-top:10px;
@@ -723,9 +723,6 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	min-height:71px;
 	position:relative;
 }
-.layout3 .list-layout .list-item-copy{
-	padding:6px 10px 5px;
-}
 
 /* Play Btn */
 .play-btn{
@@ -762,9 +759,13 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 
 .link-list i{
-	font-size: 20px;
+	font-size: 1.25rem;
 	display: inline-block;
-	padding: 5px 16px;
+	padding: .75rem;
+}
+
+.link-list a + a{
+	margin-left:.75rem;
 }
 
 .list-layout.has-btns .list-item{
@@ -807,28 +808,28 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 
 input[type=range] {
-+  -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
-+  width: 100%; /* Specific width is required for Firefox. */
-+  background: transparent; /* Otherwise white in Chrome */
-+}
-+
-+input[type=range]::-webkit-slider-thumb {
-+  -webkit-appearance: none;
-+}
-+
-+input[type=range]:focus {
-+  outline: none; /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
-+}
-+
-+input[type=range]::-ms-track {
-+  width: 100%;
-+  cursor: pointer;
-+
-+  /* Hides the slider so custom styles can be added */
-+  background: transparent;
-+  border-color: transparent;
-+  color: transparent;
-+}
+  -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+  width: 100%; /* Specific width is required for Firefox. */
+  background: transparent; /* Otherwise white in Chrome */
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
+
+input[type=range]:focus {
+  outline: none; /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+}
+
+input[type=range]::-ms-track {
+  width: 100%;
+  cursor: pointer;
+
+  /* Hides the slider so custom styles can be added */
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
 
 .plugin-slide img[style]{
 	width: 100%!important;
@@ -837,22 +838,21 @@ input[type=range] {
 .item-actions{
 	margin: 16px 0;
 	padding: 0;
-	border-top: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	position: relative;
 }
 .item-actions, .li-actions .li-actions{
-    display: flex;
-    position: relative;
+	display: flex;
+	position: relative;
 }
 
 .li-actions i, .li-actions-item i 
 .li-actions i, .li-actions-item i {
     position: relative;
     display: block;
+    padding: .65rem;
     flex-shrink: 0;
     top: 0;
 }
@@ -880,12 +880,13 @@ input[type=range] {
 	font-size: 2rem;
 	border-radius: 40px;
 	width: 100%;
-	height: 40px;
+	height: 100%;
 }
 .layout1 .li-actions-item i,
 .layout4 .li-actions-item i,
 .layout3 .list-item-media .li-actions-item{
 	position: absolute;
+	font-size: 1.25rem;
 }
 
 .layout1 .li-actions-item i,
@@ -941,18 +942,126 @@ input[type=range] {
 }
 
 .bitmap {
-	background-image: url('../.images/empty_page.svg');
+	background-image: url('../images/empty_page.svg');
 	background-repeat: no-repeat;
 	background-attachment: absolute;
 	background-position: center;
 	height: 80vh;
-  }
+}
   
-  .bitmap::after {
+.bitmap::after {
 	content: "Content is not available anymore.";
-    position: absolute;
-    text-align: center;
-    bottom: 35%;
-    width: 100%;
-  }
+	position: absolute;
+	text-align: center;
+	bottom: 35%;
+	width: 100%;
+}
   
+.pb15 {
+	padding-bottom: 15px !important;
+}
+.pb30 {
+	padding-bottom: 30px !important;
+}
+.pb35 {
+	padding-bottom: 35px !important;
+}
+.pb40 {
+	padding-bottom: 40px !important;
+}
+.pb45 {
+	padding-bottom: 45px !important;
+}
+.pb50 {
+	padding-bottom: 50px !important;
+}
+.pb55 {
+	padding-bottom: 55px !important;
+}
+.pb60 {
+	padding-bottom: 60px !important;
+}
+.pb70 {
+	padding-bottom: 70px !important;
+}
+.pb75 {
+	padding-bottom: 75px !important;
+}
+
+#emptyContainer {
+	background-image: url('../images/empty_page.svg');
+	background-repeat: no-repeat;
+	background-position: center;
+	height: 100vh;
+}
+
+.list-layout-1 #emptyContainer,
+.list-layout-4 #emptyContainer {
+	height: 80vh;
+}
+.list-layout-2 #emptyContainer,
+.list-layout-3 #emptyContainer {
+	height: 85vh;
+}
+
+.list-layout .layout-1 .col-xs-6:nth-child(odd) {
+    clear: both !important;
+}
+
+.playlist-actions {
+	position: absolute; 
+	bottom: 15px; 
+	width: 100%;
+	overflow: hidden;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+	padding: 0 4px;
+}
+
+.playlist-actions button {
+	padding: 12px 6px;
+	margin: 0 4px;
+	overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 50%;
+}
+
+.playlist-actions button.add-button {
+	flex: 1;
+	transition: none;
+	margin-right: 2px;
+	border-radius: 25px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+.playlist-actions button.add-button-only {
+	flex: 1;
+	margin: 0 2px !important;
+	border-radius: 25px !important;
+	max-width: 100% !important;
+}
+
+
+.playlist-actions button.go-to-button {
+	flex: 1;    
+	transition: none;
+	margin-left: 2px;
+	border-radius: 25px;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.summary {
+	padding-top:0.5rem
+}
+
+.summary p {
+	font-size:13px; 
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;  
+}

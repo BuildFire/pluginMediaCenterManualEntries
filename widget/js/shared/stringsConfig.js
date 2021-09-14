@@ -1,6 +1,6 @@
 var stringsConfig = {
   playlist: {
-    title: "Playlist",
+    title: "Audio Playlist",
     labels: {
       goToPlaylist: {
         title: "Go To Playlist Button",
@@ -58,6 +58,60 @@ var stringsConfig = {
       },
     },
   },
+  globalPlaylist: {
+    title: "Global Playlist",
+    labels: {
+      itemAdded: {
+        title: "Item added to playlist",
+        placeholder: "Item added to playlist",
+        maxLength: 50,
+        defaultValue: "Item added to playlist",
+      },
+      itemRemoved: {
+        title: "Item removed from playlist",
+        placeholder: "Item removed from playlist",
+        maxLength: 50,
+        defaultValue: "Item removed from playlist",
+      },
+      addAllToPlaylist: {
+        title: "Add all to playlist",
+        placeholder: "Add all to playlist",
+        maxLength: 50,
+        defaultValue: "Add all to playlist",
+      },
+      addedAllItemsToPlaylist: {
+        title: "Added all items to playlist",
+        placeholder: "Added all items to playlist",
+        maxLength: 50,
+        defaultValue: "Added all items to playlist",
+      },
+      removeAllFromPlaylist: {
+        title: "Remove all from playlist",
+        placeholder: "Remove all from playlist",
+        maxLength: 35,
+        defaultValue: "Remove all from playlist",
+      },
+      removedAllItemsFromPlaylist: {
+        title: "Removed all items from playlist",
+        placeholder: "Removed all items from playlist",
+        maxLength: 50,
+        defaultValue: "Removed all items from playlist",
+      },
+      goToPlaylist: {
+        title: "Go to playlist",
+        placeholder: "Go to playlist",
+        maxLength: 35,
+        defaultValue: "Go to playlist",
+      },
+      playlistLimitReached: {
+        title: "Playlist limit reached!",
+        placeholder: "Playlist limit reached!",
+        maxLength: 50,
+        defaultValue: "Playlist limit reached!",
+      },
+    },
+  },
+
   settings: {
     title: "Settings",
     labels: {

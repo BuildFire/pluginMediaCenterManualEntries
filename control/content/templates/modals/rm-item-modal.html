@@ -7,11 +7,9 @@
         <p class="margin-zero">Are you sure you want to delete this item?</p>
     </div>
 </div>
-<div class="bottom border-top-grey clearfix">
-    <div class="col-md-6 pull-left text-center">
-        <a class="text-primary default-background-hover transition-third" ng-click="RemovePopup.cancel()">Cancel</a>
-    </div>
-    <div class="col-md-6 pull-right text-center border-left-grey">
-        <a class="text-danger default-background-hover transition-third" ng-click="RemovePopup.ok()">Delete</a>
-    </div>
-</div>
+<div class="flex padded-sm">
+    <button class="btn btn-outlined btn-secondary flex-left-auto"
+    ng-click="RemovePopup.cancel()">Cancel</button>
+    <button class="margin-left-ten btn btn-danger"
+    ng-click="RemovePopup.ok()">Delete</button>
+  </div>

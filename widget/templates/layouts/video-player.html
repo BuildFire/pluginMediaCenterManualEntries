@@ -1,49 +1,51 @@
+<div ng-style="WidgetMedia.fullScreen == false && {height: (WidgetMedia.deviceWidth*9)/16}" ng-show="WidgetMedia.showVideo" class="videogular-container">
+    <img src="../../../styles/media/holder-16x9.gif"
+        ng-if="WidgetMedia.loadingVideo">
+    <videogular id="videogularElement"
+                vg-player-ready="WidgetMedia.onPlayerReady($API)"
+                vg-change-source="WidgetMedia.sourceChanged($source)"
+                vg-theme="WidgetMedia.videoPlayerConfig.theme.url"
+                vg-update-state="onVideoStateChange($state)"
+                vg-can-play="WidgetMedia.videoLoaded()"
+                vg-complete="playNextItem()"
+                vg-auto-play="autoPlay"
+                >
+        <vg-media 
+                vg-vimeo
+                vg-youtube
+                vg-native-controls="false"
+                vg-src="WidgetMedia.videoPlayerConfig.sources"
+                vg-tracks="WidgetMedia.videoPlayerConfig.tracks"
+                ng-show="!WidgetMedia.loadingVideo"
+                >
+        </vg-media>
 
-    <div ng-style="WidgetMedia.fullScreen == false && {height: (WidgetMedia.deviceWidth*9)/16}" ng-show="WidgetMedia.showVideo" class="videogular-container">
-      <img src="../../../styles/media/holder-16x9.gif" data-ng-hide="WidgetMedia.item.data.videoUrl | isYoutubeVimeoLink"
-           ng-if="WidgetMedia.loadingVideo">
-        <videogular data-ng-hide="WidgetMedia.item.data.videoUrl | isYoutubeVimeoLink" vg-player-ready="WidgetMedia.onPlayerReady($API)"
-                    vg-change-source="WidgetMedia.sourceChanged($source)"
-                    vg-theme="WidgetMedia.videoPlayerConfig.theme.url"
-                    vg-error="WidgetMedia.onVideoError($event)"
-                    vg-can-play="WidgetMedia.videoLoaded()"
-                    vg-auto-play="WidgetMedia.media.data.design.skipMediaPage"
-                    >
-            <vg-media vg-src="WidgetMedia.videoPlayerConfig.sources"
-                      vg-tracks="WidgetMedia.videoPlayerConfig.tracks"
-                      vg-native-controls="false"
-                      ng-show="!WidgetMedia.loadingVideo">
-            </vg-media>
-            <vg-controls vg-autohide="true" ng-show="!WidgetMedia.loadingVideo">
-                <vg-play-pause-button ng-show="!WidgetMedia.loadingVideo"></vg-play-pause-button>
-                <vg-scrub-bar>
-                    <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
-                </vg-scrub-bar>
-                <vg-time-display>{{ timeLeft | date:'mm:ss':'+0000' | timeCorrect }}</vg-time-display>
+        <vg-controls ng-if="WidgetMedia.item.data.videoUrl" vg-autohide="false" ng-show="!WidgetMedia.loadingVideo">
+            <div class="prev-item-btn" ng-click="playPrevItem()">
+                <button class="iconButton">
+                    <i class="glyphicon glyphicon-step-backward"></i>
+                </button>
+            </div>
+            <vg-play-pause-button class="vid-play-pause-btn" ng-show="!WidgetMedia.loadingVideo"></vg-play-pause-button>
+            <div class="next-item-btn" ng-click="playNextItem(true)">
+                <button class="iconButton">
+                    <i class="glyphicon glyphicon-step-forward"></i>
+                </button>
+            </div>
 
-                <vg-volume>
-                    <vg-mute-button></vg-mute-button>
-                    <vg-volume-bar></vg-volume-bar>
-                </vg-volume>
-                <vg-fullscreen-button></vg-fullscreen-button>
-            </vg-controls>
-            <!--<vg-overlay-play></vg-overlay-play>-->
-        </videogular>
+            <div class="empty-space"></div>
+            <vg-scrub-bar>
+                <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+            </vg-scrub-bar>
+            <div class="empty-space"></div>
+            <vg-time-display class="vid-time">{{ timeLeft | date:'mm:ss':'+0000' | timeCorrect }}</vg-time-display>
 
-
-        <embed-video data-ng-if="WidgetMedia.item.data.videoUrl | isYoutubeVimeoLink" data-ng-href="{{WidgetMedia.item.data.videoUrl}}" controls="0"></embed-video>
-    </div>
-
-<!--
-    <script>
-        var monitor = setInterval(function(){
-            var elem = document.activeElement;
-
-            if(elem && elem.tagName == 'IFRAME'){
-                $("iframe.player").addClass('playing');
-                var audioPlayer = window.buildfire.services.media.audioPlayer;
-                audioPlayer.pause();
-                clearInterval(monitor);
-            }
-        }, 100);
-    </script>-->
+            <vg-volume class="volume-btn">
+                <vg-mute-button></vg-mute-button>
+                <vg-volume-bar></vg-volume-bar>
+            </vg-volume>
+            <vg-fullscreen-button class="fullscreen-btn"></vg-fullscreen-button>
+        </vg-controls>
+        <vg-overlay-play ng-class="{'hidden': videoAlreadyPlayed()}"></vg-overlay-play>
+    </videogular>
+</div>

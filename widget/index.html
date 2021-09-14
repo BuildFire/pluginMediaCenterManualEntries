@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
 
     <!-- CSS -->
-    <!--<link href="../../../styles/bootstrap.css" rel="stylesheet">-->
     <link href="../../../styles/helper.css" rel="stylesheet">
     <link href="../../../styles/siteIcons.css" rel="stylesheet">
     <link href="../../../scripts/owlCarousel/owlCarousel.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../../styles/transitionAnimation.css">
+    <link href="../../../styles/transitionAnimation.css" rel="stylesheet">
     <link href="assets/css/widget.app.css" rel="stylesheet">
-    <link href="assets/css/videogular.css" rel="stylesheet">
+    <!-- <link href="assets/css/videogular.css" rel="stylesheet"> -->
     <link href="assets/css/media.css" rel="stylesheet">
     <!--SDK js-->
     <script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
@@ -25,6 +24,9 @@
     <script src="js/shared/stringsConfig.js"></script>
     <script src="js/shared/strings.js"></script>
     <script src="../../../scripts/angular/ng-infinite-scroll.custom.js"></script>
+
+    <script src="https://player.vimeo.com/api/player.js"></script>
+
     <!--app js-->
     <script src="app.js"></script>
     <script src="enums.js"></script>
@@ -43,6 +45,8 @@
 
     <script src="assets/js/angular-sanitize.min.js"></script>
     <script src="assets/js/videogular.min.js"></script>
+    <script src="assets/js/vg-youtube.min.js"></script>
+    <script src="assets/js/vg-vimeo.min.js"></script>
     <script src="assets/js/vg-controls.min.js"></script>
     <script src="assets/js/vg-overlay-play.min.js"></script>
     <script src="../../../scripts/angular/angular-touch.js"></script>
@@ -51,29 +55,53 @@
     <!-- Audio player-->
     <script src="../../../scripts/buildfire/services/media/audioPlayer.js"></script>
     <script src="../../../scripts/buildfire/services/notifications/localNotifications.js"></script>
-
-    <!--Video Embeder for Vimeo Youtube-->
-    <script src="assets/js/ng-videosharing-embed.min.js"></script>
 </head>
-<!--<body class="scrollable customBackground" ng-style="currentBackgroundImage"
-      ng-class="blackBackground ? 'blackBackground': ''">-->
+
 <body class="body-scroll">
-<div class="main_view">
-    <div ng-class="showFeed ? 'showing' : 'notshowing'" data-back-img="{{backgroundImage}}" id="feedView" class="content slide infinite-scroll-parent" >
-        <div ng-controller="WidgetHomeCtrl as WidgetHome">
-            <div ng-include="'templates/home.html'">
+    <div class="main_view">
+        <div ng-class="showFeed ? 'showing' : 'notshowing'" data-back-img="{{backgroundImage}}" id="feedView" class="content slide infinite-scroll-parent" >
+            <div ng-controller="WidgetHomeCtrl as WidgetHome">
+                <div ng-include="'templates/home.html'">
+                </div>
             </div>
         </div>
+        <div ng-class="WidgetHome.deepLink ? 'noSlide' : 'slide'"
+            data-back-img="{{backgroundImage}}"
+            ng-view=""
+            class="content"
+            ng-if="!showFeed"></div>
+
+        <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>
     </div>
-    <div ng-class="WidgetHome.deepLink ? 'noSlide' : 'slide'"
-         data-back-img="{{backgroundImage}}"
-         ng-view=""
-         class="content"
-         ng-if="!showFeed"></div>
 
-    <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>
-
-</div>
+    <div class="playlist-actions" ng-if="globalPlaylist && !loadingGlobalPlaylist && showGlobalPlaylistButtons && myItems.length > 0">
+        <button
+            class="btn btn-primary add-button"
+            ng-disabled="addAllToPlaylistLoading"
+            ng-click="addAllToGlobalPlaylist($event)"
+            ng-class="{'add-button-only': !showGlobalPlaylistNavButton || !globalPlaylistPlugin }"
+        >
+            {{ addAllToPlaylistLoading ? areAllInGlobalPlaylist() ? 'Removing...' : 'Adding...' : areAllInGlobalPlaylist() ? globalPlaylistStrings.removeAllFromPlaylist : globalPlaylistStrings.addAllToPlaylist}}
+        </button>
+        <button
+            class="btn btn-primary go-to-button"
+            ng-if="globalPlaylist"
+            ng-click="goToPlaylistPlugin()"
+            ng-class="{'hidden': !showGlobalPlaylistNavButton || !globalPlaylistPlugin}"
+        >
+            {{ globalPlaylistStrings.goToPlaylist }}
+        </button>
+    </div>
+    
+    <div id="countdownOverlay" ng-class="{'h30': showCountdown}">
+        <div class="overlay-content">
+            <h5 class="margin-top-zero">{{delayCountdownText}}</h5>
+            <br />
+            <button class="btn btn-warning media-action margin-zero" ng-if="showCountdown" ng-click="clearCountdown()">
+                Cancel
+            </button>
+        </div>
+    </div>
 </body>
 <script>
     window.strings = new buildfire.services.Strings("en-us", stringsConfig);
@@ -94,12 +122,12 @@
             }), "*");
         }
     }
-    function callVimeoPlayer(iframeId) {
-        var iframe = $('#' + iframeId)[0];
-        var url = 'https://player.vimeo.com';
-        /*   if (iframe.src.indexOf('https') == 0)
-         url = 'https://player.vimeo.com';*/
-        iframe.contentWindow.postMessage({method: 'pause'}, url);
-    }
+    // function callVimeoPlayer(iframeId) {
+    //     var iframe = $('#' + iframeId)[0];
+    //     var url = 'https://player.vimeo.com';
+    //     /*   if (iframe.src.indexOf('https') == 0)
+    //      url = 'https://player.vimeo.com';*/
+    //     iframe.contentWindow.postMessage({method: 'pause'}, url);
+    // }
 </script>
 </html>
