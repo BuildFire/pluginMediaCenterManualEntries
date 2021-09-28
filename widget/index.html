@@ -79,7 +79,7 @@
             class="btn btn-primary add-button"
             ng-disabled="addAllToPlaylistLoading"
             ng-click="addAllToGlobalPlaylist($event)"
-            ng-class="{'add-button-only': !showGlobalPlaylistNavButton || !globalPlaylistPlugin }"
+            ng-class="{'add-button-only': (!showGlobalPlaylistNavButton || !globalPlaylistPlugin) && !showGlobalAddAllToPlaylistButton, 'hidden': showGlobalAddAllToPlaylistButton }"
         >
             {{ addAllToPlaylistLoading ? areAllInGlobalPlaylist() ? 'Removing...' : 'Adding...' : areAllInGlobalPlaylist() ? globalPlaylistStrings.removeAllFromPlaylist : globalPlaylistStrings.addAllToPlaylist}}
         </button>
@@ -87,7 +87,7 @@
             class="btn btn-primary go-to-button"
             ng-if="globalPlaylist"
             ng-click="goToPlaylistPlugin()"
-            ng-class="{'hidden': !showGlobalPlaylistNavButton || !globalPlaylistPlugin}"
+            ng-class="{'hidden': !showGlobalPlaylistNavButton || !globalPlaylistPlugin ,'add-button-only': showGlobalAddAllToPlaylistButton && showGlobalPlaylistNavButton}"
         >
             {{ globalPlaylistStrings.goToPlaylist }}
         </button>

@@ -115,6 +115,20 @@
 </div>
 
 <div class="input-control side-label margin-bottom-thirty" ng-show="Settings.data.content.globalPlaylist && Settings.data.content.globalPlaylistPlugin">
+    <label for="">Add All To Playlist Button
+        <span class="customTooltipBox btn-primary">
+            <span class="customTooltipText">
+                Enable this to show a button that allows users to add all items to the global playlist feature.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch">
+        <input id="showGlobalAddAllToPlaylistButton" type="checkbox" ng-click="Settings.setGlobalPlaylistAddButton($event)" ng-checked="!Settings.data.content.showGlobalAddAllToPlaylistButton">
+        <label for="showGlobalAddAllToPlaylistButton" class="label-success"></label>
+    </div>
+</div>
+
+<div class="input-control side-label margin-bottom-thirty" ng-show="Settings.data.content.globalPlaylist && Settings.data.content.globalPlaylistPlugin">
     <label for="">Global Playlist Nav Button
         <span class="customTooltipBox btn-primary">
             <span class="customTooltipText">

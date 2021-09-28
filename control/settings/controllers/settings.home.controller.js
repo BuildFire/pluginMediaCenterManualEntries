@@ -28,6 +28,8 @@
                     Settings.data.content.globalPlaylist = false;
                 if (typeof (Settings.data.content.showGlobalPlaylistNavButton) == 'undefined')
                     Settings.data.content.showGlobalPlaylistNavButton = false;
+                if (typeof (Settings.data.content.showGlobalAddAllToPlaylistButton) == 'undefined')
+                    Settings.data.content.showGlobalAddAllToPlaylistButton = false;
                 if (typeof (Settings.data.content.globalPlaylistPlugin) == 'undefined') {
                     Settings.data.content.globalPlaylistPlugin = false;
                 }
@@ -110,6 +112,14 @@
                 let value = e.target.checked;
                 if (value != Settings.data.content.showGlobalPlaylistNavButton) {
                     Settings.data.content.showGlobalPlaylistNavButton = value;
+                    MediaCenter.save(Settings.data).then(() => {});
+                }
+            };
+
+            Settings.setGlobalPlaylistAddButton = (e) => {
+                let value = !e.target.checked;
+                if (value != Settings.data.content.showGlobalAddAllToPlaylistButton) {
+                    Settings.data.content.showGlobalAddAllToPlaylistButton = value;
                     MediaCenter.save(Settings.data).then(() => {});
                 }
             };
