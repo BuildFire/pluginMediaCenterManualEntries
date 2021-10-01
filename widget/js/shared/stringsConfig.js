@@ -85,6 +85,12 @@ var stringsConfig = {
         maxLength: 50,
         defaultValue: "Added all items to playlist",
       },
+      addedItemsToPlaylist: {
+        title: "If Not All Items Could Be Added",
+        placeholder: "Added maximum allowed number of items to the playlist.",
+        maxLength: 80,
+        defaultValue: "Added maximum allowed number of items to the playlist.",
+      },
       removeAllFromPlaylist: {
         title: "Remove all from playlist",
         placeholder: "Remove all from playlist",
