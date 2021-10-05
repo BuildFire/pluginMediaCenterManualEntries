@@ -295,6 +295,7 @@
                             $rootScope.globalPlaylist = WidgetMedia.media.data.content.globalPlaylist;
                             $rootScope.globalPlaylistPlugin = WidgetMedia.media.data.content.globalPlaylistPlugin;
                             $rootScope.showGlobalPlaylistNavButton = WidgetMedia.media.data.content.showGlobalPlaylistNavButton;
+                            $rootScope.showGlobalAddAllToPlaylistButton = WidgetMedia.media.data.content.showGlobalAddAllToPlaylistButton;
                             // Update Data in media contoller
                             WidgetMedia.fixIOSAutoPlay();
                             $rootScope.refreshItems();

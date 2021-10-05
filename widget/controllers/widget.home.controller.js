@@ -15,6 +15,7 @@
                     itemRemoved: strings.get('globalPlaylist.itemRemoved'),
                     addAllToPlaylist: strings.get('globalPlaylist.addAllToPlaylist'),
                     addedAllItemsToPlaylist: strings.get('globalPlaylist.addedAllItemsToPlaylist'),
+                    addedItemsToPlaylist: strings.get('globalPlaylist.addedItemsToPlaylist'),
                     removeAllFromPlaylist: strings.get('globalPlaylist.removeAllFromPlaylist'),
                     removedAllItemsFromPlaylist: strings.get('globalPlaylist.removedAllItemsFromPlaylist'),
                     goToPlaylist: strings.get('globalPlaylist.goToPlaylist'),
@@ -101,6 +102,7 @@
                     $rootScope.globalPlaylist = MediaCenterInfo.data.content.globalPlaylist;
                     $rootScope.globalPlaylistPlugin = MediaCenterInfo.data.content.globalPlaylistPlugin;
                     $rootScope.showGlobalPlaylistNavButton = MediaCenterInfo.data.content.showGlobalPlaylistNavButton;
+                    $rootScope.showGlobalAddAllToPlaylistButton = MediaCenterInfo.data.content.showGlobalAddAllToPlaylistButton;
                 },
                     function fail() {
                         MediaCenterInfo = _infoData;
@@ -221,6 +223,7 @@
                             $rootScope.globalPlaylist = WidgetHome.media.data.content.globalPlaylist;
                             $rootScope.globalPlaylistPlugin = WidgetHome.media.data.content.globalPlaylistPlugin;
                             $rootScope.showGlobalPlaylistNavButton = WidgetHome.media.data.content.showGlobalPlaylistNavButton;
+                            $rootScope.showGlobalAddAllToPlaylistButton = WidgetHome.media.data.content.showGlobalAddAllToPlaylistButton;
 
                             if (view && event.data.content && event.data.content.images) {
                                 view.loadItems(event.data.content.images);
@@ -433,7 +436,10 @@
                             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                         });
                     } else {
-                        if (typeof $rootScope.globalPlaylistLimit === 'number' && WidgetHome.items.length > $rootScope.globalPlaylistLimit) {
+
+                        var takenSlots=Object.keys($rootScope.globalPlaylistItems.playlist).length;
+                        var freeSlots=$rootScope.globalPlaylistLimit-takenSlots;
+                        if (typeof $rootScope.globalPlaylistLimit === 'number' && freeSlots < 1) {
                             buildfire.dialog.toast({
                                 message: $rootScope.globalPlaylistStrings.playlistLimitReached,
                                 type: 'warning'
@@ -441,13 +447,17 @@
                             $rootScope.addAllToPlaylistLoading = false;
                             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                         } else {
-                            GlobalPlaylist.insertAndUpdateAll(WidgetHome.items).then(() => {
-                                for (let item of WidgetHome.items) {
+                            var itemsToAdd=[...WidgetHome.items].splice(0, freeSlots);
+                            GlobalPlaylist.insertAndUpdateAll(itemsToAdd).then(() => {
+                                for (let item of itemsToAdd) {
                                     $rootScope.globalPlaylistItems.playlist[item.id] = item.data;
                                 }
 
+                                var message=(itemsToAdd.length == WidgetHome.items.length)?
+                                $rootScope.globalPlaylistStrings.addedAllItemsToPlaylist:
+                                $rootScope.globalPlaylistStrings.addedItemsToPlaylist;
                                 buildfire.dialog.toast({
-                                    message: $rootScope.globalPlaylistStrings.addedAllItemsToPlaylist,
+                                    message: message,
                                     type: 'success',
                                     duration: 2000
                                 });
