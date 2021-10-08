@@ -13,13 +13,10 @@
                 $rootScope.globalPlaylistStrings = {
                     itemAdded: strings.get('globalPlaylist.itemAdded'),
                     itemRemoved: strings.get('globalPlaylist.itemRemoved'),
-                    addAllToPlaylist: strings.get('globalPlaylist.addAllToPlaylist'),
                     addedAllItemsToPlaylist: strings.get('globalPlaylist.addedAllItemsToPlaylist'),
                     addedItemsToPlaylist: strings.get('globalPlaylist.addedItemsToPlaylist'),
-                    removeAllFromPlaylist: strings.get('globalPlaylist.removeAllFromPlaylist'),
                     removedAllItemsFromPlaylist: strings.get('globalPlaylist.removedAllItemsFromPlaylist'),
-                    goToPlaylist: strings.get('globalPlaylist.goToPlaylist'),
-                    playlistLimitReached: strings.get('globalPlaylist.playlistLimitReached'),
+                    playlistLimitReached: strings.get('globalPlaylist.playlistLimitReached')
                 }
 
                 const isLauncher = window.location.href.includes('launcherPlugin');
@@ -447,7 +444,8 @@
                             $rootScope.addAllToPlaylistLoading = false;
                             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                         } else {
-                            var itemsToAdd=[...WidgetHome.items].splice(0, freeSlots);
+                            var filteredItems=WidgetHome.items.filter(el=>!$rootScope.isInGlobalPlaylist(el.id));
+                            var itemsToAdd=[...filteredItems].splice(0, freeSlots);
                             GlobalPlaylist.insertAndUpdateAll(itemsToAdd).then(() => {
                                 for (let item of itemsToAdd) {
                                     $rootScope.globalPlaylistItems.playlist[item.id] = item.data;

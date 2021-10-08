@@ -76,20 +76,21 @@
 
     <div class="playlist-actions" ng-if="globalPlaylist && !loadingGlobalPlaylist && showGlobalPlaylistButtons && myItems.length > 0">
         <button
-            class="btn btn-primary add-button"
+            class="btn btn-standard add-button"
             ng-disabled="addAllToPlaylistLoading"
             ng-click="addAllToGlobalPlaylist($event)"
-            ng-class="{'add-button-only': (!showGlobalPlaylistNavButton || !globalPlaylistPlugin) && !showGlobalAddAllToPlaylistButton, 'hidden': showGlobalAddAllToPlaylistButton }"
+            ng-class="{'add-button-only': (!showGlobalPlaylistNavButton || !globalPlaylistPlugin), 'hidden': showGlobalAddAllToPlaylistButton || !globalPlaylistPlugin}"
         >
-            {{ addAllToPlaylistLoading ? areAllInGlobalPlaylist() ? 'Removing...' : 'Adding...' : areAllInGlobalPlaylist() ? globalPlaylistStrings.removeAllFromPlaylist : globalPlaylistStrings.addAllToPlaylist}}
+            <div ng-if="!areAllInGlobalPlaylist()" class="play-list-icon add-button-icon"></div>
+            <div ng-if="areAllInGlobalPlaylist()" class="play-list-icon remove-button-icon"></div>
         </button>
         <button
-            class="btn btn-primary go-to-button"
+            class="btn add-button-only go-to-button"
             ng-if="globalPlaylist"
             ng-click="goToPlaylistPlugin()"
-            ng-class="{'hidden': !showGlobalPlaylistNavButton || !globalPlaylistPlugin ,'add-button-only': showGlobalAddAllToPlaylistButton && showGlobalPlaylistNavButton}"
+            ng-class="{'hidden': (!showGlobalPlaylistNavButton || !globalPlaylistPlugin)}"
         >
-            {{ globalPlaylistStrings.goToPlaylist }}
+            <div class="play-list-icon go-to-button-icon"></div>
         </button>
     </div>
     
