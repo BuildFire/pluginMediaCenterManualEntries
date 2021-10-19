@@ -73,12 +73,6 @@ var stringsConfig = {
         maxLength: 50,
         defaultValue: "Item removed from playlist",
       },
-      addAllToPlaylist: {
-        title: "Add all to playlist",
-        placeholder: "Add all to playlist",
-        maxLength: 50,
-        defaultValue: "Add all to playlist",
-      },
       addedAllItemsToPlaylist: {
         title: "Added all items to playlist",
         placeholder: "Added all items to playlist",
@@ -91,23 +85,11 @@ var stringsConfig = {
         maxLength: 80,
         defaultValue: "Added maximum allowed number of items to the playlist.",
       },
-      removeAllFromPlaylist: {
-        title: "Remove all from playlist",
-        placeholder: "Remove all from playlist",
-        maxLength: 35,
-        defaultValue: "Remove all from playlist",
-      },
       removedAllItemsFromPlaylist: {
         title: "Removed all items from playlist",
         placeholder: "Removed all items from playlist",
         maxLength: 50,
         defaultValue: "Removed all items from playlist",
-      },
-      goToPlaylist: {
-        title: "Go to playlist",
-        placeholder: "Go to playlist",
-        maxLength: 35,
-        defaultValue: "Go to playlist",
       },
       playlistLimitReached: {
         title: "Playlist limit reached!",

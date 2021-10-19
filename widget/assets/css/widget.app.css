@@ -1010,49 +1010,57 @@ input[type=range]::-ms-track {
 
 .playlist-actions {
 	position: absolute; 
-	bottom: 15px; 
-	width: 100%;
-	overflow: hidden;
-	display: flex;
-    align-items: center;
-    justify-content: center;
+	bottom: 5px; 
 	padding: 0 4px;
+	right: 5px;
 }
 
 .playlist-actions button {
 	padding: 12px 6px;
-	margin: 0 4px;
-	overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    max-width: 50%;
+	margin: 12px 8px;
+	display: block;
+	border-radius: 50%;
+	width: 48px;
+	height: 48px;
+	-webkit-box-shadow: rgb(0 0 0 / 60%) 0px 1px 5px;
+	-moz-box-shadow: rgb(0 0 0 / 60%) 0px 1px 5px;
+	box-shadow: rgb(0 0 0 / 60%) 0px 1px 5px;
+	-o-box-shadow: rgb(0 0 0 / 60%) 0px 1px 5px;
 }
 
-.playlist-actions button.add-button {
-	flex: 1;
-	transition: none;
-	margin-right: 2px;
-	border-radius: 25px;
-	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
+.btn-standard{
+	background-color: var(--bf-theme-default);
 }
 
-.playlist-actions button.add-button-only {
-	flex: 1;
-	margin: 0 2px !important;
-	border-radius: 25px !important;
-	max-width: 100% !important;
+.add-button-only{
+	background-color: var(--bf-theme-primary);
+}
+
+.playlist-actions .play-list-icon{
+	width: 90%;
+    height: 90%;
+	background-color: var(--bf-theme-icons);
+	-webkit-mask-size: 25px;
+	mask-size: 25px;
+	padding: 12px 18px;
+}
+
+.playlist-actions .add-button-icon{
+	-webkit-mask: url(icons/ic_playlist_add_material.svg) no-repeat center;
+	mask: url(icons/ic_playlist_add_material.svg) no-repeat center;
+}
+
+.playlist-actions .remove-button-icon{
+	-webkit-mask: url(icons/ic_playlist_remove_material.svg) no-repeat center;
+	mask: url(icons/ic_playlist_remove_material.svg) no-repeat center;
 }
 
 
-.playlist-actions button.go-to-button {
-	flex: 1;    
-	transition: none;
-	margin-left: 2px;
-	border-radius: 25px;
-	border-top-left-radius: 0;
-	border-bottom-left-radius: 0;
+.playlist-actions .go-to-button-icon{
+	-webkit-mask: url(icons/ic_playlist_open_material.svg) no-repeat center;
+	mask: url(icons/ic_playlist_open_material.svg) no-repeat center;
 }
+
 
 .summary {
 	padding-top:0.5rem
