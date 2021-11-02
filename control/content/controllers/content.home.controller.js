@@ -94,7 +94,7 @@
                     _limit = 10,
                     _maxLimit = 19,
                     searchOptions = {
-                        filter: { "$json.title": { "$regex": '/*' } },
+                        filter: {},
                         skip: _skip,
                         limit: _limit + 1 // the plus one is to check if there are any more
                     };

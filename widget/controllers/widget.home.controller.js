@@ -109,7 +109,7 @@
                 var _skip = 0,
                     _limit = 50,
                     searchOptions = {
-                        filter: { "$json.title": { "$regex": '/*' } },
+                        filter: { },
                         skip: _skip,
                         limit: _limit // the plus one is to check if there are any more
                     };
