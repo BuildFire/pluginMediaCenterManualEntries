@@ -41,8 +41,8 @@
               rankOfLastItem: 0,
               allowShare: true,
               allowSource: true,
-              transferAudioContentToPlayList:false,
-              forceAutoPlay:false
+              transferAudioContentToPlayList: false,
+              forceAutoPlay: false
             },
             design: {
               listLayout: "list-1",
@@ -85,8 +85,8 @@
             searchEngineId: '',
             allowShare: true,
             allowSource: true,
-            transferAudioContentToPlayList:false,
-            forceAutoPlay:false
+            transferAudioContentToPlayList: false,
+            forceAutoPlay: false
           };
           /**
            * Define links sortable options
@@ -179,22 +179,22 @@
         /**
          * This updateItemData method will call the Builfire update method to update the ContentMedia.item
          */
-        function updateItemData() {          
+        function updateItemData() {
           ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
-          ContentMedia.item.data && ContentMedia.item.data.title ? 
-          ContentMedia.item.data.titleIndex = ContentMedia.item.data.title.toLowerCase() : '';
+          ContentMedia.item.data && ContentMedia.item.data.title ?
+            ContentMedia.item.data.titleIndex = ContentMedia.item.data.title.toLowerCase() : '';
           if (!ContentMedia.item.data.deepLinkUrl) {
             ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: ContentMedia.item.id });
           }
           if (ContentMedia.item.data.searchEngineId) {
             SearchEngineService.update(ContentMedia.item.data.searchEngineId, ContentMedia.item.data).then(function () {
               update();
-            },function(){
-              SearchEngineService.insert(ContentMedia.item.data).then(function(result) {
-                if(result && result.id)
-                  ContentMedia.item.data.searchEngineId=result.id;
+            }, function () {
+              SearchEngineService.insert(ContentMedia.item.data).then(function (result) {
+                if (result && result.id)
+                  ContentMedia.item.data.searchEngineId = result.id;
                 update();
-              }, function() {
+              }, function () {
                 update();
               });;
             });
@@ -230,53 +230,62 @@
          * This addNewItem method will call the Builfire insert method to insert ContentMedia.item
          */
 
-        function createNewDeeplink(obj){
+        function createNewDeeplink(obj, cb) {
           new Deeplink({
-            deeplinkId:obj.id,
-            name:obj.data.title,
-            deeplinkData:{id:obj.id},
-            imageUrl:(obj.data.topImage)?obj.data.topImage:null
-          }).save();
+            deeplinkId: obj.id,
+            name: obj.data.title,
+            deeplinkData: { id: obj.id },
+            imageUrl: (obj.data.topImage) ? obj.data.topImage : null
+          }).save((err, res) => {
+            if (err)
+              return cb(err);
+            else
+              return cb(null, res);
+          });
         }
 
         function addNewItem(callback) {
           ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
-          ContentMedia.item.data && ContentMedia.item.data.title ? 
-          ContentMedia.item.data.titleIndex = ContentMedia.item.data.title.toLowerCase() : '';
+          ContentMedia.item.data && ContentMedia.item.data.title ?
+            ContentMedia.item.data.titleIndex = ContentMedia.item.data.title.toLowerCase() : '';
           SearchEngineService.insert(ContentMedia.item.data).then(function (searchEngineData) {
             ContentMedia.item.data.searchEngineId = searchEngineData.id;
             MediaContent.insert(ContentMedia.item.data).then((data) => {
-              createNewDeeplink(data);
-              MediaContent.getById(data.id).then((item) => {
-                ContentMedia.item = item;
-                ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: item.id });
-                updateMasterItem(item);
-                ContentMedia.saving = false;
-                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                MediaCenterSettings.content.rankOfLastItem = item.data.rank;
-                if (appId && MediaCenterSettings) {
-                  MediaCenter.update(appId, MediaCenterSettings).then((data) => {
-                  }, (err) => {
-                    callback(err);
-                  });
-                }else {
-                  MediaCenter.insert(MediaCenterSettings).then((data) => {
-                    console.info("Inserted MediaCenter rank");
-                  }, (err) => {
-                    callback(err);
-                  });
+              createNewDeeplink(data, (err, deeplink) => {
+                if (err) {
+                  callback(err);
                 }
-                Messaging.sendMessageToWidget({
-                  name: EVENTS.ITEMS_CHANGE,
-                  message: {}
-                });
+                MediaContent.getById(data.id).then((item) => {
+                  ContentMedia.item = item;
+                  ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: item.id });
+                  updateMasterItem(item);
+                  ContentMedia.saving = false;
+                  if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                  MediaCenterSettings.content.rankOfLastItem = item.data.rank;
+                  if (appId && MediaCenterSettings) {
+                    MediaCenter.update(appId, MediaCenterSettings).then((data) => {
+                    }, (err) => {
+                      callback(err);
+                    });
+                  } else {
+                    MediaCenter.insert(MediaCenterSettings).then((data) => {
+                      console.info("Inserted MediaCenter rank");
+                    }, (err) => {
+                      callback(err);
+                    });
+                  }
+                  Messaging.sendMessageToWidget({
+                    name: EVENTS.ITEMS_CHANGE,
+                    message: {}
+                  });
 
-                callback()
+                  callback()
+                }, (err) => {
+                  resetItem(err);
+                });
               }, (err) => {
-                resetItem(err);
+                callback(err);
               });
-            }, (err) => {
-              callback(err);
             });
           });
         }
@@ -289,20 +298,21 @@
          * updateItem called when ever there is some change in current media item
          * @param item
          */
-         ContentMedia.updateItem = () => {
+        ContentMedia.updateItem = () => {
           if (ContentMedia.saving) return;
           ContentMedia.isItemValid = isValidItem(ContentMedia.item.data);
           if (!ContentMedia.isItemValid) {
             $scope.titleRequired = 'Required';
             var scrollDiv = document.getElementById("titleInput").offsetTop;
-            return window.scrollTo({ top: scrollDiv, behavior: 'smooth'});
+            return window.scrollTo({ top: scrollDiv, behavior: 'smooth' });
           } else {
             $scope.titleRequired = false;
             ContentMedia.saving = true;
             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
             if (ContentMedia.item.id) {
-              createNewDeeplink(ContentMedia.item);
-              updateItemData();
+              createNewDeeplink(ContentMedia.item, (err, res) => {
+                updateItemData();
+              })
             } else {
               ContentMedia.item.data.dateCreated = new Date();
               addNewItem((err) => {
@@ -462,16 +472,16 @@
               }
             });
             Location.goToHome();
-            }, 0);
+          }, 0);
         };
-          
-          ContentMedia.cancelAdd = function () {
-            Messaging.sendMessageToWidget({
-              name: EVENTS.ROUTE_CHANGE,
-              message: {
-                path: PATHS.HOME
-              }
-            });
+
+        ContentMedia.cancelAdd = function () {
+          Messaging.sendMessageToWidget({
+            name: EVENTS.ROUTE_CHANGE,
+            message: {
+              path: PATHS.HOME
+            }
+          });
           Location.goToHome();
         };
         /**
