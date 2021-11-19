@@ -46,6 +46,7 @@
                             autoPlay: false,
                             autoPlayDelay: { label: "Off", value: 0 },
                             globalPlaylist: false,
+                            dateIndexed: true
                         },
                         design: {
                             listLayout: "list-1",
@@ -289,6 +290,13 @@
                 var updateGetOptions = function () {
                     var order = Orders.getOrder(WidgetHome.media.data.content.sortBy || Orders.ordersMap.Default);
                     if (order) {
+                        //Handles Indexing Changes mediaDate/mediaDateIndex
+                        if(WidgetHome.media.data.content.dateIndexed && order.key == "mediaDate"){
+                            order.key="mediaDateIndex";
+                        }else if(!WidgetHome.media.data.content.dateIndexed && order.key == "mediaDateIndex"){//so it don't couse issues before data is updated
+                            order.key="mediaDate";
+                        }
+                        //END Handles Indexing Changes mediaDate/mediaDateIndex
                         var sort = {};
                         sort[order.key] = order.order;
                         

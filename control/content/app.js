@@ -33,18 +33,20 @@
                         MediaCenterInfo: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location', function ($q, DB, COLLECTIONS, Orders, Location) {
                             var deferred = $q.defer();
                             var MediaCenter = new DB(COLLECTIONS.MediaCenter);
-                            MediaCenter.get().then(function success(result) {
-                                    if (result && result.id && result.data) {
-                                        deferred.resolve(result);
-                                    }
-                                    else {
+                            mainDateIndexCheck(function(success){       
+                                MediaCenter.get().then(function success(result) {
+                                        if (result && result.id && result.data) {
+                                            deferred.resolve(result);
+                                        }
+                                        else {
+                                            deferred.resolve(null);
+                                        }
+                                    },
+                                    function fail(err) {
                                         deferred.resolve(null);
                                     }
-                                },
-                                function fail(err) {
-                                    deferred.resolve(null);
-                                }
-                            );
+                                );
+                            });
                             return deferred.promise;
                         }]
                     }
