@@ -611,6 +611,7 @@
                                 }
                                 removeDeeplink(item);
                                 MediaContent.delete(item.id).then(function (data) {
+                                    console.log("Item deleted");
                                     ContentHome.items.splice(index, 1);
                                 }, function (err) {
                                     console.error('Error while deleting an item-----', err);

@@ -42,7 +42,8 @@
               allowShare: true,
               allowSource: true,
               transferAudioContentToPlayList: false,
-              forceAutoPlay: false
+              forceAutoPlay: false,
+              dateIndexed: true
             },
             design: {
               listLayout: "list-1",
