@@ -5,11 +5,7 @@
      
 function mainDateIndexCheck(callback){
     indexOldMediaDate(function(state){
-        if(!state){
-            return callback(false);
-        }else{
-            return callback(true);
-        }
+      return callback(state);
     });
 }
 
