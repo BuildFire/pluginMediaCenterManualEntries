@@ -55,7 +55,10 @@ function indexMediaContent(page,callback) {
         }
         if (data && data.result && data.result.length==50){
             indexMediaContent(page+1,function(state){return callback(state);});
-        }else if(data && data.result && data.result.length==0)
+        }else if(data && data.result && data.result.length==0){
+            return callback(true);
+        }
+        else if(data.length==0)
             return callback(true);
     });
 }
