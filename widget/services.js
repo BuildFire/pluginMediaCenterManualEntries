@@ -46,8 +46,8 @@
               {id: 1, name: "Oldest", value: "Oldest", key: "dateCreated", order: 1},
               {id: 1, name: "Media Title A-Z", value: "Media Title A-Z", key: "title", order: 1},
               {id: 1, name: "Media Title Z-A", value: "Media Title Z-A", key: "title", order: -1},
-              {id: 1, name: "Media Date Asc", value: "Media Date Asc", key: "mediaDate", order: 1},
-              {id: 1, name: "Media Date Desc", value: "Media Date Desc", key: "mediaDate", order: -1}
+              {id: 1, name: "Media Date Asc", value: "Media Date Asc", key: "mediaDateIndex", order: 1},
+              {id: 1, name: "Media Date Desc", value: "Media Date Desc", key: "mediaDateIndex", order: -1}
           ];
           return {
               ordersMap: ordersMap,

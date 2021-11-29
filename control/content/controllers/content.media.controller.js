@@ -41,8 +41,8 @@
               rankOfLastItem: 0,
               allowShare: true,
               allowSource: true,
-              transferAudioContentToPlayList: false,
-              forceAutoPlay: false,
+              transferAudioContentToPlayList:false,
+              forceAutoPlay:false,
               dateIndexed: true
             },
             design: {
@@ -81,6 +81,7 @@
             videoUrl: '',
             image: '',
             mediaDate: new Date(),
+            mediaDateIndex: new Date().getTime(),
             rank: (MediaCenterSettings.content.rankOfLastItem || 0) + 10,
             links: [], // this will contain action links,
             searchEngineId: '',
@@ -113,8 +114,10 @@
            */
           if (media) {
             ContentMedia.item = media;
-            if (media.data.mediaDate)
+            if (media.data.mediaDate){
               ContentMedia.item.data.mediaDate = new Date(media.data.mediaDate);
+              ContentMedia.item.data.mediaDateIndex = new Date(media.data.mediaDate).getTime();
+            }
             if (ContentMedia.item.data.topImage) {
               //topImage.loadbackground(ContentMedia.item.data.topImage);
             }
@@ -310,6 +313,9 @@
             $scope.titleRequired = false;
             ContentMedia.saving = true;
             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+            if (ContentMedia.item.mediaDate){
+              ContentMedia.item.mediaDateIndex = new Date(ContentMedia.item.mediaDate).getTime();
+            }
             if (ContentMedia.item.id) {
               createNewDeeplink(ContentMedia.item, (err, res) => {
                 updateItemData();

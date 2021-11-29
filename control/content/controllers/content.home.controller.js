@@ -24,7 +24,8 @@
                             allowShare: true,
                             allowSource: true,
                             transferAudioContentToPlayList: false,
-                            forceAutoPlay: false
+                            forceAutoPlay: false,
+                            dateIndexed: true
                         },
                         design: {
                             listLayout: "list-1",
@@ -161,6 +162,13 @@
                     if (ContentHome.info && ContentHome.info.data && ContentHome.info.data.content)
                         order = Orders.getOrder(ContentHome.info.data.content.sortBy || Orders.ordersMap.Default);
                     if (order) {
+                        //Handles Indexing Changes mediaDate/mediaDateIndex
+                        if(ContentHome.info.data.content.dateIndexed && order.key == "mediaDate"){
+                            order.key="mediaDateIndex";
+                        }else if(!ContentHome.info.data.content.dateIndexed && order.key == "mediaDateIndex"){//so it don't couse issues before data is updated
+                            order.key="mediaDate";
+                        }
+                        //END Handles Indexing Changes mediaDate/mediaDateIndex                        
                         var sort = {};
                         sort[order.key] = order.order;
                         if ((order.name == "Media Title A-Z" || order.name === "Media Title Z-A")) {
@@ -425,6 +433,7 @@
                                     delete value.data.links;
                                     delete value.data.rank;
                                     delete value.data.body;
+                                    delete value.data.mediaDateIndex;
                                     persons.push(value.data);
                                 });
                                 var csv = $csv.jsonToCsv(angular.toJson(persons), {
@@ -481,6 +490,17 @@
                                 rows[index].rank = rank;
                                 rows[index].body = rows[index].bodyHTML;
                                 rows[index].titleIndex = rows[index].title ? rows[index].titleIndex = rows[index].title.toLowerCase() : '';
+                                //MEDIA DATE INDEX
+                                var setMediaDateIndex=new Date().getTime();
+                                if(rows[index].mediaDateIndex){
+                                    setMediaDateIndex=rows[index].mediaDateIndex;
+                                }else if(rows[index].mediaDate){
+                                    setMediaDateIndex=new Date(rows[index].mediaDate).getTime();
+                                }else if(rows[index].dateCreated){
+                                    setMediaDateIndex=new Date(rows[index].dateCreated).getTime();
+                                }
+                                rows[index].mediaDateIndex = setMediaDateIndex;
+                                //MEDIA DATE INDEX
                             }
                             if (validateCsv(rows)) {
                                 MediaContent.insert(rows).then(function (data) {
