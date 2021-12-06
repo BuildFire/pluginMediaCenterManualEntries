@@ -25,7 +25,8 @@
                             allowSource: true,
                             transferAudioContentToPlayList: false,
                             forceAutoPlay: false,
-                            dateIndexed: true
+                            dateIndexed: true,
+                            dateCreatedIndexed: true
                         },
                         design: {
                             listLayout: "list-1",
