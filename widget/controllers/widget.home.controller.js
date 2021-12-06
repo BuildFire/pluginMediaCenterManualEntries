@@ -46,7 +46,8 @@
                             autoPlay: false,
                             autoPlayDelay: { label: "Off", value: 0 },
                             globalPlaylist: false,
-                            dateIndexed: true
+                            dateIndexed: true,
+                            dateCreatedIndexed: true
                         },
                         design: {
                             listLayout: "list-1",

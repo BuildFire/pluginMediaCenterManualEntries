@@ -43,7 +43,8 @@
               allowSource: true,
               transferAudioContentToPlayList:false,
               forceAutoPlay:false,
-              dateIndexed: true
+              dateIndexed: true,
+              dateCreatedIndexed: true
             },
             design: {
               listLayout: "list-1",
@@ -321,7 +322,7 @@
                 updateItemData();
               })
             } else {
-              ContentMedia.item.data.dateCreated = new Date();
+              ContentMedia.item.data.dateCreated = new Date().getTime();
               addNewItem((err) => {
                 if (err) {
                   console.error(err)
