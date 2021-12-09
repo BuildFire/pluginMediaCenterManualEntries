@@ -25,7 +25,8 @@
                             allowSource: true,
                             transferAudioContentToPlayList: false,
                             forceAutoPlay: false,
-                            dateIndexed: true
+                            dateIndexed: true,
+                            dateCreatedIndexed: true
                         },
                         design: {
                             listLayout: "list-1",
@@ -485,7 +486,7 @@
                             var rank = ContentHome.info.data.content.rankOfLastItem || 0;
                             for (var index = 0; index < rows.length; index++) {
                                 rank += 10;
-                                rows[index].dateCreated = new Date();
+                                rows[index].dateCreated = new Date().getTime();
                                 rows[index].links = [];
                                 rows[index].rank = rank;
                                 rows[index].body = rows[index].bodyHTML;

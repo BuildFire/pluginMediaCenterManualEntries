@@ -1,6 +1,7 @@
 /*
   NOTES:
   THIS PART OF CODE IS USED FOR INDEXING OLD DATA. THIS PART WAS ADDED IN NOVEMBER, 2021. REMOVE THIS AFTER A WHILE SO WE DON'T KEEP "JUNK" AND "GHOST" CODE.
+  THE UPDATE WAS MADE ON 12/06/2021 TO INCLUDE "dataCreated" FIELD
 */
      
 function mainDateIndexCheck(callback){
@@ -13,7 +14,7 @@ function indexOldMediaDate(callback) {
     buildfire.datastore.get("MediaCenter",function(err,resp){
         if(err || !resp || !resp.data || !resp.data.content){
             return callback(false);
-        }else if(resp.data.content.dateIndexed){
+        }else if(resp.data.content.dateIndexed && resp.data.content.dateCreatedIndexed){
             return callback(false);
         }else{
             showLoadingScreen();
@@ -64,12 +65,18 @@ function indexMediaContent(page,callback) {
 }
 
 function indexItem(item,index,callback){
-    var handleDate;
-    if (item.data.mediaDate)
-        handleDate = item.data.mediaDate;
-    else
-        handleDate = item.data.dateCreated;
-    item.data.mediaDateIndex = new Date(handleDate).getTime();
+    if(!item.data.mediaDateIndex){
+      var handleDate;
+      if (item.data.mediaDate)
+          handleDate = item.data.mediaDate;
+      else
+          handleDate = item.data.dateCreated;
+      item.data.mediaDateIndex = new Date(handleDate).getTime();
+    }
+    if(typeof item.data.dateCreated == "string"){
+      item.data.dateCreated=new Date(item.data.dateCreated).getTime();
+    }
+
     buildfire.datastore.update(item.id, item.data, "MediaContent", function(err, res){
         if(err)
             return callback(false,index);
@@ -80,6 +87,7 @@ function indexItem(item,index,callback){
 
 function updateMediaCenterFlag(obj,callback){
     obj.data.content.dateIndexed=true;
+    obj.data.content.dateCreatedIndexed=true;
     buildfire.datastore.update(obj.id,obj.data,"MediaCenter",function(err,data){
         if(err || !data){
             return callback(false);
