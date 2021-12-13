@@ -143,6 +143,16 @@
                     }
                 };
 
+                Buildfire.deeplink.onUpdate((deeplinkData) => {
+                    if (deeplinkData && deeplinkData.id) {
+                        $window.deeplinkingDone = true;
+                        $rootScope.showFeed = false;
+                        window.setTimeout(() => {
+                            WidgetHome.goTo(deeplinkData.id);
+                        }, 0);
+                    }
+                });
+
                 WidgetHome.goTo = function (id) {
                     var foundObj = WidgetHome.items.find(function (el) { return el.id == id; });
                     var index = WidgetHome.items.indexOf(foundObj);
