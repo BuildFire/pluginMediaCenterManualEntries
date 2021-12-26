@@ -9,7 +9,7 @@
                     <img ng-if="!WidgetMedia.fullScreen" data-ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage || ( skipMediaPage && WidgetMedia.item.data.videoUrl )"
                         load-image="16x9" style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
                         crop-width="1280" crop-height="720" crop-type="crop"
-                        data-final-src="{{WidgetMedia.item.data.topImage}}" />
+                        data-final-src="{{WidgetMedia.item.data.topImage | resizeImage }}" />
                         <img ng-if="!WidgetMedia.item.data.topImage && !WidgetMedia.showVideo" src="../../../styles/media/holder-16x9.png" style="width:100%;">
 
                     <div id="myVideo" ng-include="'templates/layouts/video-player.html'"></div>

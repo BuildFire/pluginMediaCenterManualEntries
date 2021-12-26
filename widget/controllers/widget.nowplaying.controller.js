@@ -317,6 +317,7 @@
                                 // param: userInput
                                 $rootScope.playNextItem(true);
                             } else if (e && e.data && e.data.track) {
+                                e.data.track.lastPosition = 0;
                                 NowPlaying.currentTrack = e.data.track;
                                 NowPlaying.playing = true;
                             } else {

@@ -9,6 +9,7 @@
                 WidgetHome.deepLink = false;
                 $rootScope.loadingData = true;
                 buildfire.spinner.hide();
+                $rootScope.resizeImg = (url) => buildfire.imageLib.resizeImage(url);
 
                 $rootScope.globalPlaylistStrings = {
                     itemAdded: strings.get('globalPlaylist.itemAdded'),
