@@ -236,18 +236,18 @@
                         case 'play':
                             NowPlaying.playing = true;
                             NowPlaying.paused = false;
-                            if(NowPlaying.forceAutoPlay)
-                                audioPlayer.getPlaylist(function(err,data){
-                                    first=false;
-                                    NowPlaying.keepPosition=e.data.track.lastPosition;
+                            audioPlayer.getPlaylist(function(err,data){
+                                first=false;
+                                NowPlaying.keepPosition=e.data.track.lastPosition;
 
-                                    var filteredPlaylist=data.tracks.filter(el=>{return el.plugin && el.plugin == buildfire.context.instanceId;});
-                                    var index=NowPlaying.findTrackIndex({tracks:filteredPlaylist},{myId:(e.data.track.myId)?e.data.track.myId:"none"});
+                                var filteredPlaylist=data.tracks.filter(el=>{return el.plugin && el.plugin == buildfire.context.instanceId;});
+                                var index=NowPlaying.findTrackIndex({tracks:filteredPlaylist},{myId:(e.data.track.myId)?e.data.track.myId:"none"});
 
-                                    NowPlaying.isItLast=(index==(filteredPlaylist.length-1));
-                                    if(index>=(filteredPlaylist.length-1)&&NowPlaying.forceAutoPlay&&!NowPlaying.settings.loopPlaylist){
-                                        NowPlaying.settings.autoPlayNext=false;
-                                    }
+                                NowPlaying.isItLast=(index==(filteredPlaylist.length-1));
+                                if(index>=(filteredPlaylist.length-1)&&NowPlaying.forceAutoPlay&&!NowPlaying.settings.loopPlaylist){
+                                    NowPlaying.settings.autoPlayNext=false;
+                                }
+                                if(NowPlaying.forceAutoPlay){
                                     audioPlayer.settings.set({autoPlayNext:false});
                                     var myInterval=setInterval(function(){ 
                                         if(ready){
@@ -255,11 +255,13 @@
                                                 NowPlaying.settings.autoPlayNext=true;
                                                 audioPlayer.settings.set({autoPlayNext:true});
                                             }
-
+    
                                             setOder=true;
                                             clearInterval(myInterval);
                                         }
                                     }, 100);
+                                }
+
                                 });
                             break;
                         case 'timeUpdate':
@@ -292,23 +294,33 @@
                             NowPlaying.currentTime = e.data.currentTime;
                             NowPlaying.duration = e.data.duration;
                             break;
-                        case 'audioEnded':
-                            ready = false;
-                            if ($rootScope.autoPlay) {
-                                $rootScope.playNextItem();
-                            } else {
-                                if(!NowPlaying.settings.autoPlayNext) {
-                                    NowPlaying.playing = false;
-                                    NowPlaying.paused = false;
+                            case 'audioEnded':
+                                ready = false;
+                                if ($rootScope.autoPlay) {
+                                    $rootScope.playNextItem();
+                                } else {
+                                    if(NowPlaying.isItLast && NowPlaying.settings.loopPlaylist){
+                                        NowPlaying.playing = true;
+                                        NowPlaying.paused = false;
+                                        NowPlaying.finished = false;
+                                        audioPlayer.setTime(0.1);
+                                        audioPlayer.play();
+                                    }
+                                    else{
+                                        if(!NowPlaying.settings.autoPlayNext) {
+                                            NowPlaying.playing = false;
+                                            NowPlaying.paused = false;
+                                        }
+                                        if(NowPlaying.forceAutoPlay&&NowPlaying.isItLast&&!NowPlaying.settings.loopPlaylist)
+                                        {
+                                            NowPlaying.playing = false;
+                                            NowPlaying.paused = true;
+                                            NowPlaying.finished=true;
+                                        } 
+                                        else NowPlaying.finished=false;
+                                    }
                                 }
-                                if(NowPlaying.forceAutoPlay&&NowPlaying.isItLast&&!NowPlaying.settings.loopPlaylist)
-                                {
-                                    NowPlaying.playing = false;
-                                    NowPlaying.paused = true;
-                                    NowPlaying.finished=true;
-                                } else NowPlaying.finished=false;
-                            }
-                            break;
+                                break;
                         case 'pause':
                             NowPlaying.playing = false;
                             break;
