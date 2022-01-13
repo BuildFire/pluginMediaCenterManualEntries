@@ -36,25 +36,22 @@
                     <div class="link-list">
                         <a class="media-action video" ng-click="WidgetMedia.toggleShowVideo();"
                             ng-if="WidgetMedia.item.data.videoUrl && !skipMediaPage">
-                            <i class="btn btn-success glyphicon glyphicon-play"></i>
+                            <i ng-class="WidgetMedia.showVideo ? 'glyphicon glyphicon-info-sign':'glyphicon glyphicon-film'" class="btn btn-success"></i>
                         </a>
                         <a class="media-action" ng-click="WidgetMedia.playAudio();" ng-if="WidgetMedia.item.data.audioUrl && !skipMediaPage">
                             <i class="btn btn-success glyphicon glyphicon-volume-up"></i>
                         </a>
-                        <a ng-if="WidgetMedia.item.srcUrl && allowSource" ng-click="WidgetMedia.openLink(WidgetMedia.item.srcUrl)"
+                        <a ng-if="WidgetMedia.item.srcUrl && allowSource && online" ng-click="WidgetMedia.openLink(WidgetMedia.item.srcUrl)"
                             target="_blank">
                             <i class="glyphicon share glyphicon-screenshot"></i>
                         </a>
                     </div>
                     <div class="li-actions">
-                        <i class="glyphicon glyphicon glyphicon-edit" ng-click="WidgetMedia.addNote()" ng-click=""
-                            role="button"></i>
-                        <i class="share glyphicon glyphicon-share-alt" ng-if="allowShare" ng-click="WidgetMedia.share($event)" role="button"></i>
+                        <div style="float: none; display: inline-block;" data-ng-if="WidgetMedia.isDownloading(WidgetMedia.item)" class="lds-ring-small"><div></div><div></div><div></div><div></div></div>
                         <i class="glyphicon icon bookmark" style="font-family: 'Glyphicons Halflings' !important;"
-                            ng-class="{ 'glyphicon-star-empty' : !WidgetMedia.item.data.bookmarked, 'glyphicon-star' : WidgetMedia.item.data.bookmarked }"
-                            ng-click="WidgetMedia.bookmark($event)" role="button"></i>
-                            <i ng-if="WidgetMedia.item.data.links.length" class="glyphicon glyphicon-align-justify" ng-click="WidgetMedia.openLinks(WidgetMedia.item.data.links)" role="button"></i>
-                            <i ng-if="globalPlaylist" class="glyphicon star" style="font-size: 17px;top: -3px;" ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(WidgetMedia.item.id), 'glyphicon-minus' : isInGlobalPlaylist(WidgetMedia.item.id) }" ng-click="toggleGlobalPlaylistItem($event, WidgetMedia.item)" role="button"></i>
+                        ng-class="{ 'glyphicon-star-empty' : !WidgetMedia.item.data.bookmarked, 'glyphicon-star' : WidgetMedia.item.data.bookmarked }"
+                        ng-click="WidgetMedia.bookmark($event)" role="button"></i>
+                        <i class="glyphicon glyphicon-option-horizontal" ng-click="WidgetMedia.showDrawer()" role="button"></i>
                     </div>
                 </div>
                 <p class="wysiwyg" ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>

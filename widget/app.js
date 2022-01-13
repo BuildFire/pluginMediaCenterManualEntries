@@ -45,25 +45,124 @@
                     controllerAs: 'WidgetMedia',
                     controller: 'WidgetMediaCtrl',
                     resolve: {
-                        media: ['$q', 'DB', 'COLLECTIONS', 'Location', '$route', function ($q, DB, COLLECTIONS, Location, $route) {
-
+                        media: ['$q', '$window', 'DB', 'OFSTORAGE', 'COLLECTIONS', 'Location', '$route', function ($q, $window, DB, OFSTORAGE, COLLECTIONS, Location, $route) {
+                            var isOnline = $window.navigator.onLine;
+                            var isWeb = buildfire.getContext().device.platform === 'web'
                             var deferred = $q.defer();
+                            var mediaId = $route.current.params.mediaId;
                             var MediaContent = new DB(COLLECTIONS.MediaContent);
-                            if ($route.current.params.mediaId) {
-                                MediaContent.getById($route.current.params.mediaId).then(function success(result) {
-                                    if (result && result.data) {
-                                        deferred.resolve(result);
-                                    }
-                                    else {
-                                        Location.goToHome();
-                                    }
-                                },
-                                    function fail() {
-                                        Location.goToHome();
-                                    }
-                                );
+                            var CachedMediaContent = new OFSTORAGE({
+                                path: "/data/mediaCenterManual",
+                                fileName: "cachedMediaContent"
+                            });
+                            var DownloadedMedia = new OFSTORAGE({
+                                path: "/data/mediaCenterManual",
+                                fileName: "downloadedMedia"
+                            });
+                            if (mediaId) {
+                                if (isOnline) {
+                                    console.log("$route.current.params.mediaId", $route.current.params.mediaId)
+                                    MediaContent.getById($route.current.params.mediaId).then(function success(result) {
+                                        if (result && result.data) {
+                                            if (!isWeb) {
+                                                // Check if media has downloads
+                                                DownloadedMedia.get((err, res) => {
+                                                    if (err) {
+                                                        buildfire.dialog.toast({
+                                                            message: "Found no downloaded items",
+                                                        });
+                                                    }
+                                                    if (res) {
+                                                        let matchingItems = res.filter(item => item.mediaId == mediaId);
+                                                        if (matchingItems.length > 0) {
+                                                            matchingItems.map(downloadedItem => {
+                                                                if (downloadedItem.mediaType == "video") {
+                                                                    // buildfire.dialog.toast({
+                                                                    //     message: `Found downloaded video ${downloadedItem.mediaPath}`,
+                                                                    // });
+                                                                    result.data.hasDownloadedVideo = true;
+                                                                }
+
+                                                                else if (downloadedItem.mediaType == "audio") {
+                                                                    result.data.hasDownloadedAudio = true;
+                                                                }
+
+                                                            });
+                                                        }
+                                                        else {
+                                                            // buildfire.dialog.toast({
+                                                            //     message: "Found no downloaded items",
+                                                            // });
+                                                        }
+                                                    }
+                                                    deferred.resolve(result);
+                                                });
+                                            }
+                                            else
+                                                deferred.resolve(result);
+                                        }
+                                        else {
+                                            buildfire.dialog.toast({
+                                                message: "Did not find the media",
+                                            });
+                                            Location.goToHome();
+                                        }
+                                    },
+                                        function fail(error) {
+                                            buildfire.dialog.toast({
+                                                message: "Fetching the media failed " + mediaId,
+                                            });
+                                            Location.goToHome();
+                                        }
+                                    );
+                                }
+
+                                else {
+                                    CachedMediaContent.getById(mediaId, (err, result) => {
+                                        if (err) {
+                                            buildfire.dialog.toast({
+                                                message: "Fetching the media failed" + err,
+                                            });
+                                            Location.goToHome();
+                                        }
+                                        else {
+                                            //Check if the cached media item has a downloaded video or audio
+                                            DownloadedMedia.get((err, res) => {
+                                                if (err) {
+                                                    buildfire.dialog.toast({
+                                                        message: "Found no downloaded items",
+                                                    });
+                                                }
+                                                if (res) {
+                                                    let matchingItems = res.filter(item => item.mediaId == mediaId);
+                                                    if (matchingItems.length > 0) {
+                                                        matchingItems.map(downloadedItem => {
+                                                            if (downloadedItem.mediaType == "video") {
+                                                                buildfire.dialog.toast({
+                                                                    message: `Found downloaded video ${downloadedItem.mediaPath}`,
+                                                                });
+                                                                result.data.hasDownloadedVideo = true;
+                                                                result.data.videoUrl = downloadedItem.mediaPath;
+                                                            }
+
+                                                            else if (downloadedItem.mediaType == "audio") {
+                                                                result.data.hasDownloadedAudio = true;
+                                                                result.data.audioUrl = downloadedItem.mediaPath;
+                                                            }
+
+                                                        });
+                                                    }
+                                                }
+                                                deferred.resolve(result);
+                                            });
+                                        }
+                                    })
+                                }
                             }
                             else {
+                                buildfire.dialog.toast({
+                                    message: "Mediaid not in params",
+                                });
                                 Location.goToHome();
                             }
                             return deferred.promise;
@@ -144,15 +243,14 @@
             $httpProvider.interceptors.push(interceptor);
 
         }])
-        .run(['Location', '$location', '$rootScope', 'Messaging', 'EVENTS', 'PATHS', 'DB', 'COLLECTIONS', function (Location, $location, $rootScope, Messaging, EVENTS, PATHS, DB, COLLECTIONS) {
+        .run(['Location', '$location', '$rootScope', '$window', 'Messaging', 'EVENTS', 'PATHS', 'DB', 'COLLECTIONS', function (Location, $location, $rootScope, $window, Messaging, EVENTS, PATHS, DB, COLLECTIONS) {
             buildfire.navigation.onBackButtonClick = function () {
-                if($rootScope.fullScreen)
-                {
+                if ($rootScope.fullScreen) {
                     $rootScope.goingBackFullScreen = true;
                     $rootScope.$digest();
                     return;
                 }
-                $rootScope.goingBackFullScreen=false;
+                $rootScope.goingBackFullScreen = false;
                 $rootScope.goingBack = true;
                 var navigate = function () {
                     buildfire.history.pop();
@@ -165,8 +263,8 @@
                             }
                         });
                         $("#showFeedBtn").click();
-                    $rootScope.showGlobalPlaylistButtons = true;
-                    if (!$rootScope.$$phase) $rootScope.$digest();
+                        $rootScope.showGlobalPlaylistButtons = true;
+                        if (!$rootScope.$$phase) $rootScope.$digest();
                     } else buildfire.navigation._goBackOne();
                 }
 
@@ -183,7 +281,7 @@
                         Location.go("#/media/" + path.split("/")[2]);
                     }
                     if (!$rootScope.$$phase) $rootScope.$digest();
-                } else if($rootScope.showEmptyState) {
+                } else if ($rootScope.showEmptyState) {
                     angular.element('#emptyState').css('display', 'none');
                     angular.element('#home').css('display', 'block');
                     $rootScope.showGlobalPlaylistButtons = true;
@@ -191,17 +289,32 @@
                 } else {
                     buildfire.navigation._goBackOne()
                     if (!$rootScope.$$phase) $rootScope.$digest();
-                }; 
+                };
             }
 
-            $rootScope.$on('$routeChangeSuccess', () => { 
+
+            // $rootScope.online = $window.navigator.onLine;
+
+            $rootScope.$on('$routeChangeSuccess', () => {
                 var path = $location.path();
                 if (path.indexOf('/media') == 0 || path.indexOf('/nowplaying') == 0) {
                     $rootScope.showGlobalPlaylistButtons = false;
                 } else $rootScope.showGlobalPlaylistButtons = true;
 
                 if (!$rootScope.$$phase) $rootScope.$digest();
-              });
+            });
+
+            $window.addEventListener("offline", function () {
+                $rootScope.online = false;
+                $rootScope.$emit('online');
+                console.log("changing online status to false");
+            });
+
+            $window.addEventListener("online", function () {
+                $rootScope.online = true;
+                console.log("changing online status to true");
+                $rootScope.$emit('online');
+            });
 
             buildfire.device.onAppBackgrounded(function () {
                 $rootScope.$emit('deviceLocked', {});

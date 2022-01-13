@@ -1,33 +1,32 @@
 <div class="holder padding-zero list-layout-4" ng-class="{'pb30': globalPlaylist}">
     <div class="media-center-plugin list-layout layout4 text-overlay">
         <div class="media-center-banner clearfix text-overlay">
-            <div ng-style="WidgetHome.data.content.images.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}" id="carousel" build-fire-carousel=""></div>
+            <div ng-style="WidgetHome.data.content.images.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}"
+                id="carousel" build-fire-carousel=""></div>
         </div>
-        <div class="text-left padded padding-bottom-zero clearfix text-overlay wysiwyg" >
-            <p ng-if="WidgetHome.showDescription()" ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml"></p>
+        <div class="text-left padded padding-bottom-zero clearfix text-overlay wysiwyg">
+            <p ng-if="WidgetHome.showDescription()"
+                ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml"></p>
         </div>
-        <div id="emptyContainer" class="padded" ng-if="!loadingData && (!WidgetHome.items || (WidgetHome.items && WidgetHome.items.length === 0))"></div>
+        <div id="emptyContainer" class="padded"
+            ng-if="!loadingData && (!WidgetHome.items || (WidgetHome.items && WidgetHome.items.length === 0))"></div>
         <div class="padded padding-top-zero text-overlay">
-            <div class="list-layout" infinite-scroll="WidgetHome.loadMore()"
-                 infinite-scroll-distance="1"
-                 data-infinite-container=".infinite-scroll-parent"
-                 infinite-scroll-disabled="WidgetHome.noMore">
+            <div class="list-layout" infinite-scroll="WidgetHome.loadMore()" infinite-scroll-distance="1"
+                data-infinite-container=".infinite-scroll-parent" infinite-scroll-disabled="WidgetHome.noMore">
                 <div ng-repeat="item in WidgetHome.items" ng-if="$index % 2 == 0" class="row text-overlay">
                     <div class="list-item-odd col-xs-6 pull-left clickable " ng-click="WidgetHome.goToMedia($index)">
                         <div class="list-item-media text-center overflow-hidden text-overlay">
                             <div class="li-actions-item">
-                                <i class="share glyphicon glyphicon-share-alt" ng-if="allowShare" ng-click="WidgetHome.share($event, item)" role="button"></i>
-                                <i class="bookmark glyphicon" style="right: 0; font-family: 'Glyphicons Halflings' !important; position: absolute;" ng-class="{ 'glyphicon-star-empty' : !item.data.bookmarked, 'glyphicon-star' : item.data.bookmarked }"
-                                 ng-click="WidgetHome.bookmark($event, item)" role="button"></i>
-                                <i ng-show="globalPlaylist" class="glyphicon" style="right: 0; bottom: 0; top: unset; font-family: 'Glyphicons Halflings' !important; font-size: 17px;"  ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(item.id), 'glyphicon-minus' : isInGlobalPlaylist(item.id) }" ng-click="toggleGlobalPlaylistItem($event, item)" role="button"></i>
+                                <i class="glyphicon glyphicon-option-horizontal" style="right: 0;"
+                                    ng-click="WidgetHome.showDrawer($event, WidgetHome.items[$index + 1])" role="button"></i>
                             </div>
                             <div class="list-media-holder text-overlay"
-                                 play-btn="{{WidgetHome.items[$index].data.videoUrl.length > 0  || (skipMediaPage && (WidgetHome.items[$index].data.videoUrl.length > 0 || WidgetHome.items[$index].data.audioUrl.length > 0)) }}">
-                                <img ng-if="WidgetHome.items[$index].data.topImage" load-image="1x1"
-                                     crop-width="200" crop-height="200" crop-type="crop"
-                                     data-final-src="{{WidgetHome.items[$index].data.topImage}}">
+                                play-btn="{{WidgetHome.items[$index].data.videoUrl.length > 0  || (skipMediaPage && (WidgetHome.items[$index].data.videoUrl.length > 0 || WidgetHome.items[$index].data.audioUrl.length > 0)) }}">
+                                <img ng-if="WidgetHome.items[$index].data.topImage" load-image="1x1" crop-width="200"
+                                    crop-height="200" crop-type="crop"
+                                    data-final-src="{{WidgetHome.items[$index].data.topImage}}">
                                 <img ng-if="!WidgetHome.items[$index].data.topImage"
-                                     src="../../../styles/media/holder-1x1.png">
+                                    src="../../../styles/media/holder-1x1.png">
                             </div>
                         </div>
                         <div class="list-item-copy text-left text-overlay">
@@ -35,26 +34,34 @@
                                 <a class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index].data.title}}</a>
                             </p>
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index].data.summary}}</p>
-                            <span class="list-item-date" data-ng-if="WidgetHome.items[$index].data.mediaDate">{{WidgetHome.items[$index].data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
+                            <span class="list-item-date"
+                                data-ng-if="WidgetHome.items[$index].data.mediaDate">{{WidgetHome.items[$index].data.mediaDate
+                                | jsDate | date:"MMMM dd, yyyy"}}</span>
+                            <i data-ng-if="WidgetHome.items[$index].hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
+                                style="float: right; margin-top: 2px;" class="glyphicon glyphicon-ok-circle"
+                                role="button"></i>
+                            <!-- <div data-ng-if="currentlyDownloading.indexOf(WidgetHome.items[$index].id) > -1" role="button" class="loader">
+                                
+                            </div> -->
+                            <div data-ng-if="currentlyDownloading.indexOf(WidgetHome.items[$index].id) > -1" class="lds-ring-small"><div></div><div></div><div></div><div></div></div>
                         </div>
                     </div>
-                    <div class="list-item-even col-xs-6 pull-left clickable text-overlay " ng-click="WidgetHome.goToMedia($index+1)"
-                         ng-if="WidgetHome.items[$index + 1]">
+                    <div class="list-item-even col-xs-6 pull-left clickable text-overlay "
+                        ng-click="WidgetHome.goToMedia($index+1)" ng-if="WidgetHome.items[$index + 1]">
                         <div class="list-item-media text-center overflow-hidden text-overlay">
                             <div class="li-actions-item">
-                                <i class="share glyphicon glyphicon-share-alt" ng-if="allowShare" ng-click="WidgetHome.share($event, WidgetHome.items[$index + 1])" role="button"></i>
-                                <i class="bookmark glyphicon" style="right: 0; font-family: 'Glyphicons Halflings' !important; position: absolute;" ng-class="{ 'glyphicon-star-empty' : !WidgetHome.items[$index + 1].data.bookmarked, 'glyphicon-star' : WidgetHome.items[$index + 1].data.bookmarked }"
-                                 ng-click="WidgetHome.bookmark($event, WidgetHome.items[$index + 1])" role="button"></i>
-                                 <i ng-show="globalPlaylist" class="glyphicon" style="right: 0; bottom: 0; top: unset; font-family: 'Glyphicons Halflings' !important; font-size: 17px;"  ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(WidgetHome.items[$index + 1].id), 'glyphicon-minus' : isInGlobalPlaylist(WidgetHome.items[$index + 1].id) }" ng-click="toggleGlobalPlaylistItem($event, WidgetHome.items[$index + 1])" role="button"></i>
+                                <i style="right: 0;" class="glyphicon glyphicon-option-horizontal"
+                                    ng-click="WidgetHome.showDrawer($event, WidgetHome.items[$index + 1])"
+                                    role="button"></i>
 
                             </div>
                             <div class="list-media-holder text-overlay"
-                                 play-btn="{{WidgetHome.items[$index+1].data.videoUrl.length > 0  || (skipMediaPage && (WidgetHome.items[$index+1].data.videoUrl.length > 0 || WidgetHome.items[$index+1].data.audioUrl.length > 0)) }}">
+                                play-btn="{{WidgetHome.items[$index+1].data.videoUrl.length > 0  || (skipMediaPage && (WidgetHome.items[$index+1].data.videoUrl.length > 0 || WidgetHome.items[$index+1].data.audioUrl.length > 0)) }}">
                                 <img ng-if="WidgetHome.items[$index + 1].data.topImage" load-image="1x1"
-                                     crop-width="200" crop-height="200" crop-type="crop"
-                                     data-final-src="{{WidgetHome.items[$index + 1].data.topImage}}">
+                                    crop-width="200" crop-height="200" crop-type="crop"
+                                    data-final-src="{{WidgetHome.items[$index + 1].data.topImage}}">
                                 <img ng-if="!WidgetHome.items[$index + 1].data.topImage"
-                                     src="../../../styles/media/holder-1x1.png">
+                                    src="../../../styles/media/holder-1x1.png">
                             </div>
                         </div>
                         <div class="list-item-copy text-left text-overlay">
@@ -63,7 +70,14 @@
                                     1].data.title}}</a>
                             </p>
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.summary}}</p>
-                            <span class="list-item-date" data-ng-if="WidgetHome.items[$index + 1].data.mediaDate">{{WidgetHome.items[$index + 1].data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
+                            <span class="list-item-date"
+                                data-ng-if="WidgetHome.items[$index + 1].data.mediaDate">{{WidgetHome.items[$index +
+                                1].data.mediaDate | jsDate | date:"MMMM dd, yyyy"}}</span>
+                                <i data-ng-if="WidgetHome.items[$index + 1].hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
+                                style="float: right; margin-top: 2px;" class="glyphicon glyphicon-ok-circle"
+                                role="button"></i>
+                            <!-- <div data-ng-if="currentlyDownloading.indexOf(WidgetHome.items[$index + 1].id) > -1" role="button" class="loader"> -->
+                                <div data-ng-if="currentlyDownloading.indexOf(WidgetHome.items[$index + 1].id) > -1" class="lds-ring-small"><div></div><div></div><div></div><div></div></div>
                         </div>
                     </div>
                 </div>

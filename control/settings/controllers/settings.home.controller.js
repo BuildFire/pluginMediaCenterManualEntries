@@ -33,6 +33,10 @@
                 if (typeof (Settings.data.content.globalPlaylistPlugin) == 'undefined') {
                     Settings.data.content.globalPlaylistPlugin = false;
                 }
+                console.log("offline download is", Settings.data.content.allowOfflineDownload)
+                if (typeof (Settings.data.content.allowOfflineDownload) == 'undefined') {
+                    Settings.data.content.allowOfflineDownload = false;
+                }
             }, (err) => {
                 console.error(err);
             });
@@ -120,6 +124,14 @@
                 let value = !e.target.checked;
                 if (value != Settings.data.content.showGlobalAddAllToPlaylistButton) {
                     Settings.data.content.showGlobalAddAllToPlaylistButton = value;
+                    MediaCenter.save(Settings.data).then(() => {});
+                }
+            };
+
+            Settings.setAllowOfflineDownload = (e) => {
+                let value = e.target.checked;
+                if (value != Settings.data.content.allowOfflineDownload) {
+                    Settings.data.content.allowOfflineDownload = value;
                     MediaCenter.save(Settings.data).then(() => {});
                 }
             };
