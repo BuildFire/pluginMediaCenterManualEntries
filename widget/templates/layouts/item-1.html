@@ -21,7 +21,7 @@
         <div class="item-main-header" ng-if="!WidgetMedia.fullScreen">
             <div class="text-left padded word-break">
                 <h5 class="margin-top-zero word-break">{{WidgetMedia.item.data.title}} <div data-ng-if="WidgetMedia.isDownloading(WidgetMedia.item)" class="lds-ring-small"><div></div><div></div><div></div><div></div></div></h5>
-                <p data-ng-if="WidgetMedia.data.hasDownloadedVideo" class="margin-bottom-zero word-break">Downloaded</p>
+                <p data-ng-if="WidgetMedia.item.data.hasDownloadedVideo" class="margin-bottom-zero word-break">Downloaded</p>
                 <p class="margin-bottom-zero word-break">{{WidgetMedia.item.data.summary}}</p>
             </div>
         </div>

@@ -659,196 +659,194 @@
                             // $rootScope.seekTime = 10.22;
                             WidgetHome.items = WidgetHome.items ? WidgetHome.items.concat(result) : result;
                             //Check if items have downloaded media
-                            CachedMediaContent.insert(WidgetHome.items, (error, res) => {
-                                if (WidgetHome.items.length > 0 && Buildfire.getContext().device.platform != 'web') {
-                                    DownloadedMedia.get((err, res) => {
-                                        let downloadedIDS = [];
-                                        if (err) {
-                                            return callback(err);
-                                        }
-                                        if (res) {
-                                            downloadedIDS = res.map(item => item.mediaId);
-                                            if (downloadedIDS.length > 0) {
-                                                WidgetHome.items = WidgetHome.items.map(item => {
-                                                    if (downloadedIDS.indexOf(item.id) > -1) {
-                                                        item.hasDownloadedMedia = true;
-                                                        let downloadedItem = res[downloadedIDS.indexOf(item.id)];
-                                                        if (downloadedItem.mediaType == "video") {
-                                                            item.data.hasDownloadedVideo = true;
+                            if (!WidgetHome.isWeb) {
+                                CachedMediaContent.insert(WidgetHome.items, (error, res) => {
+                                    if (WidgetHome.items.length > 0) {
+                                        DownloadedMedia.get((err, res) => {
+                                            let downloadedIDS = [];
+                                            if (err) {
+                                                return callback(err);
+                                            }
+                                            if (res) {
+                                                downloadedIDS = res.map(item => item.mediaId);
+                                                if (downloadedIDS.length > 0) {
+                                                    WidgetHome.items = WidgetHome.items.map(item => {
+                                                        if (downloadedIDS.indexOf(item.id) > -1) {
+                                                            item.hasDownloadedMedia = true;
+                                                            let downloadedItem = res[downloadedIDS.indexOf(item.id)];
+                                                            if (downloadedItem.mediaType == "video") {
+                                                                item.data.hasDownloadedVideo = true;
+                                                            }
+    
+                                                            else if (downloadedItem.mediaType == "audio") {
+                                                                item.data.hasDownloadedAudio = true;
+                                                            }
                                                         }
-
-                                                        else if (downloadedItem.mediaType == "audio") {
-                                                            item.data.hasDownloadedAudio = true;
-                                                        }
+                                                        return item;
+                                                    });
+                                                }
+                                            }
+                                            // WidgetHome.items = result;
+                                            WidgetHome.isBusy = false;
+                                            $rootScope.myItems = WidgetHome.items;
+                                            bookmarks.sync($scope);
+                                            if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
+    
+                                            if (result.length < _limit) {// to indicate there is no more
+                                                WidgetHome.noMore = true;
+                                            }
+                                            else {
+                                                result.pop();
+                                                searchOptions.skip = searchOptions.skip + _limit;
+                                                WidgetHome.noMore = false;
+                                                // In order to get all the items
+                                                return getMediaItems();
+                                            }
+    
+                                            if (!$window.deeplinkingDone && buildfire.deeplink) {
+                                                buildfire.deeplink.getData(function (data) {
+                                                    var exists = data && data.id && WidgetHome.items.find(item => item.id === data.id);
+                                                    if (data && data.mediaId) {
+                                                        $rootScope.showFeed = false;
+                                                        $rootScope.fromSearch = true;
+                                                        $window.deeplinkingDone = true;
+                                                        window.setTimeout(() => {
+                                                            WidgetHome.goTo(data.mediaId);
+                                                        }, 0);
                                                     }
-                                                    return item;
+                                                    else if (data && data.link) {
+                                                        $rootScope.showFeed = false;
+                                                        $rootScope.fromSearch = true;
+                                                        $window.deeplinkingDone = true;
+                                                        var foundObj = WidgetHome.items.find(function (el) { return el.id == data.link; });
+                                                        if (!foundObj) return WidgetHome.setEmptyState();
+                                                        if (data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
+                                                            $rootScope.deepLinkNavigate = true;
+                                                            $rootScope.seekTime = data.timeIndex;
+                                                        }
+                                                        window.setTimeout(() => {
+                                                            if (foundObj.data.audioUrl && $rootScope.seekTime) {
+                                                                return Location.go('#/nowplaying/' + foundObj.id)
+                                                            }
+    
+                                                            WidgetHome.goTo(data.link);
+                                                        }, 0);
+                                                    }
+                                                    else if (data && data.deepLinkUrl) {
+                                                        var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
+                                                        var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
+                                                        var itemId = JSON.parse(deepLinkUrl).id;
+                                                        $rootScope.showFeed = false;
+                                                        $rootScope.fromSearch = true;
+                                                        $window.deeplinkingDone = true;
+                                                        window.setTimeout(() => {
+                                                            WidgetHome.goTo(itemId);
+                                                        }, 0);
+                                                    }
+                                                    else if (data && exists) {
+                                                        $window.deeplinkingDone = true;
+                                                        $rootScope.showFeed = false;
+                                                        window.setTimeout(() => {
+                                                            WidgetHome.goTo(data.id);
+                                                        }, 0);
+                                                    } else if (data && !exists) {
+                                                        $window.deeplinkingDone = true;
+                                                        WidgetHome.deepLink = true;
+                                                        const text = strings.get("deeplink.deeplinkMediaNotFound") ? strings.get("deeplink.deeplinkMediaNotFound") : "Media does not exist!";
+                                                        buildfire.components.toast.showToastMessage({ text }, () => { });
+                                                    } else WidgetHome.deepLink = true;
                                                 });
                                             }
-                                        }
-                                        // WidgetHome.items = result;
-                                        WidgetHome.isBusy = false;
-                                        $rootScope.myItems = WidgetHome.items;
-                                        bookmarks.sync($scope);
-                                        if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
-
-                                        if (result.length < _limit) {// to indicate there is no more
-                                            WidgetHome.noMore = true;
-                                        }
-                                        else {
-                                            result.pop();
-                                            searchOptions.skip = searchOptions.skip + _limit;
-                                            WidgetHome.noMore = false;
-                                            // In order to get all the items
-                                            return getMediaItems();
-                                        }
-
-                                        if (!$window.deeplinkingDone && buildfire.deeplink) {
-                                            buildfire.deeplink.getData(function (data) {
-                                                var exists = data && data.id && WidgetHome.items.find(item => item.id === data.id);
-                                                if (data && data.mediaId) {
-                                                    $rootScope.showFeed = false;
-                                                    $rootScope.fromSearch = true;
-                                                    $window.deeplinkingDone = true;
-                                                    window.setTimeout(() => {
-                                                        WidgetHome.goTo(data.mediaId);
-                                                    }, 0);
-                                                }
-                                                else if (data && data.link) {
-                                                    $rootScope.showFeed = false;
-                                                    $rootScope.fromSearch = true;
-                                                    $window.deeplinkingDone = true;
-                                                    var foundObj = WidgetHome.items.find(function (el) { return el.id == data.link; });
-                                                    if (!foundObj) return WidgetHome.setEmptyState();
-                                                    if (data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
-                                                        $rootScope.deepLinkNavigate = true;
-                                                        $rootScope.seekTime = data.timeIndex;
-                                                    }
-                                                    window.setTimeout(() => {
-                                                        if (foundObj.data.audioUrl && $rootScope.seekTime) {
-                                                            return Location.go('#/nowplaying/' + foundObj.id)
-                                                        }
-
-                                                        WidgetHome.goTo(data.link);
-                                                    }, 0);
-                                                }
-                                                else if (data && data.deepLinkUrl) {
-                                                    var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
-                                                    var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
-                                                    var itemId = JSON.parse(deepLinkUrl).id;
-                                                    $rootScope.showFeed = false;
-                                                    $rootScope.fromSearch = true;
-                                                    $window.deeplinkingDone = true;
-                                                    window.setTimeout(() => {
-                                                        WidgetHome.goTo(itemId);
-                                                    }, 0);
-                                                }
-                                                else if (data && exists) {
-                                                    $window.deeplinkingDone = true;
-                                                    $rootScope.showFeed = false;
-                                                    window.setTimeout(() => {
-                                                        WidgetHome.goTo(data.id);
-                                                    }, 0);
-                                                } else if (data && !exists) {
-                                                    $window.deeplinkingDone = true;
-                                                    WidgetHome.deepLink = true;
-                                                    const text = strings.get("deeplink.deeplinkMediaNotFound") ? strings.get("deeplink.deeplinkMediaNotFound") : "Media does not exist!";
-                                                    buildfire.components.toast.showToastMessage({ text }, () => { });
-                                                } else WidgetHome.deepLink = true;
-                                            });
-                                        }
-                                        setTimeout(() => {
-                                            WidgetHome.isBusy = false;
-                                            $rootScope.loadingData = false;
-                                            buildfire.spinner.hide();
-                                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                                        }, 0);
-                                    });
-                                }
-                                else {
-                                    // WidgetHome.items = result;
-                                    WidgetHome.isBusy = false;
-                                    $rootScope.myItems = WidgetHome.items;
-                                    bookmarks.sync($scope);
-                                    if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
-
-                                    if (result.length < _limit) {// to indicate there is no more
-                                        WidgetHome.noMore = true;
-                                    }
-                                    else {
-                                        result.pop();
-                                        searchOptions.skip = searchOptions.skip + _limit;
-                                        WidgetHome.noMore = false;
-                                        // In order to get all the items
-                                        return getMediaItems();
-                                    }
-
-                                    if (!$window.deeplinkingDone && buildfire.deeplink) {
-                                        buildfire.deeplink.getData(function (data) {
-                                            var exists = data && data.id && WidgetHome.items.find(item => item.id === data.id);
-                                            if (data && data.mediaId) {
-                                                $rootScope.showFeed = false;
-                                                $rootScope.fromSearch = true;
-                                                $window.deeplinkingDone = true;
-                                                window.setTimeout(() => {
-                                                    WidgetHome.goTo(data.mediaId);
-                                                }, 0);
-                                            }
-                                            else if (data && data.link) {
-                                                $rootScope.showFeed = false;
-                                                $rootScope.fromSearch = true;
-                                                $window.deeplinkingDone = true;
-                                                var foundObj = WidgetHome.items.find(function (el) { return el.id == data.link; });
-                                                if (!foundObj) return WidgetHome.setEmptyState();
-                                                if (data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
-                                                    $rootScope.deepLinkNavigate = true;
-                                                    $rootScope.seekTime = data.timeIndex;
-                                                }
-                                                window.setTimeout(() => {
-                                                    if (foundObj.data.audioUrl && $rootScope.seekTime) {
-                                                        return Location.go('#/nowplaying/' + foundObj.id)
-                                                    }
-
-                                                    WidgetHome.goTo(data.link);
-                                                }, 0);
-                                            }
-                                            else if (data && data.deepLinkUrl) {
-                                                var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
-                                                var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
-                                                var itemId = JSON.parse(deepLinkUrl).id;
-                                                $rootScope.showFeed = false;
-                                                $rootScope.fromSearch = true;
-                                                $window.deeplinkingDone = true;
-                                                window.setTimeout(() => {
-                                                    WidgetHome.goTo(itemId);
-                                                }, 0);
-                                            }
-                                            else if (data && exists) {
-                                                $window.deeplinkingDone = true;
-                                                $rootScope.showFeed = false;
-                                                window.setTimeout(() => {
-                                                    WidgetHome.goTo(data.id);
-                                                }, 0);
-                                            } else if (data && !exists) {
-                                                $window.deeplinkingDone = true;
-                                                WidgetHome.deepLink = true;
-                                                const text = strings.get("deeplink.deeplinkMediaNotFound") ? strings.get("deeplink.deeplinkMediaNotFound") : "Media does not exist!";
-                                                buildfire.components.toast.showToastMessage({ text }, () => { });
-                                            } else WidgetHome.deepLink = true;
+                                            setTimeout(() => {
+                                                WidgetHome.isBusy = false;
+                                                $rootScope.loadingData = false;
+                                                buildfire.spinner.hide();
+                                                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                            }, 0);
                                         });
                                     }
-                                    setTimeout(() => {
-                                        WidgetHome.isBusy = false;
-                                        $rootScope.loadingData = false;
-                                        buildfire.spinner.hide();
-                                        if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                                    }, 0);
-                                }
-                            }, function fail(err) {
+                                 
+                                });
+                            }
+                            else {
+                                // WidgetHome.items = result;
                                 WidgetHome.isBusy = false;
-                                $rootScope.loadingData = false;
-                                buildfire.spinner.hide();
-                                console.error(err);
-                            });
+                                $rootScope.myItems = WidgetHome.items;
+                                bookmarks.sync($scope);
+                                if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
+
+                                if (result.length < _limit) {// to indicate there is no more
+                                    WidgetHome.noMore = true;
+                                }
+                                else {
+                                    result.pop();
+                                    searchOptions.skip = searchOptions.skip + _limit;
+                                    WidgetHome.noMore = false;
+                                    // In order to get all the items
+                                    return getMediaItems();
+                                }
+
+                                if (!$window.deeplinkingDone && buildfire.deeplink) {
+                                    buildfire.deeplink.getData(function (data) {
+                                        var exists = data && data.id && WidgetHome.items.find(item => item.id === data.id);
+                                        if (data && data.mediaId) {
+                                            $rootScope.showFeed = false;
+                                            $rootScope.fromSearch = true;
+                                            $window.deeplinkingDone = true;
+                                            window.setTimeout(() => {
+                                                WidgetHome.goTo(data.mediaId);
+                                            }, 0);
+                                        }
+                                        else if (data && data.link) {
+                                            $rootScope.showFeed = false;
+                                            $rootScope.fromSearch = true;
+                                            $window.deeplinkingDone = true;
+                                            var foundObj = WidgetHome.items.find(function (el) { return el.id == data.link; });
+                                            if (!foundObj) return WidgetHome.setEmptyState();
+                                            if (data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
+                                                $rootScope.deepLinkNavigate = true;
+                                                $rootScope.seekTime = data.timeIndex;
+                                            }
+                                            window.setTimeout(() => {
+                                                if (foundObj.data.audioUrl && $rootScope.seekTime) {
+                                                    return Location.go('#/nowplaying/' + foundObj.id)
+                                                }
+
+                                                WidgetHome.goTo(data.link);
+                                            }, 0);
+                                        }
+                                        else if (data && data.deepLinkUrl) {
+                                            var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
+                                            var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
+                                            var itemId = JSON.parse(deepLinkUrl).id;
+                                            $rootScope.showFeed = false;
+                                            $rootScope.fromSearch = true;
+                                            $window.deeplinkingDone = true;
+                                            window.setTimeout(() => {
+                                                WidgetHome.goTo(itemId);
+                                            }, 0);
+                                        }
+                                        else if (data && exists) {
+                                            $window.deeplinkingDone = true;
+                                            $rootScope.showFeed = false;
+                                            window.setTimeout(() => {
+                                                WidgetHome.goTo(data.id);
+                                            }, 0);
+                                        } else if (data && !exists) {
+                                            $window.deeplinkingDone = true;
+                                            WidgetHome.deepLink = true;
+                                            const text = strings.get("deeplink.deeplinkMediaNotFound") ? strings.get("deeplink.deeplinkMediaNotFound") : "Media does not exist!";
+                                            buildfire.components.toast.showToastMessage({ text }, () => { });
+                                        } else WidgetHome.deepLink = true;
+                                    });
+                                }
+                                setTimeout(() => {
+                                    WidgetHome.isBusy = false;
+                                    $rootScope.loadingData = false;
+                                    buildfire.spinner.hide();
+                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                }, 0);
+                            }
                         });
                     }
 
@@ -867,7 +865,13 @@
                                 return callback(null, true);
                             }, 0);
                         }
+
                         CachedMediaContent.get((err, res) => {
+                            if (WidgetHome.noMore) {
+                                buildfire.spinner.hide();
+                                $rootScope.loadingData = false;
+                                return;
+                            }
                             let cachedItems = [];
                             if (err) {
                                 return callback(err);
@@ -879,7 +883,7 @@
                             //     message: "Cached items found " + cachedItems.length,
                             // });
                             if (!cachedItems) cachedItems = [];
-                            WidgetHome.items = WidgetHome.items ? WidgetHome.items.concat(cachedItems) : cachedItems;
+                            WidgetHome.items = cachedItems;
                             DownloadedMedia.get((err, res) => {
                                 let downloadedIDS = [];
                                 if (err) {
@@ -905,9 +909,12 @@
                                         });
                                     }
                                 }
-                                buildfire.dialog.alert({
-                                    message: "You are offline! Downloaded media is available.",
+                                WidgetHome.items.sort(function (a, b) {
+                                    if (a.hasDownloadedMedia && !b.hasDownloadedMedia) return -1;
+                                    if (!a.hasDownloadedMedia && b.hasDownloadedMedia) return 1;
+                                    return 0;
                                 });
+                                WidgetHome.noMore = true;
                                 setTimeout(() => {
                                     buildfire.spinner.hide();
                                     WidgetHome.isBusy = false;
@@ -1433,6 +1440,11 @@
 
                 $rootScope.$on('online', function () {
                     WidgetHome.online = $rootScope.online;
+                    if (!$rootScope.online) {
+                        buildfire.dialog.alert({
+                            message: "You are offline! Downloaded media is available.",
+                        });
+                    }
                     Location.goToHome();
                 });
 

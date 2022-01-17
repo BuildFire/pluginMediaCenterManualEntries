@@ -33,13 +33,14 @@
                         <p style="display: inline" class="ellipsis margin-zero text-primary"><a class="text-primary">{{item.data.title}}</a> </p><i style="float: right; display: inline;" class="glyphicon glyphicon-option-horizontal" ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
 
                         <p class="summary ellipsis margin-zero">{{item.data.summary}}</p>
+                        <div class="date-row">
                         <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate | jsDate |
                             date:"MMMM dd, yyyy"}}</span>
                         </span><i
                             data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
-                            style="float: right; margin-top: 2px;" class="glyphicon glyphicon-ok-circle"
+                            style="margin-top: 2px;  margin-left: auto;" class="glyphicon glyphicon-ok-circle"
                             ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
-                            <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" class="lds-ring-small"><div></div><div></div><div></div><div></div></div>
+                            <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" class="lds-ring-small"><div></div><div></div><div></div><div></div></div></div>
                         </div>
                         <!-- <div class="li-actions-item" style="bottom:5%;">
                             <i class="glyphicon bookmark star" style="top:unset !important; bottom:10%;"

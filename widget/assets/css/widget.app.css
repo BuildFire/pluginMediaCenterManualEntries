@@ -1073,12 +1073,17 @@ input[type=range]::-ms-track {
 	-webkit-box-orient: vertical;  
 }
 
+.date-row {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
 .lds-ring-small {
 	position: relative;
 	width: 20px;
 	height: 20px;
-	float: right;
-	top: 5px;
+	margin-left: auto;
   }
   .lds-ring-small div {
     box-sizing: border-box;

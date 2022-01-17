@@ -41,12 +41,20 @@
                     <div class="summary">
                         <p class="margin-bottom-zero">{{item.data.summary}}</p>
                     </div>
-                    <span class="list-item-date" data-ng-if="item.data.mediaDate"
-                        style="font-size:11px; font-style:italic; margin-top:-4px;">{{item.data.mediaDate | jsDate |
-                        date:"MMMM dd, yyyy"}}</span>
-                    <i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
-                        style="float: right; margin-top: 2px;" class="glyphicon glyphicon-ok-circle" role="button"></i>
-                        <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" class="lds-ring-small"><div></div><div></div><div></div><div></div></div>
+                    <div class="date-row">
+                        <span class="list-item-date" data-ng-if="item.data.mediaDate"
+                            style="font-size:11px; font-style:italic; margin-top:-4px;">{{item.data.mediaDate | jsDate |
+                            date:"MMMM dd, yyyy"}}</span>
+                        <i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
+                            style="margin-left: auto; margin-top: 2px;" class="glyphicon glyphicon-ok-circle"
+                            role="button"></i>
+                        <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" class="lds-ring-small">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

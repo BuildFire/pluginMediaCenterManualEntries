@@ -18,7 +18,8 @@
                         <div class="list-item-media text-center overflow-hidden text-overlay">
                             <div class="li-actions-item">
                                 <i class="glyphicon glyphicon-option-horizontal" style="right: 0;"
-                                    ng-click="WidgetHome.showDrawer($event, WidgetHome.items[$index + 1])" role="button"></i>
+                                    ng-click="WidgetHome.showDrawer($event, WidgetHome.items[$index + 1])"
+                                    role="button"></i>
                             </div>
                             <div class="list-media-holder text-overlay"
                                 play-btn="{{WidgetHome.items[$index].data.videoUrl.length > 0  || (skipMediaPage && (WidgetHome.items[$index].data.videoUrl.length > 0 || WidgetHome.items[$index].data.audioUrl.length > 0)) }}">
@@ -34,16 +35,24 @@
                                 <a class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index].data.title}}</a>
                             </p>
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index].data.summary}}</p>
+                            <div class="date-row">
                             <span class="list-item-date"
                                 data-ng-if="WidgetHome.items[$index].data.mediaDate">{{WidgetHome.items[$index].data.mediaDate
                                 | jsDate | date:"MMMM dd, yyyy"}}</span>
                             <i data-ng-if="WidgetHome.items[$index].hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
-                                style="float: right; margin-top: 2px;" class="glyphicon glyphicon-ok-circle"
+                                style="margin-left: auto; margin-top: 2px;" class="glyphicon glyphicon-ok-circle"
                                 role="button"></i>
                             <!-- <div data-ng-if="currentlyDownloading.indexOf(WidgetHome.items[$index].id) > -1" role="button" class="loader">
                                 
                             </div> -->
-                            <div data-ng-if="currentlyDownloading.indexOf(WidgetHome.items[$index].id) > -1" class="lds-ring-small"><div></div><div></div><div></div><div></div></div>
+                            <div data-ng-if="currentlyDownloading.indexOf(WidgetHome.items[$index].id) > -1"
+                                class="lds-ring-small">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
+                        </div>
                         </div>
                     </div>
                     <div class="list-item-even col-xs-6 pull-left clickable text-overlay "
@@ -70,14 +79,22 @@
                                     1].data.title}}</a>
                             </p>
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.summary}}</p>
+                            <div class="date-row">
                             <span class="list-item-date"
                                 data-ng-if="WidgetHome.items[$index + 1].data.mediaDate">{{WidgetHome.items[$index +
                                 1].data.mediaDate | jsDate | date:"MMMM dd, yyyy"}}</span>
-                                <i data-ng-if="WidgetHome.items[$index + 1].hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
-                                style="float: right; margin-top: 2px;" class="glyphicon glyphicon-ok-circle"
+                            <i data-ng-if="WidgetHome.items[$index + 1].hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
+                                style="margin-left: auto; margin-top: 2px;" class="glyphicon glyphicon-ok-circle"
                                 role="button"></i>
                             <!-- <div data-ng-if="currentlyDownloading.indexOf(WidgetHome.items[$index + 1].id) > -1" role="button" class="loader"> -->
-                                <div data-ng-if="currentlyDownloading.indexOf(WidgetHome.items[$index + 1].id) > -1" class="lds-ring-small"><div></div><div></div><div></div><div></div></div>
+                            <div data-ng-if="currentlyDownloading.indexOf(WidgetHome.items[$index + 1].id) > -1"
+                                class="lds-ring-small">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
+                            </div>
                         </div>
                     </div>
                 </div>

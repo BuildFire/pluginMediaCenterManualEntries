@@ -29,9 +29,12 @@
                         <div class="list-item-copy text-left">
                             <p class="ellipsis margin-zero text-primary"><a class="text-primary">{{item.data.title}}</a></p>
                             <p class="summary ellipsis margin-zero">{{item.data.summary}}</p>
-                            <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}} </span><i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload" style="float: right; margin-top: 2px;" class="glyphicon glyphicon-ok-circle" role="button"></i>
+                            <div class="date-row">
+                                <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}} </span><i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload" style="margin-top: 2px; margin-left: auto;" class="glyphicon glyphicon-ok-circle" role="button"></i>
+                                <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" class="lds-ring-small"><div></div><div></div><div></div><div></div></div>
+                            </div>
                             <!-- <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" role="button" class="loader"></div> -->
-                            <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" class="lds-ring-small"><div></div><div></div><div></div><div></div></div>
+   
                         </div>
                     </div>
                 </div>
