@@ -33,7 +33,6 @@
                 if (typeof (Settings.data.content.globalPlaylistPlugin) == 'undefined') {
                     Settings.data.content.globalPlaylistPlugin = false;
                 }
-                console.log("offline download is", Settings.data.content.allowOfflineDownload)
                 if (typeof (Settings.data.content.allowOfflineDownload) == 'undefined') {
                     Settings.data.content.allowOfflineDownload = false;
                 }

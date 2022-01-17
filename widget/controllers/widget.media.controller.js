@@ -279,7 +279,6 @@
                         WidgetMedia.media = {
                             data: data.data
                         };
-                        console.log("Media center", data);
                         $rootScope.backgroundImage = WidgetMedia.media && WidgetMedia.media.data && WidgetMedia.media.data.design && WidgetMedia.media.data.design.backgroundImage;
                     }, function (err) {
                         WidgetMedia.media = {
@@ -654,21 +653,6 @@
                     });
                 };
 
-                WidgetMedia.read = function () {
-                    buildfire.services.fileSystem.fileManager.readFileAsText(
-                        { path: "/data/people/", fileName: "managers.json" },
-                        (error, fileContent) => {
-                            if (error) {
-                                WidgetMedia.error = "Error in reading: " + JSON.stringify(error);
-                                console.log("error in reading", error)
-                                return;
-                            }
-                            console.log("file content", fileContent)
-                            WidgetMedia.error = "File Content: " + JSON.stringify(fileContent);
-                        }
-                    );
-                };
-
                 WidgetMedia.getVideoDownloadURL = function () {
                     if (WidgetMedia.item.data.videoUrl) {
                         var myType;
@@ -708,123 +692,6 @@
                     return $rootScope.currentlyDownloading.indexOf(item.id) > -1;
                 };
 
-                // WidgetMedia.download = function (mediaType) {
-                //     $rootScope.currentlyDownloading.push(WidgetMedia.item.id);
-                //     if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                //     // if (Buildfire.getContext().device.platform === 'web') {
-                //     //     buildfire.dialog.alert({
-                //     //         message: "You can't download media in the web browser",
-                //     //     });
-                //     //     return;
-                //     // }
-                //     // if (mediaType === 'video') {
-                //     //     if (WidgetMedia.item.data.videoUrl) {
-                //     //         WidgetMedia.downloadingMedia = true;
-                //     //         WidgetMedia.API.pause();
-                //     //         //TODO show download modal
-                //     //         //check videoURL is valid
-                //     //         let { uri, type, source } = WidgetMedia.getVideoDownloadURL();
-                //     //         console.log("donwloading", uri, type, source);
-                //     //         if (source === 'youtube' || source === 'vimeo') {
-                //     //             //TODO show error in modal that you can not download from youtube or vimeo
-                //     //             WidgetMedia.error = "Invalid source"
-                //     //         }
-                //     //         else {
-                //     //             WidgetMedia.error = "Downloading..."
-                //     //             buildfire.dialog.toast({
-                //     //                 message: `Downloading instance ${Buildfire.getContext().instanceId}`,
-                //     //                 type: 'warning',
-                //     //             });
-                //     //             $rootScope.currentlyDownloading.push(WidgetMedia.item.id);
-                //     //             buildfire.services.fileSystem.fileManager.download(
-                //     //                 {
-                //     //                     uri:
-                //     //                         uri,
-                //     //                     path: "/data/mediaCenterManual/" + Buildfire.getContext().instanceId + "/" + mediaType + "/",
-                //     //                     fileName: WidgetMedia.item.id + "." + type,
-                //     //                 },
-                //     //                 (err, filePath) => {
-                //     //                     if (err) {
-                //     //                         WidgetMedia.error = "Error in downloading: " + JSON.stringify(err);
-                //     //                         console.log("error in downloading", err)
-                //     //                         buildfire.dialog.toast({
-                //     //                             message: `Error`,
-                //     //                             type: 'warning',
-                //     //                         });
-                //     //                         return;
-                //     //                     }
-                //     //                     // Save the offline media
-                //     //                     buildfire.analytics.trackAction('mediaDownloadedOffline');
-                //     //                     new OfflineAccess({
-                //     //                         db: DownloadedMedia,
-                //     //                     }).save({
-                //     //                         mediaId: WidgetMedia.item.id,
-                //     //                         mediaType: mediaType,
-                //     //                         mediaPath: filePath,
-                //     //                         createdOn: new Date(),
-                //     //                     }, (err, result) => {
-                //     //                         if (err) {
-                //     //                             console.error(err);
-                //     //                             return;
-                //     //                         }
-                //     //                         console.log("offline media saved", result);
-                //     //                         WidgetMedia.error = "Downloaded";
-                //     //                         let index = $rootScope.currentlyDownloading.indexOf(WidgetMedia.item.id);
-                //     //                         $rootScope.currentlyDownloading.splice(index, 1);
-                //     //                         buildfire.dialog.toast({
-                //     //                             message: `Downloaded and saved video`,
-                //     //                             type: 'warning',
-                //     //                         });
-                //     //                     });
-                //     //                 }
-                //     //             );
-                //     //         }
-
-                //     //     }
-                //     // }
-                // };
-
-                // WidgetMedia.removeDownload = function (mediaType) {
-                // buildfire.spinner.show();
-                // let type;
-                // if (mediaType === 'video') {
-                //     type = WidgetMedia.getVideoDownloadURL().type;
-                // }
-                // buildfire.services.fileSystem.fileManager.deleteFile(
-                //     {
-                //         path: "/data/mediaCenterManual/" + Buildfire.getContext().instanceId + "/" + mediaType + "/",
-                //         fileName: WidgetMedia.item.id + "." + type
-                //     },
-                //     (err, isDeleted) => {
-                //         if (err) return console.error(err);
-                //         buildfire.spinner.hide();
-                //         if (isDeleted) {
-                //             buildfire.dialog.toast({
-                //                 message: `Removed video from fs`,
-                //                 type: 'warning',
-                //             });
-                //             new OfflineAccess({
-                //                 db: DownloadedMedia,
-                //             }).delete({
-                //                 mediaId: WidgetMedia.item.id,
-                //                 mediaType: mediaType,
-                //             }, (err, res) => {
-                //                 if (err) {
-                //                     console.error(err);
-                //                     return;
-                //                 }
-                //                 console.log("offline media removed", res);
-                //                 WidgetMedia.error = "Removed";
-                //                 buildfire.dialog.toast({
-                //                     message: `Removed video`,
-                //                     type: 'warning',
-                //                 });
-                //             });
-                //         }
-                //     }
-                // );
-
-                // }
 
                 WidgetMedia.addNote = function () {
                     var options = {

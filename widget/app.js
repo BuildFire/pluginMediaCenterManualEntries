@@ -297,12 +297,10 @@
             $window.addEventListener("offline", function () {
                 $rootScope.online = false;
                 $rootScope.$emit('online');
-                console.log("changing online status to false");
             });
 
             $window.addEventListener("online", function () {
                 $rootScope.online = true;
-                console.log("changing online status to true");
                 $rootScope.$emit('online');
             });
 

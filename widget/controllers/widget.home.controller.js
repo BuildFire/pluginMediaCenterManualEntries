@@ -901,7 +901,6 @@
                                                 }
                                             }
 
-                                            console.log("new item", item);
                                             return item;
                                         });
                                     }
@@ -1168,7 +1167,6 @@
                 // }
 
                 $rootScope.download = function (item, mediaType) {
-                    console.log("downloading", item.data.videoUrl);
                     if (Buildfire.getContext().device.platform === 'web') {
                         buildfire.dialog.alert({
                             message: "You can't download media in the web browser",
@@ -1180,7 +1178,6 @@
                             //check videoURL is valid
                             let { uri, type, source } = WidgetHome.getVideoDownloadURL(item.data.videoUrl);
                             if (source === 'youtube' || source === 'vimeo') {
-                                //TODO show error in modal that you can not download from youtube or vimeo
                                 buildfire.dialog.show(
                                     {
                                         title: "Cannot download Media",
@@ -1342,7 +1339,6 @@
                 };
 
                 WidgetHome.goToMedia = function (ind) {
-                    console.log("ind", ind)
                     if (typeof ind != 'number') {
                         var foundObj = WidgetHome.items.find(function (el) { return el.id == ind; });
                         ind = WidgetHome.items.indexOf(foundObj);
@@ -1436,14 +1432,12 @@
                 });
 
                 $rootScope.$on('online', function () {
-                    console.log("online status changed");
                     WidgetHome.online = $rootScope.online;
                     Location.goToHome();
                 });
 
                 $rootScope.$watch('showFeed', function () {
                     if ($rootScope.showFeed) {
-                        console.log("showing feed")
                         listener.clear();
                         listener = Buildfire.datastore.onUpdate(onUpdateCallback);
                         bookmarks.sync($scope);
@@ -1493,24 +1487,6 @@
                         }
                     }
                 });
-
-                // $rootScope.$watch('showFeed', function () {
-                //     if ($rootScope.showFeed) {
-                //         listener.clear();
-                //         listener = Buildfire.datastore.onUpdate(onUpdateCallback);
-                //         bookmarks.sync($scope);
-                //         if(!WidgetHome.items.length) WidgetHome.deepLink = true;
-                //         MediaCenter.get().then(function success(result) {
-                //             WidgetHome.media = result;
-                //             if (WidgetHome.media.data.design && $rootScope.skipMediaPage) $rootScope.skipMediaPage = true;
-                //         },
-                //             function fail() {
-                //                 WidgetHome.media = _infoData;
-                //             }
-                //         );
-
-                //     }
-                // });
 
                 $rootScope.$watch('goingBack', function () {
                     if ($rootScope.goingBack) {
