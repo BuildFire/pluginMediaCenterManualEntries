@@ -102,16 +102,10 @@
                                                 deferred.resolve(result);
                                         }
                                         else {
-                                            buildfire.dialog.toast({
-                                                message: "Did not find the media",
-                                            });
                                             Location.goToHome();
                                         }
                                     },
                                         function fail(error) {
-                                            buildfire.dialog.toast({
-                                                message: "Fetching the media failed " + mediaId,
-                                            });
                                             Location.goToHome();
                                         }
                                     );
@@ -129,18 +123,14 @@
                                             //Check if the cached media item has a downloaded video or audio
                                             DownloadedMedia.get((err, res) => {
                                                 if (err) {
-                                                    buildfire.dialog.toast({
-                                                        message: "Found no downloaded items",
-                                                    });
+                               
                                                 }
                                                 if (res) {
                                                     let matchingItems = res.filter(item => item.mediaId == mediaId);
                                                     if (matchingItems.length > 0) {
                                                         matchingItems.map(downloadedItem => {
                                                             if (downloadedItem.mediaType == "video") {
-                                                                buildfire.dialog.toast({
-                                                                    message: `Found downloaded video ${downloadedItem.mediaPath}`,
-                                                                });
+                                               
                                                                 result.data.hasDownloadedVideo = true;
                                                                 result.data.videoUrl = downloadedItem.mediaPath;
                                                             }
