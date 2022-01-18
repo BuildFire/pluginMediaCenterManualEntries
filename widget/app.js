@@ -123,14 +123,14 @@
                                             //Check if the cached media item has a downloaded video or audio
                                             DownloadedMedia.get((err, res) => {
                                                 if (err) {
-                               
+
                                                 }
                                                 if (res) {
                                                     let matchingItems = res.filter(item => item.mediaId == mediaId);
                                                     if (matchingItems.length > 0) {
                                                         matchingItems.map(downloadedItem => {
                                                             if (downloadedItem.mediaType == "video") {
-                                               
+
                                                                 result.data.hasDownloadedVideo = true;
                                                                 result.data.videoUrl = downloadedItem.mediaPath;
                                                             }
@@ -255,7 +255,27 @@
                         $("#showFeedBtn").click();
                         $rootScope.showGlobalPlaylistButtons = true;
                         if (!$rootScope.$$phase) $rootScope.$digest();
-                    } else buildfire.navigation._goBackOne();
+                    } else {
+                        if ($rootScope.currentlyDownloading.length > 0) {
+                            buildfire.dialog.confirm(
+                                {
+                                    message: "There is media currently downloading, are you sure you want to go back?",
+                                },
+                                (err, isConfirmed) => {
+                                    if (err) console.error(err);
+    
+                                    if (isConfirmed) {
+                                        buildfire.navigation._goBackOne()
+                                    } else {
+                                        //Prevent action
+                                    }
+                                }
+                            );
+                        }
+                        else {
+                            buildfire.navigation._goBackOne()
+                        }
+                    }
                 }
 
                 var path = $location.path();
@@ -277,8 +297,27 @@
                     $rootScope.showGlobalPlaylistButtons = true;
                     $rootScope.showEmptyState = false;
                 } else {
-                    buildfire.navigation._goBackOne()
-                    if (!$rootScope.$$phase) $rootScope.$digest();
+                    if ($rootScope.currentlyDownloading.length > 0) {
+                        buildfire.dialog.confirm(
+                            {
+                                message: "There is media currently downloading, are you sure you want to go back?",
+                            },
+                            (err, isConfirmed) => {
+                                if (err) console.error(err);
+
+                                if (isConfirmed) {
+                                    buildfire.navigation._goBackOne()
+                                    if (!$rootScope.$$phase) $rootScope.$digest();
+                                } else {
+                                    //Prevent action
+                                }
+                            }
+                        );
+                    }
+                    else {
+                        buildfire.navigation._goBackOne()
+                        if (!$rootScope.$$phase) $rootScope.$digest();
+                    }
                 };
             }
 
