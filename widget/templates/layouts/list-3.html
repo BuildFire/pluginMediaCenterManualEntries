@@ -25,10 +25,21 @@
                 </div>
                 <div class="padded text-left text-overlay">
                     <div class="titleFlexBox">
-                        <p class="text-primary ellipsis margin-zero">
+                        <p class="text-primary ellipsis margin-zero title">
                             <a class="text-primary">{{item.data.title}}</a>
                         </p>
-                        <div class="action">
+                        <div class="action" style="display: flex; flex-direction: row;">
+                            <div class="li-actions-item">
+                                <i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
+                                style="margin-left: auto; margin-top: 2px;" class="glyphicon glyphicon-ok-circle"
+                                role="button"></i>
+                            <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" class="lds-ring-small">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
+                            </div>
                             <div class="li-actions-item">
                                 <!-- <i class="share glyphicon glyphicon-share-alt star" ng-if="allowShare" ng-click="WidgetHome.share($event, item)" role="button"></i>
                             <i class="glyphicon bookmark star" ng-class="{ 'glyphicon-star-empty' : !item.data.bookmarked, 'glyphicon-star' : item.data.bookmarked }" ng-click="WidgetHome.bookmark($event, item)" role="button"></i>
@@ -36,25 +47,16 @@
                                 <i class="glyphicon glyphicon-option-horizontal"
                                     ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
                             </div>
+                  
                         </div>
                     </div>
                     <div class="summary">
                         <p class="margin-bottom-zero">{{item.data.summary}}</p>
                     </div>
-                    <div class="date-row">
+               
                         <span class="list-item-date" data-ng-if="item.data.mediaDate"
                             style="font-size:11px; font-style:italic; margin-top:-4px;">{{item.data.mediaDate | jsDate |
                             date:"MMMM dd, yyyy"}}</span>
-                        <i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
-                            style="margin-left: auto; margin-top: 2px;" class="glyphicon glyphicon-ok-circle"
-                            role="button"></i>
-                        <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" class="lds-ring-small">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

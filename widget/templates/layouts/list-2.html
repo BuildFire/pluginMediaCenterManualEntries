@@ -30,19 +30,34 @@
 
                     <div class="list-item-copy text-left padding-left-ten padding-right-ten text-overlay"
                         style=" width:100%;padding-right: 30px !important;">
-                        <p style="display: inline" class="ellipsis margin-zero text-primary"><a class="text-primary">{{item.data.title}}</a> </p><i style="float: right; display: inline;" class="glyphicon glyphicon-option-horizontal" ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
-
-                        <p class="summary ellipsis margin-zero">{{item.data.summary}}</p>
                         <div class="date-row">
-                        <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate | jsDate |
-                            date:"MMMM dd, yyyy"}}</span>
-                        </span><i
-                            data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
-                            style="margin-top: 2px;  margin-left: auto;" class="glyphicon glyphicon-ok-circle"
-                            ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
-                            <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" class="lds-ring-small"><div></div><div></div><div></div><div></div></div></div>
+                            <p class="ellipsis margin-zero text-primary title"><a
+                                    class="text-primary">{{item.data.title}}</a> </p>
+                            <div style="display: flex; flex-direction: row;">
+                                
+                                <i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
+                                style=" margin-right: 10px;" class="glyphicon glyphicon-ok-circle"
+                                ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
+                                <div style="margin-right: 10px;" data-ng-if="currentlyDownloading.indexOf(item.id) > -1" class="lds-ring-small">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                                <i style="float: right; display: inline;" class="glyphicon glyphicon-option-horizontal"
+                                    ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
+                            </div>
+
                         </div>
-                        <!-- <div class="li-actions-item" style="bottom:5%;">
+
+                    
+
+                    <p class="summary ellipsis margin-zero">{{item.data.summary}}</p>
+
+                    <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate | jsDate |
+                        date:"MMMM dd, yyyy"}}</span>
+                    </span>
+                    <!-- <div class="li-actions-item" style="bottom:5%;">
                             <i class="glyphicon bookmark star" style="top:unset !important; bottom:10%;"
                                 ng-class="{ 'glyphicon-star-empty' : !item.data.bookmarked, 'glyphicon-star' : item.data.bookmarked}"
                                 ng-click="WidgetHome.bookmark($event, item)" role="button"></i>
@@ -53,9 +68,10 @@
                                 ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(item.id), 'glyphicon-minus' : isInGlobalPlaylist(item.id) }"
                                 ng-click="toggleGlobalPlaylistItem($event, item)" role="button"></i>
                         </div> -->
-                    </div>
                 </div>
+            </div>
             </div>
         </div>
     </div>
+</div>
 </div>

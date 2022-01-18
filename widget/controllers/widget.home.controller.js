@@ -13,6 +13,7 @@
                 // $rootScope.online = $window.navigator.onLine;
                 $rootScope.online = $window.navigator.onLine;
                 WidgetHome.online = $rootScope.online;
+                $rootScope.backgroundColor = buildfire.getContext().appTheme.colors.backgroundColor ? {"background-color": buildfire.getContext().appTheme.colors.backgroundColor} : {"background-color": '#ffffff'};
                 // $rootScope.online = false;
                 // WidgetHome.online = false;
                 buildfire.spinner.hide();
@@ -1234,6 +1235,8 @@
                                                 (err, filePath) => {
                                                     if (err) {
                                                         console.log("error in downloading", JSON.stringify(err));
+                                                        let index = $rootScope.currentlyDownloading.indexOf(item.id);
+                                                        $rootScope.currentlyDownloading.splice(index, 1);
                                                         buildfire.dialog.toast({
                                                             message: `Error`,
                                                             type: 'warning',
@@ -1429,6 +1432,10 @@
                     });
                 };
 
+                WidgetHome.dismissOfflineBox = function () {
+                    $rootScope.showOfflineBox = false;
+                };
+
                 $rootScope.$on("Carousel:LOADED", function () {
                     if (WidgetHome.media.data.content && WidgetHome.media.data.content.images) {
                         view = new Buildfire.components.carousel.view("#carousel", WidgetHome.media.data.content.images);
@@ -1440,11 +1447,6 @@
 
                 $rootScope.$on('online', function () {
                     WidgetHome.online = $rootScope.online;
-                    if (!$rootScope.online) {
-                        buildfire.dialog.toast({
-                            message: "You are offline! Downloaded media is available.",
-                        });
-                    }
                     Location.goToHome();
                 });
 

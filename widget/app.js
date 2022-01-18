@@ -333,13 +333,21 @@
                 if (!$rootScope.$$phase) $rootScope.$digest();
             });
 
+            if (!window.navigator.onLine) {
+                if ($rootScope.showOfflineBox != false) {
+                    $rootScope.showOfflineBox = true;
+                }
+            }
+
             $window.addEventListener("offline", function () {
                 $rootScope.online = false;
+                $rootScope.showOfflineBox = true;
                 $rootScope.$emit('online');
             });
 
             $window.addEventListener("online", function () {
                 $rootScope.online = true;
+                $rootScope.showOfflineBox = false;
                 $rootScope.$emit('online');
             });
 

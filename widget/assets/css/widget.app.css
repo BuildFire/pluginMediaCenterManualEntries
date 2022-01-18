@@ -1060,6 +1060,10 @@ input[type=range]::-ms-track {
 	mask: url(icons/ic_playlist_open_material.svg) no-repeat center;
 }
 
+.title {
+	max-width: 80%;
+}
+
 
 .summary {
 	padding-top:0.5rem
@@ -1084,6 +1088,7 @@ input[type=range]::-ms-track {
 	width: 20px;
 	height: 20px;
 	margin-left: auto;
+	top: 3px;
   }
   .lds-ring-small div {
     box-sizing: border-box;
@@ -1136,3 +1141,71 @@ input[type=range]::-ms-track {
 	0% { transform: rotate(0deg); }
 	100% { transform: rotate(360deg); }
   }
+
+  .offlineBox {
+	padding: 20px;
+	z-index: 1000000;
+	animation-name: fromTop;
+	animation-duration: 300ms;
+	animation-fill-mode: forwards;
+	margin-top: -100px;
+  }
+  
+  .offlineBox.offlineBoxToTop {
+	animation-name: offlineBoxToTop;
+	animation-duration: 300ms;
+	animation-fill-mode: forwards;
+  }
+  
+  .toFullHeight {
+	animation-name: toFullHeight;
+	animation-duration: 300ms;
+	animation-fill-mode: forwards;
+  }
+  
+  .offlineBox > div {
+	display: flex;
+	align-items: center;
+  }
+  
+  .offlineBox > div > div:first-of-type {
+	margin-right: 20px;
+  }
+  
+  .offlineBox > div:last-of-type {
+	display: flex;
+	justify-content: flex-end;
+  }
+  
+  .offlineBox .dismissBtn {
+	margin-top: 10px;
+	margin-right: 0 !important;
+	cursor: pointer;
+	letter-spacing: 2px;
+	font-weight: bold;
+  }
+
+  @keyframes fromTop {
+	to {
+	  margin-top: 0;
+	}
+  }
+  
+  @keyframes toFullHeight {
+	from {
+	  height: calc(100vh - 116px) !important;
+	}
+	to {
+	  height: 100vh !important;
+	}
+  }
+  
+  @keyframes offlineBoxToTop {
+	from {
+	  margin-top: 0;
+	}
+	to {
+	  margin-top: -108px;
+	}
+  }
+  

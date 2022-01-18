@@ -31,28 +31,26 @@
                             </div>
                         </div>
                         <div class="list-item-copy text-left text-overlay">
-                            <p class="text-primary ellipsis margin-zero">
-                                <a class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index].data.title}}</a>
-                            </p>
-                            <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index].data.summary}}</p>
                             <div class="date-row">
-                            <span class="list-item-date"
-                                data-ng-if="WidgetHome.items[$index].data.mediaDate">{{WidgetHome.items[$index].data.mediaDate
-                                | jsDate | date:"MMMM dd, yyyy"}}</span>
-                            <i data-ng-if="WidgetHome.items[$index].hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
-                                style="margin-left: auto; margin-top: 2px;" class="glyphicon glyphicon-ok-circle"
-                                role="button"></i>
-                            <!-- <div data-ng-if="currentlyDownloading.indexOf(WidgetHome.items[$index].id) > -1" role="button" class="loader">
-                                
-                            </div> -->
-                            <div data-ng-if="currentlyDownloading.indexOf(WidgetHome.items[$index].id) > -1"
-                                class="lds-ring-small">
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
+                                <p class="text-primary margin-zero ellipsis title">
+                                    <a class="ellipsis margin-zero text-primary ">{{WidgetHome.items[$index].data.title}}</a>
+                                </p>
+                                <i data-ng-if="WidgetHome.items[$index].hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
+                                    style="margin-left: auto; margin-top: 2px;" class="glyphicon glyphicon-ok-circle"
+                                    role="button"></i>
+                                <!-- <div data-ng-if="currentlyDownloading.indexOf(WidgetHome.items[$index + 1].id) > -1" role="button" class="loader"> -->
+                                <div data-ng-if="currentlyDownloading.indexOf(WidgetHome.items[$index].id) > -1"
+                                    class="lds-ring-small">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
                             </div>
-                        </div>
+                            <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index].data.summary}}</p>
+                                <span class="list-item-date"
+                                    data-ng-if="WidgetHome.items[$index].data.mediaDate">{{WidgetHome.items[$index].data.mediaDate
+                                    | jsDate | date:"MMMM dd, yyyy"}}</span>
                         </div>
                     </div>
                     <div class="list-item-even col-xs-6 pull-left clickable text-overlay "
@@ -74,15 +72,11 @@
                             </div>
                         </div>
                         <div class="list-item-copy text-left text-overlay">
-                            <p class="text-primary margin-zero ellipsis">
-                                <a class="ellipsis margin-zero text-primary">{{WidgetHome.items[$index +
+                            <div class="date-row">
+                            <p class="text-primary margin-zero ellipsis title">
+                                <a class="ellipsis margin-zero text-primary ">{{WidgetHome.items[$index +
                                     1].data.title}}</a>
                             </p>
-                            <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.summary}}</p>
-                            <div class="date-row">
-                            <span class="list-item-date"
-                                data-ng-if="WidgetHome.items[$index + 1].data.mediaDate">{{WidgetHome.items[$index +
-                                1].data.mediaDate | jsDate | date:"MMMM dd, yyyy"}}</span>
                             <i data-ng-if="WidgetHome.items[$index + 1].hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
                                 style="margin-left: auto; margin-top: 2px;" class="glyphicon glyphicon-ok-circle"
                                 role="button"></i>
@@ -94,7 +88,11 @@
                                 <div></div>
                                 <div></div>
                             </div>
-                            </div>
+                        </div>
+                            <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.summary}}</p>
+                            <span class="list-item-date"
+                                data-ng-if="WidgetHome.items[$index + 1].data.mediaDate">{{WidgetHome.items[$index +
+                                1].data.mediaDate | jsDate | date:"MMMM dd, yyyy"}}</span>
                         </div>
                     </div>
                 </div>
