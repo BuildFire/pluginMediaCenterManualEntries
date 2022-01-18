@@ -1441,7 +1441,7 @@
                 $rootScope.$on('online', function () {
                     WidgetHome.online = $rootScope.online;
                     if (!$rootScope.online) {
-                        buildfire.dialog.alert({
+                        buildfire.dialog.toast({
                             message: "You are offline! Downloaded media is available.",
                         });
                     }
