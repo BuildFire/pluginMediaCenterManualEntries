@@ -1231,6 +1231,7 @@
                                                         uri,
                                                     path: "/data/mediaCenterManual/" + Buildfire.getContext().instanceId + "/" + mediaType + "/",
                                                     fileName: item.id + "." + type,
+                                                    returnAsWebUri: true
                                                 },
                                                 (err, filePath) => {
                                                     if (err) {
