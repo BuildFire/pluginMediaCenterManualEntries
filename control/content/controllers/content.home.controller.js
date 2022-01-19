@@ -615,11 +615,10 @@
                     }
                     var item = ContentHome.items[index];
                     if ("undefined" !== typeof item) {
-                        buildfire.dialog.confirm(
+                        Buildfire.dialog.confirm(
                             {
                               title: "Delete Item",
                               message: 'Are you sure you want to delete this item?',
-                              isMessageHTML: true,
                               confirmButton: {
                                 type: "danger",
                                 text: "Delete"

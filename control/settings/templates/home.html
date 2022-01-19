@@ -141,3 +141,17 @@
         <label for="globalPlaylistNavButtonSwitch" class="label-success"></label>
     </div>
 </div>
+
+<div class="input-control side-label margin-bottom-thirty">
+    <label for="">Allow Offline downloads
+        <span class="customTooltipBox btn-primary">
+            <span class="customTooltipText">
+                Enable this to allow users to download and view media offline.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch">
+        <input id="allowOfflineSwitch" type="checkbox" ng-click="Settings.setAllowOfflineDownload($event)" ng-checked="Settings.data.content.allowOfflineDownload">
+        <label for="allowOfflineSwitch" class="label-success"></label>
+    </div>
+</div>

@@ -678,6 +678,7 @@
                                 $rootScope.globalPlaylistPlugin = event.data.content.globalPlaylistPlugin;
                                 $rootScope.showGlobalPlaylistNavButton = event.data.content.showGlobalPlaylistNavButton;
                                 $rootScope.showGlobalAddAllToPlaylistButton = event.data.content.showGlobalAddAllToPlaylistButton;
+                                $rootScope.allowOfflineDownload = event.data.content.allowOfflineDownload;
 
                                 // Update Data in media contoller
                                 $rootScope.refreshItems();

@@ -1,14 +1,23 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'AppDB', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location',
-            function ($scope, $window, DB, AppDB, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location) {
+        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location',
+            function ($scope, $window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location) {
                 $rootScope.loadingGlobalPlaylist = true;
                 $rootScope.showFeed = true;
+                $rootScope.currentlyDownloading = [];
                 var WidgetHome = this;
                 WidgetHome.deepLink = false;
                 $rootScope.loadingData = true;
+                WidgetHome.isWeb = Buildfire.getContext().device.platform == 'web';
+                // $rootScope.online = $window.navigator.onLine;
+                $rootScope.online = $window.navigator.onLine;
+                WidgetHome.online = $rootScope.online;
+                $rootScope.backgroundColor = buildfire.getContext().appTheme.colors.backgroundColor ? {"background-color": buildfire.getContext().appTheme.colors.backgroundColor} : {"background-color": '#ffffff'};
+                // $rootScope.online = false;
+                // WidgetHome.online = false;
                 buildfire.spinner.hide();
+
 
                 $rootScope.globalPlaylistStrings = {
                     itemAdded: strings.get('globalPlaylist.itemAdded'),
@@ -65,7 +74,19 @@
                  */
                 let MediaContent = new DB(COLLECTIONS.MediaContent),
                     MediaCenter = new DB(COLLECTIONS.MediaCenter),
-                    GlobalPlaylist = new AppDB();
+                    GlobalPlaylist = new AppDB(),
+                    CachedMediaContent = new OFSTORAGE({
+                        path: "/data/mediaCenterManual",
+                        fileName: "cachedMediaContent"
+                    }),
+                    CachedMediaCenter = new OFSTORAGE({
+                        path: "/data/mediaCenterManual",
+                        fileName: "cachedMediaCenter"
+                    }),
+                    DownloadedMedia = new OFSTORAGE({
+                        path: "/data/mediaCenterManual",
+                        fileName: "downloadedMedia"
+                    });
 
                 const getCurrentUser = (callback) => {
                     Buildfire.auth.getCurrentUser((err, user) => {
@@ -80,38 +101,85 @@
                  * @type {MediaCenterInfo|*}
                  */
                 var MediaCenterInfo = null;
-            
-                MediaCenter.get().then(function success(result) {
-                    if (result && result.data && result.id) {
-                        MediaCenterInfo = result;
-                    } else {
-                        MediaCenterInfo = _infoData;
-                    }
-                    WidgetHome.media = MediaCenterInfo;
 
-                    $rootScope.backgroundImage = MediaCenterInfo.data.design.backgroundImage;
-                    $rootScope.allowShare = MediaCenterInfo.data.content.allowShare;
-                    $rootScope.allowSource = MediaCenterInfo.data.content.allowSource;
-                    $rootScope.transferAudioContentToPlayList = MediaCenterInfo.data.content.transferAudioContentToPlayList;
-                    $rootScope.forceAutoPlay = MediaCenterInfo.data.content.forceAutoPlay;
-                    $rootScope.skipMediaPage = MediaCenterInfo.data.design.skipMediaPage
-
-                    $rootScope.autoPlay = MediaCenterInfo.data.content.autoPlay;
-                    $rootScope.autoPlayDelay = MediaCenterInfo.data.content.autoPlayDelay;
-                    $rootScope.globalPlaylist = MediaCenterInfo.data.content.globalPlaylist;
-                    $rootScope.globalPlaylistPlugin = MediaCenterInfo.data.content.globalPlaylistPlugin;
-                    $rootScope.showGlobalPlaylistNavButton = MediaCenterInfo.data.content.showGlobalPlaylistNavButton;
-                    $rootScope.showGlobalAddAllToPlaylistButton = MediaCenterInfo.data.content.showGlobalAddAllToPlaylistButton;
-                },
-                    function fail() {
-                        MediaCenterInfo = _infoData;
+                if ($rootScope.online) {
+                    MediaCenter.get().then(function success(result) {
+                        if (result && result.data && result.id) {
+                            MediaCenterInfo = result;
+                        } else {
+                            MediaCenterInfo = _infoData;
+                        }
                         WidgetHome.media = MediaCenterInfo;
+
+                        $rootScope.backgroundImage = MediaCenterInfo.data.design.backgroundImage;
+                        $rootScope.allowShare = MediaCenterInfo.data.content.allowShare;
+                        $rootScope.allowSource = MediaCenterInfo.data.content.allowSource;
+                        $rootScope.transferAudioContentToPlayList = MediaCenterInfo.data.content.transferAudioContentToPlayList;
+                        $rootScope.forceAutoPlay = MediaCenterInfo.data.content.forceAutoPlay;
+                        $rootScope.skipMediaPage = MediaCenterInfo.data.design.skipMediaPage
+
+                        $rootScope.autoPlay = MediaCenterInfo.data.content.autoPlay;
+                        $rootScope.autoPlayDelay = MediaCenterInfo.data.content.autoPlayDelay;
+                        $rootScope.globalPlaylist = MediaCenterInfo.data.content.globalPlaylist;
+                        $rootScope.globalPlaylistPlugin = MediaCenterInfo.data.content.globalPlaylistPlugin;
+                        $rootScope.showGlobalPlaylistNavButton = MediaCenterInfo.data.content.showGlobalPlaylistNavButton;
+                        $rootScope.showGlobalAddAllToPlaylistButton = MediaCenterInfo.data.content.showGlobalAddAllToPlaylistButton;
+                        $rootScope.allowOfflineDownload = MediaCenterInfo.data.content.allowOfflineDownload;
+
+                        if (!WidgetHome.isWeb) {
+                            CachedMediaCenter.insert(MediaCenterInfo, (err, res) => {
+                                if (err) {
+                                    buildfire.dialog.toast({
+                                        message: `Error`,
+                                        type: 'warning',
+                                    });
+                                }
+                            });
+                        }
+                    },
+                        function fail() {
+                            MediaCenterInfo = _infoData;
+                            WidgetHome.media = MediaCenterInfo;
+                            if (!WidgetHome.isWeb) {
+                                CachedMediaCenter.insert(MediaCenterInfo, (err, res) => { });
+                            }
+                        }
+                    );
+                }
+
+                else {
+                    if (!WidgetHome.isWeb) {
+                        CachedMediaCenter.get((err, res) => {
+                            if (err) WidgetHome.media = _infoData;
+
+                            if (res) WidgetHome.media = res;
+
+                            $rootScope.backgroundImage = WidgetHome.media.data.design.backgroundImage;
+                            $rootScope.allowShare = WidgetHome.media.data.content.allowShare;
+                            $rootScope.allowSource = WidgetHome.media.data.content.allowSource;
+                            $rootScope.transferAudioContentToPlayList = WidgetHome.media.data.content.transferAudioContentToPlayList;
+                            $rootScope.forceAutoPlay = WidgetHome.media.data.content.forceAutoPlay;
+                            $rootScope.skipMediaPage = WidgetHome.media.data.design.skipMediaPage
+
+                            $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
+                            $rootScope.autoPlayDelay = WidgetHome.media.data.content.autoPlayDelay;
+                            $rootScope.globalPlaylist = WidgetHome.media.data.content.globalPlaylist;
+                            $rootScope.globalPlaylistPlugin = WidgetHome.media.data.content.globalPlaylistPlugin;
+                            $rootScope.showGlobalPlaylistNavButton = WidgetHome.media.data.content.showGlobalPlaylistNavButton;
+                            $rootScope.showGlobalAddAllToPlaylistButton = WidgetHome.media.data.content.showGlobalAddAllToPlaylistButton;
+                            $rootScope.allowOfflineDownload = WidgetHome.media.data.content.allowOfflineDownload;
+                        });
                     }
-                );
+                    else {
+                        WidgetHome.media = _infoData;
+                    }
+                }
+
+
                 var _skip = 0,
                     _limit = 50,
                     searchOptions = {
-                        filter: { },
+                        filter: {},
                         skip: _skip,
                         limit: _limit // the plus one is to check if there are any more
                     };
@@ -177,7 +245,7 @@
                     } else {
                         MediaContent.getById(id).then(function success(result) {
 
-                            if (Object.keys(result.data).length > 2){
+                            if (Object.keys(result.data).length > 2) {
                                 navigate(result);
                                 $rootScope.showGlobalPlaylistButtons = false;
                             } else {
@@ -233,6 +301,7 @@
                             $rootScope.globalPlaylistPlugin = WidgetHome.media.data.content.globalPlaylistPlugin;
                             $rootScope.showGlobalPlaylistNavButton = WidgetHome.media.data.content.showGlobalPlaylistNavButton;
                             $rootScope.showGlobalAddAllToPlaylistButton = WidgetHome.media.data.content.showGlobalAddAllToPlaylistButton;
+                            $rootScope.allowOfflineDownload = WidgetHome.media.data.content.allowOfflineDownload;
 
                             if (view && event.data.content && event.data.content.images) {
                                 view.loadItems(event.data.content.images);
@@ -302,23 +371,23 @@
                     var order = Orders.getOrder(WidgetHome.media.data.content.sortBy || Orders.ordersMap.Default);
                     if (order) {
                         //Handles Indexing Changes mediaDate/mediaDateIndex
-                        if(WidgetHome.media.data.content.dateIndexed && order.key == "mediaDate"){
-                            order.key="mediaDateIndex";
-                        }else if(!WidgetHome.media.data.content.dateIndexed && order.key == "mediaDateIndex"){//so it don't couse issues before data is updated
-                            order.key="mediaDate";
+                        if (WidgetHome.media.data.content.dateIndexed && order.key == "mediaDate") {
+                            order.key = "mediaDateIndex";
+                        } else if (!WidgetHome.media.data.content.dateIndexed && order.key == "mediaDateIndex") {//so it don't couse issues before data is updated
+                            order.key = "mediaDate";
                         }
                         //END Handles Indexing Changes mediaDate/mediaDateIndex
                         var sort = {};
                         sort[order.key] = order.order;
-                        
+
                         if ((order.name == "Media Title A-Z" || order.name === "Media Title Z-A")) {
                             if (order.name == "Media Title A-Z") {
                                 WidgetHome.media.data.content.updatedRecords ? searchOptions.sort = { titleIndex: 1 }
-                                : searchOptions.sort = { title: 1 }
+                                    : searchOptions.sort = { title: 1 }
                             }
                             if (order.name == "Media Title Z-A") {
                                 WidgetHome.media.data.content.updatedRecords ? searchOptions.sort = { titleIndex: -1 }
-                                : searchOptions.sort = { title: -1 }
+                                    : searchOptions.sort = { title: -1 }
                             }
                         } else {
                             searchOptions.sort = sort;
@@ -326,9 +395,9 @@
                         return true;
                     }
                     else {
-                        if(WidgetHome.media.data.content.sortBy === 'Most')
+                        if (WidgetHome.media.data.content.sortBy === 'Most')
                             searchOptions.sort = { title: 1 }
-                        if(WidgetHome.media.data.content.sortBy === 'Least')
+                        if (WidgetHome.media.data.content.sortBy === 'Least')
                             searchOptions.sort = { title: -1 }
                         return false;
                     }
@@ -355,7 +424,7 @@
                 /**
                  * loadMore method loads the items in list page.
                  */
-                
+
                 // Check if an item is in the globalPlaylist
                 $rootScope.isInGlobalPlaylist = (itemId) => {
                     return (
@@ -433,9 +502,8 @@
                     }
                 }
 
-                $rootScope.addAllToGlobalPlaylist = ($event) => {
-                    $event.stopImmediatePropagation();
-                                            
+                $rootScope.addAllToGlobalPlaylist = () => {
+
                     $rootScope.addAllToPlaylistLoading = true;
 
                     if ($rootScope.areAllInGlobalPlaylist()) {
@@ -448,13 +516,13 @@
                                 type: 'success',
                                 duration: 2000
                             });
-                            
+
                             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                         });
                     } else {
 
-                        var takenSlots=Object.keys($rootScope.globalPlaylistItems.playlist).length;
-                        var freeSlots=$rootScope.globalPlaylistLimit-takenSlots;
+                        var takenSlots = Object.keys($rootScope.globalPlaylistItems.playlist).length;
+                        var freeSlots = $rootScope.globalPlaylistLimit - takenSlots;
                         if (typeof $rootScope.globalPlaylistLimit === 'number' && freeSlots < 1) {
                             buildfire.dialog.toast({
                                 message: $rootScope.globalPlaylistStrings.playlistLimitReached,
@@ -463,16 +531,16 @@
                             $rootScope.addAllToPlaylistLoading = false;
                             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                         } else {
-                            var filteredItems=WidgetHome.items.filter(el=>!$rootScope.isInGlobalPlaylist(el.id));
-                            var itemsToAdd=[...filteredItems].splice(0, freeSlots);
+                            var filteredItems = WidgetHome.items.filter(el => !$rootScope.isInGlobalPlaylist(el.id));
+                            var itemsToAdd = [...filteredItems].splice(0, freeSlots);
                             GlobalPlaylist.insertAndUpdateAll(itemsToAdd).then(() => {
                                 for (let item of itemsToAdd) {
                                     $rootScope.globalPlaylistItems.playlist[item.id] = item.data;
                                 }
 
-                                var message=(itemsToAdd.length == WidgetHome.items.length)?
-                                $rootScope.globalPlaylistStrings.addedAllItemsToPlaylist:
-                                $rootScope.globalPlaylistStrings.addedItemsToPlaylist;
+                                var message = (itemsToAdd.length == WidgetHome.items.length) ?
+                                    $rootScope.globalPlaylistStrings.addedAllItemsToPlaylist :
+                                    $rootScope.globalPlaylistStrings.addedItemsToPlaylist;
                                 buildfire.dialog.toast({
                                     message: message,
                                     type: 'success',
@@ -485,8 +553,7 @@
                     }
                 }
 
-                $rootScope.toggleGlobalPlaylistItem = ($event, item) => {
-                    $event.stopImmediatePropagation();
+                $rootScope.toggleGlobalPlaylistItem = (item) => {
                     if ($rootScope.isInGlobalPlaylist(item.id)) {
                         GlobalPlaylist.delete(item.id).then(() => {
                             delete $rootScope.globalPlaylistItems.playlist[item.id];
@@ -497,7 +564,7 @@
                             });
                         });
                     } else {
-                        if (typeof $rootScope.globalPlaylistLimit === 'number' && Object.keys($rootScope.globalPlaylistItems.playlist).length >= $rootScope.globalPlaylistLimit)  {
+                        if (typeof $rootScope.globalPlaylistLimit === 'number' && Object.keys($rootScope.globalPlaylistItems.playlist).length >= $rootScope.globalPlaylistLimit) {
                             buildfire.dialog.toast({
                                 message: $rootScope.globalPlaylistStrings.playlistLimitReached,
                                 type: 'warning',
@@ -537,7 +604,7 @@
                             $rootScope.showCountdown = true;
 
                             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                            
+
                             $rootScope.delayCountdownText = `Next will play in ${delay}`;
                             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                             if (delayInterval) clearInterval(delayInterval);
@@ -569,6 +636,12 @@
                         return;
                     }
 
+                    $rootScope.loadingData = true;
+                    WidgetHome.isBusy = true;
+                    buildfire.spinner.show();
+                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+
+
                     updateGetOptions();
                     $rootScope.loadingData = true;
                     WidgetHome.isBusy = true;
@@ -576,7 +649,7 @@
                     if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
 
                     const getMediaItems = () => {
-                        MediaContent.find(searchOptions).then(function success(result) {
+                        MediaContent.find(searchOptions).then((result) => {
                             if (WidgetHome.noMore) {
                                 buildfire.spinner.hide();
                                 $rootScope.loadingData = false;
@@ -586,87 +659,272 @@
                             // $rootScope.deepLinkNavigate = true;
                             // $rootScope.seekTime = 10.22;
                             WidgetHome.items = WidgetHome.items ? WidgetHome.items.concat(result) : result;
-                            // WidgetHome.items = result;
-                            WidgetHome.isBusy = false;
-                            $rootScope.myItems = WidgetHome.items;
-                            bookmarks.sync($scope);
-
-                            if (result.length < _limit) {// to indicate there is no more
-                                WidgetHome.noMore = true;
-                            }
-                            else {
-                                result.pop();
-                                searchOptions.skip = searchOptions.skip + _limit;
-                                WidgetHome.noMore = false;
-                                // In order to get all the items
-                                return getMediaItems();
-                            }
-                            
-                            if (!$window.deeplinkingDone && buildfire.deeplink) {
-                                buildfire.deeplink.getData(function (data) {
-                                    var exists = data && data.id && WidgetHome.items.find(item => item.id === data.id);
-                                    if (data && data.mediaId) {
-                                        $rootScope.showFeed = false;
-                                        $rootScope.fromSearch = true;
-                                        $window.deeplinkingDone = true;
-                                        window.setTimeout(() => {
-                                            WidgetHome.goTo(data.mediaId);
-                                        }, 0);
-                                    }
-                                    else if (data && data.link) {
-                                        $rootScope.showFeed = false;
-                                        $rootScope.fromSearch = true;
-                                        $window.deeplinkingDone = true;
-                                        var foundObj = WidgetHome.items.find(function (el) { return el.id == data.link; });
-                                        if (!foundObj) return WidgetHome.setEmptyState();
-                                        if (data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
-                                            $rootScope.deepLinkNavigate = true;
-                                            $rootScope.seekTime = data.timeIndex;
-                                        }
-                                        window.setTimeout(() => {
-                                            if (foundObj.data.audioUrl && $rootScope.seekTime) {
-                                                return Location.go('#/nowplaying/' + foundObj.id)
+                            //Check if items have downloaded media
+                            if (!WidgetHome.isWeb) {
+                                CachedMediaContent.insert(WidgetHome.items, (error, res) => {
+                                    if (WidgetHome.items.length > 0) {
+                                        DownloadedMedia.get((err, res) => {
+                                            let downloadedIDS = [];
+                                            if (err) {
+                                                return callback(err);
                                             }
-
-                                            WidgetHome.goTo(data.link);
-                                        }, 0);
+                                            if (res) {
+                                                downloadedIDS = res.map(item => item.mediaId);
+                                                if (downloadedIDS.length > 0) {
+                                                    WidgetHome.items = WidgetHome.items.map(item => {
+                                                        if (downloadedIDS.indexOf(item.id) > -1) {
+                                                            item.hasDownloadedMedia = true;
+                                                            let downloadedItem = res[downloadedIDS.indexOf(item.id)];
+                                                            if (downloadedItem.mediaType == "video") {
+                                                                item.data.hasDownloadedVideo = true;
+                                                            }
+    
+                                                            else if (downloadedItem.mediaType == "audio") {
+                                                                item.data.hasDownloadedAudio = true;
+                                                            }
+                                                        }
+                                                        return item;
+                                                    });
+                                                }
+                                            }
+                                            // WidgetHome.items = result;
+                                            WidgetHome.isBusy = false;
+                                            $rootScope.myItems = WidgetHome.items;
+                                            bookmarks.sync($scope);
+                                            if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
+    
+                                            if (result.length < _limit) {// to indicate there is no more
+                                                WidgetHome.noMore = true;
+                                            }
+                                            else {
+                                                result.pop();
+                                                searchOptions.skip = searchOptions.skip + _limit;
+                                                WidgetHome.noMore = false;
+                                                // In order to get all the items
+                                                return getMediaItems();
+                                            }
+    
+                                            if (!$window.deeplinkingDone && buildfire.deeplink) {
+                                                buildfire.deeplink.getData(function (data) {
+                                                    var exists = data && data.id && WidgetHome.items.find(item => item.id === data.id);
+                                                    if (data && data.mediaId) {
+                                                        $rootScope.showFeed = false;
+                                                        $rootScope.fromSearch = true;
+                                                        $window.deeplinkingDone = true;
+                                                        window.setTimeout(() => {
+                                                            WidgetHome.goTo(data.mediaId);
+                                                        }, 0);
+                                                    }
+                                                    else if (data && data.link) {
+                                                        $rootScope.showFeed = false;
+                                                        $rootScope.fromSearch = true;
+                                                        $window.deeplinkingDone = true;
+                                                        var foundObj = WidgetHome.items.find(function (el) { return el.id == data.link; });
+                                                        if (!foundObj) return WidgetHome.setEmptyState();
+                                                        if (data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
+                                                            $rootScope.deepLinkNavigate = true;
+                                                            $rootScope.seekTime = data.timeIndex;
+                                                        }
+                                                        window.setTimeout(() => {
+                                                            if (foundObj.data.audioUrl && $rootScope.seekTime) {
+                                                                return Location.go('#/nowplaying/' + foundObj.id)
+                                                            }
+    
+                                                            WidgetHome.goTo(data.link);
+                                                        }, 0);
+                                                    }
+                                                    else if (data && data.deepLinkUrl) {
+                                                        var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
+                                                        var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
+                                                        var itemId = JSON.parse(deepLinkUrl).id;
+                                                        $rootScope.showFeed = false;
+                                                        $rootScope.fromSearch = true;
+                                                        $window.deeplinkingDone = true;
+                                                        window.setTimeout(() => {
+                                                            WidgetHome.goTo(itemId);
+                                                        }, 0);
+                                                    }
+                                                    else if (data && exists) {
+                                                        $window.deeplinkingDone = true;
+                                                        $rootScope.showFeed = false;
+                                                        window.setTimeout(() => {
+                                                            WidgetHome.goTo(data.id);
+                                                        }, 0);
+                                                    } else if (data && !exists) {
+                                                        $window.deeplinkingDone = true;
+                                                        WidgetHome.deepLink = true;
+                                                        const text = strings.get("deeplink.deeplinkMediaNotFound") ? strings.get("deeplink.deeplinkMediaNotFound") : "Media does not exist!";
+                                                        buildfire.components.toast.showToastMessage({ text }, () => { });
+                                                    } else WidgetHome.deepLink = true;
+                                                });
+                                            }
+                                            setTimeout(() => {
+                                                WidgetHome.isBusy = false;
+                                                $rootScope.loadingData = false;
+                                                buildfire.spinner.hide();
+                                                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                            }, 0);
+                                        });
                                     }
-                                    else if (data && data.deepLinkUrl) {
-                                        var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
-                                        var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
-                                        var itemId = JSON.parse(deepLinkUrl).id;
-                                        $rootScope.showFeed = false;
-                                        $rootScope.fromSearch = true;
-                                        $window.deeplinkingDone = true;
-                                        window.setTimeout(() => {
-                                            WidgetHome.goTo(itemId);
-                                        }, 0);
-                                    }
-                                    else if (data && exists) {
-                                        $window.deeplinkingDone = true;
-                                        $rootScope.showFeed = false;
-                                        window.setTimeout(() => {
-                                            WidgetHome.goTo(data.id);
-                                        }, 0);
-                                    } else if (data && !exists) {
-                                        $window.deeplinkingDone = true;
-                                        WidgetHome.deepLink = true;
-                                        const text = strings.get("deeplink.deeplinkMediaNotFound") ? strings.get("deeplink.deeplinkMediaNotFound") : "Media does not exist!";
-                                        buildfire.components.toast.showToastMessage({ text }, () => { });
-                                    } else WidgetHome.deepLink = true;
+                                 
                                 });
                             }
+                            else {
+                                // WidgetHome.items = result;
+                                WidgetHome.isBusy = false;
+                                $rootScope.myItems = WidgetHome.items;
+                                bookmarks.sync($scope);
+                                if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
+
+                                if (result.length < _limit) {// to indicate there is no more
+                                    WidgetHome.noMore = true;
+                                }
+                                else {
+                                    result.pop();
+                                    searchOptions.skip = searchOptions.skip + _limit;
+                                    WidgetHome.noMore = false;
+                                    // In order to get all the items
+                                    return getMediaItems();
+                                }
+
+                                if (!$window.deeplinkingDone && buildfire.deeplink) {
+                                    buildfire.deeplink.getData(function (data) {
+                                        var exists = data && data.id && WidgetHome.items.find(item => item.id === data.id);
+                                        if (data && data.mediaId) {
+                                            $rootScope.showFeed = false;
+                                            $rootScope.fromSearch = true;
+                                            $window.deeplinkingDone = true;
+                                            window.setTimeout(() => {
+                                                WidgetHome.goTo(data.mediaId);
+                                            }, 0);
+                                        }
+                                        else if (data && data.link) {
+                                            $rootScope.showFeed = false;
+                                            $rootScope.fromSearch = true;
+                                            $window.deeplinkingDone = true;
+                                            var foundObj = WidgetHome.items.find(function (el) { return el.id == data.link; });
+                                            if (!foundObj) return WidgetHome.setEmptyState();
+                                            if (data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
+                                                $rootScope.deepLinkNavigate = true;
+                                                $rootScope.seekTime = data.timeIndex;
+                                            }
+                                            window.setTimeout(() => {
+                                                if (foundObj.data.audioUrl && $rootScope.seekTime) {
+                                                    return Location.go('#/nowplaying/' + foundObj.id)
+                                                }
+
+                                                WidgetHome.goTo(data.link);
+                                            }, 0);
+                                        }
+                                        else if (data && data.deepLinkUrl) {
+                                            var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
+                                            var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
+                                            var itemId = JSON.parse(deepLinkUrl).id;
+                                            $rootScope.showFeed = false;
+                                            $rootScope.fromSearch = true;
+                                            $window.deeplinkingDone = true;
+                                            window.setTimeout(() => {
+                                                WidgetHome.goTo(itemId);
+                                            }, 0);
+                                        }
+                                        else if (data && exists) {
+                                            $window.deeplinkingDone = true;
+                                            $rootScope.showFeed = false;
+                                            window.setTimeout(() => {
+                                                WidgetHome.goTo(data.id);
+                                            }, 0);
+                                        } else if (data && !exists) {
+                                            $window.deeplinkingDone = true;
+                                            WidgetHome.deepLink = true;
+                                            const text = strings.get("deeplink.deeplinkMediaNotFound") ? strings.get("deeplink.deeplinkMediaNotFound") : "Media does not exist!";
+                                            buildfire.components.toast.showToastMessage({ text }, () => { });
+                                        } else WidgetHome.deepLink = true;
+                                    });
+                                }
+                                setTimeout(() => {
+                                    WidgetHome.isBusy = false;
+                                    $rootScope.loadingData = false;
+                                    buildfire.spinner.hide();
+                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                }, 0);
+                            }
+                        });
+                    }
+
+                    const getCachedItems = (callback) => {
+                        if (Buildfire.getContext().device.platform === 'web') {
+                            buildfire.dialog.toast({
+                                message: "You can't use offline mode in web browser",
+                            });
+                            WidgetHome.items = [];
                             setTimeout(() => {
+                                buildfire.spinner.hide();
                                 WidgetHome.isBusy = false;
                                 $rootScope.loadingData = false;
-                                buildfire.spinner.hide();
+                                $rootScope.loadingGlobalPlaylist = false;
                                 if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                return callback(null, true);
                             }, 0);
-                        }, function fail(err) {
-                            WidgetHome.isBusy = false;
-                            $rootScope.loadingData = false;
-                            buildfire.spinner.hide();
-                            console.error(err);
+                        }
+
+                        CachedMediaContent.get((err, res) => {
+                            if (WidgetHome.noMore) {
+                                buildfire.spinner.hide();
+                                $rootScope.loadingData = false;
+                                return;
+                            }
+                            let cachedItems = [];
+                            if (err) {
+                                return callback(err);
+                            }
+                            if (res) {
+                                cachedItems = res;
+                            }
+                            // buildfire.dialog.toast({
+                            //     message: "Cached items found " + cachedItems.length,
+                            // });
+                            if (!cachedItems) cachedItems = [];
+                            WidgetHome.items = cachedItems;
+                            DownloadedMedia.get((err, res) => {
+                                let downloadedIDS = [];
+                                if (err) {
+                                    return callback(err);
+                                }
+                                if (res) {
+                                    downloadedIDS = res.map(item => item.mediaId);
+                                    if (downloadedIDS.length > 0) {
+                                        WidgetHome.items = WidgetHome.items.map(item => {
+                                            if (downloadedIDS.indexOf(item.id) > -1) {
+                                                item.hasDownloadedMedia = true;
+                                                let downloadedItem = res[downloadedIDS.indexOf(item.id)];
+                                                if (downloadedItem.mediaType == "video") {
+                                                    item.data.hasDownloadedVideo = true;
+                                                }
+
+                                                else if (downloadedItem.mediaType == "audio") {
+                                                    item.data.hasDownloadedAudio = true;
+                                                }
+                                            }
+
+                                            return item;
+                                        });
+                                    }
+                                }
+                                WidgetHome.items.sort(function (a, b) {
+                                    if (a.hasDownloadedMedia && !b.hasDownloadedMedia) return -1;
+                                    if (!a.hasDownloadedMedia && b.hasDownloadedMedia) return 1;
+                                    return 0;
+                                });
+                                WidgetHome.noMore = true;
+                                setTimeout(() => {
+                                    buildfire.spinner.hide();
+                                    WidgetHome.isBusy = false;
+                                    $rootScope.loadingData = false;
+                                    $rootScope.loadingGlobalPlaylist = false;
+                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                    callback(null, true);
+                                }, 0);
+                            });
                         });
                     }
 
@@ -674,24 +932,24 @@
                         return new Promise(resolve => {
                             $rootScope.loadingGlobalPlaylist = true;
                             GlobalPlaylist.get()
-                            .then(result => {
-                                if (!result.data.playlist) {
-                                    // If there is no object, then create the parent object
-                                    GlobalPlaylist.save({ playlist: {}})
-                                    .then(result => {
-                                        result.data.id = result.id;
-                                        $rootScope.globalPlaylistItems = result.data;
-                                        resolve();
-                                    });
+                                .then(result => {
+                                    if (!result.data.playlist) {
+                                        // If there is no object, then create the parent object
+                                        GlobalPlaylist.save({ playlist: {} })
+                                            .then(result => {
+                                                result.data.id = result.id;
+                                                $rootScope.globalPlaylistItems = result.data;
+                                                resolve();
+                                            });
                                     } else {
                                         result.data.id = result.id;
                                         $rootScope.globalPlaylistItems = result.data;
                                         resolve();
                                     }
-                            }).catch(err => {
-                                console.error(err);
-                                resolve()
-                            })
+                                }).catch(err => {
+                                    console.error(err);
+                                    resolve()
+                                })
                         })
                     }
 
@@ -704,31 +962,44 @@
                             };
                         });
                     };
-
-                    if ($rootScope.globalPlaylist) {
+                    if ($rootScope.globalPlaylist && $rootScope.online) {
                         getCurrentUser(() => {
                             // Get limit from appData
                             getGlobalPlaylistLimit();
-                            
+
                             getGlobalPlaylistItems()
-                            .then(getMediaItems)
-                            .finally(() => {
-                                buildfire.spinner.hide();
-                                $rootScope.loadingGlobalPlaylist = false
-                            });
+                                .then(getMediaItems)
+                                .finally(() => {
+                                    buildfire.spinner.hide();
+                                    $rootScope.loadingGlobalPlaylist = false
+                                });
                         });
-                    } else getGlobalPlaylistItems().then(getMediaItems).finally(() => {
-                        setTimeout(() => {
-                            buildfire.spinner.hide();
-                            WidgetHome.isBusy = false;
-                            $rootScope.loadingData = false;
-                            $rootScope.loadingGlobalPlaylist = false;
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                        }, 0);
-                    });
+                    } else if ($rootScope.online) {
+                        getGlobalPlaylistItems().then(getMediaItems).finally(() => {
+                            setTimeout(() => {
+                                buildfire.spinner.hide();
+                                WidgetHome.isBusy = false;
+                                $rootScope.loadingData = false;
+                                $rootScope.loadingGlobalPlaylist = false;
+                                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            }, 0);
+                        });
+                    }
+                    else {
+                        getCachedItems((err, res) => {
+                        });
+                    }
+
+                    setTimeout(() => {
+                        buildfire.spinner.hide();
+                        WidgetHome.isBusy = false;
+                        $rootScope.loadingData = false;
+                        $rootScope.loadingGlobalPlaylist = false;
+                        if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                    }, 0);
                 };
 
-                WidgetHome.openLinks = function (actionItems, $event) {
+                WidgetHome.openLinks = function (actionItems) {
                     if (actionItems && actionItems.length) {
                         var options = {};
                         var callback = function (error, result) {
@@ -737,11 +1008,334 @@
                             }
                         };
 
-                        $event.preventDefault();
                         $timeout(function () {
                             Buildfire.actionItems.list(actionItems, options, callback);
                         });
                     }
+                };
+
+
+                WidgetHome.addNote = function (item) {
+                    var options = {
+                        itemId: item.id,
+                        title: item.data.title,
+                        imageUrl: item.data.topImage
+                    };
+
+                    var callback = function (err, data) {
+                        if (err) throw err;
+                        console.log(data);
+                    };
+
+                    buildfire.notes.openDialog(options, callback);
+                };
+
+                WidgetHome.showDrawer = function ($event, item) {
+                    $event.stopImmediatePropagation();
+                    let listItems = [];
+                    listItems.push({ text: "Add Note" });
+                    if (WidgetHome.media.data.content.allowOfflineDownload && $rootScope.online) {
+                        if (item.data.videoUrl) {
+                            if (item.data.hasDownloadedVideo) {
+                                listItems.push({ text: "Remove Downloaded Video" });
+                            }
+
+                            else {
+                                listItems.push({ text: "Download Video" });
+                            }
+                        }
+
+                        // if (item.data.audioUrl) {
+                        //     if (item.data.hasDownloadedAudio) {
+                        //         listItems.push({ text: "Remove Downloaded Audio" });
+                        //     }
+
+                        //     else {
+                        //         listItems.push({ text: "Download Audio" });
+                        //     }
+                        // }
+                    }
+
+                    if (WidgetHome.media.data.content.allowShare && $rootScope.online) {
+                        listItems.push({ text: "Share" });
+                    }
+
+                    if (item.data.links.length && $rootScope.online) {
+                        listItems.push({ text: "Open Links" });
+                    }
+
+                    if (WidgetHome.media.data.content.globalPlaylist && $rootScope.online) {
+                        if ($rootScope.isInGlobalPlaylist(item.id)) {
+                            listItems.push({ text: "Remove from Playlist" });
+                        }
+                        else {
+                            listItems.push({ text: "Add to Playlist" });
+                        }
+                    }
+
+                    if ($rootScope.online) {
+                        if (item.data.bookmarked) {
+                            listItems.push({ text: "Remove from favorites" });
+                        }
+                        else {
+                            listItems.push({ text: "Favorite" });
+                        }
+                    }
+
+                    buildfire.components.drawer.open(
+                        {
+                            isHTML: false,
+                            listItems: listItems
+                        },
+                        (err, result) => {
+                            if (err) return console.error(err);
+                            buildfire.components.drawer.closeDrawer();
+                            if (result) {
+                                if (result.text == "Download Video") {
+                                    $rootScope.download(item, "video");
+                                }
+
+                                // if (result.text == "Download Audio") {
+                                //     $rootScope.download(item, "audio");
+                                // }
+
+                                if (result.text == "Remove Downloaded Video") {
+                                    $rootScope.removeDownload(item, "video");
+                                }
+
+                                // if (result.text == "Remove Downloaded Audio") {
+                                //     $rootScope.removeDownloaded(item, "audio");
+                                // }
+
+                                if (result.text == "Share") {
+                                    WidgetHome.share(item);
+                                }
+
+                                if (result.text == "Open Links") {
+                                    WidgetHome.openLinks(item.data.links);
+                                }
+
+                                if (result.text == "Add to Playlist") {
+                                    $rootScope.toggleGlobalPlaylistItem(item);
+                                }
+
+                                if (result.text == "Remove from Playlist") {
+                                    $rootScope.toggleGlobalPlaylistItem(item);
+                                }
+
+                                if (result.text == "Add Note") {
+                                    WidgetHome.addNote(item);
+                                }
+
+                                if (result.text == "Remove from favorites") {
+                                    WidgetHome.bookmark(item);
+                                }
+
+                                if (result.text == "Favorite") {
+                                    WidgetHome.bookmark(item);
+                                }
+                            }
+                        }
+                    );
+                };
+
+                WidgetHome.getVideoDownloadURL = function (videoURL) {
+                    if (videoURL) {
+                        var myType;
+                        var source;
+                        var videoUrlToSend = videoURL;
+                        if (videoUrlToSend.includes("www.dropbox") || videoUrlToSend.includes("dl.dropbox.com")) {
+                            videoUrlToSend = videoUrlToSend.replace("www.dropbox", "dl.dropboxusercontent").split("?dl=")[0];
+                            videoUrlToSend = videoUrlToSend.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
+                            myType = videoUrlToSend.split('.').pop();
+                            source = "dropbox";
+                        } else {
+                            source = videoUrlToSend.includes("youtube.com") ? "youtube" : videoUrlToSend.includes("vimeo") ? "vimeo" : "other";
+                            myType = videoUrlToSend.split('.').pop();
+                        }
+                        return {
+                            uri: videoUrlToSend,
+                            type: myType,
+                            source: source
+                        }
+                    }
+                }
+
+                // WidgetHome.getAudioDownloadURL = function () {
+                //     // if (WidgetMedia.item.data.audioUrl) {
+                //     //     var myType;
+                //     //     var audioUrlToSend = WidgetMedia.item.data.audioUrl;
+                //     //         myType = audioUrlToSend.split('.').pop();
+
+                //     //     return {
+                //     //         uri: audioUrlToSend,
+                //     //         type: myType,
+                //     //     }
+                //     // }
+                // }
+
+                $rootScope.download = function (item, mediaType) {
+                    if (Buildfire.getContext().device.platform === 'web') {
+                        buildfire.dialog.alert({
+                            message: "You can't download media in the web browser",
+                        });
+                        return;
+                    }
+                    if (mediaType === 'video') {
+                        if (item.data.videoUrl) {
+                            //check videoURL is valid
+                            let { uri, type, source } = WidgetHome.getVideoDownloadURL(item.data.videoUrl);
+                            if (source === 'youtube' || source === 'vimeo') {
+                                buildfire.dialog.show(
+                                    {
+                                        title: "Cannot download Media",
+                                        message:
+                                            "This media is not available for download.",
+                                        isMessageHTML: true,
+                                        actionButtons: [
+                                            {
+                                                text: "Ok",
+                                                type: "primary",
+                                                action: () => {
+                                                },
+                                            },
+                                        ],
+                                    },
+                                    (err, actionButton) => {
+                                    }
+                                );
+                            }
+                            else {
+                                buildfire.dialog.show(
+                                    {
+                                        title: "Download is starting",
+                                        message:
+                                            "Please do not press the back button until the download is finished.",
+                                        isMessageHTML: true,
+                                        actionButtons: [
+                                            {
+                                                text: "Ok",
+                                                type: "primary",
+                                                action: () => {
+                                                },
+                                            },
+                                        ],
+                                    },
+                                    (err, actionButton) => {
+                                        if (actionButton.text == "Ok") {
+                                            $rootScope.currentlyDownloading.push(item.id);
+                                            if (!$rootScope.$$phase && !$rootScope.$root.$$phase) $rootScope.$apply();
+                                            buildfire.services.fileSystem.fileManager.download(
+                                                {
+                                                    uri:
+                                                        uri,
+                                                    path: "/data/mediaCenterManual/" + Buildfire.getContext().instanceId + "/" + mediaType + "/",
+                                                    fileName: item.id + "." + type,
+                                                    returnAsWebUri: true
+                                                },
+                                                (err, filePath) => {
+                                                    if (err) {
+                                                        console.log("error in downloading", JSON.stringify(err));
+                                                        let index = $rootScope.currentlyDownloading.indexOf(item.id);
+                                                        $rootScope.currentlyDownloading.splice(index, 1);
+                                                        buildfire.dialog.toast({
+                                                            message: `Error`,
+                                                            type: 'warning',
+                                                        });
+                                                        return;
+                                                    }
+                                                    // Save the offline media
+                                                    buildfire.analytics.trackAction('mediaDownloadedOffline');
+                                                    new OfflineAccess({
+                                                        db: DownloadedMedia,
+                                                    }).save({
+                                                        mediaId: item.id,
+                                                        mediaType: mediaType,
+                                                        mediaPath: filePath,
+                                                        createdOn: new Date(),
+                                                    }, (err, result) => {
+                                                        if (err) {
+                                                            console.error(err);
+                                                            return;
+                                                        }
+                                                        let index = $rootScope.currentlyDownloading.indexOf(item.id);
+                                                        $rootScope.currentlyDownloading.splice(index, 1);
+                                                        item.data.hasDownloadedVideo = true;
+                                                        item.hasDownloadedMedia = true;
+                                                        if (!$rootScope.showFeed) {
+                                                            let homeItem = WidgetHome.items.filter(x => x.id === item.id)[0];
+                                                            if (homeItem) {
+                                                                homeItem.data.hasDownloadedVideo = true;
+                                                                homeItem.hasDownloadedMedia = homeItem.data.hasDownloadedAudio;
+                                                            }
+                                                        }
+                                                        buildfire.dialog.toast({
+                                                            message: `Media has been successfully downloaded.`,
+                                                        });
+                                                        setTimeout(() => {
+                                                            if (!$rootScope.$$phase && !$rootScope.$root.$$phase) $rootScope.$apply();
+                                                        }, 0);
+                                                    });
+                                                }
+                                            );
+                                        }
+                                    }
+                                );
+                            }
+
+                        }
+                    }
+                };
+
+                $rootScope.removeDownload = function (item, mediaType) {
+                    buildfire.spinner.show();
+                    let type;
+                    if (mediaType === 'video') {
+                        type = WidgetHome.getVideoDownloadURL(item.data.videoUrl).type;
+                    }
+                    buildfire.services.fileSystem.fileManager.deleteFile(
+                        {
+                            path: "/data/mediaCenterManual/" + Buildfire.getContext().instanceId + "/" + mediaType + "/",
+                            fileName: item.id + "." + type
+                        },
+                        (err, isDeleted) => {
+                            if (err) return console.error(err);
+                            if (isDeleted) {
+                                new OfflineAccess({
+                                    db: DownloadedMedia,
+                                }).delete({
+                                    mediaId: item.id,
+                                    mediaType: mediaType,
+                                }, (err, res) => {
+                                    if (err) {
+                                        console.error(err);
+                                        return;
+                                    }
+                                    item.data.hasDownloadedVideo = false;
+                                    item.data.videoURL = "";
+                                    item.hasDownloadedMedia = item.data.hasDownloadedAudio;
+                                    if (!$rootScope.showFeed) {
+                                        let homeItem = WidgetHome.items.filter(x => x.id === item.id)[0];
+                                        if (homeItem) {
+                                            homeItem.data.hasDownloadedVideo = false;
+                                            homeItem.hasDownloadedMedia = homeItem.data.hasDownloadedAudio;
+                                        }
+                                    }
+                                    buildfire.spinner.hide();
+                                    setTimeout(() => {
+                                        if (!$rootScope.$$phase && !$rootScope.$root.$$phase) $rootScope.$apply();
+                                    }, 0);
+                                    buildfire.dialog.toast({
+                                        message: `Media has been removed from downloads.`,
+                                    });
+                                });
+                            }
+                        }
+                    );
+                };
+
+                WidgetHome.isDownloading = function (item) {
+                    return $rootScope.currentlyDownloading.indexOf(item.id) > -1;
                 };
 
                 $rootScope.refreshItems = function () {
@@ -766,7 +1360,7 @@
                     }
 
                     $rootScope.showFeed = false;
-                    
+
                     if (ind != -1) {
                         if ($rootScope.autoPlay && !WidgetHome.items[ind]) ind = 0;
 
@@ -774,9 +1368,9 @@
 
                         if (!$rootScope.skipMediaPage || ($rootScope.skipMediaPage && WidgetHome.items[ind].data.videoUrl)
                             || ($rootScope.skipMediaPage && !WidgetHome.items[ind].data.videoUrl && !WidgetHome.items[ind].data.audioUrl)) {
-                                Location.go('#/media/' + WidgetHome.items[ind].id, true);
+                            Location.go('#/media/' + WidgetHome.items[ind].id, true);
                         } else {
-                                Location.go('#/nowplaying/' + WidgetHome.items[ind].id, true);
+                            Location.go('#/nowplaying/' + WidgetHome.items[ind].id, true);
                         }
                         $rootScope.showGlobalPlaylistButtons = false;
                     }
@@ -785,6 +1379,7 @@
                 buildfire.auth.onLogin(function (user) {
                     buildfire.spinner.show();
                     bookmarks.sync($scope);
+                    if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
                     $rootScope.user = user;
                     $rootScope.refreshItems();
                 });
@@ -792,12 +1387,12 @@
                 buildfire.auth.onLogout(function () {
                     buildfire.spinner.show();
                     bookmarks.sync($scope);
+                    if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
                     $rootScope.user = null;
                     $rootScope.refreshItems();
                 });
 
-                WidgetHome.bookmark = function ($event, item) {
-                    $event.stopImmediatePropagation();
+                WidgetHome.bookmark = function (item) {
                     var isBookmarked = item.data.bookmarked ? true : false;
                     if (isBookmarked) {
                         bookmarks.delete($scope, item);
@@ -806,13 +1401,11 @@
                     }
                 };
 
-                WidgetHome.bookmarked = function ($event, item) {
-                    $event.stopImmediatePropagation();
-                    WidgetHome.bookmark($event, item);
+                WidgetHome.bookmarked = function (item) {
+                    WidgetHome.bookmark(item);
                 };
 
-                WidgetHome.share = function ($event, item) {
-                    $event.stopImmediatePropagation();
+                WidgetHome.share = function (item) {
 
                     var link = {};
                     link.title = item.data.title;
@@ -840,6 +1433,10 @@
                     });
                 };
 
+                WidgetHome.dismissOfflineBox = function () {
+                    $rootScope.showOfflineBox = false;
+                };
+
                 $rootScope.$on("Carousel:LOADED", function () {
                     if (WidgetHome.media.data.content && WidgetHome.media.data.content.images) {
                         view = new Buildfire.components.carousel.view("#carousel", WidgetHome.media.data.content.images);
@@ -849,23 +1446,63 @@
                     }
                 });
 
+                $rootScope.$on('online', function () {
+                    WidgetHome.online = $rootScope.online;
+                    Location.goToHome();
+                });
+
                 $rootScope.$watch('showFeed', function () {
                     if ($rootScope.showFeed) {
                         listener.clear();
                         listener = Buildfire.datastore.onUpdate(onUpdateCallback);
                         bookmarks.sync($scope);
-                        if(!WidgetHome.items.length) WidgetHome.deepLink = true;
-                        MediaCenter.get().then(function success(result) {
-                            WidgetHome.media = result;
-                            if (WidgetHome.media.data.design && $rootScope.skipMediaPage) $rootScope.skipMediaPage = true;
-                        },
-                            function fail() {
-                                WidgetHome.media = _infoData;
-                            }
-                        );
+                        if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
+                        if (!WidgetHome.items.length) WidgetHome.deepLink = true;
+                        if (!$rootScope.online && !WidgetHome.isWeb) {
+                            CachedMediaCenter.get((err, res) => {
+                                if (err) {
+                                    WidgetHome.media = _infoData;
+                                }
 
+                                else {
+                                    WidgetHome.media = res;
+                                }
+                                setTimeout(() => {
+                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                }, 0);
+                            });
+                        }
+                        else {
+                            MediaCenter.get().then(function success(result) {
+                                WidgetHome.media = result;
+                                if (WidgetHome.media.data.design && $rootScope.skipMediaPage) $rootScope.skipMediaPage = true;
+                                if (!WidgetHome.isWeb) {
+                                    CachedMediaCenter.insert(result, (err, res) => {
+                                        if (err) {
+                                            buildfire.dialog.toast({
+                                                message: `Error`,
+                                                type: 'warning',
+                                            });
+                                        }
+
+                                        setTimeout(() => {
+                                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                        }, 0);
+                                    });
+                                }
+                            },
+                                function fail() {
+                                    WidgetHome.media = _infoData;
+                                    setTimeout(() => {
+                                        if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                    }, 0);
+                                }
+
+                            );
+                        }
                     }
                 });
+
                 $rootScope.$watch('goingBack', function () {
                     if ($rootScope.goingBack) {
                         WidgetHome.deepLink = true;

@@ -20,18 +20,25 @@
                         <div class="list-item-media text-center border-radius-three overflow-hidden text-overlay">
                             <div play-btn="{{item.data.videoUrl.length > 0  || (skipMediaPage && (item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0)) }}" class="list-media-holder text-overlay">
                                 <div class="li-actions-item">
-                                    <i class="share glyphicon glyphicon-share-alt" ng-if="allowShare" ng-click="WidgetHome.share($event, item)" role="button"></i>
-                                    <i class="bookmark glyphicon" style="right: 0; font-family: 'Glyphicons Halflings' !important;"  ng-class="{ 'glyphicon-star-empty' : !item.data.bookmarked, 'glyphicon-star' : item.data.bookmarked }" ng-click="WidgetHome.bookmark($event, item)" role="button"></i>
-                                    <i ng-if="globalPlaylist" class="glyphicon" style="right: 0; bottom: 0; top: unset; font-family: 'Glyphicons Halflings' !important; font-size: 17px; padding: 7px;"  ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(item.id), 'glyphicon-minus' : isInGlobalPlaylist(item.id) }" ng-click="toggleGlobalPlaylistItem($event, item)" role="button"></i>
+                                    <i style="right: 0;" class="glyphicon glyphicon-option-horizontal" ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
                                 </div>
                                 <img ng-if="item.data.topImage" load-image="16x9" crop-width="240" crop-height="135" crop-type="crop" data-final-src="{{item.data.topImage}}">
                                 <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png" style="max-width:99.5%">
                             </div>
                         </div>
                         <div class="list-item-copy text-left">
-                            <p class="ellipsis margin-zero text-primary"><a class="text-primary">{{item.data.title}}</a></p>
+                            <div class="date-row">
+                                <p class="ellipsis margin-zero text-primary title"><a class="text-primary">{{item.data.title}}</a></p>
+                                <i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload" style="margin-top: 2px; margin-left: auto;" class="glyphicon glyphicon-ok-circle" role="button"></i>
+                                <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" class="lds-ring-small"><div></div><div></div><div></div><div></div></div>
+                            </div>
+                            
                             <p class="summary ellipsis margin-zero">{{item.data.summary}}</p>
-                            <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}}</span>
+                      
+                                <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}} </span>
+                       
+                            <!-- <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" role="button" class="loader"></div> -->
+   
                         </div>
                     </div>
                 </div>

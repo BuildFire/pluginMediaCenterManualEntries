@@ -17,7 +17,7 @@
             var _location = location;
             return {
                 go: function (path, pushToHistory) {
-                    if(pushToHistory) {
+                    if (pushToHistory) {
                         setTimeout(function () {
                             buildfire.history.push(path);
                         }, 1000);
@@ -29,38 +29,96 @@
                 }
             };
         }])
-      .factory('Orders', [function () {
-          var ordersMap = {
-              Manually: "Manually",
-              Default: "Manually",
-              Newest: "Newest",
-              Oldest: "Oldest",
-              Most: " Oldest",
-              Least: " Oldest",
-              MediaDateAsc:"Media Date Asc",
-              MediaDateDesc:"Media Date Desc"
-          };
-          var orders = [
-              {id: 1, name: "Manually", value: "Manually", key: "rank", order: 1},
-              {id: 1, name: "Newest", value: "Newest", key: "dateCreated", order: -1},
-              {id: 1, name: "Oldest", value: "Oldest", key: "dateCreated", order: 1},
-              {id: 1, name: "Media Title A-Z", value: "Media Title A-Z", key: "title", order: 1},
-              {id: 1, name: "Media Title Z-A", value: "Media Title Z-A", key: "title", order: -1},
-              {id: 1, name: "Media Date Asc", value: "Media Date Asc", key: "mediaDateIndex", order: 1},
-              {id: 1, name: "Media Date Desc", value: "Media Date Desc", key: "mediaDateIndex", order: -1}
-          ];
-          return {
-              ordersMap: ordersMap,
-              options: orders,
-              getOrder: function (name) {
-                  return orders.filter(function (order) {
-                      return order.name === name;
-                  })[0];
-              }
-          };
-      }])
+        .factory('Orders', [function () {
+            var ordersMap = {
+                Manually: "Manually",
+                Default: "Manually",
+                Newest: "Newest",
+                Oldest: "Oldest",
+                Most: " Oldest",
+                Least: " Oldest",
+                MediaDateAsc: "Media Date Asc",
+                MediaDateDesc: "Media Date Desc"
+            };
+            var orders = [
+                { id: 1, name: "Manually", value: "Manually", key: "rank", order: 1 },
+                { id: 1, name: "Newest", value: "Newest", key: "dateCreated", order: -1 },
+                { id: 1, name: "Oldest", value: "Oldest", key: "dateCreated", order: 1 },
+                { id: 1, name: "Media Title A-Z", value: "Media Title A-Z", key: "title", order: 1 },
+                { id: 1, name: "Media Title Z-A", value: "Media Title Z-A", key: "title", order: -1 },
+                { id: 1, name: "Media Date Asc", value: "Media Date Asc", key: "mediaDateIndex", order: 1 },
+                { id: 1, name: "Media Date Desc", value: "Media Date Desc", key: "mediaDateIndex", order: -1 }
+            ];
+            return {
+                ordersMap: ordersMap,
+                options: orders,
+                getOrder: function (name) {
+                    return orders.filter(function (order) {
+                        return order.name === name;
+                    })[0];
+                }
+            };
+        }])
 
-      .factory("DB", ['Buildfire', '$q', 'MESSAGES', 'CODES', function (Buildfire, $q, MESSAGES, CODES) {
+        .factory("OFSTORAGE", ['Buildfire', function (Buildfire) {
+            function OFSTORAGE(data = {}) {
+                this.instanceId = Buildfire.getContext().instanceId;
+                this.path = data.path;
+                this.fileName = `cache_${this.instanceId}_${data.fileName}.json`;;
+            }
+
+            OFSTORAGE.prototype.get = function (callback) {
+                buildfire.services.fileSystem.fileManager.readFileAsText({
+                    path: this.path,
+                    fileName: this.fileName,
+                }, (error, result) => {
+                    if (error && error.code !== 1) return callback(error);
+                    result = result ? JSON.parse(result) : [];
+                    callback(null, result);
+                });
+            };
+
+            OFSTORAGE.prototype.getById = function (id, callback) {
+                this.get((error, result) => {
+                    if (error) return callback(error);
+                    callback(null, result.filter(item => item.id === id)[0]);
+                });
+            };
+
+            OFSTORAGE.prototype.insert = function (item, callback) {
+                buildfire.services.fileSystem.fileManager.writeFileAsText(
+                    {
+                        path: this.path,
+                        fileName: this.fileName,
+                        content: JSON.stringify(item),
+                    },
+                    (err, isWritten) => {
+                        if (err) return callback(err);
+
+                        callback(null, isWritten);
+                    }
+                );
+            }
+
+            // OFSTORAGE.prototype.update = function (item) {
+            //     Buildfire.localStorage.setItem(this.tagName, item);
+            // }
+
+            // OFSTORAGE.prototype.getById = function (id) {
+            //     let res = Buildfire.localStorage.getItem(this.tagName);
+            //     if (res) {
+            //         res = JSON.parse(res);
+            //         return res.filter(function (item) {
+            //             return item.mediaId == id;
+            //         })[0];
+            //     }
+            //     return false;
+            // };
+
+            return OFSTORAGE;
+        }])
+
+        .factory("DB", ['Buildfire', '$q', 'MESSAGES', 'CODES', function (Buildfire, $q, MESSAGES, CODES) {
             function DB(tagName) {
                 this._tagName = tagName;
             }
@@ -206,8 +264,9 @@
             };
             return DB;
         }])
+
         .factory("AppDB", ['$rootScope', 'Buildfire', '$q', 'MESSAGES', 'CODES', function ($rootScope, Buildfire, $q, MESSAGES, CODES) {
-            function AppDB() {};
+            function AppDB() { };
 
             const getTagName = () => {
                 return 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : '');
@@ -351,7 +410,7 @@
                 itemsIds.forEach(itemId => {
                     unset['$unset'][`playlist.${itemId}`] = "";
                 });
-                
+
                 Buildfire.appData.update($rootScope.globalPlaylistItems.id, unset, tagName, (err, result) => {
                     if (err) {
                         return deferred.reject(err);
