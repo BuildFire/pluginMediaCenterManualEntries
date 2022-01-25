@@ -260,6 +260,16 @@
                 if (err) {
                   callback(err);
                 }
+                if (MediaCenterSettings.content.allowOfflineDownload) {
+                  Buildfire.analytics.registerEvent(
+                    {
+                      title: ContentMedia.item.data.title + " Video Downloads",
+                      key: data.id + "_downloads",
+                      description: "Video Downloads",
+                    },
+                    { silentNotification: true }
+                  );
+                }
                 MediaContent.getById(data.id).then((item) => {
                   ContentMedia.item = item;
                   ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: item.id });
@@ -319,6 +329,16 @@
             }
             if (ContentMedia.item.id) {
               createNewDeeplink(ContentMedia.item, (err, res) => {
+                if (MediaCenterSettings.content.allowOfflineDownload) {
+                  Buildfire.analytics.registerEvent(
+                    {
+                      title: ContentMedia.item.data.title + " Video Downloads",
+                      key: ContentMedia.item.id + "_downloads",
+                      description: "Video Downloads",
+                    },
+                    { silentNotification: true }
+                  );
+                }
                 updateItemData();
               })
             } else {

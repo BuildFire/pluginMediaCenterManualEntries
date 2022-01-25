@@ -13,7 +13,7 @@
                 // $rootScope.online = $window.navigator.onLine;
                 $rootScope.online = $window.navigator.onLine;
                 WidgetHome.online = $rootScope.online;
-                $rootScope.backgroundColor = buildfire.getContext().appTheme.colors.backgroundColor ? {"background-color": buildfire.getContext().appTheme.colors.backgroundColor} : {"background-color": '#ffffff'};
+                $rootScope.backgroundColor = buildfire.getContext().appTheme.colors.backgroundColor ? { "background-color": buildfire.getContext().appTheme.colors.backgroundColor } : { "background-color": '#ffffff' };
                 // $rootScope.online = false;
                 // WidgetHome.online = false;
                 buildfire.spinner.hide();
@@ -678,7 +678,7 @@
                                                             if (downloadedItem.mediaType == "video") {
                                                                 item.data.hasDownloadedVideo = true;
                                                             }
-    
+
                                                             else if (downloadedItem.mediaType == "audio") {
                                                                 item.data.hasDownloadedAudio = true;
                                                             }
@@ -692,7 +692,7 @@
                                             $rootScope.myItems = WidgetHome.items;
                                             bookmarks.sync($scope);
                                             if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
-    
+
                                             if (result.length < _limit) {// to indicate there is no more
                                                 WidgetHome.noMore = true;
                                             }
@@ -703,7 +703,7 @@
                                                 // In order to get all the items
                                                 return getMediaItems();
                                             }
-    
+
                                             if (!$window.deeplinkingDone && buildfire.deeplink) {
                                                 buildfire.deeplink.getData(function (data) {
                                                     var exists = data && data.id && WidgetHome.items.find(item => item.id === data.id);
@@ -729,7 +729,7 @@
                                                             if (foundObj.data.audioUrl && $rootScope.seekTime) {
                                                                 return Location.go('#/nowplaying/' + foundObj.id)
                                                             }
-    
+
                                                             WidgetHome.goTo(data.link);
                                                         }, 0);
                                                     }
@@ -766,7 +766,7 @@
                                             }, 0);
                                         });
                                     }
-                                 
+
                                 });
                             }
                             else {
@@ -1041,7 +1041,8 @@
                             }
 
                             else {
-                                listItems.push({ text: "Download Video" });
+                                if ($rootScope.currentlyDownloading.indexOf(item.id) < 0)
+                                    listItems.push({ text: "Download Video" });
                             }
                         }
 
@@ -1258,6 +1259,7 @@
                                                             console.error(err);
                                                             return;
                                                         }
+                                                        buildfire.analytics.trackAction(`${item.id}_downloads`);
                                                         let index = $rootScope.currentlyDownloading.indexOf(item.id);
                                                         $rootScope.currentlyDownloading.splice(index, 1);
                                                         item.data.hasDownloadedVideo = true;
