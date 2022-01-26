@@ -676,7 +676,12 @@
                                                             item.hasDownloadedMedia = true;
                                                             let downloadedItem = res[downloadedIDS.indexOf(item.id)];
                                                             if (downloadedItem.mediaType == "video") {
-                                                                item.data.hasDownloadedVideo = true;
+                                                                if (downloadedItem.originalMediaUrl != item.data.videoUrl || !downloadedItem.originalMediaUrl || item.data.videoUrl.length == 0) {
+                                                                    item.data.hasDownloadedVideo = true;
+                                                                }
+                                                                else {
+                                                                    item.data.hasDownloadedVideo = true;
+                                                                }
                                                             }
 
                                                             else if (downloadedItem.mediaType == "audio") {
@@ -1246,13 +1251,13 @@
                                                         return;
                                                     }
                                                     // Save the offline media
-                                                    buildfire.analytics.trackAction('mediaDownloadedOffline');
                                                     new OfflineAccess({
                                                         db: DownloadedMedia,
                                                     }).save({
                                                         mediaId: item.id,
                                                         mediaType: mediaType,
                                                         mediaPath: filePath,
+                                                        originalMediaUrl: item.data.videoUrl,
                                                         createdOn: new Date(),
                                                     }, (err, result) => {
                                                         if (err) {

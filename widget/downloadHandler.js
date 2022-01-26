@@ -12,14 +12,50 @@ var downloads = {
                     if ($scope.WidgetHome) {
                         $scope.WidgetHome.item = $scope.WidgetHome.items.map(item => {
                             if (downloadedIDS.indexOf(item.id) > -1) {
-                                item.hasDownloadedMedia = true;
                                 let downloadedItem = res[downloadedIDS.indexOf(item.id)];
                                 if (downloadedItem.mediaType == "video") {
-                                    item.data.hasDownloadedVideo = true;
+                                    if ((downloadedItem.originalMediaUrl != item.data.videoUrl || !downloadedItem.originalMediaUrl || item.data.videoUrl.length == 0) && window.navigator.onLine) {
+                                        item.hasDownloadedMedia = false;
+                                        item.data.hasDownloadedVideo = false;
+                                        if (!$scope.$$phase) {
+                                            $scope.$apply();
+                                        }
+                                        let type = downloadedItem.mediaPath.split('.').pop();
+                                        buildfire.dialog.toast({
+                                            message: `We are deleting downloads for old videos. Please download the video again.`,
+                                            type: 'warning',
+                                        });
+                                        console.log("instance", buildfire.getContext().instanceId);
+                                        console.log("mediaId", item.id);
+                                        console.log("type", downloadedItem.mediaType);
+                                        console.log("extension", type);
+                                        buildfire.services.fileSystem.fileManager.deleteFile(
+                                            {
+                                                path: "/data/mediaCenterManual/" + buildfire.getContext().instanceId + "/" + downloadedItem.mediaType + "/",
+                                                fileName: item.id + "." + type
+                                            },
+                                            (err, isDeleted) => {
+                                                if (err) console.error("Error from dm home" + err);
+                                   
+                                                    new OfflineAccess({
+                                                        db: db,
+                                                    }).delete({
+                                                        mediaId: item.id,
+                                                        mediaType: downloadedItem.mediaType,
+                                                    });
+                                                
+                                            }
+                                        );
+                                    }
+                                    else {
+                                        item.hasDownloadedMedia = true;
+                                        item.data.hasDownloadedVideo = true;
+                                    }
                                 }
 
                                 else if (downloadedItem.mediaType == "audio") {
                                     item.data.hasDownloadedAudio = true;
+                                    item.hasDownloadedMedia = true;
                                 }
                             }
                             else {
@@ -33,16 +69,48 @@ var downloads = {
                     if ($scope.WidgetMedia) {
                         let matchingItems = res.filter(item => item.mediaId == $scope.WidgetMedia.item.id);
                         if (matchingItems.length > 0) {
-                            $scope.WidgetMedia.item.hasDownloadedMedia = true;
                             matchingItems.map(downloadedItem => {
                                 if (downloadedItem.mediaType == "video") {
+                                    if ((downloadedItem.originalMediaUrl != $scope.WidgetMedia.item.data.videoUrl || !downloadedItem.originalMediaUrl || $scope.WidgetMedia.item.data.videoUrl.length == 0) && window.navigator.onLine) {
+                                        let type = downloadedItem.mediaPath.split('.').pop();
+                                        buildfire.dialog.toast({
+                                            message: `We are deleting downloads for old videos. Please download the video again.`,
+                                            type: 'warning',
+                                        });
+                                        $scope.WidgetMedia.item.hasDownloadedMedia = false;
+                                        $scope.WidgetMedia.item.data.hasDownloadedVideo = false;
+                                        if (!$scope.$$phase) {
+                                            $scope.$apply();
+                                        }
+                                        buildfire.services.fileSystem.fileManager.deleteFile(
+                                            {
+                                                path: "/data/mediaCenterManual/" + buildfire.getContext().instanceId + "/" + downloadedItem.mediaType + "/",
+                                                fileName: $scope.WidgetMedia.item.id + "." + type
+                                            },
+                                            (err, isDeleted) => {
+                                                if (err) console.error("Error from dm media" + err);
+                                                    new OfflineAccess({
+                                                        db: db,
+                                                    }).delete({
+                                                        mediaId: $scope.WidgetMedia.item.id,
+                                                        mediaType: downloadedItem.mediaType,
+                                                    });
+                                                
+                                            }
+                                        );
+                                    }
+
+                                    else {
+                                        $scope.WidgetMedia.item.data.hasDownloadedVideo = true;
+                                        $scope.WidgetMedia.item.hasDownloadedMedia = true;
+                                    }
                                     // buildfire.dialog.toast({
                                     //     message: `Found downloaded video ${downloadedItem.mediaPath}`,
                                     // });
                                     if (!window.navigator.onLine) {
                                         $scope.WidgetMedia.item.data.videoUrl = downloadedItem.mediaPath;
+                                        $scope.WidgetMedia.item.data.topImage = "";
                                     }
-                                    $scope.WidgetMedia.item.data.hasDownloadedVideo = true;
                                 }
 
                                 else if (downloadedItem.mediaType == "audio") {
