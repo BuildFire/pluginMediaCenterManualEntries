@@ -103,7 +103,8 @@
                             }
 
                             else {
-                                listItems.push({ text: "Download Video" });
+                                if ($rootScope.currentlyDownloading.indexOf(WidgetMedia.item.id) < 0)
+                                    listItems.push({ text: "Download Video" });
                             }
                         }
 
@@ -361,35 +362,35 @@
                 if (media) {
                     if (!media.data.videoUrl && !media.data.audioUrl && $rootScope.autoPlay) return setTimeout($rootScope.playNextItem, 1500); // Wait for the page to load before moving
                     //Check if item has newly downloaded media
-                        WidgetMedia.loadingData = true;
-              
-                        WidgetMedia.item = media;
-                        WidgetMedia.mediaType = media.data.audioUrl ? 'AUDIO' : (media.data.videoUrl ? 'VIDEO' : null);
-                        WidgetMedia.item.srcUrl = media.data.srcUrl ? media.data.srcUrl
-                            : (media.data.audioUrl ? media.data.audioUrl : media.data.videoUrl);
-                        bookmarks.sync($scope);
-                        if (!WidgetMedia.isWeb) downloads.sync($scope, DownloadedMedia);
-                        WidgetMedia.changeVideoSrc();
+                    WidgetMedia.loadingData = true;
 
-                        WidgetMedia.iframeSrcUrl = $sce.trustAsUrl(WidgetMedia.item.data.srcUrl);
-                        if ($rootScope.deepLinkNavigate && $rootScope.seekTime) {
-                            if (WidgetMedia.mediaType == 'VIDEO') {
-                                var retry = setInterval(function () {
-                                    if (!WidgetMedia.API || !WidgetMedia.API.isReady || WidgetMedia.API.totalTime === 0) {
-                                        return;
-                                    } else {
-                                        clearInterval(retry);
-                                        WidgetMedia.API.seekTime($rootScope.seekTime);
-                                        WidgetMedia.toggleShowVideo();
-                                        $rootScope.deepLinkNavigate = null;
-                                        $rootScope.seekTime = null;
-                                        setTimeout(function () {
-                                            WidgetMedia.API.play();
-                                        }, 500);
-                                    }
-                                }, 500);
-                            }
+                    WidgetMedia.item = media;
+                    WidgetMedia.mediaType = media.data.audioUrl ? 'AUDIO' : (media.data.videoUrl ? 'VIDEO' : null);
+                    WidgetMedia.item.srcUrl = media.data.srcUrl ? media.data.srcUrl
+                        : (media.data.audioUrl ? media.data.audioUrl : media.data.videoUrl);
+                    bookmarks.sync($scope);
+                    if (!WidgetMedia.isWeb) downloads.sync($scope, DownloadedMedia);
+                    WidgetMedia.changeVideoSrc();
+
+                    WidgetMedia.iframeSrcUrl = $sce.trustAsUrl(WidgetMedia.item.data.srcUrl);
+                    if ($rootScope.deepLinkNavigate && $rootScope.seekTime) {
+                        if (WidgetMedia.mediaType == 'VIDEO') {
+                            var retry = setInterval(function () {
+                                if (!WidgetMedia.API || !WidgetMedia.API.isReady || WidgetMedia.API.totalTime === 0) {
+                                    return;
+                                } else {
+                                    clearInterval(retry);
+                                    WidgetMedia.API.seekTime($rootScope.seekTime);
+                                    WidgetMedia.toggleShowVideo();
+                                    $rootScope.deepLinkNavigate = null;
+                                    $rootScope.seekTime = null;
+                                    setTimeout(function () {
+                                        WidgetMedia.API.play();
+                                    }, 500);
+                                }
+                            }, 500);
                         }
+                    }
                 }
                 else {
                     WidgetMedia.iframeSrcUrl = '';
