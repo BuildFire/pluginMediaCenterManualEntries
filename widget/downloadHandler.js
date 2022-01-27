@@ -22,7 +22,7 @@ var downloads = {
                                         }
                                         let type = downloadedItem.mediaPath.split('.').pop();
                                         buildfire.dialog.toast({
-                                            message: `We are deleting downloads for old videos. Please download the video again.`,
+                                            message: `Some downloads are deleted`,
                                             type: 'warning',
                                         });
                                         console.log("instance", buildfire.getContext().instanceId);
@@ -74,7 +74,7 @@ var downloads = {
                                     if ((downloadedItem.originalMediaUrl != $scope.WidgetMedia.item.data.videoUrl || !downloadedItem.originalMediaUrl || $scope.WidgetMedia.item.data.videoUrl.length == 0) && window.navigator.onLine) {
                                         let type = downloadedItem.mediaPath.split('.').pop();
                                         buildfire.dialog.toast({
-                                            message: `We are deleting downloads for old videos. Please download the video again.`,
+                                            message: `Some downloads are deleted`,
                                             type: 'warning',
                                         });
                                         $scope.WidgetMedia.item.hasDownloadedMedia = false;
