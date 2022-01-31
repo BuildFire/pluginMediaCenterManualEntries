@@ -103,6 +103,7 @@
                 var MediaCenterInfo = null;
 
                 if ($rootScope.online) {
+                    console.log('getting media center info');
                     MediaCenter.get().then(function success(result) {
                         if (result && result.data && result.id) {
                             MediaCenterInfo = result;
@@ -126,22 +127,45 @@
                         $rootScope.showGlobalAddAllToPlaylistButton = MediaCenterInfo.data.content.showGlobalAddAllToPlaylistButton;
                         $rootScope.allowOfflineDownload = MediaCenterInfo.data.content.allowOfflineDownload;
 
+                        console.log("widget home is web", WidgetHome.isWeb);
                         if (!WidgetHome.isWeb) {
                             CachedMediaCenter.insert(MediaCenterInfo, (err, res) => {
                                 if (err) {
+                                    console.log("error inserting");
                                     buildfire.dialog.toast({
                                         message: `Error`,
                                         type: 'warning',
                                     });
                                 }
+                                console.log("Inserted settingd 1");
+                                buildfire.dialog.toast({
+                                    message: `Inserted settings 1`,
+                                    type: 'warning',
+                                });
                             });
                         }
                     },
                         function fail() {
                             MediaCenterInfo = _infoData;
+                            buildfire.dialog.toast({
+                                message: `Error while getting settings`,
+                                type: 'warning',
+                            });
                             WidgetHome.media = MediaCenterInfo;
                             if (!WidgetHome.isWeb) {
-                                CachedMediaCenter.insert(MediaCenterInfo, (err, res) => { });
+                                CachedMediaCenter.insert(MediaCenterInfo, (err, res) => {
+                                    if (err) {
+                                        buildfire.dialog.toast({
+                                            message: `Error while saving settings`,
+                                            type: 'warning',
+                                        });
+                                    }
+                                    console.log("Inserted settingd 2");
+                                    buildfire.dialog.toast({
+                                        message: `Inserted settings 2`,
+                                        type: 'warning',
+                                    });
+                                 });
                             }
                         }
                     );
@@ -149,10 +173,26 @@
 
                 else {
                     if (!WidgetHome.isWeb) {
+                        buildfire.dialog.toast({
+                            message: `getting settings 1`,
+                            type: 'warning',
+                        });
                         CachedMediaCenter.get((err, res) => {
-                            if (err) WidgetHome.media = _infoData;
-
-                            if (res) WidgetHome.media = res;
+                            if (err) {
+                                buildfire.dialog.toast({
+                                    message: `Error getting settings 1`,
+                                    type: 'warning',
+                                });
+                                WidgetHome.media = _infoData;
+                            } 
+                     
+                            if (res) {
+                                WidgetHome.media = res;
+                                buildfire.dialog.toast({
+                                    message: `got media center settings`,
+                                    type: 'warning',
+                                });
+                            } 
 
                             $rootScope.backgroundImage = WidgetHome.media.data.design.backgroundImage;
                             $rootScope.allowShare = WidgetHome.media.data.content.allowShare;
@@ -629,6 +669,7 @@
                 }
 
                 WidgetHome.loadMore = function () {
+                    console.log("loading items");
                     if (WidgetHome.isBusy || WidgetHome.noMore) {
                         buildfire.spinner.hide();
                         $rootScope.loadingData = false;
@@ -662,10 +703,26 @@
                             //Check if items have downloaded media
                             if (!WidgetHome.isWeb) {
                                 CachedMediaContent.insert(WidgetHome.items, (error, res) => {
+                                    if (error) {
+                                        buildfire.dialog.toast({
+                                            message: `Couldn't cache media items`,
+                                            type: 'warning',
+                                        });
+                                        return;
+                                    }
+                                    console.log("Inserted content 1");
+                                    // buildfire.dialog.toast({
+                                    //     message: `Inserted content 1`,
+                                    //     type: 'warning',
+                                    // });
                                     if (WidgetHome.items.length > 0) {
                                         DownloadedMedia.get((err, res) => {
                                             let downloadedIDS = [];
                                             if (err) {
+                                                buildfire.dialog.toast({
+                                                    message: `Error getting downloaded media 1`,
+                                                    type: 'warning',
+                                                });
                                                 return callback(err);
                                             }
                                             if (res) {
@@ -880,6 +937,10 @@
                             }
                             let cachedItems = [];
                             if (err) {
+                                buildfire.dialog.toast({
+                                    message: `Couldn't get cache media items`,
+                                    type: 'warning',
+                                });
                                 return callback(err);
                             }
                             if (res) {
@@ -1460,14 +1521,21 @@
 
                 $rootScope.$watch('showFeed', function () {
                     if ($rootScope.showFeed) {
-                        listener.clear();
-                        listener = Buildfire.datastore.onUpdate(onUpdateCallback);
+                        if ($rootScope.online) {
+                            listener.clear();
+                            listener = Buildfire.datastore.onUpdate(onUpdateCallback);
+                        }
                         bookmarks.sync($scope);
+                        
                         if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
                         if (!WidgetHome.items.length) WidgetHome.deepLink = true;
                         if (!$rootScope.online && !WidgetHome.isWeb) {
                             CachedMediaCenter.get((err, res) => {
                                 if (err) {
+                                    buildfire.dialog.toast({
+                                        message: `Error while getting settings`,
+                                        type: 'warning',
+                                    });
                                     WidgetHome.media = _infoData;
                                 }
 
@@ -1491,7 +1559,11 @@
                                                 type: 'warning',
                                             });
                                         }
-
+                                        console.log("Inserted settings 3");
+                                        buildfire.dialog.toast({
+                                            message: `Inserted settings 3`,
+                                            type: 'warning',
+                                        });
                                         setTimeout(() => {
                                             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                                         }, 0);
@@ -1499,6 +1571,10 @@
                                 }
                             },
                                 function fail() {
+                                    buildfire.dialog.toast({
+                                        message: `Error while getting settings`,
+                                        type: 'warning',
+                                    });
                                     WidgetHome.media = _infoData;
                                     setTimeout(() => {
                                         if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
