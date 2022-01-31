@@ -132,39 +132,18 @@
                             CachedMediaCenter.insert(MediaCenterInfo, (err, res) => {
                                 if (err) {
                                     console.log("error inserting");
-                                    buildfire.dialog.toast({
-                                        message: `Error`,
-                                        type: 'warning',
-                                    });
                                 }
                                 console.log("Inserted settingd 1");
-                                buildfire.dialog.toast({
-                                    message: `Inserted settings 1`,
-                                    type: 'warning',
-                                });
                             });
                         }
                     },
                         function fail() {
                             MediaCenterInfo = _infoData;
-                            buildfire.dialog.toast({
-                                message: `Error while getting settings`,
-                                type: 'warning',
-                            });
                             WidgetHome.media = MediaCenterInfo;
                             if (!WidgetHome.isWeb) {
                                 CachedMediaCenter.insert(MediaCenterInfo, (err, res) => {
                                     if (err) {
-                                        buildfire.dialog.toast({
-                                            message: `Error while saving settings`,
-                                            type: 'warning',
-                                        });
                                     }
-                                    console.log("Inserted settingd 2");
-                                    buildfire.dialog.toast({
-                                        message: `Inserted settings 2`,
-                                        type: 'warning',
-                                    });
                                  });
                             }
                         }
@@ -173,25 +152,13 @@
 
                 else {
                     if (!WidgetHome.isWeb) {
-                        buildfire.dialog.toast({
-                            message: `getting settings 1`,
-                            type: 'warning',
-                        });
                         CachedMediaCenter.get((err, res) => {
                             if (err) {
-                                buildfire.dialog.toast({
-                                    message: `Error getting settings 1`,
-                                    type: 'warning',
-                                });
                                 WidgetHome.media = _infoData;
                             } 
                      
                             if (res) {
                                 WidgetHome.media = res;
-                                buildfire.dialog.toast({
-                                    message: `got media center settings`,
-                                    type: 'warning',
-                                });
                             } 
 
                             $rootScope.backgroundImage = WidgetHome.media.data.design.backgroundImage;
@@ -704,10 +671,6 @@
                             if (!WidgetHome.isWeb) {
                                 CachedMediaContent.insert(WidgetHome.items, (error, res) => {
                                     if (error) {
-                                        buildfire.dialog.toast({
-                                            message: `Couldn't cache media items`,
-                                            type: 'warning',
-                                        });
                                         return;
                                     }
                                     console.log("Inserted content 1");
@@ -719,10 +682,6 @@
                                         DownloadedMedia.get((err, res) => {
                                             let downloadedIDS = [];
                                             if (err) {
-                                                buildfire.dialog.toast({
-                                                    message: `Error getting downloaded media 1`,
-                                                    type: 'warning',
-                                                });
                                                 return callback(err);
                                             }
                                             if (res) {
@@ -937,10 +896,6 @@
                             }
                             let cachedItems = [];
                             if (err) {
-                                buildfire.dialog.toast({
-                                    message: `Couldn't get cache media items`,
-                                    type: 'warning',
-                                });
                                 return callback(err);
                             }
                             if (res) {
@@ -1532,10 +1487,6 @@
                         if (!$rootScope.online && !WidgetHome.isWeb) {
                             CachedMediaCenter.get((err, res) => {
                                 if (err) {
-                                    buildfire.dialog.toast({
-                                        message: `Error while getting settings`,
-                                        type: 'warning',
-                                    });
                                     WidgetHome.media = _infoData;
                                 }
 
@@ -1554,16 +1505,8 @@
                                 if (!WidgetHome.isWeb) {
                                     CachedMediaCenter.insert(result, (err, res) => {
                                         if (err) {
-                                            buildfire.dialog.toast({
-                                                message: `Error`,
-                                                type: 'warning',
-                                            });
                                         }
                                         console.log("Inserted settings 3");
-                                        buildfire.dialog.toast({
-                                            message: `Inserted settings 3`,
-                                            type: 'warning',
-                                        });
                                         setTimeout(() => {
                                             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                                         }, 0);
@@ -1571,10 +1514,6 @@
                                 }
                             },
                                 function fail() {
-                                    buildfire.dialog.toast({
-                                        message: `Error while getting settings`,
-                                        type: 'warning',
-                                    });
                                     WidgetHome.media = _infoData;
                                     setTimeout(() => {
                                         if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
