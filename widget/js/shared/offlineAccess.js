@@ -87,9 +87,17 @@ class OfflineAccess {
             this.db.get((err, result) => {
                 if (err) {
                     if (cb) cb(err);
+                    buildfire.dialog.toast({
+                        message: `Error while deleting downloads`,
+                        type: 'warning',
+                    });
                     return;
                 }
                 if (!result) {
+                    buildfire.dialog.toast({
+                        message: `Error while deleting downloads`,
+                        type: 'warning',
+                    });
                     if (cb) cb("Media not found");
                     return;
                 }
@@ -98,6 +106,10 @@ class OfflineAccess {
 
                 this.db.insert(result, (err, result) => {
                     if (err) {
+                        buildfire.dialog.toast({
+                            message: `Error while deleting downloads`,
+                            type: 'warning',
+                        });
                         if (cb) return cb(err);
                     }
                     if (cb) return cb(null, result);

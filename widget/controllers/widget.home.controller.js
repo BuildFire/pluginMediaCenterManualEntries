@@ -129,10 +129,6 @@
                         if (!WidgetHome.isWeb) {
                             CachedMediaCenter.insert(MediaCenterInfo, (err, res) => {
                                 if (err) {
-                                    buildfire.dialog.toast({
-                                        message: `Error`,
-                                        type: 'warning',
-                                    });
                                 }
                             });
                         }
@@ -141,7 +137,10 @@
                             MediaCenterInfo = _infoData;
                             WidgetHome.media = MediaCenterInfo;
                             if (!WidgetHome.isWeb) {
-                                CachedMediaCenter.insert(MediaCenterInfo, (err, res) => { });
+                                CachedMediaCenter.insert(MediaCenterInfo, (err, res) => {
+                                    if (err) {
+                                    }
+                                 });
                             }
                         }
                     );
@@ -150,9 +149,13 @@
                 else {
                     if (!WidgetHome.isWeb) {
                         CachedMediaCenter.get((err, res) => {
-                            if (err) WidgetHome.media = _infoData;
-
-                            if (res) WidgetHome.media = res;
+                            if (err) {
+                                WidgetHome.media = _infoData;
+                            } 
+                     
+                            if (res) {
+                                WidgetHome.media = res;
+                            } 
 
                             $rootScope.backgroundImage = WidgetHome.media.data.design.backgroundImage;
                             $rootScope.allowShare = WidgetHome.media.data.content.allowShare;
@@ -662,6 +665,13 @@
                             //Check if items have downloaded media
                             if (!WidgetHome.isWeb) {
                                 CachedMediaContent.insert(WidgetHome.items, (error, res) => {
+                                    if (error) {
+                                        return;
+                                    }
+                                    // buildfire.dialog.toast({
+                                    //     message: `Inserted content 1`,
+                                    //     type: 'warning',
+                                    // });
                                     if (WidgetHome.items.length > 0) {
                                         DownloadedMedia.get((err, res) => {
                                             let downloadedIDS = [];
@@ -1241,7 +1251,6 @@
                                                 },
                                                 (err, filePath) => {
                                                     if (err) {
-                                                        console.log("error in downloading", JSON.stringify(err));
                                                         let index = $rootScope.currentlyDownloading.indexOf(item.id);
                                                         $rootScope.currentlyDownloading.splice(index, 1);
                                                         buildfire.dialog.toast({
@@ -1460,9 +1469,12 @@
 
                 $rootScope.$watch('showFeed', function () {
                     if ($rootScope.showFeed) {
-                        listener.clear();
-                        listener = Buildfire.datastore.onUpdate(onUpdateCallback);
+                        if ($rootScope.online) {
+                            listener.clear();
+                            listener = Buildfire.datastore.onUpdate(onUpdateCallback);
+                        }
                         bookmarks.sync($scope);
+                        
                         if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
                         if (!WidgetHome.items.length) WidgetHome.deepLink = true;
                         if (!$rootScope.online && !WidgetHome.isWeb) {
@@ -1486,12 +1498,7 @@
                                 if (!WidgetHome.isWeb) {
                                     CachedMediaCenter.insert(result, (err, res) => {
                                         if (err) {
-                                            buildfire.dialog.toast({
-                                                message: `Error`,
-                                                type: 'warning',
-                                            });
                                         }
-
                                         setTimeout(() => {
                                             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                                         }, 0);
