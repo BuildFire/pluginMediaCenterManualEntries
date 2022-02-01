@@ -103,7 +103,6 @@
                 var MediaCenterInfo = null;
 
                 if ($rootScope.online) {
-                    console.log('getting media center info');
                     MediaCenter.get().then(function success(result) {
                         if (result && result.data && result.id) {
                             MediaCenterInfo = result;
@@ -127,13 +126,10 @@
                         $rootScope.showGlobalAddAllToPlaylistButton = MediaCenterInfo.data.content.showGlobalAddAllToPlaylistButton;
                         $rootScope.allowOfflineDownload = MediaCenterInfo.data.content.allowOfflineDownload;
 
-                        console.log("widget home is web", WidgetHome.isWeb);
                         if (!WidgetHome.isWeb) {
                             CachedMediaCenter.insert(MediaCenterInfo, (err, res) => {
                                 if (err) {
-                                    console.log("error inserting");
                                 }
-                                console.log("Inserted settingd 1");
                             });
                         }
                     },
@@ -636,7 +632,6 @@
                 }
 
                 WidgetHome.loadMore = function () {
-                    console.log("loading items");
                     if (WidgetHome.isBusy || WidgetHome.noMore) {
                         buildfire.spinner.hide();
                         $rootScope.loadingData = false;
@@ -673,7 +668,6 @@
                                     if (error) {
                                         return;
                                     }
-                                    console.log("Inserted content 1");
                                     // buildfire.dialog.toast({
                                     //     message: `Inserted content 1`,
                                     //     type: 'warning',
@@ -1257,7 +1251,6 @@
                                                 },
                                                 (err, filePath) => {
                                                     if (err) {
-                                                        console.log("error in downloading", JSON.stringify(err));
                                                         let index = $rootScope.currentlyDownloading.indexOf(item.id);
                                                         $rootScope.currentlyDownloading.splice(index, 1);
                                                         buildfire.dialog.toast({
@@ -1506,7 +1499,6 @@
                                     CachedMediaCenter.insert(result, (err, res) => {
                                         if (err) {
                                         }
-                                        console.log("Inserted settings 3");
                                         setTimeout(() => {
                                             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                                         }, 0);

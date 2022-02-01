@@ -29,10 +29,6 @@ var downloads = {
                                         message: `Some downloads are deleted`,
                                         type: 'warning',
                                     });
-                                    console.log("instance", buildfire.getContext().instanceId);
-                                    console.log("mediaId", item.id);
-                                    console.log("type", downloadedItem.mediaType);
-                                    console.log("extension", type);
                                     buildfire.services.fileSystem.fileManager.deleteFile(
                                         {
                                             path: "/data/mediaCenterManual/" + buildfire.getContext().instanceId + "/" + downloadedItem.mediaType + "/",
