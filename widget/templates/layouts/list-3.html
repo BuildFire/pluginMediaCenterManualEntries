@@ -15,12 +15,9 @@
             <div class="clickable text-overlay" ng-repeat="item in WidgetHome.items"
                 ng-click="WidgetHome.goToMedia($index)">
                 <div class="plugin-banner clearfix text-overlay">
-                    <div class="text-overlay"
-                        play-btn="{{item.data.videoUrl.length > 0 || (skipMediaPage && (item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0)) }}">
-                        <img ng-if="item.data.topImage" load-image="16x9" style="width:100%;" crop-width="340"
-                            crop-height="190" crop-type="crop" data-final-src="{{item.data.topImage}}">
-                        <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png"
-                            style="width:100%;">
+                    <div class="text-overlay" play-btn="{{item.data.videoUrl.length > 0 || (skipMediaPage && (item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0)) }}">
+                        <img ng-if="item.data.topImage" load-image="16x9" style="width:100%;" crop-width="340" crop-height="190" crop-type="crop" data-final-src="{{item.data.topImage | resizeImage : 340:190}}">
+                        <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png" style="width:100%;">
                     </div>
                 </div>
                 <div class="padded text-left text-overlay">

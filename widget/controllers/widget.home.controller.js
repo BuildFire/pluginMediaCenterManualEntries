@@ -17,6 +17,7 @@
                 // $rootScope.online = false;
                 // WidgetHome.online = false;
                 buildfire.spinner.hide();
+                $rootScope.resizeImg = (url) => buildfire.imageLib.resizeImage(url);
 
 
                 $rootScope.globalPlaylistStrings = {

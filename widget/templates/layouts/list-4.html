@@ -22,10 +22,10 @@
                                     role="button"></i>
                             </div>
                             <div class="list-media-holder text-overlay"
-                                play-btn="{{WidgetHome.items[$index].data.videoUrl.length > 0  || (skipMediaPage && (WidgetHome.items[$index].data.videoUrl.length > 0 || WidgetHome.items[$index].data.audioUrl.length > 0)) }}">
-                                <img ng-if="WidgetHome.items[$index].data.topImage" load-image="1x1" crop-width="200"
-                                    crop-height="200" crop-type="crop"
-                                    data-final-src="{{WidgetHome.items[$index].data.topImage}}">
+                                 play-btn="{{WidgetHome.items[$index].data.videoUrl.length > 0  || (skipMediaPage && (WidgetHome.items[$index].data.videoUrl.length > 0 || WidgetHome.items[$index].data.audioUrl.length > 0)) }}">
+                                <img ng-if="WidgetHome.items[$index].data.topImage" load-image="1x1"
+                                     crop-width="200" crop-height="200" crop-type="crop"
+                                     data-final-src="{{WidgetHome.items[$index].data.topImage | resizeImage : 200:200}}">
                                 <img ng-if="!WidgetHome.items[$index].data.topImage"
                                     src="../../../styles/media/holder-1x1.png">
                             </div>
@@ -65,8 +65,8 @@
                             <div class="list-media-holder text-overlay"
                                 play-btn="{{WidgetHome.items[$index+1].data.videoUrl.length > 0  || (skipMediaPage && (WidgetHome.items[$index+1].data.videoUrl.length > 0 || WidgetHome.items[$index+1].data.audioUrl.length > 0)) }}">
                                 <img ng-if="WidgetHome.items[$index + 1].data.topImage" load-image="1x1"
-                                    crop-width="200" crop-height="200" crop-type="crop"
-                                    data-final-src="{{WidgetHome.items[$index + 1].data.topImage}}">
+                                     crop-width="200" crop-height="200" crop-type="crop"
+                                     data-final-src="{{WidgetHome.items[$index + 1].data.topImage | resizeImage : 200:200}}">
                                 <img ng-if="!WidgetHome.items[$index + 1].data.topImage"
                                     src="../../../styles/media/holder-1x1.png">
                             </div>
