@@ -1245,7 +1245,6 @@
                                                         return;
                                                     }
                                                     // Save the offline media
-                                                    buildfire.analytics.trackAction('mediaDownloadedOffline');
                                                     new OfflineAccess({
                                                         db: DownloadedMedia,
                                                     }).save({
@@ -1258,6 +1257,7 @@
                                                             console.error(err);
                                                             return;
                                                         }
+                                                        buildfire.analytics.trackAction(`${item.id}_downloads`);
                                                         let index = $rootScope.currentlyDownloading.indexOf(item.id);
                                                         $rootScope.currentlyDownloading.splice(index, 1);
                                                         item.data.hasDownloadedVideo = true;

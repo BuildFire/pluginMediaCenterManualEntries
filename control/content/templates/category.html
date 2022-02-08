@@ -1,0 +1,186 @@
+<div class="has-bottom-actions">
+    <div id="subcategoryModal" class="modal fade" role="dialog" ng-show="ContentCategory.showSubModal">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content backgroundColorTheme">
+                <div class="modal-header">
+                    <button ng-click="ContentCategory.closeSubcategoryModal()" style="margin-top: 0;" type="button"
+                        class="close" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span></button>
+                    <h4 class="modal-title">{{ContentCategory.addSubcategoryTitle}}</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Subcategory Name</p>
+                    <input type="text" class="form-control" ng-model="ContentCategory.subcategoryTitle" maxlength="70"
+                        placeholder="Enter name">
+                    <div class="text-danger" ng-show="subcategoryTitlequired">A title is required</div>
+                </div>
+                <div class="modal-footer">
+                    <button ng-click="ContentCategory.updateSubcategory()" type="button"
+                        class="btn btn-success">Save</button>
+                    <button type="button" style="margin-right: 10px;border:1px solid var(--c-gray3);" class="btn"
+                        ng-click="ContentCategory.closeSubcategoryModal()">Cancel</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div id="breadcrumbs">
+        <ol class="breadcrumb">
+            <li><a href="#/categoryHome">Categories</a></li>
+            <li>{{ContentCategory.item.data.name || ContentCategory.title}}
+            </li>
+        </ol>
+    </div>
+    <h1>{{ContentCategory.title}}</h1>
+    <p class="info-note margin-bottom-ten">Organize and filter your media by categories.</p>
+    <div class="row flex margin-top-thirty ">
+        <div class="col-md-3">
+            <span>Category Icon</span>
+        </div>
+        <div class="col-md-9 main ">
+            <div class="screens clearfix margin-bottom-five">
+                <div class="screen logoicon pull-left">
+                    <a class="border-grey border-radius-three default-background-hover"
+                        style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;"
+                        ng-click="ContentCategory.addIcon()">
+                        <span ng-if="!ContentCategory.item.data.icon" class="add-icon"
+                            style="height: 82px; margin: -8px;">+</span>
+                        <img ng-if="ContentCategory.item.data.icon && !ContentCategory.isIcon()"
+                            ng-src="{{ContentCategory.item.data.icon }}">
+                        <div style="color:#5f5f5f" ng-if="ContentCategory.item.data.icon && ContentCategory.isIcon()"
+                            ng-class="ContentCategory.item.data.icon">
+                        </div>
+                    </a>
+                    <span ng-if="ContentCategory.item.data.icon"
+                        class="icon btn-delete-icon btn-danger transition-third"
+                        ng-click="ContentCategory.removeIcon()"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="none">
+    <div class="item clearfix row" id="titleInput">
+        <div class="labels col-md-3 padding-right-zero pull-left">
+            <span>Category Name <span class="required">*</span></span>
+        </div>
+        <div class="main col-md-9 pull-right">
+            <input type="text" class="form-control" ng-model="ContentCategory.item.data.name" maxlength="70"
+                ng-class="{'border-danger': titleRequired}" />
+            <div class="text-left text-danger margin-top-five text-small" ng-show="titleRequired">
+                {{titleRequired}}
+            </div>
+        </div>
+    </div>
+    <hr class="none">
+    <h3>Subcategories</h3>
+    <p class="info-note margin-bottom-ten">Use subcategories within your parent category to get even more specific about
+        the media.</p>
+    <div class="search-bar-container margin-bottom-thirty margin-top-thirty">
+        <div class="search-bar">
+            <input type="text" class="form-control" placeholder="Search" ng-model="ContentCategory.searchText"
+                ng-keyup="ContentCategory.onEnterKey($event)">
+            <a class="btn btn-info" ng-click="ContentCategory.searchSubcategories()"><span
+                    class="search-icon"></span></a>
+        </div>
+    </div>
+
+    <div class="item clearfix flex margin-bottom-ten">
+        <div class="dropdown" dropdown is-open="status.isopen">
+            <button class="btn btn-default text-left dropdown-toggle sort-dropdown" dropdown-toggle
+                ng-disabled="disabled" aria-expanded="true">
+                <span class="pull-left">{{ContentCategory.item.data.sortByValue || 'Newest'}}</span>
+                <span class="chevron icon-chevron-down pull-right"></span>
+            </button>
+            <ul class="dropdown-menu extended" role="menu">
+                <li ng-repeat="option in ContentCategory.sortOptions"
+                    ng-click="ContentCategory.toggleSortOrder(option.name)">
+                    <a tabindex="-1" class="transition-third">{{option.value}}</a>
+                </li>
+            </ul>
+        </div>
+        <div class="dropdown flex-left-auto margin-right-ten" dropdown>
+            <button class="btn btn-default text-left dropdown-toggle" data-toggle="dropdown" dropdown-toggle
+                aria-expanded="true">
+                <span class="pull-left">Bulk Actions</span>
+                <span class="chevron icon-chevron-down pull-right"></span>
+            </button>
+            <ul class="dropdown-menu extended" role="menu">
+                <li ng-click="ContentCategory.exportCSV()"><a>Export CSV</a></li>
+                <li ng-click="ContentCategory.getTemplate()"><a>Get Template</a></li>
+                <li class="margin-bottom-ten" ng-click="ContentCategory.openImportCSVDialog()"><a>Import CSV</a></li>
+                <li>
+                    <p class="info-note caption margin-bottom-zero">Safari users need to rename the file to .csv to
+                        open
+                        the file.</p>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-3 padding-zero">
+            <a class="btn btn-success pull-right stretch btn-add"
+                ng-click="ContentCategory.showSubcategoryModal('Add')">Add Subcategory</a>
+        </div>
+    </div>
+
+    <div class="item clearfix">
+        <div
+            class="tab-order draggable-list-view wide-list has-btn-link border-grey border-radius-four infinite-scroll-parent">
+            <div infinite-scroll="ContentCategory.getMore()" infinite-scroll-distance="1"
+                data-infinite-container=".infinite-scroll-parent" infinite-scroll-disabled="ContentCategory.noMore">
+                <div ui-sortable="ContentCategory.itemSortableOptions"
+                    ng-model="ContentCategory.displayedSubactegories">
+                    <div class="well text-center margin-bottom-zero border-none empty-state"
+                        ng-if="ContentCategory.displayedSubactegories.length < 1 && !ContentCategory.isBusy">
+                        <p class="margin-zero">You haven't added anything else</p>
+                    </div>
+                    <div class="d-item double-line square-icon clearfix"
+                        ng-if="ContentCategory.displayedSubactegories.length"
+                        ng-repeat="item in ContentCategory.displayedSubactegories">
+                        <span class="icon icon-menu pull-left cursor-grab"
+                            ng-class="{ 'disabled': ContentCategory.itemSortableOptions.disabled }"></span>
+
+                        <div ng-click="ContentCategory.addSucbategoryIcon(item, $event)" ng-if="!item.icon"
+                            class="plus">
+                        </div>
+                        <div  ng-click="ContentCategory.removeSubcategoryIcon(item)" style="position: relative;" ng-if="item.icon" class="screen logoicon pull-left">
+                            <a  class="border-grey border-radius-three default-background-hover"
+                                style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                                <!-- <img ng-if="ContentCategory.item.data.icon && !ContentCategory.isIcon()"
+                                    ng-src="{{item.icon}}"> -->
+                                <div style="color:#5f5f5f" ng-if="item.icon && ContentCategory.isIcon(item.icon)" ng-class="item.icon">
+                                </div>
+                                <img style="max-height: 100%;" ng-if="item.icon && !ContentCategory.isIcon(item.icon)"
+                                ng-src="{{item.icon}}">
+                            </a>
+                            <div class="x"></div>
+                        </div>
+
+                        <div style="max-width: 100%; width: 100%;" class="copy pull-right">
+                            <a style="margin-left: 10px;" class="text-primary"
+                                ><span
+                                    class="title ellipsis pull-left">{{item.name}}</span></a>
+
+                            <div class="flex pull-right">
+                                <span ng-click="ContentCategory.showSubcategoryModal('Edit', item)" style="color: #000;" class="btn btn--icon icon icon-pencil3"></span>
+                                <span style="margin-left: 0px !important;" class="btn-icon btn-delete-icon btn-danger transition-third"
+                                    ng-click="ContentCategory.removeSubcategory(item)"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="well text-center margin-bottom-zero border-none empty-state"
+                        ng-if="ContentCategory.isBusy">
+                        <p class="margin-zero">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-actions">
+        <a class="btn btn-default btn-outlined margin-right-ten" style="border: 1px solid #ddd;"
+            ng-disabled="ContentCategory.saving" ng-click="ContentCategory.cancelAdd()"
+            href="javaScript:void(0);">Cancel</a>
+        <a class="btn btn-success margin-right-ten" ng-click="ContentCategory.updateItem()"
+            ng-disabled="ContentCategory.saving" href="javaScript:void(0);">{{ContentCategory.saving ? 'Saving...' :
+            'Save'}}</a>
+    </div>

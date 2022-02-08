@@ -3,21 +3,21 @@
     //created mediaCenterContent module
     angular
         .module('mediaCenterContent',
-        [
-            'mediaCenterEnums',
-            'mediaCenterContentServices',
-            'mediaCenterControlFilters',
-            'mediaCenterModals',
-            'ngAnimate',
-            'ngRoute',
-            'ui.bootstrap',
-            'ui.sortable',
-            'ngClipboard',
-            'infinite-scroll',
-            'bngCsv',
-            'ui.tinymce'
+            [
+                'mediaCenterEnums',
+                'mediaCenterContentServices',
+                'mediaCenterControlFilters',
+                'mediaCenterModals',
+                'ngAnimate',
+                'ngRoute',
+                'ui.bootstrap',
+                'ui.sortable',
+                'ngClipboard',
+                'infinite-scroll',
+                'bngCsv',
+                'ui.tinymce'
 
-        ])
+            ])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component
         //injected ui.sortable for manual ordering of list
@@ -33,15 +33,41 @@
                         MediaCenterInfo: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location', function ($q, DB, COLLECTIONS, Orders, Location) {
                             var deferred = $q.defer();
                             var MediaCenter = new DB(COLLECTIONS.MediaCenter);
-                            mainDateIndexCheck(function(success){       
+                            mainDateIndexCheck(function (success) {
                                 MediaCenter.get().then(function success(result) {
-                                        if (result && result.id && result.data) {
-                                            deferred.resolve(result);
-                                        }
-                                        else {
-                                            deferred.resolve(null);
-                                        }
-                                    },
+                                    if (result && result.id && result.data) {
+                                        deferred.resolve(result);
+                                    }
+                                    else {
+                                        deferred.resolve(null);
+                                    }
+                                },
+                                    function fail(err) {
+                                        deferred.resolve(null);
+                                    }
+                                );
+                            });
+                            return deferred.promise;
+                        }]
+                    }
+                })
+                .when('/categoryHome', {
+                    templateUrl: 'templates/categoryHome.html',
+                    controllerAs: 'ContentCategoryHome',
+                    controller: 'ContentCategoryHomeCtrl',
+                    resolve: {
+                        CategoryHomeInfo: ['$q', 'DB', 'COLLECTIONS', 'CategoryOrders', 'Orders', 'Location', function ($q, DB, COLLECTIONS, CategoryOrders, Orders, Location) {
+                            var deferred = $q.defer();
+                            var MediaCenter = new DB(COLLECTIONS.MediaCenter);
+                            mainDateIndexCheck(function (success) {
+                                MediaCenter.get().then(function success(result) {
+                                    if (result && result.id && result.data) {
+                                        deferred.resolve(result);
+                                    }
+                                    else {
+                                        deferred.resolve(null);
+                                    }
+                                },
                                     function fail(err) {
                                         deferred.resolve(null);
                                     }
@@ -61,6 +87,16 @@
                         }
                     }
                 })
+                .when('/category', {
+                    templateUrl: 'templates/category.html',
+                    controllerAs: 'ContentCategory',
+                    controller: 'ContentCategoryCtrl',
+                    resolve: {
+                        category: function () {
+                            return null;
+                        }
+                    }
+                })
                 .when('/media/:itemId', {
                     templateUrl: 'templates/media.html',
                     controllerAs: 'ContentMedia',
@@ -71,13 +107,42 @@
                             var MediaContent = new DB(COLLECTIONS.MediaContent);
                             if ($route.current.params.itemId) {
                                 MediaContent.getById($route.current.params.itemId).then(function success(result) {
-                                        if (result && result.data) {
-                                            deferred.resolve(result);
-                                        }
-                                        else {
-                                            Location.goToHome();
-                                        }
-                                    },
+                                    if (result && result.data) {
+                                        deferred.resolve(result);
+                                    }
+                                    else {
+                                        Location.goToHome();
+                                    }
+                                },
+                                    function fail() {
+                                        Location.goToHome();
+                                    }
+                                );
+                            }
+                            else {
+                                Location.goToHome();
+                            }
+                            return deferred.promise;
+                        }]
+                    }
+                })
+                .when('/category/:itemId', {
+                    templateUrl: 'templates/category.html',
+                    controllerAs: 'ContentCategory',
+                    controller: 'ContentCategoryCtrl',
+                    resolve: {
+                        category: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location', '$route', function ($q, DB, COLLECTIONS, Orders, Location, $route) {
+                            var deferred = $q.defer();
+                            var CategoryContent = new DB(COLLECTIONS.CategoryContent);
+                            if ($route.current.params.itemId) {
+                                CategoryContent.getById($route.current.params.itemId).then(function success(result) {
+                                    if (result && result.data) {
+                                        deferred.resolve(result);
+                                    }
+                                    else {
+                                        Location.goToHome();
+                                    }
+                                },
                                     function fail() {
                                         Location.goToHome();
                                     }
@@ -146,7 +211,7 @@
                                     //Buildfire.history.pop();
                                     url = url + "home";
                                     break;
-                                default :
+                                default:
                                     break
                             }
                             Location.go(url);
@@ -161,4 +226,4 @@
             });*/
         }]);
 })
-(window.angular, window.buildfire);
+    (window.angular, window.buildfire);

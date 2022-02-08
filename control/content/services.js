@@ -73,6 +73,64 @@
                 }
             };
         }])
+        .factory('CategoryOrders', [function () {
+            var ordersMap = {
+                Manually: "Manually",
+                Default: "Manually",
+                Newest: "Newest",
+                Oldest: "Oldest",
+                Most: " Oldest",
+                Least: " Oldest"
+            };
+            var orders = [
+                {id: 1, name: "Manually", value: "Manually", key: "rank", order: 1},
+                {id: 1, name: "Category Title A-Z", value: "Category Title A-Z", key: "title", order: 1},
+                {id: 1, name: "Category Title Z-A", value: "Category Title Z-A", key: "title", order: -1},
+                {id: 1, name: "Category Date Asc", value: "Category Date Asc", key: "categoryDateIndex", order: 1},
+                {id: 1, name: "Category Date Desc", value: "Category Date Desc", key: "categoryDateIndex", order: -1},
+                {id: 1, name: "Newest", value: "Newest", key: "dateCreated", order: -1},
+                {id: 1, name: "Oldest", value: "Oldest", key: "dateCreated", order: 1},
+            ];
+
+            return {
+                ordersMap: ordersMap,
+                options: orders,
+                getOrder: function (name) {
+                    return orders.filter(function (order) {
+                        return order.name === name;
+                    })[0];
+                }
+            };
+        }])
+        .factory('SubcategoryOrders', [function () {
+            var ordersMap = {
+                Manually: "Manually",
+                Default: "Manually",
+                Newest: "Newest",
+                Oldest: "Oldest",
+                Most: " Oldest",
+                Least: " Oldest"
+            };
+            var orders = [
+                {id: 1, name: "Manually", value: "Manually", key: "rank", order: 1},
+                {id: 1, name: "Subcategory Title A-Z", value: "Subcategory Title A-Z", key: "title", order: 1},
+                {id: 1, name: "Subcategory Title Z-A", value: "Subcategory Title Z-A", key: "title", order: -1},
+                {id: 1, name: "Subcategory Date Asc", value: "Subcategory Date Asc", key: "subcategoryDateIndex", order: 1},
+                {id: 1, name: "Subcategory Date Desc", value: "Subcategory Date Desc", key: "subcategoryDateIndex", order: -1},
+                {id: 1, name: "Newest", value: "Newest", key: "dateCreated", order: -1},
+                {id: 1, name: "Oldest", value: "Oldest", key: "dateCreated", order: 1},
+            ];
+
+            return {
+                ordersMap: ordersMap,
+                options: orders,
+                getOrder: function (name) {
+                    return orders.filter(function (order) {
+                        return order.name === name;
+                    })[0];
+                }
+            };
+        }])
         .factory("SearchEngine", ["Buildfire", '$q', 'MESSAGES', function(Buildfire, $q, MESSAGES) {
             function SearchEngine(tagName) {
                 this._tagName = tagName;
@@ -280,6 +338,7 @@
                 if (typeof item == 'undefined') {
                     return deferred.reject(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
                 }
+                console.log("Saving", item);
                 Buildfire.datastore.save(item, that._tagName, function (err, result) {
                     if (err) {
                         return deferred.reject(err);

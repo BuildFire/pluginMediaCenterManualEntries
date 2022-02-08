@@ -36,6 +36,9 @@
                 if (typeof (Settings.data.content.allowOfflineDownload) == 'undefined') {
                     Settings.data.content.allowOfflineDownload = false;
                 }
+                if (typeof (Settings.data.content.enableFiltering) == 'undefined') {
+                    Settings.data.content.enableFiltering = false;
+                }
             }, (err) => {
                 console.error(err);
             });
@@ -131,6 +134,14 @@
                 let value = e.target.checked;
                 if (value != Settings.data.content.allowOfflineDownload) {
                     Settings.data.content.allowOfflineDownload = value;
+                    MediaCenter.save(Settings.data).then(() => {});
+                }
+            };
+
+            Settings.setEnableFiltering = (e) => {
+                let value = e.target.checked;
+                if (value != Settings.data.content.enableFiltering) {
+                    Settings.data.content.enableFiltering = value;
                     MediaCenter.save(Settings.data).then(() => {});
                 }
             };

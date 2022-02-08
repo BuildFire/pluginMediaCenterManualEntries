@@ -25,6 +25,7 @@
                     _location.href = path;
                 },
                 goToHome: function () {
+                    console.log("location", _location.href.substr(0, _location.href.indexOf('#')));
                     _location.href = _location.href.substr(0, _location.href.indexOf('#'));
                 }
             };
