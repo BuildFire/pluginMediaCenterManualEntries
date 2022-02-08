@@ -1,12 +1,13 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location',
-            function ($scope, $window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location) {
+        .controller('WidgetHomeCtrl', ['$scope', '$timeout','$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location',
+            function ($scope,  $timeout,$window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location) {
                 $rootScope.loadingGlobalPlaylist = true;
                 $rootScope.showFeed = true;
                 $rootScope.currentlyDownloading = [];
                 var WidgetHome = this;
+                WidgetHome.displayItems=[];
                 WidgetHome.deepLink = false;
                 $rootScope.loadingData = true;
                 WidgetHome.isWeb = Buildfire.getContext().device.platform == 'web';
@@ -632,6 +633,29 @@
                     if (delayInterval) clearInterval(delayInterval);
                 }
 
+                var _htmlDisplayItemsLimit=20;
+                WidgetHome.stopScroll=false;
+                WidgetHome.skip=0;
+                WidgetHome.addMore = function () {
+                    if(!WidgetHome.noMore){
+                        WidgetHome.stopScroll=true;
+                        WidgetHome.loadMore();
+                    }
+                    else{
+                        if(WidgetHome.displayItems.length<WidgetHome.items.length){
+                            WidgetHome.stopScroll=true;
+                            var moreItems=WidgetHome.items.slice(WidgetHome.skip,WidgetHome.skip+_htmlDisplayItemsLimit);
+                            WidgetHome.displayItems=WidgetHome.displayItems.concat(moreItems);
+                            WidgetHome.skip+=_htmlDisplayItemsLimit;
+                            $timeout(function() {//debounce
+                                WidgetHome.stopScroll=false;
+                            }, 800);
+                        }else{
+                            WidgetHome.stopScroll=true;
+                        }
+                    }
+                }
+
                 WidgetHome.loadMore = function () {
                     if (WidgetHome.isBusy || WidgetHome.noMore) {
                         buildfire.spinner.hide();
@@ -663,6 +687,15 @@
                             // $rootScope.deepLinkNavigate = true;
                             // $rootScope.seekTime = 10.22;
                             WidgetHome.items = WidgetHome.items ? WidgetHome.items.concat(result) : result;
+                            if(WidgetHome.items.length>0 && WidgetHome.displayItems.length == 0){//don't wait for all items to load to show first 20
+                                WidgetHome.displayItems = WidgetHome.items.slice(0,(_htmlDisplayItemsLimit*2));
+                                if(WidgetHome.items.length<(_htmlDisplayItemsLimit*2)){
+                                    WidgetHome.skip=WidgetHome.items.length;
+                                }
+                                else{
+                                    WidgetHome.skip+=(_htmlDisplayItemsLimit*2);
+                                }
+                            } 
                             //Check if items have downloaded media
                             if (!WidgetHome.isWeb) {
                                 CachedMediaContent.insert(WidgetHome.items, (error, res) => {
@@ -711,6 +744,7 @@
 
                                             if (result.length < _limit) {// to indicate there is no more
                                                 WidgetHome.noMore = true;
+                                                WidgetHome.addMore();
                                             }
                                             else {
                                                 result.pop();
@@ -794,6 +828,7 @@
 
                                 if (result.length < _limit) {// to indicate there is no more
                                     WidgetHome.noMore = true;
+                                    WidgetHome.addMore();
                                 }
                                 else {
                                     result.pop();
@@ -873,6 +908,9 @@
                                 message: "You can't use offline mode in web browser",
                             });
                             WidgetHome.items = [];
+                            WidgetHome.stopScroll=false;
+                            WidgetHome.skip=0;
+                            WidgetHome.displayItems = [];
                             setTimeout(() => {
                                 buildfire.spinner.hide();
                                 WidgetHome.isBusy = false;
@@ -1359,11 +1397,14 @@
                     buildfire.spinner.show();
                     searchOptions.skip = 0;
                     WidgetHome.items = [];
+                    WidgetHome.stopScroll=false;
+                    WidgetHome.skip=0;
+                    WidgetHome.displayItems = []
                     WidgetHome.noMore = false;
                     WidgetHome.glovalPlaylistLoaded = false;
                     if ($rootScope.globalPlaylist) $rootScope.globalPlaylistItems = { playlist: {} };
                     if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                    WidgetHome.loadMore();
+                    WidgetHome.addMore();
                 };
 
                 WidgetHome.goToMedia = function (ind) {
