@@ -259,6 +259,10 @@
                             videoUrlToSend = videoUrlToSend.replace("www.dropbox", "dl.dropboxusercontent").split("?dl=")[0];
                             videoUrlToSend = videoUrlToSend.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
                             myType = videoUrlToSend.split('.').pop();
+                        } else if(videoUrlToSend.includes("www.youtube") && videoUrlToSend.includes("/channel") &&  videoUrlToSend.includes("/live")){
+                            var liveId=videoUrlToSend.split("channel/")[1].split("/live")[0];
+                            videoUrlToSend="https://www.youtube.com/embed/live_stream?channel="+liveId;
+                            myType = videoUrlToSend.split('.').pop();
                         } else {
                             myType = videoUrlToSend.split('.').pop();
                         }

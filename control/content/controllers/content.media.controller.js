@@ -101,7 +101,7 @@
           ContentMedia.linksSortableOptions = {
             handle: '> .handle'
           };
-          
+
           ContentMedia.assignedCategories = [];
           /**
            * Define body content WYSIWYG options
@@ -567,9 +567,9 @@
             skip: 0,
             limit: _limit + 1 // the plus one is to check if there are any more
           }
-          // if (!ContentMedia.allCategories || ContentMedia.allCategories.length == 0) {
-          //   ContentMedia.allCategories = ContentMedia.assignedCategories;
-          // }
+
+          searchOptions.skip = 0;
+  
           CategoryContent.find(options).then(function success(result) {
             if (result.length <= _limit) {// to indicate there are more
               ContentMedia.noMore = true;
@@ -579,12 +579,8 @@
               searchOptions.skip = searchOptions.skip + _limit;
               ContentMedia.noMore = false;
             }
-            // if (ContentMedia.item.data && ContentMedia.item.data.categories && ContentMedia.item.data.categories.length > 0) {
-            //   result = result.filter(function (item) {
-            //     return ContentMedia.item.data.categories.indexOf(item.id) == -1;
-            //   })
-            // }
-            ContentMedia.allCategories = ContentMedia.allCategories ? ContentMedia.allCategories.concat(result) : result;
+
+            ContentMedia.allCategories = result;
             document.body.classList.add('modal-open')
             ContentMedia.showCatModal = true;
             if (!$scope.$$phase) $scope.$digest();
@@ -593,7 +589,6 @@
             ContentMedia.isBusy = false;
           });
         };
-
 
         ContentMedia.getMore = function () {
           if (ContentMedia.isBusy && !ContentMedia.noMore) {
@@ -652,7 +647,7 @@
             var assignedCategory = ContentMedia.allCategories.filter(function (item) {
               return item.id == categoryId;
             })[0];
-            if(assignedCategory) ContentMedia.assignedCategories.push(assignedCategory);
+            if (assignedCategory) ContentMedia.assignedCategories.push(assignedCategory);
           }
           else {
             ContentMedia.item.data.categories.splice(ContentMedia.item.data.categories.indexOf(categoryId), 1);
