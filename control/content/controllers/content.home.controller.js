@@ -20,9 +20,13 @@
                             descriptionHTML: '',
                             description: '',
                             sortBy: Orders.ordersMap.Newest,
+                            sortCategoriesBy:Orders.ordersMap.Newest,
                             rankOfLastItem: 0,
+                            rankofLastCategory:0,
                             allowShare: true,
                             allowSource: true,
+                            allowOfflineDownload: false,
+                            enableFiltering: false,
                             transferAudioContentToPlayList: false,
                             forceAutoPlay: false,
                             dateIndexed: true,
@@ -42,6 +46,7 @@
 
                 if (MediaCenterInfo) {
                     updateMasterInfo(MediaCenterInfo);
+                    console.log("info ", MediaCenterInfo);
                     ContentHome.info = MediaCenterInfo;
                 }
                 else {
@@ -59,6 +64,10 @@
                     ContentHome.info.data.content.forceAutoPlay = false;
                 if (typeof (ContentHome.info.data.content.updatedRecords) == 'undefined')
                     ContentHome.info.data.content.updatedRecords = false;
+                if (typeof (ContentHome.info.data.content.allowOfflineDownload) == 'undefined')
+                    ContentHome.info.data.content.allowOfflineDownload = false;
+                if (typeof (ContentHome.info.data.content.enableFiltering) == 'undefined')
+                    ContentHome.info.data.content.enableFiltering = false;
                 if (typeof (ContentHome.info.data.content.sortBy) !== 'undefined'
                     && ContentHome.info.data.content.sortBy === 'Most') {
                     ContentHome.info.data.content.sortBy = 'Media Title A-Z';
@@ -70,6 +79,8 @@
                     ContentHome.info.data.content.sortByValue = 'Media Title Z-A';
                 }
                 //MediaCenter.save(ContentHome.info.data).then(function (result) {});
+
+                console.log("info",MediaCenterInfo.data);
 
                 AppConfig.setSettings(MediaCenterInfo.data);
                 AppConfig.setAppId(MediaCenterInfo.id);
@@ -107,10 +118,13 @@
                     trusted: true,
                     theme: 'modern'
                 };
+   
+                ContentHome.showFilters = ContentHome.info.data.content.enableFiltering;
                 ContentHome.isBusy = false;
                 /* tells if data is being fetched*/
                 ContentHome.items = [];
                 ContentHome.sortOptions = Orders.options;
+                console.log("sort", Orders.options);
 
                 // create a new instance of the buildfire carousel editor
                 var editor = new Buildfire.components.carousel.editor("#carousel");
@@ -164,10 +178,10 @@
                         order = Orders.getOrder(ContentHome.info.data.content.sortBy || Orders.ordersMap.Default);
                     if (order) {
                         //Handles Indexing Changes mediaDate/mediaDateIndex
-                        if(ContentHome.info.data.content.dateIndexed && order.key == "mediaDate"){
-                            order.key="mediaDateIndex";
-                        }else if(!ContentHome.info.data.content.dateIndexed && order.key == "mediaDateIndex"){//so it don't couse issues before data is updated
-                            order.key="mediaDate";
+                        if (ContentHome.info.data.content.dateIndexed && order.key == "mediaDate") {
+                            order.key = "mediaDateIndex";
+                        } else if (!ContentHome.info.data.content.dateIndexed && order.key == "mediaDateIndex") {//so it don't couse issues before data is updated
+                            order.key = "mediaDate";
                         }
                         //END Handles Indexing Changes mediaDate/mediaDateIndex                        
                         var sort = {};
@@ -209,13 +223,13 @@
 
                     let pageSize = 50, page = 0, allItems = [];
                     var get = function () {
-                        buildfire.datastore.search({ pageSize, page, recordCount: true }, "MediaContent", function (err, data) {
+                        buildfire.datastore.search({ pageSize, page, recordCount: true }, "CategoryContent", function (err, data) {
                             if (data && data.result && data.result.length) {
                                 allItems = allItems.concat(data.result);
                                 if (data.totalRecord > allItems.length) {
                                     data.result.map(item => {
                                         item.data.titleIndex = item.data.title.toLowerCase();
-                                        buildfire.datastore.update(item.id, item.data, "MediaContent", (err, res) => {
+                                        buildfire.datastore.update(item.id, item.data, "CategoryContent", (err, res) => {
                                             console.log(res.data.titleIndex)
                                         })
                                     });
@@ -226,7 +240,7 @@
                                     let count = allItems.length - data.result.length;
                                     data.result.map(item => {
                                         item.data.titleIndex = item.data.title.toLowerCase();
-                                        buildfire.datastore.update(item.id, item.data, "MediaContent", (err, res) => {
+                                        buildfire.datastore.update(item.id, item.data, "CategoryContent", (err, res) => {
                                             console.log(res.data.titleIndex)
                                             count++;
                                             if (count === allItems.length) {
@@ -265,6 +279,7 @@
                  * ContentHome.getMore is used to load the items
                  */
                 ContentHome.getMore = function () {
+                    console.log("getting more from home");
                     if (ContentHome.isBusy && !ContentHome.noMore) {
                         return;
                     }
@@ -285,6 +300,7 @@
                         }
 
                         ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
+                        console.log("items", ContentHome.items);
                         ContentHome.isBusy = false;
                     }, function fail() {
                         ContentHome.isBusy = false;
@@ -299,7 +315,7 @@
                         console.info('There was a problem sorting your data');
                     } else {
                         var sortOrder = Orders.getOrder(name || Orders.ordersMap.Default);
-
+                        console.log("sort order", sortOrder);
                         if ((name === "Media Title A-Z" || name === "Media Title Z-A")
                             && !ContentHome.info.data.content.updatedRecords) {
                             ContentHome.info.data.content.sortBy = name;
@@ -492,13 +508,13 @@
                                 rows[index].body = rows[index].bodyHTML;
                                 rows[index].titleIndex = rows[index].title ? rows[index].titleIndex = rows[index].title.toLowerCase() : '';
                                 //MEDIA DATE INDEX
-                                var setMediaDateIndex=new Date().getTime();
-                                if(rows[index].mediaDateIndex){
-                                    setMediaDateIndex=rows[index].mediaDateIndex;
-                                }else if(rows[index].mediaDate){
-                                    setMediaDateIndex=new Date(rows[index].mediaDate).getTime();
-                                }else if(rows[index].dateCreated){
-                                    setMediaDateIndex=new Date(rows[index].dateCreated).getTime();
+                                var setMediaDateIndex = new Date().getTime();
+                                if (rows[index].mediaDateIndex) {
+                                    setMediaDateIndex = rows[index].mediaDateIndex;
+                                } else if (rows[index].mediaDate) {
+                                    setMediaDateIndex = new Date(rows[index].mediaDate).getTime();
+                                } else if (rows[index].dateCreated) {
+                                    setMediaDateIndex = new Date(rows[index].dateCreated).getTime();
                                 }
                                 rows[index].mediaDateIndex = setMediaDateIndex;
                                 //MEDIA DATE INDEX
@@ -588,6 +604,7 @@
                  * @param value to be search.
                  */
                 ContentHome.searchListItem = function (value) {
+                    console.log("searching");
                     searchOptions.skip = 0;
                     /*reset the skip value*/
 
@@ -597,7 +614,7 @@
                     if (!value) {
                         value = '/*';
                     }
-                    searchOptions.filter = { "$json.title": { "$regex": value, $options: "-i",} };
+                    searchOptions.filter = { "$json.title": { "$regex": value, $options: "-i", } };
                     ContentHome.getMore();
                 };
 
@@ -617,28 +634,28 @@
                     if ("undefined" !== typeof item) {
                         Buildfire.dialog.confirm(
                             {
-                              title: "Delete Item",
-                              message: 'Are you sure you want to delete this item?',
-                              confirmButton: {
-                                type: "danger",
-                                text: "Delete"
-                              }
+                                title: "Delete Item",
+                                message: 'Are you sure you want to delete this item?',
+                                confirmButton: {
+                                    type: "danger",
+                                    text: "Delete"
+                                }
                             },
                             (err, isConfirmed) => {
-                              if (isConfirmed) {
-                                if (item.data.searchEngineId) {
-                                    SearchEngineService.delete(item.data.searchEngineId);
+                                if (isConfirmed) {
+                                    if (item.data.searchEngineId) {
+                                        SearchEngineService.delete(item.data.searchEngineId);
+                                    }
+                                    removeDeeplink(item);
+                                    MediaContent.delete(item.id).then(function (data) {
+                                        console.log("Item deleted");
+                                        ContentHome.items.splice(index, 1);
+                                    }, function (err) {
+                                        console.error('Error while deleting an item-----', err);
+                                    });
                                 }
-                                removeDeeplink(item);
-                                MediaContent.delete(item.id).then(function (data) {
-                                    console.log("Item deleted");
-                                    ContentHome.items.splice(index, 1);
-                                }, function (err) {
-                                    console.error('Error while deleting an item-----', err);
-                                });
-                              }
                             }
-                          );
+                        );
                     }
                 };
 
@@ -674,6 +691,7 @@
                 }
 
                 function updateData(_info) {
+                    console.log("updating media center");
                     if (!_info.id) {
                         MediaCenter.save(_info.data).then(function (data) {
                             MediaCenter.get().then(function (getData) {
@@ -703,6 +721,7 @@
                 }
 
                 function saveDataWithDelay(_info) {
+                    console.log("saving data");
                     if (tmrDelayForMedia) {
                         clearTimeout(tmrDelayForMedia);
                     }
@@ -711,6 +730,10 @@
                             updateData(_info);
                         }, 1000);
                     }
+                }
+
+                ContentHome.goToCategories = function () {
+                    Location.go('#category/');
                 }
 
                 //var initInfo = true;

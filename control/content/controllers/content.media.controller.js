@@ -28,6 +28,7 @@
         var MediaContent = new DB(COLLECTIONS.MediaContent);
         var MediaCenter = new DB(COLLECTIONS.MediaCenter);
         var SearchEngineService = new SearchEngine(COLLECTIONS.MediaContent);
+        var CategoryContent = new DB(COLLECTIONS.CategoryContent);
         /**
          * Get the MediaCenter initialized settings
          */
@@ -41,10 +42,11 @@
               rankOfLastItem: 0,
               allowShare: true,
               allowSource: true,
-              transferAudioContentToPlayList:false,
-              forceAutoPlay:false,
+              transferAudioContentToPlayList: false,
+              forceAutoPlay: false,
               dateIndexed: true,
-              dateCreatedIndexed: true
+              dateCreatedIndexed: true,
+              enableFiltering: false,
             },
             design: {
               listLayout: "list-1",
@@ -55,6 +57,7 @@
           });
         }
         var MediaCenterSettings = AppConfig.getSettings();
+        ContentMedia.filtersEnabled = MediaCenterSettings.content.enableFiltering;
         /**
          * Get the MediaCenter master collection data object id
          */
@@ -89,7 +92,7 @@
             allowShare: true,
             allowSource: true,
             transferAudioContentToPlayList: false,
-            forceAutoPlay: false
+            forceAutoPlay: false,
           };
           /**
            * Define links sortable options
@@ -98,6 +101,8 @@
           ContentMedia.linksSortableOptions = {
             handle: '> .handle'
           };
+          
+          ContentMedia.assignedCategories = [];
           /**
            * Define body content WYSIWYG options
            * @type {{plugins: string, skin: string, trusted: boolean, theme: string}}
@@ -115,7 +120,7 @@
            */
           if (media) {
             ContentMedia.item = media;
-            if (media.data.mediaDate){
+            if (media.data.mediaDate) {
               ContentMedia.item.data.mediaDate = new Date(media.data.mediaDate);
               ContentMedia.item.data.mediaDateIndex = new Date(media.data.mediaDate).getTime();
             }
@@ -124,6 +129,9 @@
             }
             if (ContentMedia.item.data.image) {
               audioImage.loadbackground(ContentMedia.item.data.image);
+            }
+            if (ContentMedia.item && ContentMedia.item.data && ContentMedia.item.data.categories && ContentMedia.item.data.categories.length) {
+              fetchAssignedCategories();
             }
             updateMasterItem(ContentMedia.item);
 
@@ -147,6 +155,31 @@
          */
         function updateMasterItem(item) {
           ContentMedia.masterItem = angular.copy(item);
+        }
+
+        function fetchAssignedCategories() {
+          if (ContentMedia.item && ContentMedia.item.data && ContentMedia.item.data.categories && ContentMedia.item.data.categories.length) {
+            var opts =
+            {
+              filter: {
+                "$json.id": { $in: ContentMedia.item.data.categories }
+              },
+              skip: 0,
+              limit: 50,
+            }
+
+            ContentMedia.isBusy = true;
+            console.log("fetching", opts);
+            CategoryContent.find(opts).then(function success(result) {
+              ContentMedia.assignedCategories = result;
+              console.log("my categories are", ContentMedia.allCategories);
+              if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+              ContentMedia.isBusy = false;
+            }, function fail() {
+              ContentMedia.isBusy = false;
+            });
+
+          }
         }
 
         /**
@@ -324,7 +357,7 @@
             $scope.titleRequired = false;
             ContentMedia.saving = true;
             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-            if (ContentMedia.item.mediaDate){
+            if (ContentMedia.item.mediaDate) {
               ContentMedia.item.mediaDateIndex = new Date(ContentMedia.item.mediaDate).getTime();
             }
             if (ContentMedia.item.id) {
@@ -512,6 +545,165 @@
           });
           Location.goToHome();
         };
+
+        var _skip = 0,
+          _limit = 10,
+          _maxLimit = 19,
+          searchOptions = {
+            filter: {},
+            skip: _skip,
+            limit: _limit + 1 // the plus one is to check if there are any more
+          };
+
+        ContentMedia.showCategories = function () {
+          if (ContentMedia.isBusy && !ContentMedia.noMore) {
+            return;
+          }
+
+          ContentMedia.isBusy = true;
+          //Then we are editing an item that already has categories
+          //Grab the assigned categories first and then get the rest
+          var options = {
+            filter: {
+            },
+            skip: 0,
+            limit: _limit + 1 // the plus one is to check if there are any more
+          }
+          // if (!ContentMedia.allCategories || ContentMedia.allCategories.length == 0) {
+          //   ContentMedia.allCategories = ContentMedia.assignedCategories;
+          // }
+          CategoryContent.find(options).then(function success(result) {
+            if (result.length <= _limit) {// to indicate there are more
+              ContentMedia.noMore = true;
+            }
+            else {
+              result.pop();
+              searchOptions.skip = searchOptions.skip + _limit;
+              ContentMedia.noMore = false;
+            }
+            // if (ContentMedia.item.data && ContentMedia.item.data.categories && ContentMedia.item.data.categories.length > 0) {
+            //   result = result.filter(function (item) {
+            //     return ContentMedia.item.data.categories.indexOf(item.id) == -1;
+            //   })
+            // }
+            ContentMedia.allCategories = ContentMedia.allCategories ? ContentMedia.allCategories.concat(result) : result;
+            document.body.classList.add('modal-open')
+            ContentMedia.showCatModal = true;
+            if (!$scope.$$phase) $scope.$digest();
+            ContentMedia.isBusy = false;
+          }, function fail() {
+            ContentMedia.isBusy = false;
+          });
+        };
+
+
+        ContentMedia.getMore = function () {
+          console.log("scroll working");
+          if (ContentMedia.isBusy && !ContentMedia.noMore) {
+            return;
+          }
+          ContentMedia.isBusy = true;
+          CategoryContent.find(searchOptions).then(function success(result) {
+            if (result.length <= _limit) {// to indicate there are more
+              ContentMedia.noMore = true;
+            }
+            else {
+              result.pop();
+              searchOptions.skip = searchOptions.skip + _limit;
+              ContentMedia.noMore = false;
+            }
+
+            ContentMedia.allCategories = ContentMedia.allCategories ? ContentMedia.allCategories.concat(result) : result;
+            console.log("allcats", ContentMedia.allCategories);
+            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+            ContentMedia.isBusy = false;
+          }, function fail() {
+            ContentMedia.isBusy = false;
+          });
+        };
+
+        ContentMedia.closeCategoryModal = function () {
+          ContentMedia.showCatModal = false;
+          document.body.classList.remove('modal-open')
+        };
+
+        ContentMedia.isIcon = function (icon) {
+          if (icon) {
+            return icon.indexOf("http") != 0;
+          }
+        };
+
+
+        ContentMedia.pickSubcategory = function (categoryId, subcategoryId) {
+          ContentMedia.item.data.subcategories = ContentMedia.item.data.subcategories || [];
+          if (categoryId && subcategoryId) {
+            if (ContentMedia.item.data.categories.indexOf(categoryId) == -1) {
+              ContentMedia.item.data.categories.push(categoryId);
+            }
+            if (ContentMedia.item.data.subcategories.indexOf(subcategoryId) == -1) {
+              ContentMedia.item.data.subcategories.push(subcategoryId);
+            }
+            else {
+              ContentMedia.item.data.subcategories.splice(ContentMedia.item.data.subcategories.indexOf(subcategoryId), 1);
+            }
+          }
+          console.log("cats", ContentMedia.item.data.categories);
+          console.log("subcats", ContentMedia.item.data.subcategories);
+        };
+
+        ContentMedia.pickCategory = function (categoryId) {
+          ContentMedia.item.data.categories = ContentMedia.item.data.categories || [];
+          if (ContentMedia.item.data.categories.indexOf(categoryId) == -1) {
+            ContentMedia.item.data.categories.push(categoryId);
+            var assignedCategory = ContentMedia.allCategories.filter(function (item) {
+              return item.id == categoryId;
+            })[0];
+            if(assignedCategory) ContentMedia.assignedCategories.push(assignedCategory);
+            console.log("assigned", ContentMedia.assignedCategories);
+          }
+          else {
+            ContentMedia.item.data.categories.splice(ContentMedia.item.data.categories.indexOf(categoryId), 1);
+            if (ContentMedia.item.data.subcategories) {
+              let cat = ContentMedia.allCategories.find(function (item) {
+                return item.id == categoryId;
+              });
+              ContentMedia.assignedCategories = ContentMedia.assignedCategories.filter(function (item) {
+                return item.id != categoryId;
+              });
+              let catSubcats = cat.data.subcategories.map(function (item) {
+                return item.id;
+              });
+              ContentMedia.item.data.subcategories = ContentMedia.item.data.subcategories.filter(function (item) {
+                return catSubcats.indexOf(item) == -1;
+              });
+            }
+          }
+          console.log("cats", ContentMedia.item.data.categories);
+          console.log("subcats", ContentMedia.item.data.subcategories);
+        }
+
+        /**
+ * ContentMedia.searchListItem() used to search items list
+ * @param value to be search.
+ */
+        ContentMedia.searchListItem = function (value) {
+          searchOptions.skip = 0;
+          /*reset the skip value*/
+
+          ContentMedia.isBusy = false;
+          ContentMedia.items = [];
+          value = value.trim();
+          if (!value) {
+            value = '/*';
+          }
+          searchOptions.filter = { "$json.name": { "$regex": value, $options: "-i", } };
+          ContentMedia.allCategories = [];
+          ContentMedia.getMore();
+        };
+
+        ContentMedia.onEnterKey = (keyEvent) => {
+          if (keyEvent.which === 13) ContentMedia.searchListItem($scope.categorySearch);
+        }
         /**
          * Initialize bootstrap data
          */

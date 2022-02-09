@@ -155,3 +155,17 @@
         <label for="allowOfflineSwitch" class="label-success"></label>
     </div>
 </div>
+
+<div class="input-control side-label margin-bottom-thirty">
+    <label for="">Enable Filtering
+        <span class="customTooltipBox btn-primary">
+            <span class="customTooltipText">
+                Allow a user to filter media items based on categories and subcategories
+            </span>
+        </span>
+    </label>
+    <div class="button-switch">
+        <input id="enableFilterSwitch" type="checkbox" ng-click="Settings.setEnableFiltering($event)" ng-checked="Settings.data.content.enableFiltering">
+        <label for="enableFilterSwitch" class="label-success"></label>
+    </div>
+</div>

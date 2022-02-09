@@ -1,0 +1,115 @@
+<div class="loader-pan" ng-show="ContentCategoryHome.loading"></div>
+<div class="content-home-container">
+    <div class="side-menu-container">
+        <div class="side-menu">
+            <a data-ng-click="ContentCategoryHome.goToMediaHome()">
+                Media
+            </a>
+            <a href="#/categoryHome" class="active" style="margin-top: 10px;"
+                data-ng-click="ContentCategoryHome.goToCategories()">
+                Categories
+            </a>
+        </div>
+    </div>
+    <div style="flex: 5">
+        <h1>Categories</h1>
+        <p class="info-note margin-bottom-ten">Use categories if you want your media to be easily filtered. Filtering
+            option must be enabled in <a data-ng-click="ContentCategoryHome.navigateToSettings()">Settings </a></p>
+
+        <div class="search-bar-container margin-bottom-thirty margin-top-thirty">
+            <div class="search-bar">
+                <input type="text" class="form-control" placeholder="Search" ng-model="search"
+                    ng-keyup="ContentCategoryHome.onEnterKey($event)">
+                <a class="btn btn-info" ng-click="ContentCategoryHome.searchListItem(search)"><span
+                        class="search-icon"></span></a>
+            </div>
+        </div>
+
+        <div class="item clearfix flex margin-bottom-ten">
+            <div class="dropdown" dropdown is-open="status.isopen">
+                <button class="btn btn-default text-left dropdown-toggle sort-dropdown" dropdown-toggle
+                    ng-disabled="disabled" aria-expanded="true">
+                    <span class="pull-left">{{ContentCategoryHome.info.data.content.sortCategoriesByValue ||
+                        'Newest'}}</span>
+                    <span class="chevron icon-chevron-down pull-right"></span>
+                </button>
+                <ul class="dropdown-menu extended" role="menu">
+                    <li ng-repeat="option in ContentCategoryHome.sortOptions"
+                        ng-click="ContentCategoryHome.toggleSortOrder(option.name)">
+                        <a tabindex="-1" class="transition-third">{{option.value}}</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="dropdown flex-left-auto margin-right-ten" dropdown>
+                <button class="btn btn-default text-left dropdown-toggle" data-toggle="dropdown" dropdown-toggle
+                    aria-expanded="true">
+                    <span class="pull-left">Bulk Actions</span>
+                    <span class="chevron icon-chevron-down pull-right"></span>
+                </button>
+                <ul class="dropdown-menu extended" role="menu">
+                    <li ng-click="ContentCategoryHome.exportCSV()"><a>Export CSV</a></li>
+                    <li ng-click="ContentCategoryHome.getTemplate()"><a>Get Template</a></li>
+                    <li class="margin-bottom-ten" ng-click="ContentCategoryHome.openImportCSVDialog()"><a>Import CSV</a>
+                    </li>
+                    <li>
+                        <p class="info-note caption margin-bottom-zero">Safari users need to rename the file to .csv to
+                            open
+                            the file.</p>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-3 padding-zero">
+                <a class="btn btn-success pull-right stretch btn-add" href="#/category" ng-click="scrollToTop()">Add
+                    Category</a>
+            </div>
+        </div>
+
+        <div class="item clearfix">
+            <div id="home-category-list"
+                class="tab-order draggable-list-view wide-list has-btn-link border-grey border-radius-four infinite-scroll-parent">
+                <div infinite-scroll="ContentCategoryHome.getMore()" infinite-scroll-distance="1"
+                    data-infinite-container="#home-category-list" infinite-scroll-disabled="ContentCategoryHome.noMore">
+                    <div ui-sortable="ContentCategoryHome.itemSortableOptions" ng-model="ContentCategoryHome.items">
+                        <div class="well text-center margin-bottom-zero border-none empty-state"
+                            ng-if="ContentCategoryHome.items.length < 1 && !ContentCategoryHome.isBusy">
+                            <p class="margin-zero">You haven't added anything else</p>
+                        </div>
+                        <div class="d-item double-line square-icon clearfix" ng-if="ContentCategoryHome.items.length"
+                            ng-repeat="item in ContentCategoryHome.items">
+                            <span class="icon icon-menu pull-left cursor-grab"
+                                ng-class="{ 'disabled': ContentCategoryHome.itemSortableOptions.disabled }"></span>
+
+                            <div class="media-holder pull-left">
+                                <img load-image="1x1" data-final-src="{{item.data.icon | resizeImage : 50:50}}"
+                                    ng-if="item.data.icon && !ContentCategoryHome.isIcon(item.data.icon)">
+                                <div style="color:#5f5f5f"
+                                    ng-if="item.data.icon && ContentCategoryHome.isIcon(item.data.icon)"
+                                    ng-class="item.data.icon">
+                                </div>
+                                <img src="../../../../styles/media/holder-1x1.png" ng-if="!item.data.icon">
+                            </div>
+                            <div class="copy pull-right">
+                                <a class="text-primary" ng-click="ContentCategoryHome.goToCategory(item.id)"><span
+                                        class="title ellipsis pull-left">{{item.data.name}}</span></a>
+
+                                <div class="flex pull-right">
+                                    <span ng-click="ContentCategoryHome.goToCategory(item.id)"
+                                        style="color: #000;" class="btn btn--icon icon icon-pencil3"></span>
+                                    <span style="margin-left: 0px !important;"
+                                        class="btn-icon btn-delete-icon btn-danger transition-third"
+                                        ng-click="ContentCategoryHome.removeListItem($index,$event)"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="well text-center margin-bottom-zero border-none empty-state"
+                            ng-if="ContentCategoryHome.isBusy">
+                            <p class="margin-zero">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
