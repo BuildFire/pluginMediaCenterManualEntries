@@ -25,6 +25,7 @@ class OfflineAccess {
                     mediaId: data.mediaId,
                     mediaType: data.mediaType,
                     mediaPath: data.mediaPath,
+                    originalMediaUrl: data.originalMediaUrl,
                     createdOn: data.createdOn || new Date(),
                     lastUpdatedOn: new Date(),
                 }))
@@ -60,6 +61,7 @@ class OfflineAccess {
                         mediaPath: data.mediaPath,
                         createdOn: data.createdOn,
                         lastUpdatedOn: new Date(),
+                        originalMediaUrl: data.originalMediaUrl,
                     });
 
 
@@ -84,11 +86,19 @@ class OfflineAccess {
             }
             this.db.get((err, result) => {
                 if (err) {
-                    reject(err);
+                    if (cb) cb(err);
+                    buildfire.dialog.toast({
+                        message: `Error while deleting downloads`,
+                        type: 'warning',
+                    });
                     return;
                 }
                 if (!result) {
-                    reject("Media not found");
+                    buildfire.dialog.toast({
+                        message: `Error while deleting downloads`,
+                        type: 'warning',
+                    });
+                    if (cb) cb("Media not found");
                     return;
                 }
 
@@ -96,9 +106,13 @@ class OfflineAccess {
 
                 this.db.insert(result, (err, result) => {
                     if (err) {
-                        return cb(err);
+                        buildfire.dialog.toast({
+                            message: `Error while deleting downloads`,
+                            type: 'warning',
+                        });
+                        if (cb) return cb(err);
                     }
-                    return cb(null, result);
+                    if (cb) return cb(null, result);
                 });
             });
     };

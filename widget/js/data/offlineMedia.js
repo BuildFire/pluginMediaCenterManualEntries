@@ -4,6 +4,7 @@ class OfflineMedia {
         this.mediaId = data.mediaId || '';
         this.mediaType = data.mediaType || '';
         this.mediaPath = data.mediaPath || '';
+        this.originalMediaUrl = data.originalMediaUrl || '';
         this.createdOn = data.createdOn || '';
         this.lastUpdatedOn = data.lastUpdatedOn || '';
     }
