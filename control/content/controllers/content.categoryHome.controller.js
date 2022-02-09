@@ -46,7 +46,6 @@
 
                 if (CategoryHomeInfo) {
                     updateMasterInfo(CategoryHomeInfo);
-                    console.log("info ", CategoryHomeInfo.data);
                     ContentCategoryHome.info = CategoryHomeInfo;
                 }
                 else {
@@ -153,7 +152,6 @@
                                     data.result.map(item => {
                                         item.data.titleIndex = item.data.name.toLowerCase();
                                         buildfire.datastore.update(item.id, item.data, "CategoryContent", (err, res) => {
-                                            console.log(res.data.titleIndex)
                                         })
                                     });
                                     page++;
@@ -164,7 +162,6 @@
                                     data.result.map(item => {
                                         item.data.titleIndex = item.data.name.toLowerCase();
                                         buildfire.datastore.update(item.id, item.data, "CategoryContent", (err, res) => {
-                                            console.log(res.data.titleIndex)
                                             count++;
                                             if (count === allItems.length) {
                                                 buildfire.notifications.alert({
@@ -221,12 +218,10 @@
 
 
                 ContentCategoryHome.getMore = function () {
-                    console.log("getting more");
                     if (ContentCategoryHome.isBusy && !ContentCategoryHome.noMore) {
                         return;
                     }
                     updateSearchOptions();
-                    console.log("search options", searchOptions);
                     ContentCategoryHome.isBusy = true;
                     CategoryContent.find(searchOptions).then(function success(result) {
                         if (!result.length) {
@@ -269,7 +264,6 @@
                             ContentCategoryHome.updateRecords(name);
                         } else {
                             ContentCategoryHome.items = [];
-                            console.log(name)
                             /* reset Search options */
                             ContentCategoryHome.noMore = false;
                             searchOptions.skip = 0;
@@ -280,7 +274,6 @@
 
                             ContentCategoryHome.info.data.content.sortCategoriesBy = name;
                             ContentCategoryHome.info.data.content.sortCategoriesByValue = sortOrder.value;
-                            console.log("updates info", ContentCategoryHome.info.data.content);
                             ContentCategoryHome.getMore();
                             ContentCategoryHome.itemSortableOptions.disabled = !(ContentCategoryHome.info.data.content.sortCategoriesBy === CategoryOrders.ordersMap.Manually);
                         }
@@ -294,7 +287,6 @@
                         var endIndex = ui.item.sortable.dropindex,
                             maxRank = 0,
                             draggedItem = ContentCategoryHome.items[endIndex];
-                        //console.log(ui.item.sortable.dropindex)
                         if (draggedItem) {
                             var prev = ContentCategoryHome.items[endIndex - 1],
                                 next = ContentCategoryHome.items[endIndex + 1];
@@ -491,6 +483,7 @@
                                     ContentCategoryHome.isBusy = false;
                                     ContentCategoryHome.items = [];
                                     ContentCategoryHome.info.data.content.rankOfLastCategory = rank;
+                                    ContentCategoryHome.items = [];
                                     searchOptions.skip = 0
                                     ContentCategoryHome.getMore();
                                     ContentCategoryHome.updateSubcategories();
@@ -548,7 +541,6 @@
                                                 });
                                             }
                                             CategoryContent.update(record.id, record.data);
-                                            console.log("updating category", record);
                                         }
                                     });
                                 }
@@ -616,7 +608,6 @@
 
 
                 ContentCategoryHome.goTo = function (id) {
-                    console.log(id);
                     Location.go('#category/' + id);
                 };
 
@@ -635,7 +626,6 @@
                 }
 
 
-                //TODO :- Need to check this function
                 function updateData(_info) {
                     if (!_info.id) {
                         MediaCenter.save(_info.data).then(function (data) {

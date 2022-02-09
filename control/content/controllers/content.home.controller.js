@@ -223,13 +223,13 @@
 
                     let pageSize = 50, page = 0, allItems = [];
                     var get = function () {
-                        buildfire.datastore.search({ pageSize, page, recordCount: true }, "CategoryContent", function (err, data) {
+                        buildfire.datastore.search({ pageSize, page, recordCount: true }, "MediaContent", function (err, data) {
                             if (data && data.result && data.result.length) {
                                 allItems = allItems.concat(data.result);
                                 if (data.totalRecord > allItems.length) {
                                     data.result.map(item => {
                                         item.data.titleIndex = item.data.title.toLowerCase();
-                                        buildfire.datastore.update(item.id, item.data, "CategoryContent", (err, res) => {
+                                        buildfire.datastore.update(item.id, item.data, "MediaContent", (err, res) => {
                                             console.log(res.data.titleIndex)
                                         })
                                     });
@@ -240,7 +240,7 @@
                                     let count = allItems.length - data.result.length;
                                     data.result.map(item => {
                                         item.data.titleIndex = item.data.title.toLowerCase();
-                                        buildfire.datastore.update(item.id, item.data, "CategoryContent", (err, res) => {
+                                        buildfire.datastore.update(item.id, item.data, "MediaContent", (err, res) => {
                                             console.log(res.data.titleIndex)
                                             count++;
                                             if (count === allItems.length) {
