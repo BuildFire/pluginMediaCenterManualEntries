@@ -169,10 +169,8 @@
             }
 
             ContentMedia.isBusy = true;
-            console.log("fetching", opts);
             CategoryContent.find(opts).then(function success(result) {
               ContentMedia.assignedCategories = result;
-              console.log("my categories are", ContentMedia.allCategories);
               if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
               ContentMedia.isBusy = false;
             }, function fail() {
@@ -598,7 +596,6 @@
 
 
         ContentMedia.getMore = function () {
-          console.log("scroll working");
           if (ContentMedia.isBusy && !ContentMedia.noMore) {
             return;
           }
@@ -614,7 +611,6 @@
             }
 
             ContentMedia.allCategories = ContentMedia.allCategories ? ContentMedia.allCategories.concat(result) : result;
-            console.log("allcats", ContentMedia.allCategories);
             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
             ContentMedia.isBusy = false;
           }, function fail() {
@@ -647,8 +643,6 @@
               ContentMedia.item.data.subcategories.splice(ContentMedia.item.data.subcategories.indexOf(subcategoryId), 1);
             }
           }
-          console.log("cats", ContentMedia.item.data.categories);
-          console.log("subcats", ContentMedia.item.data.subcategories);
         };
 
         ContentMedia.pickCategory = function (categoryId) {
@@ -659,7 +653,6 @@
               return item.id == categoryId;
             })[0];
             if(assignedCategory) ContentMedia.assignedCategories.push(assignedCategory);
-            console.log("assigned", ContentMedia.assignedCategories);
           }
           else {
             ContentMedia.item.data.categories.splice(ContentMedia.item.data.categories.indexOf(categoryId), 1);
@@ -678,8 +671,6 @@
               });
             }
           }
-          console.log("cats", ContentMedia.item.data.categories);
-          console.log("subcats", ContentMedia.item.data.subcategories);
         }
 
         /**

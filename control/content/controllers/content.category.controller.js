@@ -64,8 +64,6 @@
 
         var MediaCenterSettings = AppConfig.getSettings();
 
-        console.log('Settings', MediaCenterSettings);
-
         function init() {
           ContentCategory.isBusy = true;
           Buildfire.auth.getCurrentUser((err, user) => {
@@ -98,7 +96,6 @@
              * else init it with bootstrap data
              */
             if (category) {
-              console.log("category", category);
               ContentCategory.item = category;
               ContentCategory.mode = 'edit';
               ContentCategory.title = "Edit Category";
@@ -134,9 +131,7 @@
               if (error) {
                 console.error('Error:', error);
               } else {
-                console.log("icon", result);
                 ContentCategory.item.data.icon = result && result.selectedFiles && result.selectedFiles[0] || result && result.selectedIcons && result.selectedIcons[0] || "";
-                console.log("icon", ContentCategory.item.data.icon);
                 if (!$scope.$$phase) $scope.$digest();
               }
             };
@@ -366,7 +361,6 @@
           );
         };
 
-        //TODO fix this function
         ContentCategory.toggleSortOrder = function (name) {
           if (!name) {
             console.info('There was a problem sorting your data');
@@ -387,7 +381,6 @@
             var endIndex = ui.item.sortable.dropindex,
               maxRank = 0,
               draggedItem = ContentCategory.displayedSubactegories[endIndex];
-            //console.log(ui.item.sortable.dropindex)
             if (draggedItem) {
               var prev = ContentCategory.displayedSubactegories[endIndex - 1],
                 next = ContentCategory.displayedSubactegories[endIndex + 1];
@@ -446,7 +439,6 @@
           }
 
           if (ContentCategory.item.data.sortBy === "Oldest") {
-            console.log("oldest", ContentCategory.item.data.subcategories);
             ContentCategory.item.data.subcategories.sort(function (a, b) {
               return (new Date(a.createdOn) - new Date(b.createdOn));
             });
