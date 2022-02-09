@@ -65,18 +65,32 @@
             function OFSTORAGE(data = {}) {
                 this.instanceId = Buildfire.getContext().instanceId;
                 this.path = data.path;
-                this.fileName = `cache_${this.instanceId}_${data.fileName}.json`;;
+                this.fileName = `cache_${this.instanceId}_${data.fileName}.json`;
             }
 
             OFSTORAGE.prototype.get = function (callback) {
-                buildfire.services.fileSystem.fileManager.readFileAsText({
-                    path: this.path,
-                    fileName: this.fileName,
-                }, (error, result) => {
-                    if (error && error.code !== 1) return callback(error);
-                    result = result ? JSON.parse(result) : [];
-                    callback(null, result);
-                });
+                    buildfire.services.fileSystem.fileManager.readFileAsText({
+                        path: this.path,
+                        fileName: this.fileName,
+                    }, (error, result) => {
+                        if (error && error.code !== 1) {
+                            return callback(error);
+                        } 
+                        let parsedResult;
+                        try {
+                            if (result) {
+                            parsedResult = JSON.parse(result);
+                            result = result ? parsedResult : [];
+                            callback(null, result);
+                            }
+                            else {
+                                return callback(null, []);
+                            }
+                        }
+                        catch (e) {
+                            callback("Error parsing");
+                        }
+                    });
             };
 
             OFSTORAGE.prototype.getById = function (id, callback) {
@@ -87,18 +101,23 @@
             };
 
             OFSTORAGE.prototype.insert = function (item, callback) {
-                buildfire.services.fileSystem.fileManager.writeFileAsText(
-                    {
-                        path: this.path,
-                        fileName: this.fileName,
-                        content: JSON.stringify(item),
-                    },
-                    (err, isWritten) => {
-                        if (err) return callback(err);
-
-                        callback(null, isWritten);
-                    }
-                );
+                try {                  
+                    buildfire.services.fileSystem.fileManager.writeFileAsText(
+                        {
+                            path: this.path,
+                            fileName: this.fileName,
+                            content: JSON.stringify(item),
+                        },
+                        (err, isWritten) => {
+                            if (err) {
+                                return callback(err);
+                            } 
+    
+                            callback(null, isWritten);
+                        }
+                    );
+                } catch (err) {
+                }
             }
 
             // OFSTORAGE.prototype.update = function (item) {
@@ -144,8 +163,6 @@
                 var that = this;
                 var deferred = $q.defer();
                 Buildfire.datastore.getById(id, that._tagName, function (err, result) {
-                    console.log("GET BY ID", result)
-
                     if (err) {
                         return deferred.reject(err);
                     }
@@ -196,6 +213,7 @@
                 }
                 Buildfire.datastore.search(options, that._tagName, function (err, result) {
                     if (err) {
+           
                         return deferred.reject(err);
                     }
                     else if (result) {

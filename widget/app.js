@@ -61,7 +61,6 @@
                             });
                             if (mediaId) {
                                 if (isOnline) {
-                                    console.log("$route.current.params.mediaId", $route.current.params.mediaId)
                                     MediaContent.getById($route.current.params.mediaId).then(function success(result) {
                                         if (result && result.data) {
                                             if (!isWeb) {
@@ -77,10 +76,30 @@
                                                         if (matchingItems.length > 0) {
                                                             matchingItems.map(downloadedItem => {
                                                                 if (downloadedItem.mediaType == "video") {
-                                                                    // buildfire.dialog.toast({
-                                                                    //     message: `Found downloaded video ${downloadedItem.mediaPath}`,
-                                                                    // });
-                                                                    result.data.hasDownloadedVideo = true;
+                                                                    if (downloadedItem.originalMediaUrl != result.data.videoUrl || !downloadedItem.originalMediaUrl || result.data.videoUrl.length == 0) {
+                                                                        // get video extention
+                                                                        let type = downloadedItem.mediaPath.split('.').pop();
+                                                                        buildfire.services.fileSystem.fileManager.deleteFile(
+                                                                            {
+                                                                                path: "/data/mediaCenterManual/" + buildfire.getContext().instanceId + "/" + downloadedItem.mediaType + "/",
+                                                                                fileName: result.id + "." + type
+                                                                            },
+                                                                            (err, isDeleted) => {
+                                                                                if (err) console.error("Error from app media" + err);
+
+                                                                                new OfflineAccess({
+                                                                                    db: DownloadedMedia,
+                                                                                }).delete({
+                                                                                    mediaId: result.id,
+                                                                                    mediaType: downloadedItem.mediaType,
+                                                                                });
+
+                                                                            }
+                                                                        );
+                                                                    }
+                                                                    else {
+                                                                        result.data.hasDownloadedVideo = true;
+                                                                    }
                                                                 }
 
                                                                 else if (downloadedItem.mediaType == "audio") {
@@ -263,7 +282,7 @@
                                 },
                                 (err, isConfirmed) => {
                                     if (err) console.error(err);
-    
+
                                     if (isConfirmed) {
                                         buildfire.navigation._goBackOne()
                                     } else {

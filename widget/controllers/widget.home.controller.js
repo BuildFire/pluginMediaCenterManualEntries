@@ -1,22 +1,24 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetHomeCtrl', ['$scope', '$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location',
-            function ($scope, $window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location) {
+        .controller('WidgetHomeCtrl', ['$scope', '$timeout','$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location',
+            function ($scope,  $timeout,$window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location) {
                 $rootScope.loadingGlobalPlaylist = true;
                 $rootScope.showFeed = true;
                 $rootScope.currentlyDownloading = [];
                 var WidgetHome = this;
+                WidgetHome.displayItems=[];
                 WidgetHome.deepLink = false;
                 $rootScope.loadingData = true;
                 WidgetHome.isWeb = Buildfire.getContext().device.platform == 'web';
                 // $rootScope.online = $window.navigator.onLine;
                 $rootScope.online = $window.navigator.onLine;
                 WidgetHome.online = $rootScope.online;
-                $rootScope.backgroundColor = buildfire.getContext().appTheme.colors.backgroundColor ? {"background-color": buildfire.getContext().appTheme.colors.backgroundColor} : {"background-color": '#ffffff'};
+                $rootScope.backgroundColor = buildfire.getContext().appTheme.colors.backgroundColor ? { "background-color": buildfire.getContext().appTheme.colors.backgroundColor } : { "background-color": '#ffffff' };
                 // $rootScope.online = false;
                 // WidgetHome.online = false;
                 buildfire.spinner.hide();
+                $rootScope.resizeImg = (url) => buildfire.imageLib.resizeImage(url);
 
 
                 $rootScope.globalPlaylistStrings = {
@@ -129,10 +131,6 @@
                         if (!WidgetHome.isWeb) {
                             CachedMediaCenter.insert(MediaCenterInfo, (err, res) => {
                                 if (err) {
-                                    buildfire.dialog.toast({
-                                        message: `Error`,
-                                        type: 'warning',
-                                    });
                                 }
                             });
                         }
@@ -141,7 +139,10 @@
                             MediaCenterInfo = _infoData;
                             WidgetHome.media = MediaCenterInfo;
                             if (!WidgetHome.isWeb) {
-                                CachedMediaCenter.insert(MediaCenterInfo, (err, res) => { });
+                                CachedMediaCenter.insert(MediaCenterInfo, (err, res) => {
+                                    if (err) {
+                                    }
+                                 });
                             }
                         }
                     );
@@ -150,9 +151,13 @@
                 else {
                     if (!WidgetHome.isWeb) {
                         CachedMediaCenter.get((err, res) => {
-                            if (err) WidgetHome.media = _infoData;
-
-                            if (res) WidgetHome.media = res;
+                            if (err) {
+                                WidgetHome.media = _infoData;
+                            } 
+                     
+                            if (res) {
+                                WidgetHome.media = res;
+                            } 
 
                             $rootScope.backgroundImage = WidgetHome.media.data.design.backgroundImage;
                             $rootScope.allowShare = WidgetHome.media.data.content.allowShare;
@@ -628,6 +633,29 @@
                     if (delayInterval) clearInterval(delayInterval);
                 }
 
+                var _htmlDisplayItemsLimit=20;
+                WidgetHome.stopScroll=false;
+                WidgetHome.skip=0;
+                WidgetHome.addMore = function () {
+                    if(!WidgetHome.noMore){
+                        WidgetHome.stopScroll=true;
+                        WidgetHome.loadMore();
+                    }
+                    else{
+                        if(WidgetHome.displayItems.length<WidgetHome.items.length){
+                            WidgetHome.stopScroll=true;
+                            var moreItems=WidgetHome.items.slice(WidgetHome.skip,WidgetHome.skip+_htmlDisplayItemsLimit);
+                            WidgetHome.displayItems=WidgetHome.displayItems.concat(moreItems);
+                            WidgetHome.skip+=_htmlDisplayItemsLimit;
+                            $timeout(function() {//debounce
+                                WidgetHome.stopScroll=false;
+                            }, 800);
+                        }else{
+                            WidgetHome.stopScroll=true;
+                        }
+                    }
+                }
+
                 WidgetHome.loadMore = function () {
                     if (WidgetHome.isBusy || WidgetHome.noMore) {
                         buildfire.spinner.hide();
@@ -659,9 +687,25 @@
                             // $rootScope.deepLinkNavigate = true;
                             // $rootScope.seekTime = 10.22;
                             WidgetHome.items = WidgetHome.items ? WidgetHome.items.concat(result) : result;
+                            if(WidgetHome.items.length>0 && WidgetHome.displayItems.length == 0){//don't wait for all items to load to show first 20
+                                WidgetHome.displayItems = WidgetHome.items.slice(0,(_htmlDisplayItemsLimit*2));
+                                if(WidgetHome.items.length<(_htmlDisplayItemsLimit*2)){
+                                    WidgetHome.skip=WidgetHome.items.length;
+                                }
+                                else{
+                                    WidgetHome.skip+=(_htmlDisplayItemsLimit*2);
+                                }
+                            } 
                             //Check if items have downloaded media
                             if (!WidgetHome.isWeb) {
                                 CachedMediaContent.insert(WidgetHome.items, (error, res) => {
+                                    if (error) {
+                                        return;
+                                    }
+                                    // buildfire.dialog.toast({
+                                    //     message: `Inserted content 1`,
+                                    //     type: 'warning',
+                                    // });
                                     if (WidgetHome.items.length > 0) {
                                         DownloadedMedia.get((err, res) => {
                                             let downloadedIDS = [];
@@ -676,9 +720,14 @@
                                                             item.hasDownloadedMedia = true;
                                                             let downloadedItem = res[downloadedIDS.indexOf(item.id)];
                                                             if (downloadedItem.mediaType == "video") {
-                                                                item.data.hasDownloadedVideo = true;
+                                                                if (downloadedItem.originalMediaUrl != item.data.videoUrl || !downloadedItem.originalMediaUrl || item.data.videoUrl.length == 0) {
+                                                                    item.data.hasDownloadedVideo = true;
+                                                                }
+                                                                else {
+                                                                    item.data.hasDownloadedVideo = true;
+                                                                }
                                                             }
-    
+
                                                             else if (downloadedItem.mediaType == "audio") {
                                                                 item.data.hasDownloadedAudio = true;
                                                             }
@@ -692,9 +741,10 @@
                                             $rootScope.myItems = WidgetHome.items;
                                             bookmarks.sync($scope);
                                             if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
-    
+
                                             if (result.length < _limit) {// to indicate there is no more
                                                 WidgetHome.noMore = true;
+                                                WidgetHome.addMore();
                                             }
                                             else {
                                                 result.pop();
@@ -703,7 +753,7 @@
                                                 // In order to get all the items
                                                 return getMediaItems();
                                             }
-    
+
                                             if (!$window.deeplinkingDone && buildfire.deeplink) {
                                                 buildfire.deeplink.getData(function (data) {
                                                     var exists = data && data.id && WidgetHome.items.find(item => item.id === data.id);
@@ -729,7 +779,7 @@
                                                             if (foundObj.data.audioUrl && $rootScope.seekTime) {
                                                                 return Location.go('#/nowplaying/' + foundObj.id)
                                                             }
-    
+
                                                             WidgetHome.goTo(data.link);
                                                         }, 0);
                                                     }
@@ -766,7 +816,7 @@
                                             }, 0);
                                         });
                                     }
-                                 
+
                                 });
                             }
                             else {
@@ -778,6 +828,7 @@
 
                                 if (result.length < _limit) {// to indicate there is no more
                                     WidgetHome.noMore = true;
+                                    WidgetHome.addMore();
                                 }
                                 else {
                                     result.pop();
@@ -857,6 +908,9 @@
                                 message: "You can't use offline mode in web browser",
                             });
                             WidgetHome.items = [];
+                            WidgetHome.stopScroll=false;
+                            WidgetHome.skip=0;
+                            WidgetHome.displayItems = [];
                             setTimeout(() => {
                                 buildfire.spinner.hide();
                                 WidgetHome.isBusy = false;
@@ -1041,7 +1095,8 @@
                             }
 
                             else {
-                                listItems.push({ text: "Download Video" });
+                                if ($rootScope.currentlyDownloading.indexOf(item.id) < 0)
+                                    listItems.push({ text: "Download Video" });
                             }
                         }
 
@@ -1235,7 +1290,6 @@
                                                 },
                                                 (err, filePath) => {
                                                     if (err) {
-                                                        console.log("error in downloading", JSON.stringify(err));
                                                         let index = $rootScope.currentlyDownloading.indexOf(item.id);
                                                         $rootScope.currentlyDownloading.splice(index, 1);
                                                         buildfire.dialog.toast({
@@ -1251,6 +1305,7 @@
                                                         mediaId: item.id,
                                                         mediaType: mediaType,
                                                         mediaPath: filePath,
+                                                        originalMediaUrl: item.data.videoUrl,
                                                         createdOn: new Date(),
                                                     }, (err, result) => {
                                                         if (err) {
@@ -1342,11 +1397,14 @@
                     buildfire.spinner.show();
                     searchOptions.skip = 0;
                     WidgetHome.items = [];
+                    WidgetHome.stopScroll=false;
+                    WidgetHome.skip=0;
+                    WidgetHome.displayItems = []
                     WidgetHome.noMore = false;
                     WidgetHome.glovalPlaylistLoaded = false;
                     if ($rootScope.globalPlaylist) $rootScope.globalPlaylistItems = { playlist: {} };
                     if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                    WidgetHome.loadMore();
+                    WidgetHome.addMore();
                 };
 
                 WidgetHome.goToMedia = function (ind) {
@@ -1453,9 +1511,12 @@
 
                 $rootScope.$watch('showFeed', function () {
                     if ($rootScope.showFeed) {
-                        listener.clear();
-                        listener = Buildfire.datastore.onUpdate(onUpdateCallback);
+                        if ($rootScope.online) {
+                            listener.clear();
+                            listener = Buildfire.datastore.onUpdate(onUpdateCallback);
+                        }
                         bookmarks.sync($scope);
+                        
                         if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
                         if (!WidgetHome.items.length) WidgetHome.deepLink = true;
                         if (!$rootScope.online && !WidgetHome.isWeb) {
@@ -1479,12 +1540,7 @@
                                 if (!WidgetHome.isWeb) {
                                     CachedMediaCenter.insert(result, (err, res) => {
                                         if (err) {
-                                            buildfire.dialog.toast({
-                                                message: `Error`,
-                                                type: 'warning',
-                                            });
                                         }
-
                                         setTimeout(() => {
                                             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                                         }, 0);

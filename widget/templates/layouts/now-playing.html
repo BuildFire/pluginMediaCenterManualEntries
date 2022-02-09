@@ -23,7 +23,7 @@
         <div class="media-holder">
             <div class="media-inner text-center">
                 <img ng-if="NowPlaying.currentTrack.image" load-image="1x1" crop-width="260" crop-height="260"
-                    crop-type="crop" data-final-src="{{NowPlaying.currentTrack.image}}">
+                    crop-type="crop" data-final-src="{{NowPlaying.currentTrack.image | resizeImage : 260:260}}">
                 <img ng-if="!NowPlaying.currentTrack.image" src="http://app.buildfire.com/app/media/now-playing.png">
             </div>
         </div>
@@ -115,7 +115,7 @@
                         <div class="list-item-media text-left" ng-class="{'edit' : track.swiped}">
                             <div class="list-media-holder square-icon pull-left">
                                 <img ng-if="track.image" load-image="2x1" crop-width="55" crop-height="22"
-                                    crop-type="crop" data-ng-src="{{track.image}}">
+                                    crop-type="crop" data-ng-src="{{track.image | resizeImage : 55:22}}">
                             </div>
                             <div class="list-item-copy text-left padding-left-ten padding-right-ten">
                                 <p class="margin-bottom-zero ellipsis margin-top-twenty bodyTextTheme">
@@ -145,11 +145,11 @@
     <!-- More Info Overlay -->
     <div ng-if="NowPlaying.openMoreInfo" class="overlay"
         style="position:fixed; top:0; left:0; width:100%; height:100%;">
-        <div class="overlay-content" style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
+        <div class="overlay-content" style="position:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
             <div class="media-player-more-info">
                 <div class="media-holder margin-top-thirty">
                     <div class="media-inner text-center">
-                        <img ng-if="NowPlaying.currentTrack.image" ng-src="{{NowPlaying.currentTrack.image}}">
+                        <img ng-if="NowPlaying.currentTrack.image" ng-src="{{NowPlaying.currentTrack.image | resizeImage : 260:260}}">
                     </div>
                 </div>
                 <hr class="none">
@@ -181,7 +181,7 @@
     <!-- Settings Overlay -->
     <div ng-if="NowPlaying.openSettings" class="overlay"
         style="position:fixed; top:0; left:0; width:100%; height:100%;">
-        <div class="overlay-content" style="postiion:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
+        <div class="overlay-content" style="position:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
             <div class="media-player-settings">
                 <div class="settings-list padded padding-top-zero">
                     <div class="item clearfix row" ng-if="!NowPlaying.forceAutoPlay && !globalPlaylist">
