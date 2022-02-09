@@ -101,6 +101,8 @@
           ContentMedia.linksSortableOptions = {
             handle: '> .handle'
           };
+          
+          ContentMedia.assignedCategories = [];
           /**
            * Define body content WYSIWYG options
            * @type {{plugins: string, skin: string, trusted: boolean, theme: string}}
@@ -128,6 +130,9 @@
             if (ContentMedia.item.data.image) {
               audioImage.loadbackground(ContentMedia.item.data.image);
             }
+            if (ContentMedia.item && ContentMedia.item.data && ContentMedia.item.data.categories && ContentMedia.item.data.categories.length) {
+              fetchAssignedCategories();
+            }
             updateMasterItem(ContentMedia.item);
 
           }
@@ -150,6 +155,31 @@
          */
         function updateMasterItem(item) {
           ContentMedia.masterItem = angular.copy(item);
+        }
+
+        function fetchAssignedCategories() {
+          if (ContentMedia.item && ContentMedia.item.data && ContentMedia.item.data.categories && ContentMedia.item.data.categories.length) {
+            var opts =
+            {
+              filter: {
+                "$json.id": { $in: ContentMedia.item.data.categories }
+              },
+              skip: 0,
+              limit: 50,
+            }
+
+            ContentMedia.isBusy = true;
+            console.log("fetching", opts);
+            CategoryContent.find(opts).then(function success(result) {
+              ContentMedia.assignedCategories = result;
+              console.log("my categories are", ContentMedia.allCategories);
+              if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+              ContentMedia.isBusy = false;
+            }, function fail() {
+              ContentMedia.isBusy = false;
+            });
+
+          }
         }
 
         /**
@@ -526,68 +556,46 @@
           };
 
         ContentMedia.showCategories = function () {
-          console.log("getting more");
           if (ContentMedia.isBusy && !ContentMedia.noMore) {
             return;
           }
+
           ContentMedia.isBusy = true;
-          if (ContentMedia.categories && ContentMedia.allCategories.length == 0) {
-            //Then we are editing an item that already has categories
-            //Grab the assigned categories first and then get the rest
-            let idList = ContentMedia.item.data.categories.map(function (item) {
-              return item.id;
-            });
-
-            var options = {
-              filter: {
-
-              },
-              skip: 0,
-              limit: _limit + 1 // the plus one is to check if there are any more
+          //Then we are editing an item that already has categories
+          //Grab the assigned categories first and then get the rest
+          var options = {
+            filter: {
+            },
+            skip: 0,
+            limit: _limit + 1 // the plus one is to check if there are any more
+          }
+          // if (!ContentMedia.allCategories || ContentMedia.allCategories.length == 0) {
+          //   ContentMedia.allCategories = ContentMedia.assignedCategories;
+          // }
+          CategoryContent.find(options).then(function success(result) {
+            if (result.length <= _limit) {// to indicate there are more
+              ContentMedia.noMore = true;
             }
-            CategoryContent.find(options).then(function success(result) {
-              if (!result.length) {
-                ContentMedia.info.data.content.updatedRecords = true;
-              }
-              console.log("categories", result);
-              if (result.length <= _limit) {// to indicate there are more
-                ContentMedia.noMore = true;
-              }
-              else {
-                result.pop();
-                searchOptions.skip = searchOptions.skip + _limit;
-                ContentMedia.noMore = false;
-              }
-
-              ContentMedia.categories = ContentMedia.categories ? ContentMedia.categories.concat(result) : result;
-              ContentMedia.isBusy = false;
-            }, function fail() {
-              ContentMedia.isBusy = false;
-            });
-
-          }
-          else {
-            CategoryContent.find(searchOptions).then(function success(result) {
-              console.log("categories", result);
-              if (result.length <= _limit) {// to indicate there are more
-                ContentMedia.noMore = true;
-              }
-              else {
-                result.pop();
-                searchOptions.skip = searchOptions.skip + _limit;
-                ContentMedia.noMore = false;
-              }
-
-              ContentMedia.allCategories = ContentMedia.allCategories ? ContentMedia.allCategories.concat(result) : result;
-              document.body.classList.add('modal-open')
-              ContentMedia.showCatModal = true;
-              if (!$scope.$$phase) $scope.$digest();
-              ContentMedia.isBusy = false;
-            }, function fail() {
-              ContentMedia.isBusy = false;
-            });
-          }
+            else {
+              result.pop();
+              searchOptions.skip = searchOptions.skip + _limit;
+              ContentMedia.noMore = false;
+            }
+            // if (ContentMedia.item.data && ContentMedia.item.data.categories && ContentMedia.item.data.categories.length > 0) {
+            //   result = result.filter(function (item) {
+            //     return ContentMedia.item.data.categories.indexOf(item.id) == -1;
+            //   })
+            // }
+            ContentMedia.allCategories = ContentMedia.allCategories ? ContentMedia.allCategories.concat(result) : result;
+            document.body.classList.add('modal-open')
+            ContentMedia.showCatModal = true;
+            if (!$scope.$$phase) $scope.$digest();
+            ContentMedia.isBusy = false;
+          }, function fail() {
+            ContentMedia.isBusy = false;
+          });
         };
+
 
         ContentMedia.getMore = function () {
           console.log("scroll working");
@@ -625,7 +633,7 @@
           }
         };
 
-        
+
         ContentMedia.pickSubcategory = function (categoryId, subcategoryId) {
           ContentMedia.item.data.subcategories = ContentMedia.item.data.subcategories || [];
           if (categoryId && subcategoryId) {
@@ -647,12 +655,20 @@
           ContentMedia.item.data.categories = ContentMedia.item.data.categories || [];
           if (ContentMedia.item.data.categories.indexOf(categoryId) == -1) {
             ContentMedia.item.data.categories.push(categoryId);
+            var assignedCategory = ContentMedia.allCategories.filter(function (item) {
+              return item.id == categoryId;
+            })[0];
+            if(assignedCategory) ContentMedia.assignedCategories.push(assignedCategory);
+            console.log("assigned", ContentMedia.assignedCategories);
           }
           else {
             ContentMedia.item.data.categories.splice(ContentMedia.item.data.categories.indexOf(categoryId), 1);
             if (ContentMedia.item.data.subcategories) {
               let cat = ContentMedia.allCategories.find(function (item) {
                 return item.id == categoryId;
+              });
+              ContentMedia.assignedCategories = ContentMedia.assignedCategories.filter(function (item) {
+                return item.id != categoryId;
               });
               let catSubcats = cat.data.subcategories.map(function (item) {
                 return item.id;

@@ -86,10 +86,8 @@
                 {id: 1, name: "Manually", value: "Manually", key: "rank", order: 1},
                 {id: 1, name: "Category Title A-Z", value: "Category Title A-Z", key: "title", order: 1},
                 {id: 1, name: "Category Title Z-A", value: "Category Title Z-A", key: "title", order: -1},
-                {id: 1, name: "Category Date Asc", value: "Category Date Asc", key: "categoryDateIndex", order: 1},
-                {id: 1, name: "Category Date Desc", value: "Category Date Desc", key: "categoryDateIndex", order: -1},
-                {id: 1, name: "Newest", value: "Newest", key: "dateCreated", order: -1},
-                {id: 1, name: "Oldest", value: "Oldest", key: "dateCreated", order: 1},
+                {id: 1, name: "Newest", value: "Newest", key: "createdOn", order: -1},
+                {id: 1, name: "Oldest", value: "Oldest", key: "createdOn", order: 1},
             ];
 
             return {

@@ -2,8 +2,8 @@
     'use strict';
     angular
         .module('mediaCenterContent')
-        .controller('ContentCategoryHomeCtrl', ['$scope', 'CategoryHomeInfo', 'Location', 'Modals', 'SearchEngine', 'DB', '$timeout', 'COLLECTIONS', 'CategoryOrders', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv',
-            function ($scope, CategoryHomeInfo, Location, Modals, SearchEngine, DB, $timeout, COLLECTIONS, CategoryOrders, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv) {
+        .controller('ContentCategoryHomeCtrl', ['$scope', 'CategoryHomeInfo', 'Location', 'Modals', 'SearchEngine', 'DB', '$timeout', 'COLLECTIONS', 'CategoryOrders', 'SubcategoryOrders', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv',
+            function ($scope, CategoryHomeInfo, Location, Modals, SearchEngine, DB, $timeout, COLLECTIONS, CategoryOrders, SubcategoryOrders, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv) {
                 /**
                  * Breadcrumbs  related implementation
                  */
@@ -20,9 +20,9 @@
                             descriptionHTML: '',
                             description: '',
                             sortCategoriesBy: Orders.ordersMap.Newest,
-                            sortCategoriesBy:CategoryOrders.ordersMap.Newest,
+                            sortCategoriesBy: CategoryOrders.ordersMap.Newest,
                             rankOfLastItem: 0,
-                            rankOfLastCategory:0,
+                            rankOfLastCategory: 0,
                             allowShare: true,
                             allowSource: true,
                             allowOfflineDownload: false,
@@ -69,8 +69,9 @@
                 var header = {
                     icon: 'Icon image',
                     name: 'Name',
+                    subcategories: 'Subcategories',
                 };
-                var headerRow = ["icon", "name"];
+                var headerRow = ["icon", "name", "subcategories"];
                 var tmrDelayForMedia = null;
 
 
@@ -92,7 +93,7 @@
                 /* tells if data is being fetched*/
                 ContentCategoryHome.items = [];
                 ContentCategoryHome.sortOptions = CategoryOrders.options;
-                
+
 
                 var updateSearchOptions = function () {
                     var order;
@@ -150,7 +151,7 @@
                                 allItems = allItems.concat(data.result);
                                 if (data.totalRecord > allItems.length) {
                                     data.result.map(item => {
-                                        item.data.titleIndex = item.data.title.toLowerCase();
+                                        item.data.titleIndex = item.data.name.toLowerCase();
                                         buildfire.datastore.update(item.id, item.data, "CategoryContent", (err, res) => {
                                             console.log(res.data.titleIndex)
                                         })
@@ -161,7 +162,7 @@
                                 else {
                                     let count = allItems.length - data.result.length;
                                     data.result.map(item => {
-                                        item.data.titleIndex = item.data.title.toLowerCase();
+                                        item.data.titleIndex = item.data.name.toLowerCase();
                                         buildfire.datastore.update(item.id, item.data, "CategoryContent", (err, res) => {
                                             console.log(res.data.titleIndex)
                                             count++;
@@ -204,14 +205,14 @@
                 ContentCategoryHome.navigateToSettings = function () {
                     Buildfire.navigation.navigateToTab(
                         {
-                          tabTitle: "Settings",
+                            tabTitle: "Settings",
                         },
                         (err) => {
-                          if (err) return console.error(err); // `Content` tab was not found
-                      
-                          console.log("NAVIGATION FINISHED");
+                            if (err) return console.error(err); // `Content` tab was not found
+
+                            console.log("NAVIGATION FINISHED");
                         }
-                      );
+                    );
                 }
 
                 /**
@@ -225,6 +226,7 @@
                         return;
                     }
                     updateSearchOptions();
+                    console.log("search options", searchOptions);
                     ContentCategoryHome.isBusy = true;
                     CategoryContent.find(searchOptions).then(function success(result) {
                         if (!result.length) {
@@ -278,6 +280,7 @@
 
                             ContentCategoryHome.info.data.content.sortCategoriesBy = name;
                             ContentCategoryHome.info.data.content.sortCategoriesByValue = sortOrder.value;
+                            console.log("updates info", ContentCategoryHome.info.data.content);
                             ContentCategoryHome.getMore();
                             ContentCategoryHome.itemSortableOptions.disabled = !(ContentCategoryHome.info.data.content.sortCategoriesBy === CategoryOrders.ordersMap.Manually);
                         }
@@ -316,8 +319,8 @@
                                     if (err) {
                                         console.error('Error during updating rank');
                                     } else {
-                                        if (ContentCategoryHome.data.content.rankOfLastItem < maxRank) {
-                                            ContentCategoryHome.data.content.rankOfLastItem = maxRank;
+                                        if (ContentCategoryHome.data.content.rankOfLastCategory < maxRank) {
+                                            ContentCategoryHome.data.content.rankOfLastCategory = maxRank;
                                         }
                                     }
                                 });
@@ -333,6 +336,7 @@
                     var templateData = [{
                         icon: '',
                         name: '',
+                        subcategories: [],
                     }];
                     var csv = $csv.jsonToCsv(angular.toJson(templateData), {
                         header: header
@@ -382,11 +386,26 @@
                             if (data && data.length) {
                                 var persons = [];
                                 angular.forEach(angular.copy(data), function (value) {
-                                    delete value.data.dateCreated;
-                                    delete value.data.links;
+                                    delete value.data.createdBy;
+                                    delete value.data.createdOn;
+                                    delete value.data.deletedBy;
+                                    delete value.data.deletedOn;
+                                    delete value.data.id;
+                                    delete value.data.lastSubcategoryId;
+                                    delete value.data.lastUpdatedBy;
+                                    delete value.data.lastUpdatedOn;
+                                    delete value.data.rankOfLastSubcategory;
+                                    delete value.data.rankOfLastCategory;
+                                    delete value.data.sortBy;
                                     delete value.data.rank;
-                                    delete value.data.body;
-                                    delete value.data.mediaDateIndex;
+                                    delete value.data.sortByValue;
+                                    delete value.data.titleIndex;
+                                    if (value.data.subcategories && value.data.subcategories.length) {
+                                        value.data.subcategories = value.data.subcategories.map(function (subcategory) {
+                                            return subcategory.name;
+                                        });
+                                        value.data.subcategories = value.data.subcategories.join(",");
+                                    }
                                     persons.push(value.data);
                                 });
                                 var csv = $csv.jsonToCsv(angular.toJson(persons), {
@@ -401,7 +420,7 @@
                         });
                 };
                 function isValidItem(item, index, array) {
-                    return item.title || item.summary;
+                    return item.name;
                 }
 
                 function validateCsv(items) {
@@ -435,34 +454,46 @@
                             if (!ContentCategoryHome.loading)
                                 return;
 
-                            var rank = ContentCategoryHome.info.data.content.rankOfLastItem || 0;
+                            var rank = ContentCategoryHome.info.data.content.rankOfLastCategory || 0;
                             for (var index = 0; index < rows.length; index++) {
                                 rank += 10;
-                                rows[index].dateCreated = new Date().getTime();
-                                rows[index].links = [];
+                                rows[index].createdOn = new Date().getTime();
+                                let subcategories = rows[index].subcategories.split(",");
+                                let subRank = 0;
+                                subcategories = subcategories.map(function (subcategory, subcategoryIndex) {
+                                    subRank += 10;
+                                    return {
+                                        name: subcategory,
+                                        rank: subRank,
+                                        createdOn: new Date().getTime(),
+                                        lastUpdatedOn: "",
+                                        lastUpdatedBy: "",
+                                        deletedOn: "",
+                                        deletedBy: "",
+                                    }
+                                });
+                                rows[index].lastSubcategoryId = subcategories.length ? subcategories.length : 0;
+                                rows[index].rankOfLastSubcategory = subcategories.length ? subcategories[subcategories.length - 1].rank : 0;
                                 rows[index].rank = rank;
-                                rows[index].body = rows[index].bodyHTML;
-                                rows[index].titleIndex = rows[index].title ? rows[index].titleIndex = rows[index].title.toLowerCase() : '';
-                                //MEDIA DATE INDEX
-                                var setMediaDateIndex = new Date().getTime();
-                                if (rows[index].mediaDateIndex) {
-                                    setMediaDateIndex = rows[index].mediaDateIndex;
-                                } else if (rows[index].categoryDate) {
-                                    setMediaDateIndex = new Date(rows[index].categoryDate).getTime();
-                                } else if (rows[index].dateCreated) {
-                                    setMediaDateIndex = new Date(rows[index].dateCreated).getTime();
-                                }
-                                rows[index].mediaDateIndex = setMediaDateIndex;
-                                //MEDIA DATE INDEX
+                                rows[index].subcategories = subcategories;
+                                rows[index].createdBy = "";
+                                rows[index].lastUpdatedBy = "";
+                                rows[index].deletedBy = "";
+                                rows[index].deletedOn = "";
+                                rows[index].lastUpdatedOn = "";
+                                rows[index].sortBy = SubcategoryOrders.ordersMap.Newest;
+
                             }
                             if (validateCsv(rows)) {
+                                console.log("rows", rows);
                                 CategoryContent.insert(rows).then(function (data) {
                                     ContentCategoryHome.loading = false;
                                     ContentCategoryHome.isBusy = false;
                                     ContentCategoryHome.items = [];
-                                    ContentCategoryHome.info.data.content.rankOfLastItem = rank;
+                                    ContentCategoryHome.info.data.content.rankOfLastCategory = rank;
+                                    searchOptions.skip = 0
                                     ContentCategoryHome.getMore();
-                                    ContentCategoryHome.setDeeplinks();
+                                    ContentCategoryHome.updateSubcategories();
                                 }, function errorHandler(error) {
                                     console.error(error);
                                     ContentCategoryHome.loading = false;
@@ -492,6 +523,41 @@
                     });
                 };
 
+                /**
+                 * ContentCategoryHome.updateSubcategories() used to give bulk inserted categories' subcategories ids
+                 */
+                ContentCategoryHome.updateSubcategories = function () {
+                    var records = [];
+                    var page = 0;
+
+                    var get = function () {
+                        CategoryContent.find({ filter: {}, pageSize: 50, page: page, recordCount: true })
+                            .then(function (data) {
+                                records = records.concat(data.result);
+                                if (records.length < data.totalRecord) {
+                                    page++;
+                                    get();
+                                } else {
+                                    records.forEach(function (record) {
+                                        if (!record.data.id) {
+                                            record.data.id = record.id;
+                                            if (record.data.subcategories && record.data.subcategories.length) {
+                                                record.data.subcategories.map((subcategory, index) => {
+                                                    subcategory.categoryId = record.id;
+                                                    subcategory.id = record.id + "_" + index;
+                                                });
+                                            }
+                                            CategoryContent.update(record.id, record.data);
+                                            console.log("updating category", record);
+                                        }
+                                    });
+                                }
+
+                            });
+                    }
+                    get();
+                };
+
 
                 /**
                  * ContentCategoryHome.searchListItem() used to search items list
@@ -507,7 +573,7 @@
                     if (!value) {
                         value = '/*';
                     }
-                    searchOptions.filter = { "$json.title": { "$regex": value, $options: "-i", } };
+                    searchOptions.filter = { "$json.name": { "$regex": value, $options: "-i", } };
                     ContentCategoryHome.getMore();
                 };
 
@@ -594,6 +660,12 @@
 
 
                 }
+
+                ContentCategoryHome.isIcon = function (icon) {
+                    if (icon) {
+                        return icon.indexOf("http") != 0;
+                    }
+                };
 
                 function saveDataWithDelay(_info) {
                     if (tmrDelayForMedia) {

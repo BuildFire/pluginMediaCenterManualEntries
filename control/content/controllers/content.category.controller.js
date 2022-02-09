@@ -161,6 +161,7 @@
             ContentCategory.item.data.name = ContentCategory.item.data.name.trim();
             if (ContentCategory.item.id) {
               //then we are editing the item
+              ContentCategory.item.data.id = ContentCategory.item.id;
               ContentCategory.item.data.lastUpdatedOn = new Date();
               ContentCategory.item.data.lastUpdatedBy = ContentCategory.user;
               ContentCategory.item.data.rankOfLastSubcategory = ContentCategory.item.data.subcategories.length ? ContentCategory.item.data.subcategories[ContentCategory.item.data.subcategories.length - 1].rank : 0;
@@ -203,6 +204,8 @@
                       subcategory.categoryId = result.id;
                       subcategory.id = result.id + "_" + index;
                     });
+                  }
+                    ContentCategory.item.data.id = result.id;
                     CategoryAccess.updateCategory(ContentCategory.item, function (err, result) {
                       if (err) {
                         ContentCategory.saving = false;
@@ -223,18 +226,6 @@
                         });
                       }
                     });
-                  }
-                  else {
-                    Messaging.sendMessageToWidget({
-                      name: EVENTS.CATEGORIES_CHANGE,
-                      message: {}
-                    });
-                    ContentCategory.saving = false;
-                    MediaCenterSettings.content.rankOfLastCategory = ContentCategory.item.data.rank;
-                    MediaCenter.save(MediaCenterSettings).then(() => {
-                      ContentCategory.done();
-                    });
-                  }
                 }
               });
               return;

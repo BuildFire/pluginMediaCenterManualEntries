@@ -20,7 +20,7 @@
                     </div>
                     <div infinite-scroll="ContentMedia.getMore()" infinite-scroll-distance="0"
                         data-infinite-container="#modalBody" infinite-scroll-disabled="ContentMedia.noMore">
-                        <div id="categories" ng-if="ContentMedia.allCategories && ContentMedia.allCategories.length > 0"
+                        <div ng-if="ContentMedia.allCategories && ContentMedia.allCategories.length > 0"
                             style="margin-bottom:50px;">
                             <div class="category-container" ng-repeat="category in ContentMedia.allCategories">
                                 <div class="top-row">
@@ -225,27 +225,37 @@
             </div>
             <div class="main col-md-9 pull-right">
                 <div class="">
-                    <a style="width: 10rem; float: right !important;" ng-if="!ContentMedia.item || !ContentMedia.item.data || !ContentMedia.item.data.subcategories || ContentMedia.item.data.subcategories.length < 1" ng-click="ContentMedia.showCategories()"
+                    <a style="width: 10rem; float: right !important;"
+                        ng-if="!ContentMedia.item || !ContentMedia.item.data || !ContentMedia.item.data.subcategories || ContentMedia.item.data.subcategories.length < 1"
+                        ng-click="ContentMedia.showCategories()"
                         class="btn btn-success pull-left add-new-item btn-plus-icon-with-text">
                         Add Media Category</a>
-                    <a style="width: 10rem; float: right !important;" ng-if="ContentMedia.item && ContentMedia.item.data && ContentMedia.item.data.subcategories && ContentMedia.item.data.subcategories.length > 0" ng-click="ContentMedia.showCategories()" class="btn btn-primary pull-left add-new-item">
+                    <a style="width: 10rem; float: right !important;"
+                        ng-if="ContentMedia.item && ContentMedia.item.data && ContentMedia.item.data.subcategories && ContentMedia.item.data.subcategories.length > 0"
+                        ng-click="ContentMedia.showCategories()" class="btn btn-primary pull-left add-new-item">
                         Edit Media Category</a>
                 </div>
             </div>
         </div>
-        <div id="categories" ng-if="ContentMedia.allCategories && ContentMedia.allCategories.length > 0"
-            style="margin-bottom:50px;">
-            <div ng-repeat="category in ContentMedia.allCategories">
-                <h2>{{category.data.name}}</h4>
-                    <div ng-repeat="subcategory in category.data.subcategories">
-                        <input type="checkbox" id="subcategory.id" name="subcategory.name"
-                            ng-click="ContentMedia.pickSubcategory(category.id, subcategory.id)"
-                            value="subcategory.checked">
-                        <label for="subcategory.id">{{subcategory.name}}</label><br>
-                    </div>
+        <hr class="none">
+        <div class="item clearfix row">
+            <div class="labels col-md-3 padding-right-zero pull-left">
+                <span></span>
             </div>
-
+            <div class="main col-md-9 pull-right">
+                <div id="categories" ng-if="ContentMedia.assignedCategories && ContentMedia.assignedCategories.length > 0"
+                    style="margin-bottom:50px;">
+                    <p>{{ContentMedia.item.data.categories.length}} Categories, {{ContentMedia.item.data.subcategories.length}}
+                        Subcategories</p>
+                    <div ng-repeat="category in ContentMedia.assignedCategories">
+                        <h2>{{category.data.name}}</h4>
+                            <span ng-if="ContentMedia.item.data.subcategories.includes(subcategory.id)" ng-repeat="subcategory in category.data.subcategories"><span>{{subcategory.name}}</span>  <span ng-if="!$last">, </span></span>
+                    </div>
+        
+                </div>
+            </div>
         </div>
+     
     </div>
 </div>
 <div class="bottom-actions">

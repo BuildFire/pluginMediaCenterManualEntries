@@ -53,7 +53,7 @@ Style for loader
 }
 
 .side-menu > a {
-    padding: 10px 30px 10px 10px;
+    padding: 0.5rem 1rem 0.5rem 0.5rem;
     min-width: 100%;
     border: 1px solid var(--c-gray3);
     border-radius: 0.25rem;
@@ -342,4 +342,16 @@ Style for loader
 
         #actionItems .clearfix a {
             float: right !important;
+        }
+
+        #categories {
+            background-color: var(--c-gray2);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        #categories h2 {
+            margin-bottom: 0.25rem;
+            font-size: 1rem;
+            font-weight: bold;
         }
