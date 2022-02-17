@@ -217,6 +217,16 @@
                         }]
                     }
                 })
+                .when('/filters', {
+                    templateUrl: 'templates/filters.html',
+                    controllerAs: 'WidgetFilters',
+                    controller: 'WidgetFiltersCtrl',
+                    resolve: {
+                        filters: function () {
+                            return null;
+                        }
+                    }
+                })
 
                 .otherwise('/');
             var interceptor = ['$q', function ($q) {
@@ -298,7 +308,7 @@
                 }
 
                 var path = $location.path();
-                if (path.indexOf('/media') == 0) {
+                if (path.indexOf('/media') == 0 || path.indexOf('/filters') == 0) {
                     navigate();
                 } else if (path.indexOf('/nowplaying') == 0) {
                     if ($rootScope.playlist) {

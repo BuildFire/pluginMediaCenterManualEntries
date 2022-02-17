@@ -8,8 +8,8 @@
     /**
      * Inject dependency
      */
-    .controller('ContentMediaCtrl', ['$scope', 'Buildfire', 'SearchEngine', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig', 'Orders',
-      function ($scope, Buildfire, SearchEngine, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig, Orders) {
+    .controller('ContentMediaCtrl', ['$scope', 'Buildfire', 'SearchEngine', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig', 'Orders', 'CategoryOrders',
+      function ($scope, Buildfire, SearchEngine, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig, Orders, CategoryOrders) {
         window.scrollTo(0, 0);
         /**
          * Breadcrumbs  related implementation
@@ -39,6 +39,7 @@
               descriptionHTML: '<p>&nbsp;<br></p>',
               description: '',
               sortBy: Orders.ordersMap.Newest,
+              sortCategoriesBy: CategoryOrders.ordersMap.Newest,
               rankOfLastItem: 0,
               allowShare: true,
               allowSource: true,
@@ -130,7 +131,7 @@
             if (ContentMedia.item.data.image) {
               audioImage.loadbackground(ContentMedia.item.data.image);
             }
-            if (ContentMedia.item && ContentMedia.item.data && ContentMedia.item.data.categories && ContentMedia.item.data.categories.length) {
+            if (ContentMedia.item && ContentMedia.item.data && ((ContentMedia.item.data.categories && ContentMedia.item.data.categories.length) || (ContentMedia.item.data.subcategories && ContentMedia.item.data.subcategories.length))) {
               fetchAssignedCategories();
             }
             updateMasterItem(ContentMedia.item);
@@ -169,7 +170,44 @@
             }
 
             ContentMedia.isBusy = true;
+            var shouldUpdate = false; //to check if any categories are deleted
             CategoryContent.find(opts).then(function success(result) {
+              if (!result || result.length == 0) {
+                if (ContentMedia.item.data.categories && ContentMedia.item.data.categories.length || ContentMedia.item.data.subcategories && ContentMedia.item.data.subcategories.length) {
+                  ContentMedia.item.data.categories = [];
+                  ContentMedia.item.data.subcategories = [];
+                  update();
+                }
+              }
+              else if (result.length < opts.limit) {
+                // In case a category or subcategory is deleted
+                let resIds = result.map(function (item) { return item.id; });
+                var resultSubcatIds = [];
+
+                result.forEach(cat => {
+                  if (cat.data.subcategories && cat.data.subcategories.length) {
+                    cat.data.subcategories.forEach(subcat => {
+                        resultSubcatIds.push(subcat.id);
+                    });
+                  }
+                });
+                ContentMedia.item.data.subcategories = ContentMedia.item.data.subcategories.filter(function (item) {
+                  if (!resultSubcatIds.includes(item)) {
+                    shouldUpdate = true;
+                  }
+                  return resultSubcatIds.includes(item);
+                });
+                ContentMedia.item.data.categories = ContentMedia.item.data.categories.filter(function (item) {
+                  if (!resIds.includes(item)) {
+                    shouldUpdate = true;
+                  }
+                  return resIds.includes(item);
+                })
+
+                if (shouldUpdate) {
+                  update();
+                }
+              }
               ContentMedia.assignedCategories = result;
               if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
               ContentMedia.isBusy = false;
@@ -177,6 +215,34 @@
               ContentMedia.isBusy = false;
             });
 
+          }
+          else {
+            if (ContentMedia.item.data.categories && ContentMedia.item.data.categories.length || ContentMedia.item.data.subcategories && ContentMedia.item.data.subcategories.length) {
+              ContentMedia.item.data.categories = [];
+              ContentMedia.item.data.subcategories = [];
+              update();
+            }
+          }
+          function update() {
+            MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then((data) => {
+              updateMasterItem(ContentMedia.item);
+              ContentMedia.saving = false;
+              if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+              Messaging.sendMessageToWidget({
+                name: EVENTS.ITEMS_CHANGE,
+                message: {}
+              });
+              buildfire.dialog.toast({
+                message: "Item updated successfully",
+                type: "success",
+              });
+            }, (err) => {
+              resetItem();
+              return buildfire.dialog.toast({
+                message: "Error while updating",
+                type: "danger",
+              });
+            });
           }
         }
 
@@ -561,16 +627,13 @@
           ContentMedia.isBusy = true;
           //Then we are editing an item that already has categories
           //Grab the assigned categories first and then get the rest
-          var options = {
-            filter: {
-            },
-            skip: 0,
-            limit: _limit + 1 // the plus one is to check if there are any more
-          }
+
 
           searchOptions.skip = 0;
-  
-          CategoryContent.find(options).then(function success(result) {
+
+          ContentMedia.updateSearchOptions();
+
+          CategoryContent.find(searchOptions).then(function success(result) {
             if (result.length <= _limit) {// to indicate there are more
               ContentMedia.noMore = true;
             }
@@ -590,11 +653,36 @@
           });
         };
 
+        ContentMedia.updateSearchOptions = function () {
+          var order;
+          if (MediaCenterSettings && MediaCenterSettings.content)
+              order = CategoryOrders.getOrder(MediaCenterSettings.content.sortCategoriesBy || CategoryOrders.ordersMap.Default);
+          if (order) {                      
+              var sort = {};
+              sort[order.key] = order.order;
+              if ((order.name == "Category Title A-Z" || order.name === "Category Title Z-A")) {
+                  if (order.name == "Category Title A-Z") {
+                      searchOptions.sort = { titleIndex: 1 }
+                  }
+                  if (order.name == "Category Title Z-A") {
+                      searchOptions.sort = { titleIndex: -1 }
+                  }
+              } else {
+                  searchOptions.sort = sort;
+              }
+              return true;
+          }
+          else {
+              return false;
+          }
+      };
+
         ContentMedia.getMore = function () {
           if (ContentMedia.isBusy && !ContentMedia.noMore) {
             return;
           }
           ContentMedia.isBusy = true;
+          ContentMedia.updateSearchOptions();
           CategoryContent.find(searchOptions).then(function success(result) {
             if (result.length <= _limit) {// to indicate there are more
               ContentMedia.noMore = true;

@@ -28,6 +28,10 @@
     <script src="../../../scripts/angular/ng-infinite-scroll.custom.js"></script>
     <script src = "js/data/offlineMedia.js"></script>
     <script src = "js/shared/offlineAccess.js"></script>
+    <script src="js/dataAcess/Categories.js"></script>
+    <script src="js/dataAcess/Subcategories.js"></script>
+    <script src="js/data/Category.js"></script>
+    <script src="js/data/Subcategory.js"></script>
     <!-- <script src="https://player.vimeo.com/api/player.js"></script> -->
     <script src="js/shared/vimeo.js"></script>
 
@@ -44,6 +48,7 @@
     <script src="controllers/widget.home.controller.js"></script>
     <script src="controllers/widget.media.controller.js"></script>
     <script src="controllers/widget.nowplaying.controller.js"></script>
+    <script src="controllers/widget.filters.controller.js"></script>
 
     <!--carousel-->
     <script src="../../../scripts/buildfire/components/carousel/carousel.js"></script>
@@ -73,7 +78,7 @@
         <div ng-class="WidgetHome.deepLink ? 'noSlide' : 'slide'"
             data-back-img="{{backgroundImage}}"
             ng-view=""
-            class="content"
+            class="content infinite-scroll-parent"
             ng-if="!showFeed"></div>
 
         <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>

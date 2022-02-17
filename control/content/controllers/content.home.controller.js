@@ -46,7 +46,6 @@
 
                 if (MediaCenterInfo) {
                     updateMasterInfo(MediaCenterInfo);
-                    console.log("info ", MediaCenterInfo);
                     ContentHome.info = MediaCenterInfo;
                 }
                 else {
@@ -79,8 +78,6 @@
                     ContentHome.info.data.content.sortByValue = 'Media Title Z-A';
                 }
                 //MediaCenter.save(ContentHome.info.data).then(function (result) {});
-
-                console.log("info",MediaCenterInfo.data);
 
                 AppConfig.setSettings(MediaCenterInfo.data);
                 AppConfig.setAppId(MediaCenterInfo.id);
@@ -124,7 +121,6 @@
                 /* tells if data is being fetched*/
                 ContentHome.items = [];
                 ContentHome.sortOptions = Orders.options;
-                console.log("sort", Orders.options);
 
                 // create a new instance of the buildfire carousel editor
                 var editor = new Buildfire.components.carousel.editor("#carousel");
@@ -230,7 +226,6 @@
                                     data.result.map(item => {
                                         item.data.titleIndex = item.data.title.toLowerCase();
                                         buildfire.datastore.update(item.id, item.data, "MediaContent", (err, res) => {
-                                            console.log(res.data.titleIndex)
                                         })
                                     });
                                     page++;
@@ -241,7 +236,6 @@
                                     data.result.map(item => {
                                         item.data.titleIndex = item.data.title.toLowerCase();
                                         buildfire.datastore.update(item.id, item.data, "MediaContent", (err, res) => {
-                                            console.log(res.data.titleIndex)
                                             count++;
                                             if (count === allItems.length) {
                                                 buildfire.notifications.alert({
@@ -279,7 +273,6 @@
                  * ContentHome.getMore is used to load the items
                  */
                 ContentHome.getMore = function () {
-                    console.log("getting more from home");
                     if (ContentHome.isBusy && !ContentHome.noMore) {
                         return;
                     }
@@ -300,7 +293,6 @@
                         }
 
                         ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
-                        console.log("items", ContentHome.items);
                         ContentHome.isBusy = false;
                     }, function fail() {
                         ContentHome.isBusy = false;
@@ -315,7 +307,6 @@
                         console.info('There was a problem sorting your data');
                     } else {
                         var sortOrder = Orders.getOrder(name || Orders.ordersMap.Default);
-                        console.log("sort order", sortOrder);
                         if ((name === "Media Title A-Z" || name === "Media Title Z-A")
                             && !ContentHome.info.data.content.updatedRecords) {
                             ContentHome.info.data.content.sortBy = name;
@@ -325,7 +316,6 @@
                             ContentHome.updateRecords(name);
                         } else {
                             ContentHome.items = [];
-                            console.log(name)
                             /* reset Search options */
                             ContentHome.noMore = false;
                             searchOptions.skip = 0;
@@ -604,7 +594,6 @@
                  * @param value to be search.
                  */
                 ContentHome.searchListItem = function (value) {
-                    console.log("searching");
                     searchOptions.skip = 0;
                     /*reset the skip value*/
 
@@ -648,7 +637,6 @@
                                     }
                                     removeDeeplink(item);
                                     MediaContent.delete(item.id).then(function (data) {
-                                        console.log("Item deleted");
                                         ContentHome.items.splice(index, 1);
                                     }, function (err) {
                                         console.error('Error while deleting an item-----', err);

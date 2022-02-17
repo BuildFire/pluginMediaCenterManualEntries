@@ -59,7 +59,33 @@
                 }
             };
         }])
+        .factory('CategoryOrders', [function () {
+            var ordersMap = {
+                Manually: "Manually",
+                Default: "Manually",
+                Newest: "Newest",
+                Oldest: "Oldest",
+                Most: " Oldest",
+                Least: " Oldest"
+            };
+            var orders = [
+                {id: 1, name: "Manually", value: "Manually", key: "rank", order: 1},
+                {id: 1, name: "Category Title A-Z", value: "Category Title A-Z", key: "title", order: 1},
+                {id: 1, name: "Category Title Z-A", value: "Category Title Z-A", key: "title", order: -1},
+                {id: 1, name: "Newest", value: "Newest", key: "createdOn", order: -1},
+                {id: 1, name: "Oldest", value: "Oldest", key: "createdOn", order: 1},
+            ];
 
+            return {
+                ordersMap: ordersMap,
+                options: orders,
+                getOrder: function (name) {
+                    return orders.filter(function (order) {
+                        return order.name === name;
+                    })[0];
+                }
+            };
+        }])
         .factory("OFSTORAGE", ['Buildfire', function (Buildfire) {
             function OFSTORAGE(data = {}) {
                 this.instanceId = Buildfire.getContext().instanceId;

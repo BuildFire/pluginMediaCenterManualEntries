@@ -24,7 +24,8 @@
         })
         .constant('COLLECTIONS', {
             MediaContent: "MediaContent",
-            MediaCenter: "MediaCenter"
+            MediaCenter: "MediaCenter",
+            CategoryContent:"CategoryContent",
         })
         .constant('PATHS', {
             MEDIA: "MEDIA",

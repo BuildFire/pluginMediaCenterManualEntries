@@ -1,0 +1,68 @@
+<div id="emptyContainer" class="padded"
+    ng-if="!loadingData && (!WidgetFilters.allCategories || (WidgetFilters.allCategories && WidgetFilters.allCategories.length === 0))">
+</div>
+<div id="filterScreen">
+<div id="filtersContainer">
+    <div infinite-scroll="WidgetFilters.getMore()" infinite-scroll-distance="1"
+        data-infinite-container="#filtersContainer" infinite-scroll-disabled="WidgetFilters.stopScroll">
+        <div ng-if="WidgetFilters.allCategories && WidgetFilters.allCategories.length > 0">
+            <div class="category-container" ng-repeat="category in WidgetFilters.allCategories">
+                <div class="top-row">
+                    <div class="category-image-container">
+                        <img style="height: 100%; object-fit: contain;"
+                            ng-if="category.data.icon && !WidgetFilters.isIcon(category.data.icon)"
+                            ng-src="{{category.data.icon }}">
+                        <div style="color:#5f5f5f"
+                            ng-if="category.data.icon && WidgetFilters.isIcon(category.data.icon)"
+                            ng-class="category.data.icon">
+                        </div>
+                    </div>
+                    <div class="category-name" style="margin-left: 15px;">
+                        {{category.data.name}}
+                    </div>
+                    <div class="input-container">
+                        <div style="margin-right: 1em;">
+                            <div class="checkbox checkbox-primary no-label" style="margin-top:3px;">
+                                <input type="checkbox" ng-checked="WidgetFilters.isCategoryPicked(category.id)"
+                                    class="ng-pristine ng-untouched ng-valid">
+                            </div>
+                            <!-- <input type="checkbox" id="subcategory.id" name="subcategory.name" ng-click="WidgetFilters.pickSubcategory(category.id, subcategory.id)" value="subcategory.checked"> -->
+                            <div class="checkbox checkbox-primary no-label" style="margin: 0;">
+                                <input type="checkbox" id="{{category.id}}" ng-disabled="config.requireLogin"
+                                    ng-click="WidgetFilters.pickCategory(category)"
+                                    ng-checked="WidgetFilters.isCategoryPicked(category.id)"
+                                    class="ng-pristine ng-untouched ng-valid" disabled="disabled">
+                                <label ng-class="WidgetFilters.getCategoryIconState(category)" class="subcategory-label"
+                                    for="{{category.id}}"></label>
+                            </div>
+                        </div>
+                        <span ng-click="WidgetFilters.expand($index)" class="expand-collapse chevron top chev"></span>
+
+                    </div>
+                </div>
+                <div id="{{ 'subcat-' + $index }}" class="subcategories-container">
+                    <div class="subcategory" ng-repeat="subcategory in category.data.subcategories">
+                        <div ng-click="WidgetFilters.pickSubcategory(category.id, subcategory.id)"
+                            id="{{subcategory.id}}" class="subcategory-bubble"
+                            ng-class="WidgetFilters.isSubcategoryPicked(category.id, subcategory.id) ? 'picked' : ''">
+                            <span style="margin-right: 5px;"
+                                ng-if="WidgetFilters.isSubcategoryPicked(category.id, subcategory.id)">&#x2714;</span>
+                            <p>{{subcategory.name}}</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- <h2>{{category.data.name}}</h4>
+            <div ng-repeat="subcategory in category.data.subcategories">
+                <input type="checkbox" id="subcategory.id" name="subcategory.name" ng-click="WidgetFilters.pickSubcategory(category.id, subcategory.id)" value="subcategory.checked">
+                <label for="subcategory.id">{{subcategory.name}}</label><br>
+            </div> -->
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="filters-footer">
+    <button ng-click="WidgetFilters.applyFilters()" class="btn btn-primary apply-button">Apply</button>
+</div>
+</div>
