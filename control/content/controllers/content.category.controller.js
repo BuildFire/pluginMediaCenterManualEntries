@@ -86,6 +86,7 @@
               lastUpdatedBy: "",
               deletedOn: "",
               deletedBy: "",
+              titleIndex:"",
             };
 
             ContentCategory.sortOptions = SubcategoryOrders.options;
@@ -154,6 +155,7 @@
           if (ContentCategory.item.data.name) {
             ContentCategory.saving = true;
             ContentCategory.item.data.name = ContentCategory.item.data.name.trim();
+            ContentCategory.item.data.titleIndex = ContentCategory.item.data.name.toLowerCase();
             if (ContentCategory.item.id) {
               //then we are editing the item
               ContentCategory.item.data.id = ContentCategory.item.id;

@@ -13,5 +13,6 @@ class Category {
         this.lastUpdatedBy = data.lastUpdatedBy || '';
         this.deletedOn = data.deletedOn || '';
         this.deletedBy = data.deletedBy || '';
+        this.titleIndex = data.titleIndex || data.name.toLowerCase();
     }
 }

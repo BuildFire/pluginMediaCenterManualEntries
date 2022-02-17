@@ -19,7 +19,7 @@
                             images: [],
                             descriptionHTML: '',
                             description: '',
-                            sortCategoriesBy: Orders.ordersMap.Newest,
+                            sortBy: Orders.ordersMap.Newest,
                             sortCategoriesBy: CategoryOrders.ordersMap.Newest,
                             rankOfLastItem: 0,
                             rankOfLastCategory: 0,
@@ -110,12 +110,10 @@
                         sort[order.key] = order.order;
                         if ((order.name == "Category Title A-Z" || order.name === "Category Title Z-A")) {
                             if (order.name == "Category Title A-Z") {
-                                ContentCategoryHome.info.data.content.updatedRecords ? searchOptions.sort = { titleIndex: 1 }
-                                    : searchOptions.sort = { title: 1 }
+                                searchOptions.sort = { titleIndex: 1 }
                             }
                             if (order.name == "Category Title Z-A") {
-                                ContentCategoryHome.info.data.content.updatedRecords ? searchOptions.sort = { titleIndex: -1 }
-                                    : searchOptions.sort = { title: -1 }
+                                searchOptions.sort = { titleIndex: -1 }
                             }
                         } else {
                             searchOptions.sort = sort;
@@ -131,69 +129,6 @@
                  * ContentCategoryHome.noMore tells if all data has been loaded
                  */
                 ContentCategoryHome.noMore = false;
-                /* Update all */
-                ContentCategoryHome.updateRecords = function (name) {
-                    ContentCategoryHome.items = [];
-                    buildfire.notifications.alert({
-                        title: "Update In Progress",
-                        message: `We have made an update to allow you to sort items alphabetically. For this update to occur successfully, please stay on this screen for 5 to 20 seconds until you receive an “Update Finished” message.`,
-                        okButton: { text: 'Ok' }
-                    }, function (e, data) {
-                        if (e) console.error(e);
-                        if (data) console.log(data);
-                    });
-
-                    let pageSize = 50, page = 0, allItems = [];
-                    var get = function () {
-                        buildfire.datastore.search({ pageSize, page, recordCount: true }, "CategoryContent", function (err, data) {
-                            if (data && data.result && data.result.length) {
-                                allItems = allItems.concat(data.result);
-                                if (data.totalRecord > allItems.length) {
-                                    data.result.map(item => {
-                                        item.data.titleIndex = item.data.name.toLowerCase();
-                                        buildfire.datastore.update(item.id, item.data, "CategoryContent", (err, res) => {
-                                        })
-                                    });
-                                    page++;
-                                    get();
-                                }
-                                else {
-                                    let count = allItems.length - data.result.length;
-                                    data.result.map(item => {
-                                        item.data.titleIndex = item.data.name.toLowerCase();
-                                        buildfire.datastore.update(item.id, item.data, "CategoryContent", (err, res) => {
-                                            count++;
-                                            if (count === allItems.length) {
-                                                buildfire.notifications.alert({
-                                                    title: "Update Finished",
-                                                    message: `Your feature has been successfully updated! Please PUBLISH your app to see this update on mobile devices.`,
-                                                    okButton: { text: 'Ok' }
-                                                }, function (e, data) {
-                                                    if (e) console.error(e);
-                                                    window.location.reload();
-                                                });
-                                            }
-                                        })
-                                    });
-                                    var sortOrder = CategoryOrders.getOrder(name || CategoryOrders.ordersMap.Default);
-                                    ContentCategoryHome.info.data.content.sortCategoriesBy = name;
-                                    ContentCategoryHome.info.data.content.sortCategoriesByValue = sortOrder.value;
-                                    ContentCategoryHome.info.data.content.updatedRecords = true;
-                                    updateData(ContentCategoryHome.info)
-                                }
-                            } else {
-
-                            }
-                        })
-                    }
-                    get();
-                }
-
-                if ((ContentCategoryHome.info.data.content.sortCategoriesBy == "Category Title A-Z"
-                    || ContentCategoryHome.info.data.content.sortCategoriesBy === "Category Title Z-A")
-                    && !ContentCategoryHome.info.data.content.updatedRecords) {
-                    ContentCategoryHome.updateRecords(ContentCategoryHome.info.data.content.sortCategoriesBy);
-                }
 
                 ContentCategoryHome.goToMediaHome = function () {
                     Location.goToHome();
@@ -224,10 +159,7 @@
                     updateSearchOptions();
                     ContentCategoryHome.isBusy = true;
                     CategoryContent.find(searchOptions).then(function success(result) {
-                        if (!result.length) {
-                            ContentCategoryHome.info.data.content.updatedRecords = true;
-                        }
-
+                
                         if (result.length <= _limit) {// to indicate there are more
                             ContentCategoryHome.noMore = true;
                         }
@@ -254,15 +186,6 @@
                         console.info('There was a problem sorting your data');
                     } else {
                         var sortOrder = CategoryOrders.getOrder(name || CategoryOrders.ordersMap.Default);
-
-                        if ((name === "Category Title A-Z" || name === "Category Title Z-A")
-                            && !ContentCategoryHome.info.data.content.updatedRecords) {
-                            ContentCategoryHome.info.data.content.sortCategoriesBy = name;
-                            ContentCategoryHome.info.data.content.sortCategoriesByValue = sortOrder.value;
-                            ContentCategoryHome.isBusy = false;
-
-                            ContentCategoryHome.updateRecords(name);
-                        } else {
                             ContentCategoryHome.items = [];
                             /* reset Search options */
                             ContentCategoryHome.noMore = false;
@@ -276,8 +199,6 @@
                             ContentCategoryHome.info.data.content.sortCategoriesByValue = sortOrder.value;
                             ContentCategoryHome.getMore();
                             ContentCategoryHome.itemSortableOptions.disabled = !(ContentCategoryHome.info.data.content.sortCategoriesBy === CategoryOrders.ordersMap.Manually);
-                        }
-
                     }
                 };
                 ContentCategoryHome.itemSortableOptions = {
@@ -450,24 +371,28 @@
                             for (var index = 0; index < rows.length; index++) {
                                 rank += 10;
                                 rows[index].createdOn = new Date().getTime();
-                                let subcategories = rows[index].subcategories.split(",");
-                                let subRank = 0;
-                                subcategories = subcategories.map(function (subcategory, subcategoryIndex) {
-                                    subRank += 10;
-                                    return {
-                                        name: subcategory,
-                                        rank: subRank,
-                                        createdOn: new Date().getTime(),
-                                        lastUpdatedOn: "",
-                                        lastUpdatedBy: "",
-                                        deletedOn: "",
-                                        deletedBy: "",
-                                    }
-                                });
+                                let subcategories = [];
+                                if (rows[index].subcategories && rows[index].subcategories.length) {
+                                    rows[index].subcategories.split(",");
+                                    let subRank = 0;
+                                    subcategories = subcategories.map(function (subcategory, subcategoryIndex) {
+                                        subRank += 10;
+                                        return {
+                                            name: subcategory,
+                                            rank: subRank,
+                                            createdOn: new Date().getTime(),
+                                            lastUpdatedOn: "",
+                                            lastUpdatedBy: "",
+                                            deletedOn: "",
+                                            deletedBy: "",
+                                        }
+                                    });
+                                }
                                 rows[index].lastSubcategoryId = subcategories.length ? subcategories.length : 0;
                                 rows[index].rankOfLastSubcategory = subcategories.length ? subcategories[subcategories.length - 1].rank : 0;
                                 rows[index].rank = rank;
                                 rows[index].subcategories = subcategories;
+                                rows[index].titleIndex = rows[index].name.toLowerCase();
                                 rows[index].createdBy = "";
                                 rows[index].lastUpdatedBy = "";
                                 rows[index].deletedBy = "";
@@ -477,7 +402,6 @@
 
                             }
                             if (validateCsv(rows)) {
-                                console.log("rows", rows);
                                 CategoryContent.insert(rows).then(function (data) {
                                     ContentCategoryHome.loading = false;
                                     ContentCategoryHome.isBusy = false;
@@ -595,7 +519,6 @@
                             (err, isConfirmed) => {
                                 if (isConfirmed) {
                                     CategoryContent.delete(item.id).then(function (data) {
-                                        console.log("Item deleted");
                                         ContentCategoryHome.items.splice(index, 1);
                                     }, function (err) {
                                         console.error('Error while deleting an item-----', err);
