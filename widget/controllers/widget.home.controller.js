@@ -385,8 +385,9 @@
                             for (let i = 0; i < categories.length; i++) {
                                 let and = filters[categories[i]].length > 0 ? [] : {};
                                 if (filters[categories[i]].length > 0) {
-                                    and.push({ "$json.categories": categories[i] });
-                                    and.push({ "$json.subcategories": { "$all": filters[categories[i]] } });
+                                    filters[categories[i]].forEach(function (item) {
+                                        and.push({ "$json.subcategories": item});
+                                    });
                                 }
                                 else {
                                     and = {
@@ -395,7 +396,7 @@
                                 }
                                 if (filters[categories[i]].length > 0) {
                                     orS.push({
-                                        "$and": and
+                                        "$or": and
                                     });
                                 }
                                 else {
@@ -409,7 +410,7 @@
 
                         if (orS) {
                             finalFilter = {
-                                "$or": orS
+                                "$and": orS
                             }
                             console.log(finalFilter);
                         }
@@ -1022,6 +1023,7 @@
                                     return 0;
                                 });
                                 WidgetHome.noMore = true;
+                                WidgetHome.displayItems = WidgetHome.items;
                                 setTimeout(() => {
                                     buildfire.spinner.hide();
                                     WidgetHome.isBusy = false;

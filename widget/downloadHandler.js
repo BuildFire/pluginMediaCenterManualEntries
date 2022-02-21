@@ -117,6 +117,10 @@ var downloads = {
                                     $scope.WidgetMedia.item.data.videoUrl = downloadedItem.mediaPath;
                                     $scope.WidgetMedia.item.data.topImage = "";
                                 }
+
+                                else {
+                                    $scope.downloadedVideoUrl = downloadedItem.mediaPath;
+                                }
                             }
 
                             else if (downloadedItem.mediaType == "audio") {

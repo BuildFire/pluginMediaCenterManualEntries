@@ -187,16 +187,18 @@
                 result.forEach(cat => {
                   if (cat.data.subcategories && cat.data.subcategories.length) {
                     cat.data.subcategories.forEach(subcat => {
-                        resultSubcatIds.push(subcat.id);
+                      resultSubcatIds.push(subcat.id);
                     });
                   }
                 });
-                ContentMedia.item.data.subcategories = ContentMedia.item.data.subcategories.filter(function (item) {
-                  if (!resultSubcatIds.includes(item)) {
-                    shouldUpdate = true;
-                  }
-                  return resultSubcatIds.includes(item);
-                });
+                if (ContentMedia.item.data.subcategories && ContentMedia.item.data.subcategories.length) {
+                  ContentMedia.item.data.subcategories = ContentMedia.item.data.subcategories.filter(function (item) {
+                    if (!resultSubcatIds.includes(item)) {
+                      shouldUpdate = true;
+                    }
+                    return resultSubcatIds.includes(item);
+                  });
+                }
                 ContentMedia.item.data.categories = ContentMedia.item.data.categories.filter(function (item) {
                   if (!resIds.includes(item)) {
                     shouldUpdate = true;
@@ -656,26 +658,26 @@
         ContentMedia.updateSearchOptions = function () {
           var order;
           if (MediaCenterSettings && MediaCenterSettings.content)
-              order = CategoryOrders.getOrder(MediaCenterSettings.content.sortCategoriesBy || CategoryOrders.ordersMap.Default);
-          if (order) {                      
-              var sort = {};
-              sort[order.key] = order.order;
-              if ((order.name == "Category Title A-Z" || order.name === "Category Title Z-A")) {
-                  if (order.name == "Category Title A-Z") {
-                      searchOptions.sort = { titleIndex: 1 }
-                  }
-                  if (order.name == "Category Title Z-A") {
-                      searchOptions.sort = { titleIndex: -1 }
-                  }
-              } else {
-                  searchOptions.sort = sort;
+            order = CategoryOrders.getOrder(MediaCenterSettings.content.sortCategoriesBy || CategoryOrders.ordersMap.Default);
+          if (order) {
+            var sort = {};
+            sort[order.key] = order.order;
+            if ((order.name == "Category Title A-Z" || order.name === "Category Title Z-A")) {
+              if (order.name == "Category Title A-Z") {
+                searchOptions.sort = { titleIndex: 1 }
               }
-              return true;
+              if (order.name == "Category Title Z-A") {
+                searchOptions.sort = { titleIndex: -1 }
+              }
+            } else {
+              searchOptions.sort = sort;
+            }
+            return true;
           }
           else {
-              return false;
+            return false;
           }
-      };
+        };
 
         ContentMedia.getMore = function () {
           if (ContentMedia.isBusy && !ContentMedia.noMore) {

@@ -254,7 +254,7 @@
                 WidgetMedia.changeVideoSrc = function () {
                     if (WidgetMedia.item.data.videoUrl) {
                         var myType;
-                        var videoUrlToSend = WidgetMedia.item.data.videoUrl;
+                        var videoUrlToSend = $scope.downloadedVideoUrl ? $scope.downloadedVideoUrl :  WidgetMedia.item.data.videoUrl;
                         if (videoUrlToSend.includes("www.dropbox") || videoUrlToSend.includes("dl.dropbox.com")) {
                             videoUrlToSend = videoUrlToSend.replace("www.dropbox", "dl.dropboxusercontent").split("?dl=")[0];
                             videoUrlToSend = videoUrlToSend.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
@@ -268,10 +268,7 @@
                         }
 
                         $scope.videoPlayed = false;
-                        // buildfire.dialog.toast({
-                        //     message: `Downloaded video found ${videoUrlToSend} with type ${myType} online ${$rootScope.online}`,
-                        //     duration: 30000
-                        // });
+              
                         WidgetMedia.videoPlayerConfig.sources = [{
                             src: $rootScope.online ? $sce.trustAsUrl(videoUrlToSend) : videoUrlToSend,
                             type: 'video/' + myType //"video/mp4"
@@ -339,10 +336,6 @@
 
                 }
 
-
-                WidgetMedia.test = function () {
-                    WidgetMedia.error = JSON.stringify(WidgetMedia.media.data.content.allowShare);
-                }
                 WidgetMedia.sourceChanged = function ($source) {
                     WidgetMedia.API.stop();
                 };
@@ -730,6 +723,14 @@
                         });
                     } else {
                         WidgetMedia.changeVideoSrc();
+                    }
+                });
+
+                $scope.$watch('downloadedVideoUrl', function(newValue, oldValue) {
+                    if (newValue) {
+                        if (oldValue != newValue) {
+                            WidgetMedia.changeVideoSrc();
+                        }
                     }
                 });
                 $scope.$on("$destroy", function () {

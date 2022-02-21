@@ -45,7 +45,7 @@ Style for loader
 }
 
 .side-menu-container {
-    flex: 1;
+    width: 20%;
 }
 
 .side-menu {
@@ -203,6 +203,9 @@ Style for loader
         font-size: 0.9rem;
         color: black;
         margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .category-container .top-row .category-description {
@@ -354,4 +357,12 @@ Style for loader
             margin-bottom: 0.25rem;
             font-size: 1rem;
             font-weight: bold;
+        }
+
+        .full-width {
+			width: 100%;
+		}
+
+        .filter-home {
+            width: 70%;
         }
