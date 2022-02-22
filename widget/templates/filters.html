@@ -63,6 +63,6 @@
 </div>
 
 <div class="filters-footer">
-    <button ng-click="WidgetFilters.applyFilters()" class="btn btn-primary apply-button">Apply</button>
+    <button ng-click="WidgetFilters.applyFilters()" ng-class="WidgetFilters.hasFilters() ? '' : 'disabled'" class="btn btn-primary apply-button">Apply</button>
 </div>
 </div>

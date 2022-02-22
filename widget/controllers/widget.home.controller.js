@@ -31,7 +31,7 @@
                 }
 
                 const isLauncher = window.location.href.includes('launcherPlugin');
-                const slideElement = document.querySelector(".slide")
+                const slideElement = document.querySelector(".slide");
                 if (isLauncher) {
                     slideElement.classList.add("safe-area");
                 } else {
@@ -129,6 +129,12 @@
                         $rootScope.allowOfflineDownload = MediaCenterInfo.data.content.allowOfflineDownload;
                         $rootScope.enableFiltering = MediaCenterInfo.data.content.enableFiltering;
 
+                        if (isLauncher && MediaCenterInfo.data.content.enableFiltering) {
+                            slideElement.classList.add("launcher-with-filter");
+                        } else {
+                            slideElement.classList.remove("launcher-with-filter");
+                        }
+
                         if (!WidgetHome.isWeb) {
                             CachedMediaCenter.insert(MediaCenterInfo, (err, res) => {
                                 if (err) {
@@ -175,6 +181,12 @@
                             $rootScope.showGlobalAddAllToPlaylistButton = WidgetHome.media.data.content.showGlobalAddAllToPlaylistButton;
                             $rootScope.allowOfflineDownload = WidgetHome.media.data.content.allowOfflineDownload;
                             $rootScope.enableFiltering = WidgetHome.media.data.content.enableFiltering;
+
+                            if (isLauncher && WidgetHome.media.data.content.enableFiltering) {
+                                slideElement.classList.add("launcher-with-filter");
+                            } else {
+                                slideElement.classList.remove("launcher-with-filter");
+                            }
                         });
                     }
                     else {
@@ -313,6 +325,12 @@
 
                             if (view && event.data.content && event.data.content.images) {
                                 view.loadItems(event.data.content.images);
+                            }
+
+                            if (isLauncher && WidgetHome.media.data.content.enableFiltering) {
+                                slideElement.classList.add("launcher-with-filter");
+                            } else {
+                                slideElement.classList.remove("launcher-with-filter");
                             }
                             $rootScope.refreshItems();
                             buildfire.spinner.hide();
@@ -1615,7 +1633,7 @@
 
                 WidgetHome.goToFilterScreen = function () {
                     $rootScope.showFeed = false;
-                    Location.go('#/filters');
+                    Location.go('#/filters', true);
                 };
 
                 $rootScope.$watch('goingBack', function () {
