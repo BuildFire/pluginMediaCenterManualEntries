@@ -8,7 +8,7 @@
         /**
          * Inject dependency
          */
-        .controller('WidgetFiltersCtrl', ['$scope', 'DB', 'COLLECTIONS', '$rootScope', 'Location','Messaging','EVENTS','PATHS','OFSTORAGE','CategoryOrders','Buildfire',
+        .controller('WidgetFiltersCtrl', ['$scope', 'DB', 'COLLECTIONS', '$rootScope', 'Location', 'Messaging', 'EVENTS', 'PATHS', 'OFSTORAGE', 'CategoryOrders', 'Buildfire',
             function ($scope, DB, COLLECTIONS, $rootScope, Location, Messaging, EVENTS, PATHS, OFSTORAGE, CategoryOrders, Buildfire) {
                 /**
                  * Using Control as syntax this
@@ -31,7 +31,6 @@
                     // if (!MediaCenterSettings.content.enableFiltering) {
                     //     Location.goToHome();
                     // }
-
                     if ($rootScope.online) {
                         MediaCenter.get().then(function (data) {
                             WidgetFilters.media = {
@@ -47,7 +46,7 @@
                             WidgetFilters.getMore();
                         });
                     }
-    
+
                     else {
                         var _infoData = {
                             data: {
@@ -76,7 +75,7 @@
                                 }
                             }
                         };
-    
+
                         CachedMediaCenter.get((err, res) => {
                             if (err) WidgetMedia.media = _infoData;
                             else {
@@ -93,7 +92,7 @@
                                 if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                             }, 0);
                         });
-    
+
                     }
 
                     WidgetFilters.pickedCategories = $rootScope.activeFilters || {};
@@ -139,7 +138,7 @@
                     var order;
                     if (WidgetFilters.media && WidgetFilters.media.data && WidgetFilters.media.data.content)
                         order = CategoryOrders.getOrder(WidgetFilters.media.data.content.sortCategoriesBy || CategoryOrders.ordersMap.Default);
-                    if (order) {                      
+                    if (order) {
                         var sort = {};
                         sort[order.key] = order.order;
                         if ((order.name == "Category Title A-Z" || order.name === "Category Title Z-A")) {
@@ -253,7 +252,7 @@
                         window.setTimeout(() => {
                             $("#showFeedBtn").click();
                         }, 0);
-                        
+
                     }
                 };
 
@@ -268,7 +267,7 @@
                 }
 
                 WidgetFilters.onUpdateFn = Buildfire.datastore.onUpdate(function (event) {
-                    
+
                     buildfire.components.drawer.closeDrawer();
                     switch (event.tag) {
                         case COLLECTIONS.CategoryContent:
@@ -315,5 +314,14 @@
                             return;
                     }
                 });
+
+                WidgetFilters.hasFilters = function () {
+                    if (WidgetFilters.allCategories && WidgetFilters.allCategories.length > 0) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                };
             }]);
 })(window.angular, window.tinymce);

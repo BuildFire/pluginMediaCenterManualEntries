@@ -1398,4 +1398,8 @@ input[type=range]::-ms-track {
 			font-size: 1.5em;
 			color: var(--bf-theme-primary);
 		}
+
+		.slide.safe-area.launcher-with-filter {
+			padding-top: 30px !important;
+		}
   
