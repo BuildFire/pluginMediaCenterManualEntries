@@ -11,7 +11,7 @@
                 </div>
                 <div class="modal-body">
                     <p>Subcategory Name</p>
-                    <input type="text" class="form-control" ng-model="ContentCategory.subcategoryTitle" maxlength="70"
+                    <input type="text" class="form-control" ng-model="ContentCategory.subcategoryTitle" maxlength="30"
                         placeholder="Enter name">
                     <div class="text-danger" ng-show="subcategoryTitlequired">A title is required</div>
                 </div>
@@ -46,8 +46,9 @@
                         ng-click="ContentCategory.addIcon()">
                         <span ng-if="!ContentCategory.item.data.icon" class="add-icon"
                             style="height: 82px; margin: -8px;">+</span>
-                        <img ng-if="ContentCategory.item.data.icon && !ContentCategory.isIcon()"
-                            ng-src="{{ContentCategory.item.data.icon }}">
+                        <img class="categoryScreenIcon" crop-width="30" load-image="1x1"
+                        crop-height="30" crop-type="crop" ng-if="ContentCategory.item.data.icon && !ContentCategory.isIcon()"
+                        data-final-src="{{ContentCategory.item.data.icon }}">
                         <div style="color:#5f5f5f" ng-if="ContentCategory.item.data.icon && ContentCategory.isIcon()"
                             ng-class="ContentCategory.item.data.icon">
                         </div>

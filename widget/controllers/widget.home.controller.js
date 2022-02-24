@@ -1643,6 +1643,12 @@
                 });
                 $rootScope.$on('activeFiltersChanged', function () {
                     if ($rootScope.activeFilters) {
+                        if (Object.keys($rootScope.activeFilters) && Object.keys($rootScope.activeFilters).length) {
+                            WidgetHome.activeFilters = true;
+                        }
+                        else {
+                            WidgetHome.activeFilters = false;
+                        }
                         WidgetHome.items = [];
                         searchOptions.skip = 0;
                         WidgetHome.displayItems = [];

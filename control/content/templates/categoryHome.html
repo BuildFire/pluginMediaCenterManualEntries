@@ -79,8 +79,9 @@
                             <span class="icon icon-menu pull-left cursor-grab"
                                 ng-class="{ 'disabled': ContentCategoryHome.itemSortableOptions.disabled }"></span>
 
-                            <div class="media-holder pull-left">
-                                <img load-image="1x1" data-final-src="{{item.data.icon | resizeImage : 50:50}}"
+                            <div class="media-holder pull-left auto-flex">
+                                <img load-image="1x1" data-final-src="{{item.data.icon}}" crop-width="40"
+                                crop-height="40" crop-type="crop" 
                                     ng-if="item.data.icon && !ContentCategoryHome.isIcon(item.data.icon)">
                                 <div style="color:#5f5f5f"
                                     ng-if="item.data.icon && ContentCategoryHome.isIcon(item.data.icon)"
@@ -90,7 +91,7 @@
                             </div>
                             <div class="copy pull-right">
                                 <a class="text-primary" ng-click="ContentCategoryHome.goToCategory(item.id)"><span
-                                        class="title ellipsis pull-left">{{item.data.name}}</span></a>
+                                        class="title ellipsis pull-left row-category-title">{{item.data.name}}</span></a>
 
                                 <div class="flex pull-right">
                                     <span ng-click="ContentCategoryHome.goToCategory(item.id)"

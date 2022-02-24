@@ -366,3 +366,31 @@ Style for loader
         .filter-home {
             width: 70%;
         }
+
+        .categoryIcon {
+            object-fit: none;
+            height: 40px !important;
+            width: 40px !important;
+        }
+
+        .categoryScreenIcon {
+            object-fit: none;
+            height: 30px !important;
+            width: 30px !important;
+        }
+
+        .auto-flex {
+            flex: auto !important;
+        }
+
+        .row-category-title {
+            width: 120px !important;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .draggable-list-view .d-item.double-line .copy.fit {
+            width: 82.5% !important;
+            max-width: 82.5% !important;
+        }

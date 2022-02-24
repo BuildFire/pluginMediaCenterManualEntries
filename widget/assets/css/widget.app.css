@@ -1373,6 +1373,7 @@ input[type=range]::-ms-track {
 			left: 0;
 			right: 0;
 			padding: 15px;
+			justify-content: center;
 		}
 
 		#filtersContainer {
@@ -1387,7 +1388,6 @@ input[type=range]::-ms-track {
 		}
 
 		.apply-button {
-			width: 100%;
 			text-transform: uppercase;
 			font-size: .875rem !important;
 			padding: 0 16px 0 16px !important;
@@ -1401,5 +1401,21 @@ input[type=range]::-ms-track {
 
 		.slide.safe-area.launcher-with-filter {
 			padding-top: 30px !important;
+		}
+
+		.categoryScreenIcon {
+			object-fit: none;
+            height: 30px !important;
+            width: 30px !important;
+		}
+
+		#activeFilterIndicator {
+			position: absolute;
+			top: 0;
+			right: 0;
+			width: 5px;
+			height: 5px;
+			border-radius: 50%;
+			background-color: red;
 		}
   
