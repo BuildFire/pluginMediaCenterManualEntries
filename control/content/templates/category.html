@@ -46,8 +46,8 @@
                         ng-click="ContentCategory.addIcon()">
                         <span ng-if="!ContentCategory.item.data.icon" class="add-icon"
                             style="height: 82px; margin: -8px;">+</span>
-                        <img class="categoryScreenIcon" crop-width="30" load-image="1x1"
-                        crop-height="30" crop-type="crop" ng-if="ContentCategory.item.data.icon && !ContentCategory.isIcon()"
+                        <img class="categoryScreenIcon"  load-image="1x1"  aspect="1:1" size="xxs"
+                         crop-type="crop" ng-if="ContentCategory.item.data.icon && !ContentCategory.isIcon()"
                         data-final-src="{{ContentCategory.item.data.icon }}">
                         <div style="color:#5f5f5f" ng-if="ContentCategory.item.data.icon && ContentCategory.isIcon()"
                             ng-class="ContentCategory.item.data.icon">
