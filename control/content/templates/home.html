@@ -90,8 +90,7 @@
                                 ng-class="{ 'disabled': ContentHome.itemSortableOptions.disabled }"></span>
 
                             <div class="media-holder pull-left auto-flex">
-                                <img crop-width="40" load-image="1x1"
-                                crop-height="40" crop-type="crop" data-final-src="{{item.data.topImage}}"
+                                <img load-image="1x1" aspect="1:1" size="xs" crop-type="crop" data-final-src="{{item.data.topImage}}"
                                     ng-if="item.data.topImage">
                                 <img  class="categoryIcon" src="../../../../styles/media/holder-1x1.png" ng-if="!item.data.topImage">
                             </div>

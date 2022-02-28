@@ -11,17 +11,16 @@
                         element.attr("src", attrs.finalSrc);
                         elem.remove();
                     };
-              
+
                     attrs.$observe('finalSrc', function () {
                         var _img = attrs.finalSrc;
                         if (attrs.cropType && attrs.cropType == "crop") {
-                            Buildfire.imageLib.local.cropImage(_img, {
-                                width: attrs.cropWidth,
-                                height: attrs.cropHeight
-                            }, function (err, imgUrl) {
-                                _img = imgUrl;
-                                replaceImg(_img);
-                            });
+                            _img = buildfire.imageLib.cropImage(
+                                _img,
+                                { size: attrs.size, aspect: attrs.aspect }
+                              );
+                            replaceImg(_img);
+
                         }
                     });
 
