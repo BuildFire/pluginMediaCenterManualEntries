@@ -2,12 +2,12 @@
     'use strict';
     angular
         .module('mediaCenterDesign')
-        .controller('SettingsCtrl', ['$scope', 'COLLECTIONS','PLAYLISTINSTANCES', 'DB', function ($scope, COLLECTIONS,PLAYLISTINSTANCES, DB) {
+        .controller('SettingsCtrl', ['$scope', 'COLLECTIONS', 'PLAYLISTINSTANCES', 'DB', function ($scope, COLLECTIONS, PLAYLISTINSTANCES, DB) {
             var Settings = this;
             Settings.data = {};
             $scope.inputs = {};
             var MediaCenter = new DB(COLLECTIONS.MediaCenter);
-            
+
             MediaCenter.get().then((getData) => {
                 Settings.data = getData.data;
                 if (typeof (Settings.data.content.allowShare) == 'undefined')
@@ -36,50 +36,53 @@
                 if (typeof (Settings.data.content.allowOfflineDownload) == 'undefined') {
                     Settings.data.content.allowOfflineDownload = false;
                 }
+                if (typeof (Settings.data.content.enableFiltering) == 'undefined') {
+                    Settings.data.content.enableFiltering = false;
+                }
             }, (err) => {
                 console.error(err);
             });
 
             Settings.setSettings = () => {
-                MediaCenter.save(Settings.data).then(() => {});
+                MediaCenter.save(Settings.data).then(() => { });
             }
 
             Settings.setForceAutoPlay = (e) => {
                 let value = e.target.checked;
-                if(value!=Settings.data.content.forceAutoPlay){
+                if (value != Settings.data.content.forceAutoPlay) {
                     if (value === true && Settings.data.content.autoPlay) {
                         Settings.data.content.autoPlay = false;
                     }
                     Settings.data.content.forceAutoPlay = value;
                     Settings.data.content.transferAudioContentToPlayList = Settings.data.content.forceAutoPlay;
-                    MediaCenter.save(Settings.data).then(() => {});
+                    MediaCenter.save(Settings.data).then(() => { });
                 }
             }
 
             Settings.changeSkipPage = (e) => {
                 let value = e.target.checked;
-                if (value!=Settings.data.design.skipMediaPage){
+                if (value != Settings.data.design.skipMediaPage) {
                     if (value === false) {
                         Settings.data.content.autoPlay = false;
                     }
                     Settings.data.design.skipMediaPage = value;
-                    MediaCenter.save(Settings.data).then(() => {});
+                    MediaCenter.save(Settings.data).then(() => { });
                 }
             };
 
             Settings.setAllowSource = (e) => {
                 let value = e.target.checked;
-                if(value!=Settings.data.content.allowSource){
-                    Settings.data.content.allowSource=value;
-                    MediaCenter.save(Settings.data).then(() => {});
+                if (value != Settings.data.content.allowSource) {
+                    Settings.data.content.allowSource = value;
+                    MediaCenter.save(Settings.data).then(() => { });
                 }
             }
 
             Settings.setAllowShare = (e) => {
                 let value = e.target.checked;
-                if(value!=Settings.data.content.allowShare){
-                    Settings.data.content.allowShare=value;
-                    MediaCenter.save(Settings.data).then(() => {});
+                if (value != Settings.data.content.allowShare) {
+                    Settings.data.content.allowShare = value;
+                    MediaCenter.save(Settings.data).then(() => { });
                 }
             }
 
@@ -92,14 +95,14 @@
                     }
                     if (value === true) Settings.data.design.skipMediaPage = true;
                     Settings.data.content.autoPlay = value;
-                    MediaCenter.save(Settings.data).then(() => {});
+                    MediaCenter.save(Settings.data).then(() => { });
                 }
             };
 
             Settings.setAutoPlayDelay = (option) => {
                 if (option.value != Settings.data.content.autoPlayDelay.value) {
                     Settings.data.content.autoPlayDelay = option;
-                    MediaCenter.save(Settings.data).then(() => {});
+                    MediaCenter.save(Settings.data).then(() => { });
                 }
             };
 
@@ -107,7 +110,7 @@
                 let value = e.target.checked;
                 if (value != Settings.data.content.globalPlaylist) {
                     Settings.data.content.globalPlaylist = value;
-                    MediaCenter.save(Settings.data).then(() => {});
+                    MediaCenter.save(Settings.data).then(() => { });
                 }
             };
 
@@ -115,7 +118,7 @@
                 let value = e.target.checked;
                 if (value != Settings.data.content.showGlobalPlaylistNavButton) {
                     Settings.data.content.showGlobalPlaylistNavButton = value;
-                    MediaCenter.save(Settings.data).then(() => {});
+                    MediaCenter.save(Settings.data).then(() => { });
                 }
             };
 
@@ -123,7 +126,7 @@
                 let value = !e.target.checked;
                 if (value != Settings.data.content.showGlobalAddAllToPlaylistButton) {
                     Settings.data.content.showGlobalAddAllToPlaylistButton = value;
-                    MediaCenter.save(Settings.data).then(() => {});
+                    MediaCenter.save(Settings.data).then(() => { });
                 }
             };
 
@@ -131,13 +134,47 @@
                 let value = e.target.checked;
                 if (value != Settings.data.content.allowOfflineDownload) {
                     Settings.data.content.allowOfflineDownload = value;
-                    MediaCenter.save(Settings.data).then(() => {});
+                    MediaCenter.save(Settings.data).then(() => { });
                 }
+            };
+
+            Settings.setEnableFiltering = (e) => {
+                let value = e.target.checked;
+                if (value && !Settings.data.content.filterPageDeeplink) {
+                    console.log("creating deeplink for filter page");
+                    buildfire.getContext((err, context) => {
+                        if (err) return console.log(`ERROR:${err}`);
+                        var instanceId = context.instanceId;
+                        buildfire.deeplink.registerDeeplink(
+                            {
+                                id: `${instanceId}_filterScreen`,
+                                name: "Filter Screen",
+                                deeplinkData: { screen: "filterScreen" },
+                            },
+                            (err, result) => {
+                                if (err) return console.log(err);
+                                if (value != Settings.data.content.enableFiltering) {
+                                    Settings.data.content.enableFiltering = value;
+                                    Settings.data.content.filterPageDeeplink = `${instanceId}_filterScreen`;
+                                    console.log("filter page dl", result);
+                                    MediaCenter.save(Settings.data).then(() => { });
+                                }
+                            }
+                        );
+                    })
+                }
+                else {
+                    if (value != Settings.data.content.enableFiltering) {
+                        Settings.data.content.enableFiltering = value;
+                        MediaCenter.save(Settings.data).then(() => { });
+                    }
+                }
+
             };
 
             Settings.setGlobalPlaylistPlugin = (pluginInstance) => {
                 Settings.data.content.globalPlaylistPlugin = pluginInstance;
-                MediaCenter.save(Settings.data).then(() => {});
+                MediaCenter.save(Settings.data).then(() => { });
             };
 
             Settings.autoPlayDelayOptions = [
@@ -158,7 +195,7 @@
                         });
                     }
                     if (instances && instances.length > 0) {
-                        if (instances[0].pluginTypeId === PLAYLISTINSTANCES.DEV || instances[0].pluginTypeId === PLAYLISTINSTANCES.QA || instances[0].pluginTypeId === PLAYLISTINSTANCES.PROD ) {
+                        if (instances[0].pluginTypeId === PLAYLISTINSTANCES.DEV || instances[0].pluginTypeId === PLAYLISTINSTANCES.QA || instances[0].pluginTypeId === PLAYLISTINSTANCES.PROD) {
                             Settings.setGlobalPlaylistPlugin(instances[0]);
                         } else {
                             buildfire.dialog.toast({
