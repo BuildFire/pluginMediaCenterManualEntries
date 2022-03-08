@@ -756,6 +756,9 @@
                                 else {
                                     WidgetHome.skip += (_htmlDisplayItemsLimit * 2);
                                 }
+                            }else{
+                                angular.element('#emptyContainer').css('display', 'block');
+
                             }
                             //Check if items have downloaded media
                             if (!WidgetHome.isWeb) {

@@ -8,7 +8,7 @@
             <p class="margin-bottom-zero" ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">
             </p>
         </div>
-        <div id="emptyContainer" class="padded"
+        <div id="emptyContainer" style="display: none;" class="padded"
             ng-if="!loadingData && (!WidgetHome.items || (WidgetHome.items && WidgetHome.items.length === 0))">
             <div ng-if="WidgetHome.media.data.content.enableFiltering"
                 style="position: absolute;right:2em; top: 2em; cursor: pointer;"
