@@ -988,11 +988,14 @@ input[type=range]::-ms-track {
 }
 
 #emptyContainer {
+	display: none;
 	background-image: url('../images/empty_page.svg');
 	background-repeat: no-repeat;
 	background-position: center;
 	height: 100vh;
 }
+
+
 
 .list-layout-1 #emptyContainer,
 .list-layout-4 #emptyContainer {
