@@ -1,3 +1,7 @@
+:root {
+	--bodyText: #cecece;
+}
+
 /* Plugin CSS */
 @media only screen and (max-width: 320px) {
 	.link-list a + a{
@@ -1230,7 +1234,7 @@ input[type=range]::-ms-track {
 
     .category-container .top-row .category-name {
 		font-size: 1.2rem;
-		color: black;
+		/* color: black; */
 		margin: 0;
 		max-width: 40vw;
 		width: 40vw;
@@ -1242,7 +1246,8 @@ input[type=range]::-ms-track {
     .category-container .top-row .category-image-container {
 		height: 3em;
     	width: 3em;
-    	background: lightgray;
+    	/* background: lightgray; */
+		background-color: rgba(150,150,150,0.2);
     	text-align: center;
     	border-radius: 50%;
     	padding: 5px;
@@ -1340,6 +1345,16 @@ input[type=range]::-ms-track {
     		content: "\2212" !important;
 		}
 
+		.subcategory-label::before{
+			background-color: transparent !important;
+			border-color: var(--bodyText) !important;
+		}
+		input[type="checkbox"]:checked + .subcategory-label.check::before, input[type="checkbox"]:checked + .subcategory-label.minus::before {
+			background-color: var(--bodyText) !important;
+			border-color: var(--bodyText) !important;
+
+		}
+
 		.chev {
 			cursor: pointer;
 			-moz-transition: all .5s linear;
@@ -1352,7 +1367,8 @@ input[type=range]::-ms-track {
 		}
 
 		.subcategory-bubble {
-			background-color: #F2F2F2;
+			/* background-color: #F2F2F2; */
+			background-color: rgba(150,150,150,0.2);
 			padding: 5px 15px;
 			border-radius: 25px;
 			margin-top: 10px;
