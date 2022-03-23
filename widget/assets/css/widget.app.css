@@ -1356,6 +1356,8 @@ input[type=range]::-ms-track {
 
 		}
 
+		
+
 		.chev {
 			cursor: pointer;
 			-moz-transition: all .5s linear;
@@ -1439,4 +1441,33 @@ input[type=range]::-ms-track {
 			border-radius: 50%;
 			background-color: red;
 		}
-  
+		.selected-subCat-icon{
+		    position: relative;
+            left: -5px;
+            width: 16px;
+            height: 17px;
+		}
+
+		.selected-subCat-icon::before {
+			position: absolute;
+			left: 0;
+			top: 50%;
+			height: 50%;
+			width: 2px;
+			background-color: var(--primaryTheme);
+			content: "";
+			transform: translateX(10px) rotate(-45deg);
+			transform-origin: left bottom;
+		}
+		
+		.selected-subCat-icon::after {
+			position: absolute;
+			left: 0;
+			bottom: 0;
+			height: 2px;
+			width: 100%;
+			background-color: var(--primaryTheme);
+			content: "";
+			transform: translateX(10px) rotate(-45deg);
+			transform-origin: left bottom;
+		}
