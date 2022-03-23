@@ -12,9 +12,8 @@
                             <img class="categoryScreenIcon" crop-width="30" load-image="1x1" crop-height="30"
                                 crop-type="crop" ng-if="category.data.icon && !WidgetFilters.isIcon(category.data.icon)"
                                 data-final-src="{{category.data.icon }}">
-                            <div style="color:#5f5f5f"
-                                ng-if="category.data.icon && WidgetFilters.isIcon(category.data.icon)"
-                                ng-class="category.data.icon">
+                            <div ng-if="category.data.icon && WidgetFilters.isIcon(category.data.icon)"
+                                ng-class="category.data.icon" class="cat-icon-widget">
                             </div>
                         </div>
                         <div class="category-name" style="margin-left: 15px;">
@@ -46,7 +45,7 @@
                             <div ng-click="WidgetFilters.pickSubcategory(category.id, subcategory.id)"
                                 id="{{subcategory.id}}" class="subcategory-bubble"
                                 ng-class="WidgetFilters.isSubcategoryPicked(category.id, subcategory.id) ? 'picked' : ''">
-                                <span style="margin-right: 5px;"
+                                <span style="margin-right: 5px;" class="selected-subCat-icon"
                                     ng-if="WidgetFilters.isSubcategoryPicked(category.id, subcategory.id)">&#x2714;</span>
                                 <p>{{subcategory.name}}</p>
                             </div>
@@ -68,3 +67,33 @@
             class="btn btn-primary apply-button">Apply</button>
     </div>
 </div>
+<script>
+       // get app theme
+       buildfire.appearance.getAppTheme((err, appTheme) => {
+                if (err) return console.error(err);
+                console.log('appTheme',appTheme);
+                let categoryName= document.querySelector('.category-name');
+                let subCategory= document.querySelector('.subcategory-bubble p');
+                let categoryIcon= document.querySelector('.cat-icon-widget');
+                let categoryArrow= document.querySelector('.expand-collapse');
+                let selectedSubCatIcon= document.querySelector('.selected-subCat-icon');
+                    
+                document.documentElement.style.setProperty('--bodyText', appTheme.colors.bodyText);
+                document.documentElement.style.setProperty('--primaryTheme', appTheme.colors.primaryTheme);
+                
+                // link category name color with app theme
+                categoryName.style.setProperty('color', appTheme.colors.headerText);
+
+                // link sub category text color with app theme
+                subCategory.style.setProperty('color', appTheme.colors.bodyText);
+
+                // link category icon color with app theme
+                categoryIcon.style.setProperty('color', appTheme.colors.icons, 'important');
+                categoryArrow.style.setProperty('color', appTheme.colors.icons, 'important');
+
+                selectedSubCatIcon.style.setProperty('color', appTheme.colors.primaryTheme);
+
+ 
+
+       });
+</script>

@@ -99,7 +99,7 @@
                 };
 
                 init();
-
+             
                 WidgetFilters.saving = false;
 
                 var _skip = 0,
