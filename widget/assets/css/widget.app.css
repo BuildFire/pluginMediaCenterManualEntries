@@ -1217,12 +1217,23 @@ input[type=range]::-ms-track {
 	}
   }
 
+  .box-item{
+    height: 46px;
+    padding: 12px 2px 0px;
+  }
+
+  .drop-control{
+	  margin-left: 0px !important;
+	  padding: 16px 18px 8px;
+	  top: 0 !important;
+  }
+
   .category-container {
     flex: 1;
     padding: 10px;
+	padding-right: 0px;
     border-radius: 0.25rem 0 0 0.25rem;
 	margin-left: 15px;
-	margin-right: 15px;
  }
 
  .category-container .top-row {

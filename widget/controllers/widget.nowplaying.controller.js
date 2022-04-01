@@ -666,6 +666,7 @@
                             if (event.data) {
                                 $rootScope.design = event.data.design;
                                 $rootScope.allowShare = event.data.content.allowShare;
+                                $rootScope.allowAddingNotes = event.data.content.allowAddingNotes;
                                 $rootScope.allowSource = event.data.content.allowSource;
                                 $rootScope.transferAudioContentToPlayList = event.data.content.transferAudioContentToPlayList;
                                 $rootScope.forceAutoPlay = event.data.content.forceAutoPlay;

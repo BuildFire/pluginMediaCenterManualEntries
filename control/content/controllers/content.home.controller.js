@@ -24,6 +24,7 @@
                             rankOfLastItem: 0,
                             rankofLastCategory:0,
                             allowShare: true,
+                            allowAddingNotes: true,
                             allowSource: true,
                             allowOfflineDownload: false,
                             enableFiltering: false,
@@ -55,6 +56,8 @@
                 }
                 if (typeof (ContentHome.info.data.content.allowShare) == 'undefined')
                     ContentHome.info.data.content.allowShare = true;
+                if (typeof (ContentHome.info.data.content.allowAddingNotes) == 'undefined')
+                    ContentHome.info.data.content.allowAddingNotes = true;
                 if (typeof (ContentHome.info.data.content.allowSource) == 'undefined')
                     ContentHome.info.data.content.allowSource = true;
                 if (typeof (ContentHome.info.data.content.transferAudioContentToPlayList) == 'undefined')

@@ -51,6 +51,7 @@
                             sortBy: Orders.ordersMap.Newest,
                             rankOfLastItem: 0,
                             allowShare: true,
+                            allowAddingNotes: true,
                             allowSource: true,
                             transferAudioContentToPlayList: false,
                             forceAutoPlay: false,
@@ -115,6 +116,7 @@
                         WidgetHome.media = MediaCenterInfo;
                         $rootScope.backgroundImage = MediaCenterInfo.data.design.backgroundImage;
                         $rootScope.allowShare = MediaCenterInfo.data.content.allowShare;
+                        $rootScope.allowAddingNotes = MediaCenterInfo.data.content.allowAddingNotes;
                         $rootScope.allowSource = MediaCenterInfo.data.content.allowSource;
                         $rootScope.transferAudioContentToPlayList = MediaCenterInfo.data.content.transferAudioContentToPlayList;
                         $rootScope.forceAutoPlay = MediaCenterInfo.data.content.forceAutoPlay;
@@ -166,8 +168,10 @@
                                 WidgetHome.media = res;
                             }
 
+
                             $rootScope.backgroundImage = WidgetHome.media.data.design.backgroundImage;
                             $rootScope.allowShare = WidgetHome.media.data.content.allowShare;
+                            $rootScope.allowAddingNotes = WidgetHome.media.data.content.allowAddingNotes;
                             $rootScope.allowSource = WidgetHome.media.data.content.allowSource;
                             $rootScope.transferAudioContentToPlayList = WidgetHome.media.data.content.transferAudioContentToPlayList;
                             $rootScope.forceAutoPlay = WidgetHome.media.data.content.forceAutoPlay;
@@ -309,6 +313,7 @@
                             WidgetHome.media.data = event.data;
                             $rootScope.backgroundImage = WidgetHome.media.data.design && WidgetHome.media.data.design.backgroundImage;
                             $rootScope.allowShare = WidgetHome.media.data.content.allowShare;
+                            $rootScope.allowAddingNotes = WidgetHome.media.data.content.allowAddingNotes;
                             $rootScope.allowSource = WidgetHome.media.data.content.allowSource;
                             $rootScope.transferAudioContentToPlayList = WidgetHome.media.data.content.transferAudioContentToPlayList;
                             $rootScope.forceAutoPlay = WidgetHome.media.data.content.forceAutoPlay;
@@ -1162,7 +1167,9 @@
                 WidgetHome.showDrawer = function ($event, item) {
                     $event.stopImmediatePropagation();
                     let listItems = [];
-                    listItems.push({ text: "Add Note" });
+                    if(WidgetHome.media.data.content.allowAddingNotes !== false && $rootScope.online){
+                        listItems.push({ text: "Add Note" });
+                    }
                     if (WidgetHome.media.data.content.allowOfflineDownload && $rootScope.online) {
                         if (item.data.videoUrl) {
                             if (item.data.hasDownloadedVideo) {
