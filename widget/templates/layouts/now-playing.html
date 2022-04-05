@@ -98,7 +98,7 @@
                 ng-click="NowPlaying.openMoreInfoOverlay()"></span>
             <span class="glyphicon glyphicon-cog whiteTheme" ng-click="NowPlaying.getSettings()"></span>
             <i ng-if="globalPlaylist" class="btn btn-icon glyphicon whiteTheme" style="font-size: 17px; opacity: .5;" ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(NowPlaying.item.id), 'glyphicon-minus' : isInGlobalPlaylist(NowPlaying.item.id) }" ng-click="toggleGlobalPlaylistItem($event, NowPlaying.item)" role="button"></i>
-            <span class="glyphicon glyphicon-edit whiteTheme" ng-click="NowPlaying.addNote()"></span>
+            <span  ng-style="{'visibility': allowAddingNotes !== false ? 'visible' : 'hidden'}"  class="glyphicon glyphicon-edit whiteTheme" ng-click="NowPlaying.addNote()"></span>
         </div>
     </div>
 

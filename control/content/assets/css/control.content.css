@@ -394,3 +394,12 @@ Style for loader
             width: 82.5% !important;
             max-width: 82.5% !important;
         }
+
+
+        .links-list.hide-empty.dynamic-link-list.draggable-list-view{
+            margin-top: 40px !important;
+        }
+
+        .item.clearfix.row{
+            display: flex;
+        }

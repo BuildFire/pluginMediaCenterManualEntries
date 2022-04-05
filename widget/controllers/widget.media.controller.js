@@ -95,7 +95,9 @@
 
                 WidgetMedia.showDrawer = function () {
                     let listItems = [];
-                    listItems.push({ text: "Add Note" });
+                    if (WidgetMedia.media.data.content.allowAddingNotes !== false && $rootScope.online) {
+                        listItems.push({ text: "Add Note" });
+                    }
                     if (WidgetMedia.media.data.content.allowOfflineDownload) {
                         if (WidgetMedia.item.data.videoUrl && $rootScope.online) {
                             if (WidgetMedia.item.data.hasDownloadedVideo) {
@@ -299,6 +301,7 @@
                                 sortBy: 'Newest',
                                 rankOfLastItem: 0,
                                 allowShare: true,
+                                allowAddingNotes: true,
                                 allowSource: true,
                                 allowOfflineDownload: false,
                                 transferAudioContentToPlayList: false,
@@ -466,6 +469,7 @@
                             WidgetMedia.media = event;
                             $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
                             $rootScope.allowShare = WidgetMedia.media.data.content.allowShare;
+                            $rootScope.allowAddingNotes = WidgetMedia.media.data.content.allowAddingNotes;
                             $rootScope.allowSource = WidgetMedia.media.data.content.allowSource;
                             $rootScope.transferAudioContentToPlayList = WidgetMedia.media.data.content.transferAudioContentToPlayList;
                             $rootScope.forceAutoPlay = WidgetMedia.media.data.content.forceAutoPlay;

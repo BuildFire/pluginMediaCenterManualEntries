@@ -20,7 +20,7 @@
                 >
         </vg-media>
 
-        <vg-controls ng-if="WidgetMedia.item.data.videoUrl" vg-autohide="false" ng-show="!WidgetMedia.loadingVideo">
+        <vg-controls ng-if="WidgetMedia.item.data.videoUrl" vg-autohide="false" ng-show="!WidgetMedia.loadingVideo" id="vg-controls">
             <div class="prev-item-btn" ng-click="playPrevItem()">
                 <button class="iconButton">
                     <i class="glyphicon glyphicon-step-backward"></i>
@@ -47,6 +47,6 @@
             <vg-playback-button vgFor="videogularElement" [playbackValues]="[ '1.0', '2.0', '4.0' ]"></vg-playback-button>
             <vg-fullscreen-button class="fullscreen-btn"></vg-fullscreen-button>
         </vg-controls>
-        <vg-overlay-play ng-class="{'hidden': videoAlreadyPlayed()}"></vg-overlay-play>
+        <vg-overlay-play ng-class="{'hidden': videoAlreadyPlayed()}" id="vg-overlay-play"></vg-overlay-play>
     </videogular>
 </div>

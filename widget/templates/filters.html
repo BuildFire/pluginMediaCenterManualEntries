@@ -20,15 +20,14 @@
                             {{category.data.name}}
                         </div>
                         <div class="input-container">
-                            <div style="margin-right: 1em;">
+                            <div class="box-item"  ng-click="WidgetFilters.pickCategory(category)">
                                 <div class="checkbox checkbox-primary no-label" style="margin-top:3px;">
                                     <input type="checkbox" ng-checked="WidgetFilters.isCategoryPicked(category.id)"
                                         class="ng-pristine ng-untouched ng-valid">
                                 </div>
                                 <!-- <input type="checkbox" id="subcategory.id" name="subcategory.name" ng-click="WidgetFilters.pickSubcategory(category.id, subcategory.id)" value="subcategory.checked"> -->
-                                <div class="checkbox checkbox-primary no-label" style="margin: 0;">
+                                <div class="checkbox checkbox-primary no-label" style="margin: 0; z-index: -1;">
                                     <input type="checkbox" id="{{category.id}}" ng-disabled="config.requireLogin"
-                                        ng-click="WidgetFilters.pickCategory(category)"
                                         ng-checked="WidgetFilters.isCategoryPicked(category.id)"
                                         class="ng-pristine ng-untouched ng-valid" disabled="disabled">
                                     <label ng-class="WidgetFilters.getCategoryIconState(category)"
@@ -36,17 +35,17 @@
                                 </div>
                             </div>
                             <span ng-click="WidgetFilters.expand($index)"
-                                class="expand-collapse chevron top chev"></span>
+                                class="expand-collapse chevron top chev drop-control"></span>
 
                         </div>
                     </div>
                     <div id="{{ 'subcat-' + $index }}" class="subcategories-container">
-                        <div class="subcategory" ng-repeat="subcategory in category.data.subcategories">
-                            <div ng-click="WidgetFilters.pickSubcategory(category.id, subcategory.id)"
+                        <div class="subcategory" ng-repeat="subcategory in category.data.subcategories" ng-click="WidgetFilters.pickSubcategory(category.id, subcategory.id)">
+                            <div
                                 id="{{subcategory.id}}" class="subcategory-bubble"
                                 ng-class="WidgetFilters.isSubcategoryPicked(category.id, subcategory.id) ? 'picked' : ''">
                                 <span style="margin-right: 5px;" class="selected-subCat-icon"
-                                    ng-if="WidgetFilters.isSubcategoryPicked(category.id, subcategory.id)">&#x2714;</span>
+                                    ng-if="WidgetFilters.isSubcategoryPicked(category.id, subcategory.id)"></span>
                                 <p>{{subcategory.name}}</p>
                             </div>
                         </div>
@@ -71,12 +70,11 @@
        // get app theme
        buildfire.appearance.getAppTheme((err, appTheme) => {
                 if (err) return console.error(err);
-                console.log('appTheme',appTheme);
+
                 let categoryName= document.querySelector('.category-name');
                 let subCategory= document.querySelector('.subcategory-bubble p');
                 let categoryIcon= document.querySelector('.cat-icon-widget');
                 let categoryArrow= document.querySelector('.expand-collapse');
-                let selectedSubCatIcon= document.querySelector('.selected-subCat-icon');
                     
                 document.documentElement.style.setProperty('--bodyText', appTheme.colors.bodyText);
                 document.documentElement.style.setProperty('--primaryTheme', appTheme.colors.primaryTheme);
@@ -91,7 +89,6 @@
                 categoryIcon.style.setProperty('color', appTheme.colors.icons, 'important');
                 categoryArrow.style.setProperty('color', appTheme.colors.icons, 'important');
 
-                selectedSubCatIcon.style.setProperty('color', appTheme.colors.primaryTheme);
 
  
 

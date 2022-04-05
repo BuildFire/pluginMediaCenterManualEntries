@@ -57,6 +57,7 @@
                                     sortBy: 'Newest',
                                     rankOfLastItem: 0,
                                     allowShare: true,
+                                    allowAddingNotes: true,
                                     allowSource: true,
                                     allowOfflineDownload: false,
                                     transferAudioContentToPlayList: false,
@@ -187,6 +188,9 @@
                         }
                         else {
                             WidgetFilters.pickedCategories[categoryId].splice(WidgetFilters.pickedCategories[categoryId].indexOf(subcategoryId), 1);
+                            if(WidgetFilters.pickedCategories[categoryId].length == 0){
+                                delete WidgetFilters.pickedCategories[categoryId];
+                            }
                         }
                     }
                     else {
@@ -285,6 +289,7 @@
                             WidgetFilters.media = event;
                             $rootScope.backgroundImage = WidgetFilters.media.data.design.backgroundImage;
                             $rootScope.allowShare = WidgetFilters.media.data.content.allowShare;
+                            $rootScope.allowAddingNotes = WidgetFilters.media.data.content.allowAddingNotes;
                             $rootScope.allowSource = WidgetFilters.media.data.content.allowSource;
                             $rootScope.transferAudioContentToPlayList = WidgetFilters.media.data.content.transferAudioContentToPlayList;
                             $rootScope.forceAutoPlay = WidgetFilters.media.data.content.forceAutoPlay;
