@@ -7,7 +7,7 @@
             <p ng-if="WidgetHome.showDescription()" ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">
             </p>
         </div>
-        <div id="emptyContainer"  class="padded" ng-if="!loadingData && (!WidgetHome.items || (WidgetHome.items && WidgetHome.items.length === 0))">
+        <div id="emptyContainer"  class="padded" ng-if="!loadingData && !WidgetHome.items.length">
             <div ng-if="WidgetHome.media.data.content.enableFiltering" style="position: absolute;right:2em; top: 2em; cursor: pointer;" ng-click="WidgetHome.goToFilterScreen()">
                 <div style=" position: relative;">
                     <i class="glyphicon glyphicon-filter filter-funnel"></i>
@@ -16,19 +16,16 @@
             </div>
         </div>
         <div class="padded padding-top-zero text-overlay">
-            <div ng-if="!loadingData && WidgetHome.media.data.content.enableFiltering && WidgetHome.items && WidgetHome.items.length > 0" style="float: right; padding: 10px; cursor: pointer;" ng-click="WidgetHome.goToFilterScreen()">
+            <div ng-if="!loadingData && WidgetHome.media.data.content.enableFiltering" style="float: right; padding: 10px; cursor: pointer;" ng-click="WidgetHome.goToFilterScreen()">
                 <div style=" position: relative;">
                     <i class="glyphicon glyphicon-filter filter-funnel"></i>
                     <div data-ng-if="WidgetHome.activeFilters" id="activeFilterIndicator"></div>
                 </div>
             </div>
             <div class="list-layout">
-                <div class="row layout-1" infinite-scroll="WidgetHome.addMore()"
-                     infinite-scroll-distance="1"
-                     data-infinite-container=".infinite-scroll-parent"
-                     infinite-scroll-disabled="WidgetHome.stopScroll"
+                <div class="row layout-1" 
                         >
-                    <div class="clickable col-xs-6 pull-left text-overlay" ng-repeat="item in WidgetHome.displayItems"
+                    <div class="clickable col-xs-6 pull-left text-overlay" ng-repeat="item in WidgetHome.items"
                          ng-click="WidgetHome.goToMedia($index)" class="list-item-odd">
                         <div class="list-item-media text-center border-radius-three overflow-hidden text-overlay">
                             <div play-btn="{{item.data.videoUrl.length > 0  || (skipMediaPage && (item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0)) }}" class="list-media-holder text-overlay">

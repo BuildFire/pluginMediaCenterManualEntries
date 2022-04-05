@@ -196,7 +196,7 @@
 
 
                 var _skip = 0,
-                    _limit = 50,
+                    _limit = 20,
                     searchOptions = {
                         filter: {},
                         skip: _skip,
@@ -716,397 +716,250 @@
                         }
                     }
                 }
+                //==============================================================================================================
+                WidgetHome.currentSkip = 0;
+                WidgetHome.currentlyLoading = false;
 
-                WidgetHome.loadMore = function () {
-                    if (WidgetHome.isBusy || WidgetHome.noMore) {
-                        buildfire.spinner.hide();
-                        $rootScope.loadingData = false;
-                        if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                        return;
-                    }
-
-                    $rootScope.loadingData = true;
-                    WidgetHome.isBusy = true;
-                    buildfire.spinner.show();
-                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-
-
-                    updateGetOptions();
-                    $rootScope.loadingData = true;
-                    WidgetHome.isBusy = true;
-                    buildfire.spinner.show();
-                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-
-                    const getMediaItems = () => {
-                        MediaContent.find(searchOptions).then((result) => {
-                            if (WidgetHome.noMore) {
-                                buildfire.spinner.hide();
-                                $rootScope.loadingData = false;
-                                return;
+                WidgetHome.checkForDeeplink = () => {
+                    if (!$window.deeplinkingDone) {
+                        buildfire.deeplink.getData((data) => {
+                            if (!data) return;
+                            let itemId = null;
+                            if (data.id) itemId = data.id;
+                            else if (data.mediaId) itemId = data.mediaId;
+                            else if (data && data.deepLinkUrl) {
+                                var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
+                                var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
+                                itemId = JSON.parse(deepLinkUrl).id;
                             }
-
-                            // $rootScope.deepLinkNavigate = true;
-                            // $rootScope.seekTime = 10.22;
-                            WidgetHome.items = WidgetHome.items ? WidgetHome.items.concat(result) : result;
-                            if (WidgetHome.items.length > 0 && WidgetHome.displayItems.length == 0) {//don't wait for all items to load to show first 20
-                                WidgetHome.displayItems = WidgetHome.items.slice(0, (_htmlDisplayItemsLimit * 2));
-                                if (WidgetHome.items.length < (_htmlDisplayItemsLimit * 2)) {
-                                    WidgetHome.skip = WidgetHome.items.length;
+                            else if (data && data.link) {
+                                if (data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
+                                    $rootScope.deepLinkNavigate = true;
+                                    $rootScope.seekTime = data.timeIndex;
                                 }
-                                else {
-                                    WidgetHome.skip += (_htmlDisplayItemsLimit * 2);
-                                }
-                            }else{
-                                angular.element('#emptyContainer').css('display', 'block');
-
+                                if (foundObj.data.audioUrl && $rootScope.seekTime)
+                                    return Location.go('#/nowplaying/' + foundObj.id);
                             }
-                            //Check if items have downloaded media
-                            if (!WidgetHome.isWeb) {
-                                CachedMediaContent.insert(WidgetHome.items, (error, res) => {
-                                    if (error) {
-                                        return;
-                                    }
-                                    // buildfire.dialog.toast({
-                                    //     message: `Inserted content 1`,
-                                    //     type: 'warning',
-                                    // });
-                                    if (WidgetHome.items.length > 0) {
-                                        DownloadedMedia.get((err, res) => {
-                                            let downloadedIDS = [];
-                                            if (err) {
-                                                return callback(err);
-                                            }
-                                            if (res) {
-                                                downloadedIDS = res.map(item => item.mediaId);
-                                                if (downloadedIDS.length > 0) {
-                                                    WidgetHome.items = WidgetHome.items.map(item => {
-                                                        if (downloadedIDS.indexOf(item.id) > -1) {
-                                                            item.hasDownloadedMedia = true;
-                                                            let downloadedItem = res[downloadedIDS.indexOf(item.id)];
-                                                            if (downloadedItem.mediaType == "video") {
-                                                                if (downloadedItem.originalMediaUrl != item.data.videoUrl || !downloadedItem.originalMediaUrl || item.data.videoUrl.length == 0) {
-                                                                    item.data.hasDownloadedVideo = true;
-                                                                }
-                                                                else {
-                                                                    item.data.hasDownloadedVideo = true;
-                                                                }
-                                                            }
-
-                                                            else if (downloadedItem.mediaType == "audio") {
-                                                                item.data.hasDownloadedAudio = true;
-                                                            }
-                                                        }
-                                                        return item;
-                                                    });
-                                                }
-                                            }
-                                            // WidgetHome.items = result;
-                                            WidgetHome.isBusy = false;
-                                            $rootScope.myItems = WidgetHome.items;
-                                            bookmarks.sync($scope);
-                                            if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
-
-                                            if (result.length < _limit) {// to indicate there is no more
-                                                WidgetHome.noMore = true;
-                                                WidgetHome.addMore();
-                                            }
-                                            else {
-                                                result.pop();
-                                                searchOptions.skip = searchOptions.skip + _limit;
-                                                WidgetHome.noMore = false;
-                                                // In order to get all the items
-                                                return getMediaItems();
-                                            }
-
-                                            if (!$window.deeplinkingDone && buildfire.deeplink) {
-                                                buildfire.deeplink.getData(function (data) {
-                                                    var exists = data && data.id && WidgetHome.items.find(item => item.id === data.id);
-                                                    if (data && data.mediaId) {
-                                                        $rootScope.showFeed = false;
-                                                        $rootScope.fromSearch = true;
-                                                        $window.deeplinkingDone = true;
-                                                        window.setTimeout(() => {
-                                                            WidgetHome.goTo(data.mediaId);
-                                                        }, 0);
-                                                    }
-                                                    else if (data && data.link) {
-                                                        $rootScope.showFeed = false;
-                                                        $rootScope.fromSearch = true;
-                                                        $window.deeplinkingDone = true;
-                                                        var foundObj = WidgetHome.items.find(function (el) { return el.id == data.link; });
-                                                        if (!foundObj) return WidgetHome.setEmptyState();
-                                                        if (data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
-                                                            $rootScope.deepLinkNavigate = true;
-                                                            $rootScope.seekTime = data.timeIndex;
-                                                        }
-                                                        window.setTimeout(() => {
-                                                            if (foundObj.data.audioUrl && $rootScope.seekTime) {
-                                                                return Location.go('#/nowplaying/' + foundObj.id)
-                                                            }
-
-                                                            WidgetHome.goTo(data.link);
-                                                        }, 0);
-                                                    }
-                                                    else if (data && data.deepLinkUrl) {
-                                                        var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
-                                                        var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
-                                                        var itemId = JSON.parse(deepLinkUrl).id;
-                                                        $rootScope.showFeed = false;
-                                                        $rootScope.fromSearch = true;
-                                                        $window.deeplinkingDone = true;
-                                                        window.setTimeout(() => {
-                                                            WidgetHome.goTo(itemId);
-                                                        }, 0);
-                                                    }
-                                                    else if (data && exists) {
-                                                        $window.deeplinkingDone = true;
-                                                        $rootScope.showFeed = false;
-                                                        window.setTimeout(() => {
-                                                            WidgetHome.goTo(data.id);
-                                                        }, 0);
-                                                    } else if (data && !exists) {
-                                                        $window.deeplinkingDone = true;
-                                                        WidgetHome.deepLink = true;
-                                                        const text = strings.get("deeplink.deeplinkMediaNotFound") ? strings.get("deeplink.deeplinkMediaNotFound") : "Media does not exist!";
-                                                        buildfire.components.toast.showToastMessage({ text }, () => { });
-                                                    } else WidgetHome.deepLink = true;
-                                                });
-                                            }
-                                            setTimeout(() => {
-                                                WidgetHome.isBusy = false;
-                                                $rootScope.loadingData = false;
-                                                buildfire.spinner.hide();
-                                                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                                            }, 0);
-                                        });
-                                    }
-
-                                });
-                            }
-                            else {
-                                // WidgetHome.items = result;
-                                WidgetHome.isBusy = false;
-                                $rootScope.myItems = WidgetHome.items;
-                                bookmarks.sync($scope);
-                                if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
-
-                                if (result.length < _limit) {// to indicate there is no more
-                                    WidgetHome.noMore = true;
-                                    WidgetHome.addMore();
-                                }
-                                else {
-                                    result.pop();
-                                    searchOptions.skip = searchOptions.skip + _limit;
-                                    WidgetHome.noMore = false;
-                                    // In order to get all the items
-                                    return getMediaItems();
-                                }
-
-                                if (!$window.deeplinkingDone && buildfire.deeplink) {
-                                    buildfire.deeplink.getData(function (data) {
-                                        if (data && data.screen) {
-                                            if (WidgetHome.media && WidgetHome.media.data && WidgetHome.media.data.content) {
-                                                if (WidgetHome.media.data.content.enableFiltering) {
-                                                    $window.deeplinkingDone = true;
-                                                    WidgetHome.goToFilterScreen();
-                                                }
-                                            }
-                                        }
-                                        else {
-                                            var exists = data && data.id && WidgetHome.items.find(item => item.id === data.id);
-                                            if (data && data.mediaId) {
-                                                $rootScope.showFeed = false;
-                                                $rootScope.fromSearch = true;
-                                                $window.deeplinkingDone = true;
-                                                window.setTimeout(() => {
-                                                    WidgetHome.goTo(data.mediaId);
-                                                }, 0);
-                                            }
-                                            else if (data && data.link) {
-                                                $rootScope.showFeed = false;
-                                                $rootScope.fromSearch = true;
-                                                $window.deeplinkingDone = true;
-                                                var foundObj = WidgetHome.items.find(function (el) { return el.id == data.link; });
-                                                if (!foundObj) return WidgetHome.setEmptyState();
-                                                if (data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
-                                                    $rootScope.deepLinkNavigate = true;
-                                                    $rootScope.seekTime = data.timeIndex;
-                                                }
-                                                window.setTimeout(() => {
-                                                    if (foundObj.data.audioUrl && $rootScope.seekTime) {
-                                                        return Location.go('#/nowplaying/' + foundObj.id)
-                                                    }
-
-                                                    WidgetHome.goTo(data.link);
-                                                }, 0);
-                                            }
-                                            else if (data && data.deepLinkUrl) {
-                                                var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
-                                                var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
-                                                var itemId = JSON.parse(deepLinkUrl).id;
-                                                $rootScope.showFeed = false;
-                                                $rootScope.fromSearch = true;
-                                                $window.deeplinkingDone = true;
-                                                window.setTimeout(() => {
-                                                    WidgetHome.goTo(itemId);
-                                                }, 0);
-                                            }
-                                            else if (data && exists) {
-                                                $window.deeplinkingDone = true;
-                                                $rootScope.showFeed = false;
-                                                window.setTimeout(() => {
-                                                    WidgetHome.goTo(data.id);
-                                                }, 0);
-                                            } else if (data && !exists) {
-                                                $window.deeplinkingDone = true;
-                                                WidgetHome.deepLink = true;
-                                                const text = strings.get("deeplink.deeplinkMediaNotFound") ? strings.get("deeplink.deeplinkMediaNotFound") : "Media does not exist!";
-                                                buildfire.components.toast.showToastMessage({ text }, () => { });
-                                            } else WidgetHome.deepLink = true;
-                                        }
-                                    });
-                                }
-                                setTimeout(() => {
-                                    WidgetHome.isBusy = false;
-                                    $rootScope.loadingData = false;
-                                    buildfire.spinner.hide();
-                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                                }, 0);
-                            }
+                            $rootScope.showFeed = false;
+                            $rootScope.fromSearch = true;
+                            $window.deeplinkingDone = true;
+                                WidgetHome.goTo(itemId);
                         });
                     }
 
-                    const getCachedItems = (callback) => {
-                        if (Buildfire.getContext().device.platform === 'web') {
-                            buildfire.dialog.toast({
-                                message: "You can't use offline mode in web browser",
+                    buildfire.deeplink.onUpdate((deeplinkData) => {
+                        if (deeplinkData && deeplinkData.id) {
+                            $window.deeplinkingDone = true;
+                            $rootScope.showFeed = false;
+                            WidgetHome.goTo(deeplinkData.id);
+                         
+                        }
+                    });
+                }
+
+
+                WidgetHome.syncWithOfflineData = (callback) => {
+                    if (!WidgetHome.isWeb) {
+                        CachedMediaContent.insert(WidgetHome.items, (error, res) => {
+                            if (error) return callback(err, null);
+                            if (WidgetHome.items.length > 0) {
+                                DownloadedMedia.get((err, res) => {
+                                    let downloadedIDS = [];
+                                    if (err || (!res && !res.length)) return callback(err, null);
+                                    downloadedIDS = res.map(item => item.mediaId);
+                                    downloadedIDS.length ?
+                                        WidgetHome.items = WidgetHome.items.map(item => {
+                                            if (downloadedIDS.indexOf(item.id) > -1) {
+                                                item.hasDownloadedMedia = true;
+                                                let downloadedItem = res[downloadedIDS.indexOf(item.id)];
+                                                if (downloadedItem.mediaType == "video") {
+                                                    if (downloadedItem.originalMediaUrl != item.data.videoUrl || !downloadedItem.originalMediaUrl || item.data.videoUrl.length == 0)
+                                                        item.data.hasDownloadedVideo = true;
+                                                    else
+                                                        item.data.hasDownloadedVideo = true;
+                                                }
+                                                else if (downloadedItem.mediaType == "audio")
+                                                    item.data.hasDownloadedAudio = true;
+                                            }
+                                            return item;
+                                        }) : null;
+
+                                    downloads.sync($scope, DownloadedMedia);
+                                    callback(err, true);
+                                });
+                            }
+                        });
+                    } else return callback(null, true);
+                }
+
+                
+                const getCachedItems = (callback) => {
+                    if (Buildfire.getContext().device.platform === 'web') {
+                        buildfire.dialog.toast({
+                            message: "You can't use offline mode in web browser",
+                        });
+                        WidgetHome.items = [];
+                        WidgetHome.stopScroll = false;
+                        WidgetHome.skip = 0;
+                        WidgetHome.displayItems = [];
+                        setTimeout(() => {
+                            buildfire.spinner.hide();
+                            WidgetHome.isBusy = false;
+                            $rootScope.loadingData = false;
+                            $rootScope.loadingGlobalPlaylist = false;
+                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            return callback(null, true);
+                        }, 0);
+                    }
+
+                    CachedMediaContent.get((err, res) => {
+                        if (WidgetHome.noMore) {
+                            buildfire.spinner.hide();
+                            $rootScope.loadingData = false;
+                            return;
+                        }
+                        let cachedItems = [];
+                        if (err) {
+                            return callback(err);
+                        }
+                        if (res) {
+                            cachedItems = res;
+                        }
+                        // buildfire.dialog.toast({
+                        //     message: "Cached items found " + cachedItems.length,
+                        // });
+                        if (!cachedItems) cachedItems = [];
+                        WidgetHome.items = cachedItems;
+                        DownloadedMedia.get((err, res) => {
+                            let downloadedIDS = [];
+                            if (err) {
+                                return callback(err);
+                            }
+                            if (res) {
+                                downloadedIDS = res.map(item => item.mediaId);
+                                if (downloadedIDS.length > 0) {
+                                    WidgetHome.items = WidgetHome.items.map(item => {
+                                        if (downloadedIDS.indexOf(item.id) > -1) {
+                                            item.hasDownloadedMedia = true;
+                                            let downloadedItem = res[downloadedIDS.indexOf(item.id)];
+                                            if (downloadedItem.mediaType == "video") {
+                                                item.data.hasDownloadedVideo = true;
+                                            }
+
+                                            else if (downloadedItem.mediaType == "audio") {
+                                                item.data.hasDownloadedAudio = true;
+                                            }
+                                        }
+
+                                        return item;
+                                    });
+                                }
+                            }
+                            WidgetHome.items.sort(function (a, b) {
+                                if (a.hasDownloadedMedia && !b.hasDownloadedMedia) return -1;
+                                if (!a.hasDownloadedMedia && b.hasDownloadedMedia) return 1;
+                                return 0;
                             });
-                            WidgetHome.items = [];
-                            WidgetHome.stopScroll = false;
-                            WidgetHome.skip = 0;
-                            WidgetHome.displayItems = [];
+                            WidgetHome.noMore = true;
+                            WidgetHome.displayItems = WidgetHome.items;
                             setTimeout(() => {
                                 buildfire.spinner.hide();
                                 WidgetHome.isBusy = false;
                                 $rootScope.loadingData = false;
                                 $rootScope.loadingGlobalPlaylist = false;
                                 if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                                return callback(null, true);
+                                callback(null, true);
                             }, 0);
-                        }
+                        });
+                    });
+                }
 
-                        CachedMediaContent.get((err, res) => {
-                            if (WidgetHome.noMore) {
-                                buildfire.spinner.hide();
-                                $rootScope.loadingData = false;
-                                return;
-                            }
-                            let cachedItems = [];
-                            if (err) {
-                                return callback(err);
-                            }
-                            if (res) {
-                                cachedItems = res;
-                            }
-                            // buildfire.dialog.toast({
-                            //     message: "Cached items found " + cachedItems.length,
-                            // });
-                            if (!cachedItems) cachedItems = [];
-                            WidgetHome.items = cachedItems;
-                            DownloadedMedia.get((err, res) => {
-                                let downloadedIDS = [];
-                                if (err) {
-                                    return callback(err);
-                                }
-                                if (res) {
-                                    downloadedIDS = res.map(item => item.mediaId);
-                                    if (downloadedIDS.length > 0) {
-                                        WidgetHome.items = WidgetHome.items.map(item => {
-                                            if (downloadedIDS.indexOf(item.id) > -1) {
-                                                item.hasDownloadedMedia = true;
-                                                let downloadedItem = res[downloadedIDS.indexOf(item.id)];
-                                                if (downloadedItem.mediaType == "video") {
-                                                    item.data.hasDownloadedVideo = true;
-                                                }
-
-                                                else if (downloadedItem.mediaType == "audio") {
-                                                    item.data.hasDownloadedAudio = true;
-                                                }
-                                            }
-
-                                            return item;
+                const getGlobalPlaylistItems = () => {
+                    return new Promise(resolve => {
+                        $rootScope.loadingGlobalPlaylist = true;
+                        GlobalPlaylist.get()
+                            .then(result => {
+                                if (!result.data.playlist) {
+                                    // If there is no object, then create the parent object
+                                    GlobalPlaylist.save({ playlist: {} })
+                                        .then(result => {
+                                            result.data.id = result.id;
+                                            $rootScope.globalPlaylistItems = result.data;
+                                            resolve();
                                         });
-                                    }
+                                } else {
+                                    result.data.id = result.id;
+                                    $rootScope.globalPlaylistItems = result.data;
+                                    resolve();
                                 }
-                                WidgetHome.items.sort(function (a, b) {
-                                    if (a.hasDownloadedMedia && !b.hasDownloadedMedia) return -1;
-                                    if (!a.hasDownloadedMedia && b.hasDownloadedMedia) return 1;
-                                    return 0;
-                                });
+                            }).catch(err => {
+                                console.error(err);
+                                resolve()
+                            })
+                    })
+                }
+
+                const getGlobalPlaylistLimit = () => {
+                    GlobalPlaylist.getGlobalPlaylistLimit().then((result) => {
+                        if (result && result.data && typeof result.data.globalPlaylistLimit !== 'undefined') {
+                            $rootScope.globalPlaylistLimit = result.data.globalPlaylistLimit;
+                        } else {
+                            $rootScope.globalPlaylistLimit = undefined;
+                        };
+                    });
+                };
+
+                WidgetHome.loadMore = () => {
+                    updateGetOptions();
+                    const getRecords = () => {
+                        
+                        if (WidgetHome.currentlyLoading || WidgetHome.noMore) return;
+                        buildfire.spinner.show();
+                        WidgetHome.stopScroll = true;
+                        WidgetHome.currentlyLoading = true;
+
+                        MediaContent.find(searchOptions).then((result) => {
+                            WidgetHome.items = WidgetHome.items.concat(result);
+
+                            const finish = () => {
+                                $rootScope.myItems = WidgetHome.items;
+                                $rootScope.loadingData = false;
+                                WidgetHome.stopScroll = false;
+                                WidgetHome.currentlyLoading = false;
+                                bookmarks.sync($scope);
+                                buildfire.spinner.hide();
+                            }
+                            
+                            if (result.length < searchOptions.limit) {
                                 WidgetHome.noMore = true;
-                                WidgetHome.displayItems = WidgetHome.items;
-                                setTimeout(() => {
-                                    buildfire.spinner.hide();
-                                    WidgetHome.isBusy = false;
-                                    $rootScope.loadingData = false;
-                                    $rootScope.loadingGlobalPlaylist = false;
-                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                                    callback(null, true);
-                                }, 0);
+                            } else {
+                                searchOptions.skip = searchOptions.skip + searchOptions.limit;
+                                WidgetHome.currentSkip = searchOptions.skip;
+                            }
+            
+                            WidgetHome.syncWithOfflineData((error, done) => {
+                                if(error) console.error(error);
+                                else if(done) {
+                                    finish();
+                                    WidgetHome.checkForDeeplink();
+                                }
                             });
                         });
                     }
 
-                    const getGlobalPlaylistItems = () => {
-                        return new Promise(resolve => {
-                            $rootScope.loadingGlobalPlaylist = true;
-                            GlobalPlaylist.get()
-                                .then(result => {
-                                    if (!result.data.playlist) {
-                                        // If there is no object, then create the parent object
-                                        GlobalPlaylist.save({ playlist: {} })
-                                            .then(result => {
-                                                result.data.id = result.id;
-                                                $rootScope.globalPlaylistItems = result.data;
-                                                resolve();
-                                            });
-                                    } else {
-                                        result.data.id = result.id;
-                                        $rootScope.globalPlaylistItems = result.data;
-                                        resolve();
-                                    }
-                                }).catch(err => {
-                                    console.error(err);
-                                    resolve()
-                                })
-                        })
-                    }
-
-                    const getGlobalPlaylistLimit = () => {
-                        GlobalPlaylist.getGlobalPlaylistLimit().then((result) => {
-                            if (result && result.data && typeof result.data.globalPlaylistLimit !== 'undefined') {
-                                $rootScope.globalPlaylistLimit = result.data.globalPlaylistLimit;
-                            } else {
-                                $rootScope.globalPlaylistLimit = undefined;
-                            };
-                        });
-                    };
                     if ($rootScope.globalPlaylist && $rootScope.online) {
                         getCurrentUser(() => {
-                            // Get limit from appData
                             getGlobalPlaylistLimit();
 
                             getGlobalPlaylistItems()
-                                .then(getMediaItems)
+                                .then(getRecords)
                                 .finally(() => {
-                                    buildfire.spinner.hide();
                                     $rootScope.loadingGlobalPlaylist = false
                                 });
                         });
                     } else if ($rootScope.online) {
-                        getGlobalPlaylistItems().then(getMediaItems).finally(() => {
+                        getGlobalPlaylistItems().then(getRecords).finally(() => {
                             setTimeout(() => {
-                                buildfire.spinner.hide();
                                 WidgetHome.isBusy = false;
                                 $rootScope.loadingData = false;
                                 $rootScope.loadingGlobalPlaylist = false;
@@ -1115,18 +968,10 @@
                         });
                     }
                     else {
-                        getCachedItems((err, res) => {
-                        });
+                        getCachedItems((err, res) => { });
                     }
-
-                    setTimeout(() => {
-                        buildfire.spinner.hide();
-                        WidgetHome.isBusy = false;
-                        $rootScope.loadingData = false;
-                        $rootScope.loadingGlobalPlaylist = false;
-                        if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                    }, 0);
-                };
+                }
+                //==============================================================================================================
 
                 WidgetHome.openLinks = function (actionItems) {
                     if (actionItems && actionItems.length) {
@@ -1469,17 +1314,16 @@
                 };
 
                 $rootScope.refreshItems = function () {
-                    buildfire.spinner.show();
                     searchOptions.skip = 0;
                     WidgetHome.items = [];
                     WidgetHome.stopScroll = false;
                     WidgetHome.skip = 0;
                     WidgetHome.displayItems = []
                     WidgetHome.noMore = false;
-                    WidgetHome.glovalPlaylistLoaded = false;
+                    WidgetHome.globalPlaylistLoaded = false;
                     if ($rootScope.globalPlaylist) $rootScope.globalPlaylistItems = { playlist: {} };
                     if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                    WidgetHome.addMore();
+                    WidgetHome.loadMore();
                 };
 
                 WidgetHome.goToMedia = function (ind) {
@@ -1621,6 +1465,7 @@
                                         }, 0);
                                     });
                                 }
+                                WidgetHome.loadMore();
                             },
                                 function fail() {
                                     WidgetHome.media = _infoData;
@@ -1633,6 +1478,8 @@
                         }
                     }
                 });
+
+                $rootScope.loadMore = () => WidgetHome.loadMore();
 
                 WidgetHome.goToFilterScreen = function () {
                     $rootScope.showFeed = false;

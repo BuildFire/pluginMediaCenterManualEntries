@@ -69,7 +69,9 @@
 
 <body class="body-scroll">
     <div class="main_view">
-        <div ng-class="showFeed ? 'showing' : 'notshowing'" data-back-img="{{backgroundImage}}" id="feedView" class="content slide infinite-scroll-parent" >
+        <div ng-class="showFeed ? 'showing' : 'notshowing'" data-back-img="{{backgroundImage}}" id="feedView" class="content slide infinite-scroll-parent" 
+        scrolly="loadMore()"
+        >
             <div ng-controller="WidgetHomeCtrl as WidgetHome">
                 <div ng-include="'templates/home.html'">
                 </div>
@@ -84,7 +86,7 @@
         <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>
     </div>
 
-    <div class="playlist-actions" ng-if="globalPlaylist && !loadingGlobalPlaylist && showGlobalPlaylistButtons && myItems.length > 0">
+    <div class="playlist-actions" style="display: none;" ng-class="(globalPlaylist && !loadingGlobalPlaylist && showGlobalPlaylistButtons && myItems.length > 0) ? 'show' : 'hidden'">
         <button
             class="btn btn-standard add-button"
             ng-disabled="addAllToPlaylistLoading"

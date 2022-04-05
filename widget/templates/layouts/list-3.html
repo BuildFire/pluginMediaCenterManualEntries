@@ -9,7 +9,7 @@
             </p>
         </div>
         <div id="emptyContainer" class="padded"
-            ng-if="!loadingData && (!WidgetHome.items || (WidgetHome.items && WidgetHome.items.length === 0))">
+            ng-if="!loadingData">
             <div ng-if="WidgetHome.media.data.content.enableFiltering"
                 style="position: absolute;right:2em; top: 2em; cursor: pointer;"
                 ng-click="WidgetHome.goToFilterScreen()">
@@ -28,9 +28,8 @@
                 </div>
             </div>
         </div>
-        <div infinite-scroll="WidgetHome.addMore()" infinite-scroll-distance="1"
-            data-infinite-container=".infinite-scroll-parent" infinite-scroll-disabled="WidgetHome.stopScroll">
-            <div class="clickable text-overlay" ng-repeat="item in WidgetHome.displayItems"
+        <div>
+            <div class="clickable text-overlay" ng-repeat="item in WidgetHome.items"
                 ng-click="WidgetHome.goToMedia($index)">
                 <div class="plugin-banner clearfix text-overlay">
                     <div class="text-overlay"
