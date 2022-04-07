@@ -1438,7 +1438,6 @@ input[type=range]::-ms-track {
 		}
 
 		.categoryScreenIcon {
-			object-fit: none;
             height: 30px !important;
             width: 30px !important;
 		}
