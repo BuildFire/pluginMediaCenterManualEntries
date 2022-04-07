@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class="padded padding-top-zero text-overlay">
-            <div ng-if="!loadingData && WidgetHome.media.data.content.enableFiltering" style="float: right; padding: 10px; cursor: pointer;" ng-click="WidgetHome.goToFilterScreen()">
+            <div ng-if="!loadingData && WidgetHome.media.data.content.enableFiltering && WidgetHome.items && WidgetHome.items.length > 0" style="float: right; padding: 10px; cursor: pointer;" ng-click="WidgetHome.goToFilterScreen()">
                 <div style=" position: relative;">
                     <i class="glyphicon glyphicon-filter filter-funnel"></i>
                     <div data-ng-if="WidgetHome.activeFilters" id="activeFilterIndicator"></div>

@@ -175,4 +175,122 @@ var stringsConfig = {
         },
       },
     },
+    homeDrawer: {
+      title: "Home Screen Drawer Options",
+      labels: {
+        share: {
+          title: "Share Option",
+          placeholder: "Share",
+          maxLength: 50,
+          defaultValue: "Share",
+        },
+        addNote: {
+          title: "Add Note Option",
+          placeholder: "Add Note",
+          maxLength: 50,
+          defaultValue: "Add Note",
+        },
+        openLinks: {
+          title: "Open Links Option",
+          placeholder: "Open Links",
+          maxLength: 50,
+          defaultValue: "Open Links",
+        },
+        downloadVideo: {
+          title: "Download Video Option",
+          placeholder: "Download Video",
+          maxLength: 50,
+          defaultValue: "Download Video",
+        },
+        removeDownloadedVideo: {
+          title: "Remove Downloaded Video Option",
+          placeholder: "Remove Downloaded Video",
+          maxLength: 50,
+          defaultValue: "Remove Downloaded Video",
+        },
+        addToPlaylist: {
+          title: "Add to Playlist Option",
+          placeholder: "Add to Playlist",
+          maxLength: 50,
+          defaultValue: "Add to Playlist",
+        },
+        removeFromPlaylist: {
+          title: "Remove from Playlist Option",
+          placeholder: "Remove from Playlist",
+          maxLength: 50,
+          defaultValue: "Remove from Playlist",
+        },
+        favorite: {
+          title: "Favorite Option",
+          placeholder: "Favorite",
+          maxLength: 50,
+          defaultValue: "Favorite",
+        },
+        removeFromFavorites: {
+          title: "Remove from favorites Option",
+          placeholder: "Remove from favorites",
+          maxLength: 50,
+          defaultValue: "Remove from favorites",
+        },
+      },
+    },
+    itemDrawer: {
+      title: "Item Screen Drawer Options",
+      labels: {
+        share: {
+          title: "Share Option",
+          placeholder: "Share",
+          maxLength: 50,
+          defaultValue: "Share",
+        },
+        addNote: {
+          title: "Add Note Option",
+          placeholder: "Add Note",
+          maxLength: 50,
+          defaultValue: "Add Note",
+        },
+        openLinks: {
+          title: "Open Links Option",
+          placeholder: "Open Links",
+          maxLength: 50,
+          defaultValue: "Open Links",
+        },
+        downloadVideo: {
+          title: "Download Video Option",
+          placeholder: "Download Video",
+          maxLength: 50,
+          defaultValue: "Download Video",
+        },
+        removeDownloadedVideo: {
+          title: "Remove Downloaded Video Option",
+          placeholder: "Remove Downloaded Video",
+          maxLength: 50,
+          defaultValue: "Remove Downloaded Video",
+        },
+        addToPlaylist: {
+          title: "Add to Playlist Option",
+          placeholder: "Add to Playlist",
+          maxLength: 50,
+          defaultValue: "Add to Playlist",
+        },
+        removeFromPlaylist: {
+          title: "Remove from Playlist Option",
+          placeholder: "Remove from Playlist",
+          maxLength: 50,
+          defaultValue: "Remove from Playlist",
+        },
+        favorite: {
+          title: "Favorite Option",
+          placeholder: "Favorite",
+          maxLength: 50,
+          defaultValue: "Favorite",
+        },
+        removeFromFavorites: {
+          title: "Remove from favorites Option",
+          placeholder: "Remove from favorites",
+          maxLength: 50,
+          defaultValue: "Remove from favorites",
+        },
+      },
+    },
   };

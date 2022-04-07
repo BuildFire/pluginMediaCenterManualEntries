@@ -1434,7 +1434,7 @@ input[type=range]::-ms-track {
 		}
 
 		.slide.safe-area.launcher-with-filter {
-			padding-top: 30px !important;
+			padding-top: env(safe-area-inset-top) !important;
 		}
 
 		.categoryScreenIcon {

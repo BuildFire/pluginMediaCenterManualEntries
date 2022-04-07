@@ -933,6 +933,10 @@
                                 WidgetHome.currentlyLoading = false;
                                 bookmarks.sync($scope);
                                 buildfire.spinner.hide();
+                                if(!WidgetHome.items.length)
+                                {
+                                    angular.element('#emptyContainer').css('display', 'block');
+                                }
                             }
                             
                             if (result.length < searchOptions.limit) {
@@ -1013,17 +1017,17 @@
                     $event.stopImmediatePropagation();
                     let listItems = [];
                     if(WidgetHome.media.data.content.allowAddingNotes !== false && $rootScope.online){
-                        listItems.push({ text: "Add Note" });
+                        listItems.push({ id:"addNote", text: strings.get("homeDrawer.addNote") });
                     }
                     if (WidgetHome.media.data.content.allowOfflineDownload && $rootScope.online) {
                         if (item.data.videoUrl) {
                             if (item.data.hasDownloadedVideo) {
-                                listItems.push({ text: "Remove Downloaded Video" });
+                                listItems.push({ id:"removeDownloadedVideo", text: strings.get("homeDrawer.removeDownloadedVideo")});
                             }
 
                             else {
                                 if ($rootScope.currentlyDownloading.indexOf(item.id) < 0)
-                                    listItems.push({ text: "Download Video" });
+                                    listItems.push({ id:"downloadVideo", text: strings.get("homeDrawer.downloadVideo")});
                             }
                         }
 
@@ -1039,28 +1043,28 @@
                     }
 
                     if (WidgetHome.media.data.content.allowShare && $rootScope.online) {
-                        listItems.push({ text: "Share" });
+                        listItems.push({ id:"share", text: strings.get("homeDrawer.share")});
                     }
 
                     if (item.data.links.length && $rootScope.online) {
-                        listItems.push({ text: "Open Links" });
+                        listItems.push({ id:"openLinks", text: strings.get("homeDrawer.openLinks") });
                     }
 
                     if (WidgetHome.media.data.content.globalPlaylist && $rootScope.online) {
                         if ($rootScope.isInGlobalPlaylist(item.id)) {
-                            listItems.push({ text: "Remove from Playlist" });
+                            listItems.push({ id:"removeFromPlaylist", text: strings.get("homeDrawer.removeFromPlaylist") });
                         }
                         else {
-                            listItems.push({ text: "Add to Playlist" });
+                            listItems.push({ id:"addToPlaylist", text: strings.get("homeDrawer.addToPlaylist") });
                         }
                     }
 
                     if ($rootScope.online) {
                         if (item.data.bookmarked) {
-                            listItems.push({ text: "Remove from favorites" });
+                            listItems.push({ id:"removeFromFavorites", text: strings.get("homeDrawer.removeFromFavorites") });
                         }
                         else {
-                            listItems.push({ text: "Favorite" });
+                            listItems.push({ id:"favorite", text: strings.get("homeDrawer.favorite") });
                         }
                     }
 
@@ -1073,7 +1077,7 @@
                             if (err) return console.error(err);
                             buildfire.components.drawer.closeDrawer();
                             if (result) {
-                                if (result.text == "Download Video") {
+                                if (result.id == "downloadVideo") {
                                     $rootScope.download(item, "video");
                                 }
 
@@ -1081,7 +1085,7 @@
                                 //     $rootScope.download(item, "audio");
                                 // }
 
-                                if (result.text == "Remove Downloaded Video") {
+                                if (result.id == "removeDownloadedVideo") {
                                     $rootScope.removeDownload(item, "video");
                                 }
 
@@ -1089,31 +1093,31 @@
                                 //     $rootScope.removeDownloaded(item, "audio");
                                 // }
 
-                                if (result.text == "Share") {
+                                if (result.id == "share") {
                                     WidgetHome.share(item);
                                 }
 
-                                if (result.text == "Open Links") {
+                                if (result.id == "openLinks") {
                                     WidgetHome.openLinks(item.data.links);
                                 }
 
-                                if (result.text == "Add to Playlist") {
+                                if (result.id == "addToPlaylist") {
                                     $rootScope.toggleGlobalPlaylistItem(item);
                                 }
 
-                                if (result.text == "Remove from Playlist") {
+                                if (result.id == "removeFromPlaylist") {
                                     $rootScope.toggleGlobalPlaylistItem(item);
                                 }
 
-                                if (result.text == "Add Note") {
+                                if (result.id == "addNote") {
                                     WidgetHome.addNote(item);
                                 }
 
-                                if (result.text == "Remove from favorites") {
+                                if (result.id == "removeFromFavorites") {
                                     WidgetHome.bookmark(item);
                                 }
 
-                                if (result.text == "Favorite") {
+                                if (result.id == "favorite") {
                                     WidgetHome.bookmark(item);
                                 }
                             }
