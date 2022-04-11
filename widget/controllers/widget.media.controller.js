@@ -95,16 +95,18 @@
 
                 WidgetMedia.showDrawer = function () {
                     let listItems = [];
-                    listItems.push({ text: "Add Note" });
+                    if (WidgetMedia.media.data.content.allowAddingNotes !== false && $rootScope.online) {
+                        listItems.push({ id:"addNote", text: strings.get("itemDrawer.addNote") });
+                    }
                     if (WidgetMedia.media.data.content.allowOfflineDownload) {
                         if (WidgetMedia.item.data.videoUrl && $rootScope.online) {
                             if (WidgetMedia.item.data.hasDownloadedVideo) {
-                                listItems.push({ text: "Remove Downloaded Video" });
+                                listItems.push({ id:"removeDownloadedVideo", text: strings.get("itemDrawer.removeDownloadedVideo") });
                             }
 
                             else {
                                 if ($rootScope.currentlyDownloading.indexOf(WidgetMedia.item.id) < 0)
-                                    listItems.push({ text: "Download Video" });
+                                    listItems.push({ id:"downloadVideo", text: strings.get("itemDrawer.downloadVideo") });
                             }
                         }
 
@@ -120,28 +122,28 @@
                     }
 
                     if (WidgetMedia.media.data.content.allowShare && $rootScope.online) {
-                        listItems.push({ text: "Share" });
+                        listItems.push({ id:"share", text: strings.get("itemDrawer.share") });
                     }
 
                     if (WidgetMedia.item.data.links.length && $rootScope.online) {
-                        listItems.push({ text: "Open Links" });
+                        listItems.push({ id:"openLinks", text: strings.get("itemDrawer.openLinks") });
                     }
 
                     if (WidgetMedia.media.data.content.globalPlaylist && $rootScope.online) {
                         if ($rootScope.isInGlobalPlaylist(WidgetMedia.item.id)) {
-                            listItems.push({ text: "Remove from Playlist" });
+                            listItems.push({ id:"removeFromPlaylist", text: strings.get("itemDrawer.removeFromPlaylist") });
                         }
                         else {
-                            listItems.push({ text: "Add to Playlist" });
+                            listItems.push({ id:"addToPlaylist", text: strings.get("itemDrawer.addToPlaylist") });
                         }
                     }
 
                     if ($rootScope.online) {
                         if (WidgetMedia.item.data.bookmarked) {
-                            listItems.push({ text: "Remove from favorites" });
+                            listItems.push({ id:"removeFromFavorites", text:strings.get("itemDrawer.removeFromFavorites") });
                         }
                         else {
-                            listItems.push({ text: "Favorite" });
+                            listItems.push({ id:"favorite", text: strings.get("itemDrawer.favorite") });
                         }
                     }
 
@@ -154,7 +156,7 @@
                             if (err) return console.error(err);
                             buildfire.components.drawer.closeDrawer();
                             if (result) {
-                                if (result.text == "Download Video") {
+                                if (result.id == "downloadVideo") {
                                     $rootScope.download(WidgetMedia.item, "video");
                                 }
 
@@ -162,7 +164,7 @@
                                 //     $rootScope.download(WidgetMedia.item, "audio");
                                 // }
 
-                                if (result.text == "Remove Downloaded Video") {
+                                if (result.id == "removeDownloadedVideo") {
                                     $rootScope.removeDownload(WidgetMedia.item, "video");
                                 }
 
@@ -170,31 +172,31 @@
                                 //     $rootScope.removeDownloaded(WidgetMedia.item, "audio");
                                 // }
 
-                                if (result.text == "Share") {
+                                if (result.id == "share") {
                                     WidgetMedia.share(WidgetMedia.item);
                                 }
 
-                                if (result.text == "Open Links") {
+                                if (result.id == "openLinks") {
                                     WidgetMedia.openLinks(WidgetMedia.item.data.links);
                                 }
 
-                                if (result.text == "Add to Playlist") {
+                                if (result.id == "addToPlaylist") {
                                     $rootScope.toggleGlobalPlaylistItem(WidgetMedia.item);
                                 }
 
-                                if (result.text == "Remove from Playlist") {
+                                if (result.id == "removeFromPlaylist") {
                                     $rootScope.toggleGlobalPlaylistItem(WidgetMedia.item);
                                 }
 
-                                if (result.text == "Add Note") {
+                                if (result.id == "addNote") {
                                     WidgetMedia.addNote(WidgetMedia.item);
                                 }
 
-                                if (result.text == "Remove from favorites") {
+                                if (result.id == "removeFromFavorites") {
                                     WidgetMedia.bookmark(WidgetMedia.item);
                                 }
 
-                                if (result.text == "Favorite") {
+                                if (result.id == "favorite") {
                                     WidgetMedia.bookmark(WidgetMedia.item);
                                 }
                             }
@@ -299,6 +301,7 @@
                                 sortBy: 'Newest',
                                 rankOfLastItem: 0,
                                 allowShare: true,
+                                allowAddingNotes: true,
                                 allowSource: true,
                                 allowOfflineDownload: false,
                                 transferAudioContentToPlayList: false,
@@ -466,6 +469,7 @@
                             WidgetMedia.media = event;
                             $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
                             $rootScope.allowShare = WidgetMedia.media.data.content.allowShare;
+                            $rootScope.allowAddingNotes = WidgetMedia.media.data.content.allowAddingNotes;
                             $rootScope.allowSource = WidgetMedia.media.data.content.allowSource;
                             $rootScope.transferAudioContentToPlayList = WidgetMedia.media.data.content.transferAudioContentToPlayList;
                             $rootScope.forceAutoPlay = WidgetMedia.media.data.content.forceAutoPlay;

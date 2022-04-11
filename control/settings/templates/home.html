@@ -7,6 +7,14 @@
 </div>
 
 <div class="input-control side-label margin-bottom-thirty">
+    <label for="">Allow Adding Notes</label>
+    <div class="button-switch">
+        <input id="allowAddingNotes" type="checkbox" ng-click="Settings.setAllowAddingNotes($event)" ng-checked="Settings.data.content.allowAddingNotes">
+        <label for="allowAddingNotes" class="label-success"></label>
+    </div>
+</div>
+
+<div class="input-control side-label margin-bottom-thirty">
     <label for="">Show Source Icon</label>
     <div class="button-switch">
         <input id="showSourceIconSwitch" type="checkbox" ng-click="Settings.setAllowSource($event)" ng-checked="Settings.data.content.allowSource">

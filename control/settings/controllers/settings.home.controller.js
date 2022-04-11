@@ -12,6 +12,8 @@
                 Settings.data = getData.data;
                 if (typeof (Settings.data.content.allowShare) == 'undefined')
                     Settings.data.content.allowShare = true;
+                if (typeof (Settings.data.content.allowAddingNotes) == 'undefined')
+                    Settings.data.content.allowAddingNotes = true;
                 if (typeof (Settings.data.content.allowSource) == 'undefined')
                     Settings.data.content.allowSource = true;
                 if (typeof (Settings.data.content.transferAudioContentToPlayList) == 'undefined')
@@ -82,6 +84,14 @@
                 let value = e.target.checked;
                 if (value != Settings.data.content.allowShare) {
                     Settings.data.content.allowShare = value;
+                    MediaCenter.save(Settings.data).then(() => { });
+                }
+            }
+
+            Settings.setAllowAddingNotes = (e) => {
+                let value = e.target.checked;
+                if (value != Settings.data.content.allowAddingNotes) {
+                    Settings.data.content.allowAddingNotes = value;
                     MediaCenter.save(Settings.data).then(() => { });
                 }
             }

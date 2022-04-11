@@ -57,7 +57,19 @@
                 }
             };
         }])
-
+        .directive('scrolly', function () {
+            return {
+                restrict: 'A',
+                link: function (scope, element, attrs) {
+                    var raw = element[0];
+                    element.on('scroll', function () {
+                        if (raw.scrollTop + raw.offsetHeight == raw.scrollHeight) { //at the bottom
+                            scope.$apply(attrs.scrolly);
+                        }
+                    })
+                }
+            }
+        })
         /**
        * A directive which is used handle background image for layouts.
        */
@@ -84,7 +96,7 @@
                     }
                     else {
                         img = "";
-                        element.attr("style", 'background-color:darkkhaki');
+                        element.attr("style", 'background-color:white');
                         element.css({
                             'background-size': 'cover !important'
                         });

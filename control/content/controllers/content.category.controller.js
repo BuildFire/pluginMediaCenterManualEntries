@@ -45,6 +45,7 @@
               rankOfLastItem: 0,
               rankOfLastCategory: 0,
               allowShare: true,
+              allowAddingNotes: true,
               allowSource: true,
               allowOfflineDownload: false,
               enableFiltering: false,

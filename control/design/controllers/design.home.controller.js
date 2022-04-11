@@ -14,6 +14,7 @@
                         sortBy: Orders.ordersMap.Newest,
                         rankOfLastItem: 0,
                         allowShare: true,
+                        allowAddingNotes: true,
                         allowSource: true,
                         transferAudioContentToPlayList:false,
                         forceAutoPlay:false,
