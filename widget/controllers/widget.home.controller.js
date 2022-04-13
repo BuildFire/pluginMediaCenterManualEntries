@@ -753,6 +753,7 @@
                                     }
                                 }
                             }
+                            $rootScope.showFeed = false;
                             $rootScope.fromSearch = true;
                             $window.deeplinkingDone = true;
                                 WidgetHome.goTo(itemId);
