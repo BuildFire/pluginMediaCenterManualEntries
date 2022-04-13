@@ -745,7 +745,14 @@
                                 if (foundObj.data.audioUrl && $rootScope.seekTime)
                                     return Location.go('#/nowplaying/' + foundObj.id);
                             }
-                            $rootScope.showFeed = false;
+                            else if (data && data.screen) {
+                                if (WidgetHome.media && WidgetHome.media.data && WidgetHome.media.data.content) {
+                                    if (WidgetHome.media.data.content.enableFiltering) {
+                                        $window.deeplinkingDone = true;
+                                        return WidgetHome.goToFilterScreen();
+                                    }
+                                }
+                            }
                             $rootScope.fromSearch = true;
                             $window.deeplinkingDone = true;
                                 WidgetHome.goTo(itemId);
