@@ -175,6 +175,17 @@ var stringsConfig = {
         },
       },
     },
+    filtersScreen: {
+      title: "Filters screen",
+      labels: {
+        applyButton: {
+          title: "Apply Button",
+          placeholder: "Apply",
+          maxLength: 20,
+          defaultValue: "Apply",
+        },
+      },
+    },
     homeDrawer: {
       title: "Home Screen Drawer Options",
       labels: {
