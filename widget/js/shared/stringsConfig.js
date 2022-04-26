@@ -219,6 +219,18 @@ var stringsConfig = {
           maxLength: 50,
           defaultValue: "Remove Downloaded Video",
         },
+        downloadAudio: {
+          title: "Download Audio Option",
+          placeholder: "Download Audio",
+          maxLength: 50,
+          defaultValue: "Download Audio",
+        },
+        removeDownloadedAudio: {
+          title: "Remove Downloaded Audio Option",
+          placeholder: "Remove Downloaded Audio",
+          maxLength: 50,
+          defaultValue: "Remove Downloaded Audio",
+        },
         addToPlaylist: {
           title: "Add to Playlist Option",
           placeholder: "Add to Playlist",

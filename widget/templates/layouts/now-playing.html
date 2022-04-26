@@ -1,5 +1,6 @@
 <div class="holder now-playing text-center audio-player">
-    <div ng-style="{'background':'url(' + (NowPlaying.currentTrack.backgroundImage ? NowPlaying.currentTrack.backgroundImage : 'http://app.buildfire.com/app/media/now-playing.png') + ') no-repeat center center',
+    {{NowPlaying.currentTrack.backgroundImage}}
+    <div ng-style="{'background':'url(' + (NowPlaying.currentTrack.backgroundImage ? NowPlaying.currentTrack.backgroundImage : './assets/images/now-playing.png') + ') no-repeat center center',
          '-o-filter': 'blur(10px) brightness(0.4)',
     '-moz-filter': 'blur(10px) brightness(0.4)',
     '-webkit-filter': 'blur(10px) brightness(0.4)',
@@ -22,9 +23,10 @@
         </div>
         <div class="media-holder">
             <div class="media-inner text-center">
-                <img ng-if="NowPlaying.currentTrack.image" load-image="1x1" crop-width="260" crop-height="260"
+                <img ng-if="NowPlaying.currentTrack.image && NowPlaying.isOnline" load-image="1x1" crop-width="260" crop-height="260"
                     crop-type="crop" data-final-src="{{NowPlaying.currentTrack.image | resizeImage : 260:260}}">
-                <img ng-if="!NowPlaying.currentTrack.image" src="http://app.buildfire.com/app/media/now-playing.png">
+                <img ng-if="NowPlaying.currentTrack.image && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.image}}" alt="ee">
+                <img ng-if="!NowPlaying.currentTrack.image" src="./assets/images/now-playing.png">
             </div>
         </div>
         <div class="media-player-info ellipsis">

@@ -109,16 +109,15 @@
                                     listItems.push({ id:"downloadVideo", text: strings.get("itemDrawer.downloadVideo") });
                             }
                         }
-
-                        // if (WidgetMedia.item.data.audioUrl) {
-                        //     if (WidgetMedia.item.data.hasDownloadedAudio) {
-                        //         listItems.push({ text: "Remove Downloaded Audio" });
-                        //     }
-
-                        //     else {
-                        //         listItems.push({ text: "Download Audio" });
-                        //     }
-                        // }
+                        if (WidgetMedia.item.data.audioUrl) {
+                            if (WidgetMedia.item.data.hasDownloadedAudio) {
+                                listItems.push({ id: "removeDownloadedAudio", text: strings.get("homeDrawer.removeDownloadedAudio") });
+                            }
+                            else {
+                                if ($rootScope.currentlyDownloading.indexOf(WidgetMedia.item.id) < 0)
+                                listItems.push({ id: "downloadAudio", text: strings.get("homeDrawer.downloadAudio") });
+                            }
+                        }
                     }
 
                     if (WidgetMedia.media.data.content.allowShare && $rootScope.online) {
@@ -160,17 +159,17 @@
                                     $rootScope.download(WidgetMedia.item, "video");
                                 }
 
-                                // if (result.text == "Download Audio") {
-                                //     $rootScope.download(WidgetMedia.item, "audio");
-                                // }
-
                                 if (result.id == "removeDownloadedVideo") {
                                     $rootScope.removeDownload(WidgetMedia.item, "video");
                                 }
+                                
+                                if (result.id == "downloadAudio") {
+                                    $rootScope.download(WidgetMedia.item, "audio");
+                                }
 
-                                // if (result.text == "Remove Downloaded Audio") {
-                                //     $rootScope.removeDownloaded(WidgetMedia.item, "audio");
-                                // }
+                                if (result.id == "removeDownloadedAudio") {
+                                    $rootScope.removeDownload(WidgetMedia.item, "audio");
+                                }
 
                                 if (result.id == "share") {
                                     WidgetMedia.share(WidgetMedia.item);

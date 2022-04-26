@@ -409,7 +409,7 @@
                                 let and = filters[categories[i]].length > 0 ? [] : {};
                                 if (filters[categories[i]].length > 0) {
                                     filters[categories[i]].forEach(function (item) {
-                                        and.push({ "$json.subcategories": item});
+                                        and.push({ "$json.subcategories": item });
                                     });
                                 }
                                 else {
@@ -756,7 +756,7 @@
                             $rootScope.showFeed = false;
                             $rootScope.fromSearch = true;
                             $window.deeplinkingDone = true;
-                                WidgetHome.goTo(itemId);
+                            WidgetHome.goTo(itemId);
                         });
                     }
 
@@ -765,7 +765,7 @@
                             $window.deeplinkingDone = true;
                             $rootScope.showFeed = false;
                             WidgetHome.goTo(deeplinkData.id);
-                         
+
                         }
                     });
                 }
@@ -805,7 +805,7 @@
                     } else return callback(null, true);
                 }
 
-                
+
                 const getCachedItems = (callback) => {
                     if (Buildfire.getContext().device.platform === 'web') {
                         buildfire.dialog.toast({
@@ -925,7 +925,7 @@
                 WidgetHome.loadMore = () => {
                     updateGetOptions();
                     const getRecords = () => {
-                        
+
                         if (WidgetHome.currentlyLoading || WidgetHome.noMore) return;
                         buildfire.spinner.show();
                         WidgetHome.stopScroll = true;
@@ -941,22 +941,21 @@
                                 WidgetHome.currentlyLoading = false;
                                 bookmarks.sync($scope);
                                 buildfire.spinner.hide();
-                                if(!WidgetHome.items.length)
-                                {
+                                if (!WidgetHome.items.length) {
                                     angular.element('#emptyContainer').css('display', 'block');
                                 }
                             }
-                            
+
                             if (result.length < searchOptions.limit) {
                                 WidgetHome.noMore = true;
                             } else {
                                 searchOptions.skip = searchOptions.skip + searchOptions.limit;
                                 WidgetHome.currentSkip = searchOptions.skip;
                             }
-            
+
                             WidgetHome.syncWithOfflineData((error, done) => {
-                                if(error) console.error(error);
-                                else if(done) {
+                                if (error) console.error(error);
+                                else if (done) {
                                     finish();
                                     WidgetHome.checkForDeeplink();
                                 }
@@ -1024,55 +1023,56 @@
                 WidgetHome.showDrawer = function ($event, item) {
                     $event.stopImmediatePropagation();
                     let listItems = [];
-                    if(WidgetHome.media.data.content.allowAddingNotes !== false && $rootScope.online){
-                        listItems.push({ id:"addNote", text: strings.get("homeDrawer.addNote") });
+                    if (WidgetHome.media.data.content.allowAddingNotes !== false && $rootScope.online) {
+                        listItems.push({ id: "addNote", text: strings.get("homeDrawer.addNote") });
                     }
                     if (WidgetHome.media.data.content.allowOfflineDownload && $rootScope.online) {
                         if (item.data.videoUrl) {
                             if (item.data.hasDownloadedVideo) {
-                                listItems.push({ id:"removeDownloadedVideo", text: strings.get("homeDrawer.removeDownloadedVideo")});
+                                listItems.push({ id: "removeDownloadedVideo", text: strings.get("homeDrawer.removeDownloadedVideo") });
                             }
 
                             else {
                                 if ($rootScope.currentlyDownloading.indexOf(item.id) < 0)
-                                    listItems.push({ id:"downloadVideo", text: strings.get("homeDrawer.downloadVideo")});
+                                    listItems.push({ id: "downloadVideo", text: strings.get("homeDrawer.downloadVideo") });
                             }
                         }
 
-                        // if (item.data.audioUrl) {
-                        //     if (item.data.hasDownloadedAudio) {
-                        //         listItems.push({ text: "Remove Downloaded Audio" });
-                        //     }
+                        if (item.data.audioUrl) {
+                            if (item.data.hasDownloadedAudio) {
+                                listItems.push({ id: "removeDownloadedAudio", text: strings.get("homeDrawer.removeDownloadedAudio") });
+                            }
 
-                        //     else {
-                        //         listItems.push({ text: "Download Audio" });
-                        //     }
-                        // }
+                            else {
+                                if ($rootScope.currentlyDownloading.indexOf(item.id) < 0)
+                                listItems.push({ id: "downloadAudio", text: strings.get("homeDrawer.downloadAudio") });
+                            }
+                        }
                     }
 
                     if (WidgetHome.media.data.content.allowShare && $rootScope.online) {
-                        listItems.push({ id:"share", text: strings.get("homeDrawer.share")});
+                        listItems.push({ id: "share", text: strings.get("homeDrawer.share") });
                     }
 
                     if (item.data.links.length && $rootScope.online) {
-                        listItems.push({ id:"openLinks", text: strings.get("homeDrawer.openLinks") });
+                        listItems.push({ id: "openLinks", text: strings.get("homeDrawer.openLinks") });
                     }
 
                     if (WidgetHome.media.data.content.globalPlaylist && $rootScope.online) {
                         if ($rootScope.isInGlobalPlaylist(item.id)) {
-                            listItems.push({ id:"removeFromPlaylist", text: strings.get("homeDrawer.removeFromPlaylist") });
+                            listItems.push({ id: "removeFromPlaylist", text: strings.get("homeDrawer.removeFromPlaylist") });
                         }
                         else {
-                            listItems.push({ id:"addToPlaylist", text: strings.get("homeDrawer.addToPlaylist") });
+                            listItems.push({ id: "addToPlaylist", text: strings.get("homeDrawer.addToPlaylist") });
                         }
                     }
 
                     if ($rootScope.online) {
                         if (item.data.bookmarked) {
-                            listItems.push({ id:"removeFromFavorites", text: strings.get("homeDrawer.removeFromFavorites") });
+                            listItems.push({ id: "removeFromFavorites", text: strings.get("homeDrawer.removeFromFavorites") });
                         }
                         else {
-                            listItems.push({ id:"favorite", text: strings.get("homeDrawer.favorite") });
+                            listItems.push({ id: "favorite", text: strings.get("homeDrawer.favorite") });
                         }
                     }
 
@@ -1089,17 +1089,17 @@
                                     $rootScope.download(item, "video");
                                 }
 
-                                // if (result.text == "Download Audio") {
-                                //     $rootScope.download(item, "audio");
-                                // }
-
                                 if (result.id == "removeDownloadedVideo") {
                                     $rootScope.removeDownload(item, "video");
                                 }
 
-                                // if (result.text == "Remove Downloaded Audio") {
-                                //     $rootScope.removeDownloaded(item, "audio");
-                                // }
+                                if (result.id == "downloadAudio") {
+                                    $rootScope.download(item, "audio");
+                                }
+
+                                if (result.id == "removeDownloadedAudio") {
+                                    $rootScope.removeDownload(item, "audio");
+                                }
 
                                 if (result.id == "share") {
                                     WidgetHome.share(item);
@@ -1155,18 +1155,50 @@
                     }
                 }
 
-                // WidgetHome.getAudioDownloadURL = function () {
-                //     // if (WidgetMedia.item.data.audioUrl) {
-                //     //     var myType;
-                //     //     var audioUrlToSend = WidgetMedia.item.data.audioUrl;
-                //     //         myType = audioUrlToSend.split('.').pop();
+                WidgetHome.getAudioDownloadURL = function (audioUrl) {
+                        var myType;
+                        var audioUrlToSend = audioUrl;
+                        myType = audioUrlToSend.split('.').pop();
+                        return {
+                            uri: audioUrlToSend,
+                            type: myType,
+                            source: null
+                        }
+                }
 
-                //     //     return {
-                //     //         uri: audioUrlToSend,
-                //     //         type: myType,
-                //     //     }
-                //     // }
-                // }
+                var downloadInvalid = () => {
+                    buildfire.dialog.show(
+                        {
+                            title: "Cannot download Media",
+                            message: "This media is not available for download.",
+                            isMessageHTML: true,
+                            actionButtons: [
+                                {
+                                    text: "Ok",
+                                    type: "primary",
+                                    action: () => { }
+                                },
+                            ],
+                        }, (err, actionButton) => { });
+                }
+
+                var beginDownload = (callback) => {
+                    buildfire.dialog.show(
+                        {
+                            title: "Download is starting",
+                            message: "Please do not press the back button until the download is finished.",
+                            isMessageHTML: true,
+                            actionButtons: [
+                                {
+                                    text: "Ok",
+                                    type: "primary",
+                                    action: () => { },
+                                },
+                            ]
+                        }, (err, actionButton) => {
+                            if (actionButton.text == "Ok") callback();
+                        });
+                }
 
                 $rootScope.download = function (item, mediaType) {
                     if (Buildfire.getContext().device.platform === 'web') {
@@ -1175,110 +1207,71 @@
                         });
                         return;
                     }
-                    if (mediaType === 'video') {
-                        if (item.data.videoUrl) {
-                            //check videoURL is valid
-                            let { uri, type, source } = WidgetHome.getVideoDownloadURL(item.data.videoUrl);
-                            if (source === 'youtube' || source === 'vimeo') {
-                                buildfire.dialog.show(
-                                    {
-                                        title: "Cannot download Media",
-                                        message:
-                                            "This media is not available for download.",
-                                        isMessageHTML: true,
-                                        actionButtons: [
-                                            {
-                                                text: "Ok",
-                                                type: "primary",
-                                                action: () => {
-                                                },
-                                            },
-                                        ],
-                                    },
-                                    (err, actionButton) => {
+                    beginDownload(() => {
+                        let { uri, type, source } = mediaType == 'video' ? WidgetHome.getVideoDownloadURL(item.data.videoUrl)
+                            : WidgetHome.getAudioDownloadURL(item.data.audioUrl);
+                        if (source && (source === 'youtube' || source === 'vimeo')) return downloadInvalid();
+                        $rootScope.currentlyDownloading.push(item.id);
+                        if (!$rootScope.$$phase && !$rootScope.$root.$$phase) $rootScope.$apply();
+                        buildfire.services.fileSystem.fileManager.download(
+                            {
+                                uri: uri,
+                                path: "/data/mediaCenterManual/" + Buildfire.getContext().instanceId + "/" + mediaType + "/",
+                                fileName: item.id + "." + type,
+                                returnAsWebUri: true
+                            },
+                            (err, filePath) => {
+                                if (err) {
+                                    let index = $rootScope.currentlyDownloading.indexOf(item.id);
+                                    $rootScope.currentlyDownloading.splice(index, 1);
+                                    buildfire.dialog.toast({
+                                        message: `Error`,
+                                        type: 'warning',
+                                    });
+                                    return;
+                                }
+                                new OfflineAccess({
+                                    db: DownloadedMedia,
+                                }).save({
+                                    mediaId: item.id,
+                                    mediaType: mediaType,
+                                    mediaPath: filePath,
+                                    originalMediaUrl: mediaType == 'video' ? item.data.videoUrl : item.data.audioUrl,
+                                    createdOn: new Date(),
+                                }, (err, result) => {
+                                    if (err) {
+                                        console.error(err);
+                                        return;
                                     }
-                                );
-                            }
-                            else {
-                                buildfire.dialog.show(
-                                    {
-                                        title: "Download is starting",
-                                        message:
-                                            "Please do not press the back button until the download is finished.",
-                                        isMessageHTML: true,
-                                        actionButtons: [
-                                            {
-                                                text: "Ok",
-                                                type: "primary",
-                                                action: () => {
-                                                },
-                                            },
-                                        ],
-                                    },
-                                    (err, actionButton) => {
-                                        if (actionButton.text == "Ok") {
-                                            $rootScope.currentlyDownloading.push(item.id);
-                                            if (!$rootScope.$$phase && !$rootScope.$root.$$phase) $rootScope.$apply();
-                                            buildfire.services.fileSystem.fileManager.download(
-                                                {
-                                                    uri:
-                                                        uri,
-                                                    path: "/data/mediaCenterManual/" + Buildfire.getContext().instanceId + "/" + mediaType + "/",
-                                                    fileName: item.id + "." + type,
-                                                    returnAsWebUri: true
-                                                },
-                                                (err, filePath) => {
-                                                    if (err) {
-                                                        let index = $rootScope.currentlyDownloading.indexOf(item.id);
-                                                        $rootScope.currentlyDownloading.splice(index, 1);
-                                                        buildfire.dialog.toast({
-                                                            message: `Error`,
-                                                            type: 'warning',
-                                                        });
-                                                        return;
-                                                    }
-                                                    // Save the offline media
-                                                    new OfflineAccess({
-                                                        db: DownloadedMedia,
-                                                    }).save({
-                                                        mediaId: item.id,
-                                                        mediaType: mediaType,
-                                                        mediaPath: filePath,
-                                                        originalMediaUrl: item.data.videoUrl,
-                                                        createdOn: new Date(),
-                                                    }, (err, result) => {
-                                                        if (err) {
-                                                            console.error(err);
-                                                            return;
-                                                        }
-                                                        buildfire.analytics.trackAction(`${item.id}_downloads`);
-                                                        let index = $rootScope.currentlyDownloading.indexOf(item.id);
-                                                        $rootScope.currentlyDownloading.splice(index, 1);
-                                                        item.data.hasDownloadedVideo = true;
-                                                        item.hasDownloadedMedia = true;
-                                                        if (!$rootScope.showFeed) {
-                                                            let homeItem = WidgetHome.items.filter(x => x.id === item.id)[0];
-                                                            if (homeItem) {
-                                                                homeItem.data.hasDownloadedVideo = true;
-                                                                homeItem.hasDownloadedMedia = homeItem.data.hasDownloadedAudio;
-                                                            }
-                                                        }
-                                                        buildfire.dialog.toast({
-                                                            message: `Media has been successfully downloaded.`,
-                                                        });
-                                                        setTimeout(() => {
-                                                            if (!$rootScope.$$phase && !$rootScope.$root.$$phase) $rootScope.$apply();
-                                                        }, 0);
-                                                    });
-                                                }
-                                            );
+                                    buildfire.analytics.trackAction(`${item.id}_downloads`);
+                                    let index = $rootScope.currentlyDownloading.indexOf(item.id);
+                                    $rootScope.currentlyDownloading.splice(index, 1);
+                                    if (mediaType == 'video')
+                                        item.data.hasDownloadedVideo = true;
+                                    else
+                                        item.data.hasDownloadedAudio = true;
+
+                                    item.hasDownloadedMedia = true;
+                                    if (!$rootScope.showFeed) {
+                                        let homeItem = WidgetHome.items.filter(x => x.id === item.id)[0];
+                                        if (homeItem) {
+                                            if (mediaType == 'video')
+                                                homeItem.data.hasDownloadedVideo = true;
+                                            else
+                                                homeItem.data.hasDownloadedAudio = true;
+
+                                            homeItem.hasDownloadedMedia = true;
                                         }
                                     }
-                                );
-                            }
-
-                        }
-                    }
+                                    buildfire.dialog.toast({
+                                        message: `Media has been successfully downloaded.`,
+                                    });
+                                    setTimeout(() => {
+                                        if (!$rootScope.$$phase && !$rootScope.$root.$$phase) $rootScope.$apply();
+                                    }, 0);
+                                });
+                            });
+                    });
                 };
 
                 $rootScope.removeDownload = function (item, mediaType) {
@@ -1465,6 +1458,7 @@
 
                                 else {
                                     WidgetHome.media = res;
+                                    WidgetHome.loadMore();
                                 }
                                 setTimeout(() => {
                                     if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
