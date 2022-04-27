@@ -241,7 +241,6 @@
                                         //Check if the cached media item has a downloaded video or audio
                                         DownloadedMedia.get((err, res) => {
                                             if (err) {}
-                                            buildfire.dialog.alert({message:"get offline downloads " + JSON.stringify(res)})
                                             if (res) {
                                                 let matchingItems = res.filter(item => item.mediaId == mediaId);
                                                 if (matchingItems.length > 0) {

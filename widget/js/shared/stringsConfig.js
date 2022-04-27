@@ -180,9 +180,9 @@ var stringsConfig = {
       labels: {
         applyButton: {
           title: "Apply Button",
-          placeholder: "Apply",
+          placeholder: "APPLY",
           maxLength: 20,
-          defaultValue: "Apply",
+          defaultValue: "APPLY",
         },
       },
     },
