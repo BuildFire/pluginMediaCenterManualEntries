@@ -31,6 +31,7 @@
                     // if (!MediaCenterSettings.content.enableFiltering) {
                     //     Location.goToHome();
                     // }
+                    WidgetFilters.filtersApplyButtonString = strings.get('filtersScreen.applyButton');
                     if ($rootScope.online) {
                         MediaCenter.get().then(function (data) {
                             WidgetFilters.media = {

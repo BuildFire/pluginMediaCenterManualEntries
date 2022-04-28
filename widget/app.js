@@ -193,26 +193,72 @@
                     controllerAs: 'NowPlaying',
                     controller: 'NowPlayingCtrl',
                     resolve: {
-                        media: ['$q', 'DB', 'COLLECTIONS', 'Location', '$route', function ($q, DB, COLLECTIONS, Location, $route) {
+                        media: ['$q', '$window', 'DB', 'OFSTORAGE', 'COLLECTIONS', 'Location', '$route', function ($q, $window, DB, OFSTORAGE, COLLECTIONS, Location, $route) {
                             var deferred = $q.defer();
                             var MediaContent = new DB(COLLECTIONS.MediaContent);
-                            if ($route.current.params.mediaId) {
-                                MediaContent.getById($route.current.params.mediaId).then(function success(result) {
-                                    if (result && result.data) {
-                                        deferred.resolve(result);
+                            var isOnline = $window.navigator.onLine;
+                            var isWeb = buildfire.getContext().device.platform === 'web'
+                            var CachedMediaContent = new OFSTORAGE({
+                                path: "/data/mediaCenterManual",
+                                fileName: "cachedMediaContent"
+                            });
+                            var DownloadedMedia = new OFSTORAGE({
+                                path: "/data/mediaCenterManual",
+                                fileName: "downloadedMedia"
+                            });
+
+                            if (isOnline) {
+                                if ($route.current.params.mediaId) {
+                                    MediaContent.getById($route.current.params.mediaId).then(function success(result) {
+                                        if (result && result.data) {
+                                            deferred.resolve(result);
+                                        }
+                                        else {
+                                            Location.goToHome();
+                                        }
+                                    },
+                                        function fail() {
+                                            Location.goToHome();
+                                        }
+                                    );
+                                }
+                                else {
+                                    Location.goToHome();
+                                }
+                            } else {
+                                var mediaId = $route.current.params.mediaId;
+
+                                if(isWeb) return;
+
+                                CachedMediaContent.getById(mediaId, (err, result) => {
+                                    if (err) {
+                                        buildfire.dialog.toast({
+                                            message: "Fetching the media failed" + err,
+                                        });
+                                        Location.goToHome();
                                     }
                                     else {
-                                        Location.goToHome();
+                                        //Check if the cached media item has a downloaded video or audio
+                                        DownloadedMedia.get((err, res) => {
+                                            if (err) {}
+                                            if (res) {
+                                                let matchingItems = res.filter(item => item.mediaId == mediaId);
+                                                if (matchingItems.length > 0) {
+                                                    matchingItems.map(downloadedItem => {
+                                                        if (downloadedItem.mediaType == "audio") {
+                                                            result.data.hasDownloadedAudio = true;
+                                                            result.data.audioUrl = downloadedItem.mediaPath;
+                                                        }
+
+                                                    });
+                                                }
+                                            }
+                                            deferred.resolve(result);
+                                        });
                                     }
-                                },
-                                    function fail() {
-                                        Location.goToHome();
-                                    }
-                                );
+                                })
                             }
-                            else {
-                                Location.goToHome();
-                            }
+
                             return deferred.promise;
                         }]
                     }

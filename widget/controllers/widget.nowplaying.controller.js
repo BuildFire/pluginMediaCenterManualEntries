@@ -21,6 +21,7 @@
 
                 $rootScope.deepLinkNavigate = null;
                 $rootScope.seekTime = null;
+                NowPlaying.isOnline = window.navigator.onLine;
 
                 NowPlaying.item = media;
                 NowPlaying.playing = false;

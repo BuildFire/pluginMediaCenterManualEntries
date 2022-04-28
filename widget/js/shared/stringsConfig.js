@@ -175,6 +175,17 @@ var stringsConfig = {
         },
       },
     },
+    filtersScreen: {
+      title: "Filters screen",
+      labels: {
+        applyButton: {
+          title: "Apply Button",
+          placeholder: "APPLY",
+          maxLength: 20,
+          defaultValue: "APPLY",
+        },
+      },
+    },
     homeDrawer: {
       title: "Home Screen Drawer Options",
       labels: {
@@ -207,6 +218,18 @@ var stringsConfig = {
           placeholder: "Remove Downloaded Video",
           maxLength: 50,
           defaultValue: "Remove Downloaded Video",
+        },
+        downloadAudio: {
+          title: "Download Audio Option",
+          placeholder: "Download Audio",
+          maxLength: 50,
+          defaultValue: "Download Audio",
+        },
+        removeDownloadedAudio: {
+          title: "Remove Downloaded Audio Option",
+          placeholder: "Remove Downloaded Audio",
+          maxLength: 50,
+          defaultValue: "Remove Downloaded Audio",
         },
         addToPlaylist: {
           title: "Add to Playlist Option",
