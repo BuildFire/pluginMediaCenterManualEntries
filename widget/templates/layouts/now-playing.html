@@ -1,20 +1,7 @@
 <div class="holder now-playing text-center audio-player">
-    {{NowPlaying.currentTrack.backgroundImage}}
-    <div ng-style="{'background':'url(' + (NowPlaying.currentTrack.backgroundImage ? NowPlaying.currentTrack.backgroundImage : './assets/images/now-playing.png') + ') no-repeat center center',
-         '-o-filter': 'blur(10px) brightness(0.4)',
-    '-moz-filter': 'blur(10px) brightness(0.4)',
-    '-webkit-filter': 'blur(10px) brightness(0.4)',
-    'filter': 'blur(10px) brightness(0.4)',
-    'position': 'absolute',
-    'top': '-5%',
-    'left': '-5%',
-    '-o-background-size': 'cover',
-    '-moz-background-size': 'cover',
-    '-webkit-background-size': 'cover',
-    'background-size': 'cover !important',
-    'height': '110%',
-    'width': '110%',
-    'z-index': '0'}"></div>
+    <div id="playerBackgroundImage"
+    ng-style="{'background-image': 'url(' + NowPlaying.currentTrack.backgroundImage + ')'}"
+    class="now-playing-backgroundImage"></div>
     <div class="media-center-plugin" ng-if="!(NowPlaying.openMoreInfo || NowPlaying.openSettings)">
         <div class="media-header-link">
             <span ng-if="!globalPlaylist" class="btn btn-icon" ng-click="NowPlaying.getFromPlaylist()">
