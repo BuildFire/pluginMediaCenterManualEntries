@@ -32,7 +32,9 @@
                 NowPlaying.keepPosition=0;
                 NowPlaying.finished=false;
                 bookmarks.sync($scope);
-
+                NowPlaying.currentTrack.backgroundImage = NowPlaying.currentTrack.backgroundImage ? NowPlaying.currentTrack.backgroundImage : './assets/images/now-playing.png';
+                NowPlaying.currentTrack.backgroundImage = CSS.escape(NowPlaying.currentTrack.backgroundImage);
+                
                 var playListArrayOfStrings=[
                     {key:"addedPlaylist",text:"Added to playlist"},
                     {key:"removedFromPlaylist",text:"Removed from playlist"},

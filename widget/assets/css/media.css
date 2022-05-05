@@ -574,3 +574,20 @@ videogular .iconButton, [videogular] .iconButton,
     font-size: .875rem;
     text-align: left;
 } */
+
+.now-playing-backgroundImage {
+    -o-filter: blur(10px) brightness(0.4);
+    -moz-filter: blur(10px) brightness(0.4);
+    -webkit-filter: blur(10px) brightness(0.4);
+    filter: blur(10px) brightness(0.4);
+    position: absolute;
+    top: -5%;
+    left: -5%;
+    -o-background-size: cover;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    background-size: cover !important;
+    height: 110%;
+    width: 110%;
+    z-index: 0;
+}
