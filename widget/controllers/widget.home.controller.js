@@ -909,7 +909,6 @@
                                 WidgetHome.currentlyLoading = false;
                                 bookmarks.sync($scope);
                                 buildfire.spinner.hide();
-                                console.log('aaaaaaaaaaa');
                                 if (!WidgetHome.items.length) {
                                     angular.element('#emptyContainer').css('display', 'block');
                                 }
