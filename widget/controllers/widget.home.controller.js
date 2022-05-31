@@ -399,46 +399,14 @@
                  * @returns {boolean}
                  */
                 var updateGetOptions = function () {
-                    let filters = $rootScope.activeFilters;
+                    let filters = $rootScope.activeFilters, computedFiltersArray = [];
                     if (filters) {
-                        let orS = [];
-                        let finalFilter = {};
-                        if (Object.keys(filters) && Object.keys(filters).length > 0) {
-                            let categories = Object.keys(filters);
-                            for (let i = 0; i < categories.length; i++) {
-                                let and = filters[categories[i]].length > 0 ? [] : {};
-                                if (filters[categories[i]].length > 0) {
-                                    filters[categories[i]].forEach(function (item) {
-                                        and.push({ "$json.subcategories": item });
-                                    });
-                                }
-                                else {
-                                    and = {
-                                        "$json.categories": categories[i]
-                                    }
-                                }
-                                if (filters[categories[i]].length > 0) {
-                                    orS.push({
-                                        "$or": and
-                                    });
-                                }
-                                else {
-                                    orS.push(and);
-                                }
-                            }
-                        }
-                        else {
-                            orS = null;
-                        }
-
-                        if (orS) {
-                            finalFilter = {
-                                "$and": orS
-                            }
-                            console.log(finalFilter);
-                        }
-                        searchOptions.filter = finalFilter;
+                        Object.keys(filters).forEach((key) => {
+                            filters[key].forEach(element => computedFiltersArray.push({ "$json.subcategories": element }));
+                        });
+                        searchOptions.filter = {"$or": computedFiltersArray };
                     }
+                 
                     var order = Orders.getOrder(WidgetHome.media.data.content.sortBy || Orders.ordersMap.Default);
                     if (order) {
                         //Handles Indexing Changes mediaDate/mediaDateIndex
@@ -941,6 +909,7 @@
                                 WidgetHome.currentlyLoading = false;
                                 bookmarks.sync($scope);
                                 buildfire.spinner.hide();
+                                console.log('aaaaaaaaaaa');
                                 if (!WidgetHome.items.length) {
                                     angular.element('#emptyContainer').css('display', 'block');
                                 }
