@@ -800,7 +800,7 @@
                                     downloads.sync($scope, DownloadedMedia);
                                     callback(err, true);
                                 });
-                            }
+                            } else return callback(null, true);
                         });
                     } else return callback(null, true);
                 }
