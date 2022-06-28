@@ -425,8 +425,8 @@
             $scope.titleRequired = false;
             ContentMedia.saving = true;
             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-            if (ContentMedia.item.mediaDate) {
-              ContentMedia.item.mediaDateIndex = new Date(ContentMedia.item.mediaDate).getTime();
+            if (ContentMedia.item.data.mediaDate) {
+              ContentMedia.item.data.mediaDateIndex = new Date(ContentMedia.item.data.mediaDate).getTime();
             }
             if (ContentMedia.item.id) {
               createNewDeeplink(ContentMedia.item, (err, res) => {
