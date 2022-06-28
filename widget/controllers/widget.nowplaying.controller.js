@@ -5,13 +5,15 @@
             function ($scope, media, Buildfire, Modals, COLLECTIONS, $rootScope, Location, EVENTS, PATHS, DB, AppDB) {
                 $rootScope.blackBackground = true;
                 $rootScope.showFeed = false;
+                var MediaContent = new DB(COLLECTIONS.MediaContent);
+                var audioPlayer = Buildfire.services.media.audioPlayer;
                 var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
                 var NowPlaying = this;
                 NowPlaying.swiped = [];
                 NowPlaying.forceAutoPlay=$rootScope.forceAutoPlay;
                 NowPlaying.transferPlaylist=$rootScope.transferAudioContentToPlayList;
                 media.data.audioUrl = convertDropbox(media.data.audioUrl);
-                NowPlaying.currentTrack = new Track(media.data);
+                NowPlaying.currentTrack = new Track(media.data, media.id);
                 NowPlaying.currentTrack.backgroundImage = media.data.image ? media.data.image : media.data.topImage;
 
                 NowPlaying.currentTrack.image = media.data.topImage;
@@ -80,8 +82,10 @@
                 /**
                  * audioPlayer is Buildfire.services.media.audioPlayer.
                  */
-                var audioPlayer = Buildfire.services.media.audioPlayer;
                 audioPlayer.settings.get(function (err, setting) {
+                    if(!setting.autoJumpToLastPosition){
+                        NowPlaying.currentTrack.startAt = 0;
+                    }
                     NowPlaying.currentTime = 0;
                     NowPlaying.settings = setting;
                     NowPlaying.volume = setting.volume;
@@ -383,6 +387,14 @@
                 };
 
                 NowPlaying.callPlayFunction = function(index){
+                    buildfire.services.media.audioPlayer.getCurrentTrack((track) => {
+                        if(track){
+                            MediaContent.getById(track.trackId).then((item) => {
+                                item.data.lastPosition = track.lastPosition;
+                                MediaContent.update(item.id, item.data, ()=>{});
+                            })
+                        }
+                    });
                     if (NowPlaying.paused) {
                         audioPlayer.play();
                         if(NowPlaying.finished)
@@ -396,7 +408,6 @@
                                 }, 50);
                             }, 50);
                     } else {
-                        NowPlaying.currentTime=0;
                         setTimeout(() => {
                             try {
                                 if(index!=-1){
@@ -431,6 +442,9 @@
                         NowPlaying.settings.isPlayingCurrentTrack = false;
                         audioPlayer.settings.set(NowPlaying.settings);
                     }
+                    media.data.lastPosition = NowPlaying.currentTime;
+                    NowPlaying.currentTrack.lastPosition = NowPlaying.currentTime;
+                    MediaContent.update(media.id, media.data, ()=>{});
                     NowPlaying.playing = false;
                     NowPlaying.paused = true;
                     audioPlayer.pause();
@@ -606,14 +620,15 @@
                  * @constructor
                  */
 
-                function Track(track) {
+                function Track(track, id) {
                     this.title = track.audioTitle;
                     this.url = track.audioUrl;
                     this.image = track.image;
                     this.album = track.title;
                     this.artist = track.artists;
-                    this.startAt = 0; // where to begin playing
-                    this.lastPosition = 0; // last played to
+                    this.startAt = 0 ; // where to begin playing
+                    this.lastPosition = track.lastPosition ? track.lastPosition : 0; 
+                    this.trackId = id;
                 }
 
                 /**
