@@ -26,6 +26,7 @@
             MediaContent: "MediaContent",
             MediaCenter: "MediaCenter",
             CategoryContent:"CategoryContent",
+            MediaCount:"MediaCount"
         })
         .constant('PATHS', {
             MEDIA: "MEDIA",

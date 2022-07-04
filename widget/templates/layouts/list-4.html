@@ -1,3 +1,25 @@
+<script>
+    buildfire.appearance.getAppTheme((err, appTheme) => {
+             if (err) return console.error(err);
+             let views = document.getElementById("views")
+             let views2 = document.getElementById("views2")
+
+             let iconView = document.getElementById("iconView")
+             let iconView2 = document.getElementById("iconView2")
+
+             let summary = document.getElementById("summary");
+             summary.style.color =  appTheme.colors.bodyText;
+
+             views.style.color =  appTheme.colors.bodyText;
+             views2.style.color =  appTheme.colors.bodyText;
+
+             iconView.style.color =  appTheme.colors.icons;
+             iconView2.style.color =  appTheme.colors.icons;
+
+
+    });
+</script>
+
 <div class="holder padding-zero list-layout-4" ng-class="{'pb30': globalPlaylist}">
     <div class="media-center-plugin list-layout layout4 text-overlay">
         <div class="media-center-banner clearfix text-overlay">
@@ -65,7 +87,12 @@
                                     <div></div>
                                 </div>
                             </div>
-                            <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index].data.summary}}</p>
+                            <p id="summary" class="summary ellipsis margin-zero">{{WidgetHome.items[$index].data.summary}}</p>
+                            <p ng-if="WidgetHome.media.data.content.showViewCount" id="views" class="ellipsis margin-zero">{{WidgetHome.items[$index].data.count}} 
+                                <span id="iconView" style="float: left;margin-right: 5px;">
+                                    <i class="glyphicon glyphicon-eye-open"></i>
+                                </span>
+                            </p>
                             <span class="list-item-date"
                                 data-ng-if="WidgetHome.items[$index].data.mediaDate">{{WidgetHome.items[$index].data.mediaDate
                                 | jsDate | date:"MMMM dd, yyyy"}}</span>
@@ -108,6 +135,11 @@
                                 </div>
                             </div>
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.summary}}</p>
+                            <p ng-if="WidgetHome.media.data.content.showViewCount" id="views2" class="ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.count}} 
+                                <span id="iconView2" style="float: left;margin-right: 5px;">
+                                    <i class="glyphicon glyphicon-eye-open"></i>
+                                </span>
+                            </p>
                             <span class="list-item-date"
                                 data-ng-if="WidgetHome.items[$index + 1].data.mediaDate">{{WidgetHome.items[$index +
                                 1].data.mediaDate | jsDate | date:"MMMM dd, yyyy"}}</span>

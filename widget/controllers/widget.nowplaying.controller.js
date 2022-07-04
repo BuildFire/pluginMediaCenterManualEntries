@@ -78,7 +78,9 @@
                     }
                     return obj;
                 }
-
+                NowPlaying.isCounted = false;
+                
+              
                 /**
                  * audioPlayer is Buildfire.services.media.audioPlayer.
                  */
@@ -361,6 +363,48 @@
                  * Player related method and variables
                  */
                 NowPlaying.playTrack = function () {
+                    if(NowPlaying.currentTrack.isAudioPlayed === false){
+                        NowPlaying.currentTrack.isAudioPlayed = true;
+                        if(!NowPlaying.isCounted){
+                            Buildfire.auth.getCurrentUser((err, user) => {
+                                if(user){
+                                    $rootScope.user = user
+                                    var userCheckViewFilter = {
+                                        filter: {
+                                            $and: [
+                                              { "$json.mediaId": {  $eq: media.id} },
+                                              { "$json.userId": {  $eq: $rootScope.user._id } },
+                                              { "$json.mediaType": {  $eq: "AUDIO" } },
+                                              { '$json.isActive': true },
+                                            ],
+                                          }
+                                    };
+                                    buildfire.publicData.search(userCheckViewFilter,COLLECTIONS.MediaCount, function(err,res){
+                                        if(res.length > 0){
+                                            NowPlaying.isCounted = true;
+                                        } else {
+                                            let data = {
+                                                mediaId: NowPlaying.item.id,
+                                                mediaType: "AUDIO",
+                                                userId: $rootScope && $rootScope.user ?  $rootScope.user._id : 0,
+                                                isActive: true
+                                            }
+                                            buildfire.publicData.insert(data,COLLECTIONS.MediaCount,false, function(err, res){
+                                                NowPlaying.isCounted = true;
+                                                Analytics.trackAction(`${NowPlaying.item.id}_audioPlayCount`);
+                                                Analytics.trackAction("allAudios_count");
+                                                Analytics.trackAction("allMediaTypes_count");
+                                            }) 
+                                        }
+                                    })
+                                }
+
+                            })
+                          
+                        }
+                    }
+                    
+                    
                     if (NowPlaying.settings) {
                         NowPlaying.settings.isPlayingCurrentTrack = true;
                         audioPlayer.settings.set(NowPlaying.settings);
@@ -629,6 +673,7 @@
                     this.startAt = 0 ; // where to begin playing
                     this.lastPosition = track.lastPosition ? track.lastPosition : 0; 
                     this.trackId = id;
+                    this.isAudioPlayed = track.isAudioPlayed ? track.isAudioPlayed : false;
                 }
 
                 /**
@@ -707,6 +752,12 @@
                                 }
                             }
                             break;
+                    }
+                });
+
+                Buildfire.publicData.onUpdate(event => {
+                    if(event.data && event.tag == COLLECTIONS.MediaCount){
+                        $rootScope.refreshItems();
                     }
                 });
 

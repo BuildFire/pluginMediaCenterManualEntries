@@ -41,6 +41,9 @@
                 if (typeof (Settings.data.content.enableFiltering) == 'undefined') {
                     Settings.data.content.enableFiltering = false;
                 }
+                if (typeof (Settings.data.content.showViewCount) == 'undefined') {
+                    Settings.data.content.showViewCount = false;
+                }
             }, (err) => {
                 console.error(err);
             });
@@ -181,6 +184,14 @@
                 }
 
             };
+
+            Settings.setEnablePlayCount = (e) => {
+                let value = e.target.checked;
+                if (value != Settings.data.content.showViewCount) {
+                    Settings.data.content.showViewCount = value;
+                    MediaCenter.save(Settings.data).then(() => { });
+                }
+            }
 
             Settings.setGlobalPlaylistPlugin = (pluginInstance) => {
                 Settings.data.content.globalPlaylistPlugin = pluginInstance;

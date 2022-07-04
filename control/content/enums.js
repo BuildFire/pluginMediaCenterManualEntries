@@ -28,6 +28,7 @@
             CategoryContent:"CategoryContent",
             CategoryCenter:"CategoryCenter",
             SubcategoryContent:"SubcategoryContent",
+            MediaCount:"MediaCount"
         })
         .constant('PATHS', {
             MEDIA: "MEDIA",

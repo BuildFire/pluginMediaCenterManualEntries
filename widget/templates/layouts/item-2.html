@@ -23,6 +23,12 @@
                                             <h5 data-ng-if="WidgetMedia.item.data.hasDownloadedVideo" class="margin-bottom-zero whiteTheme">Downloaded</h5>
                                         <h5 class="margin-bottom-zero whiteTheme">
                                             {{WidgetMedia.item.data.summary}}</h5>
+                                        <span ng-if="showViewCount" style="display:flex; justify-content: center; align-items:center">
+                                            <i id="iconViewg" class="glyphicon glyphicon-eye-open" style="margin-right: 5px;"></i>
+                                            <p class="ellipsis margin-zero" id="viewsg">{{WidgetMedia.count ? WidgetMedia.count : 0}} </p>
+                                        </span>
+                                        
+
                                     </div>
                                 </div>
                             </div>
@@ -60,3 +66,14 @@
         </div>
     </div>
 </div>
+<script>
+    buildfire.appearance.getAppTheme((err, appTheme) => {
+             if (err) return console.error(err);
+             let viewsg = document.getElementById("viewsg")
+             let iconViewg = document.getElementById("iconViewg")
+
+             viewsg.style.color =  appTheme.colors.bodyText;
+             iconViewg.style.color =  appTheme.colors.icons;
+
+    });
+</script>
