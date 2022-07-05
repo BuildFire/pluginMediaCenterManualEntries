@@ -524,7 +524,7 @@
             
 
                 MediaContent.getById(data.id).then((item) => {
-                  registerAnalytics();
+                  registerAnalytics(item);
                   ContentMedia.item = item;
                   ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: item.id });
                   updateMasterItem(item);
@@ -563,7 +563,7 @@
           if(item.data.videoUrl){
             Analytics.registerEvent(
               {
-                title: ContentMedia.item.data.title + " Video Play Count",
+                title: item.data.title + " Video Play Count",
                 key: item.id + "_videoPlayCount",
                 description: "Video Play Count",
               },
@@ -574,7 +574,7 @@
           if(item.data.audioUrl){
             Analytics.registerEvent(
               {
-                title: ContentMedia.item.data.title + " Audio Play Count",
+                title: item.data.title + " Audio Play Count",
                 key: item.id + "_audioPlayCount",
                 description: "Audio Play Count",
               },
@@ -585,7 +585,7 @@
           {
             Analytics.registerEvent(
               {
-                title: ContentMedia.item.data.title + " Article Open Count",
+                title: item.data.title + " Article Open Count",
                 key: item.id + "_articleOpenCount",
                 description: "Article Open Count",
               },
