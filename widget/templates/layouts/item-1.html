@@ -21,12 +21,6 @@
                 <h5 class="margin-top-zero word-break">{{WidgetMedia.item.data.title}} <div data-ng-if="WidgetMedia.isDownloading(WidgetMedia.item)" class="lds-ring-small"><div></div><div></div><div></div><div></div></div></h5>
                 <p data-ng-if="WidgetMedia.item.data.hasDownloadedVideo" class="margin-bottom-zero word-break">Downloaded</p>
                 <p class="margin-bottom-zero word-break">{{WidgetMedia.item.data.summary}}</p>
-
-                <p id="viewsg" ng-if="showViewCount" class="ellipsis margin-zero">{{WidgetMedia.count ? WidgetMedia.count : 0}} 
-                    <span  style="float: left;margin-right: 5px;">
-                        <i id="iconViewg" class="glyphicon glyphicon-eye-open"></i>
-                    </span>
-                </p>
             </div>
         </div>
         <div class="padded padding-top-zero" ng-if="!WidgetMedia.fullScreen">
@@ -73,13 +67,3 @@
         </div>
     </div>
 </div>
-<script>
-    buildfire.appearance.getAppTheme((err, appTheme) => {
-             if (err) return console.error(err);
-             let viewsg = document.getElementById("viewsg")
-             let iconViewg = document.getElementById("iconViewg")
-
-             viewsg.style.color =  appTheme.colors.bodyText;
-             iconViewg.style.color =  appTheme.colors.icons;
-    });
-</script>

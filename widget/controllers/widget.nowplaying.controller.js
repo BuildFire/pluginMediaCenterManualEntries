@@ -5,15 +5,13 @@
             function ($scope, media, Buildfire, Modals, COLLECTIONS, $rootScope, Location, EVENTS, PATHS, DB, AppDB) {
                 $rootScope.blackBackground = true;
                 $rootScope.showFeed = false;
-                var MediaContent = new DB(COLLECTIONS.MediaContent);
-                var audioPlayer = Buildfire.services.media.audioPlayer;
                 var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
                 var NowPlaying = this;
                 NowPlaying.swiped = [];
                 NowPlaying.forceAutoPlay=$rootScope.forceAutoPlay;
                 NowPlaying.transferPlaylist=$rootScope.transferAudioContentToPlayList;
                 media.data.audioUrl = convertDropbox(media.data.audioUrl);
-                NowPlaying.currentTrack = new Track(media.data, media.id);
+                NowPlaying.currentTrack = new Track(media.data);
                 NowPlaying.currentTrack.backgroundImage = media.data.image ? media.data.image : media.data.topImage;
 
                 NowPlaying.currentTrack.image = media.data.topImage;
@@ -78,16 +76,12 @@
                     }
                     return obj;
                 }
-                NowPlaying.isCounted = false;
-                
-              
+
                 /**
                  * audioPlayer is Buildfire.services.media.audioPlayer.
                  */
+                var audioPlayer = Buildfire.services.media.audioPlayer;
                 audioPlayer.settings.get(function (err, setting) {
-                    if(!setting.autoJumpToLastPosition){
-                        NowPlaying.currentTrack.startAt = 0;
-                    }
                     NowPlaying.currentTime = 0;
                     NowPlaying.settings = setting;
                     NowPlaying.volume = setting.volume;
@@ -363,48 +357,6 @@
                  * Player related method and variables
                  */
                 NowPlaying.playTrack = function () {
-                    if(NowPlaying.currentTrack.isAudioPlayed === false){
-                        NowPlaying.currentTrack.isAudioPlayed = true;
-                        if(!NowPlaying.isCounted){
-                            Buildfire.auth.getCurrentUser((err, user) => {
-                                if(user){
-                                    $rootScope.user = user
-                                    var userCheckViewFilter = {
-                                        filter: {
-                                            $and: [
-                                              { "$json.mediaId": {  $eq: media.id} },
-                                              { "$json.userId": {  $eq: $rootScope.user._id } },
-                                              { "$json.mediaType": {  $eq: "AUDIO" } },
-                                              { '$json.isActive': true },
-                                            ],
-                                          }
-                                    };
-                                    buildfire.publicData.search(userCheckViewFilter,COLLECTIONS.MediaCount, function(err,res){
-                                        if(res.length > 0){
-                                            NowPlaying.isCounted = true;
-                                        } else {
-                                            let data = {
-                                                mediaId: NowPlaying.item.id,
-                                                mediaType: "AUDIO",
-                                                userId: $rootScope && $rootScope.user ?  $rootScope.user._id : 0,
-                                                isActive: true
-                                            }
-                                            buildfire.publicData.insert(data,COLLECTIONS.MediaCount,false, function(err, res){
-                                                NowPlaying.isCounted = true;
-                                                Analytics.trackAction(`${NowPlaying.item.id}_audioPlayCount`);
-                                                Analytics.trackAction("allAudios_count");
-                                                Analytics.trackAction("allMediaTypes_count");
-                                            }) 
-                                        }
-                                    })
-                                }
-
-                            })
-                          
-                        }
-                    }
-                    
-                    
                     if (NowPlaying.settings) {
                         NowPlaying.settings.isPlayingCurrentTrack = true;
                         audioPlayer.settings.set(NowPlaying.settings);
@@ -431,14 +383,6 @@
                 };
 
                 NowPlaying.callPlayFunction = function(index){
-                    buildfire.services.media.audioPlayer.getCurrentTrack((track) => {
-                        if(track){
-                            MediaContent.getById(track.trackId).then((item) => {
-                                item.data.lastPosition = track.lastPosition;
-                                MediaContent.update(item.id, item.data, ()=>{});
-                            })
-                        }
-                    });
                     if (NowPlaying.paused) {
                         audioPlayer.play();
                         if(NowPlaying.finished)
@@ -452,6 +396,7 @@
                                 }, 50);
                             }, 50);
                     } else {
+                        NowPlaying.currentTime=0;
                         setTimeout(() => {
                             try {
                                 if(index!=-1){
@@ -486,9 +431,6 @@
                         NowPlaying.settings.isPlayingCurrentTrack = false;
                         audioPlayer.settings.set(NowPlaying.settings);
                     }
-                    media.data.lastPosition = NowPlaying.currentTime;
-                    NowPlaying.currentTrack.lastPosition = NowPlaying.currentTime;
-                    MediaContent.update(media.id, media.data, ()=>{});
                     NowPlaying.playing = false;
                     NowPlaying.paused = true;
                     audioPlayer.pause();
@@ -664,16 +606,14 @@
                  * @constructor
                  */
 
-                function Track(track, id) {
+                function Track(track) {
                     this.title = track.audioTitle;
                     this.url = track.audioUrl;
                     this.image = track.image;
                     this.album = track.title;
                     this.artist = track.artists;
-                    this.startAt = 0 ; // where to begin playing
-                    this.lastPosition = track.lastPosition ? track.lastPosition : 0; 
-                    this.trackId = id;
-                    this.isAudioPlayed = track.isAudioPlayed ? track.isAudioPlayed : false;
+                    this.startAt = 0; // where to begin playing
+                    this.lastPosition = 0; // last played to
                 }
 
                 /**
@@ -752,12 +692,6 @@
                                 }
                             }
                             break;
-                    }
-                });
-
-                Buildfire.publicData.onUpdate(event => {
-                    if(event.data && event.tag == COLLECTIONS.MediaCount){
-                        $rootScope.refreshItems();
                     }
                 });
 

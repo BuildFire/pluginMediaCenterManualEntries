@@ -41,7 +41,7 @@
                 buildfire.navigation.onAppLauncherActive(() => {
                     $rootScope.refreshItems();
                 });
-                
+
                 var _infoData = {
                     data: {
                         content: {
@@ -130,8 +130,7 @@
                         $rootScope.showGlobalAddAllToPlaylistButton = MediaCenterInfo.data.content.showGlobalAddAllToPlaylistButton;
                         $rootScope.allowOfflineDownload = MediaCenterInfo.data.content.allowOfflineDownload;
                         $rootScope.enableFiltering = MediaCenterInfo.data.content.enableFiltering;
-                        $rootScope.showViewCount = MediaCenterInfo.data.content.showViewCount;
-                       
+
                         if (isLauncher && MediaCenterInfo.data.content.enableFiltering) {
                             slideElement.classList.add("launcher-with-filter");
                         } else {
@@ -934,22 +933,7 @@
 
                         MediaContent.find(searchOptions).then((result) => {
                             WidgetHome.items = WidgetHome.items.concat(result);
-                            WidgetHome.items.forEach(item => {
-                                var searchOptions = {
-                                    filter: {
-                                        $and: [
-                                          { "$json.mediaId": {  $eq: item.id} },
-                                          { '$json.isActive': true },
-                                        ],
-                                      }
-                                };
-                                buildfire.publicData.search(searchOptions,COLLECTIONS.MediaCount, function(err,res){
-                                    item.data.count = res.length
-                                    if (!$scope.$$phase && !$scope.$root.$$phase) {
-                                        $scope.$apply();
-                                    }
-                                })
-                            })
+
                             const finish = () => {
                                 $rootScope.myItems = WidgetHome.items;
                                 $rootScope.loadingData = false;
@@ -1259,7 +1243,7 @@
                                         console.error(err);
                                         return;
                                     }
-                                    Analytics.trackAction(`${item.id}_downloads`);
+                                    buildfire.analytics.trackAction(`${item.id}_downloads`);
                                     let index = $rootScope.currentlyDownloading.indexOf(item.id);
                                     $rootScope.currentlyDownloading.splice(index, 1);
                                     if (mediaType == 'video')

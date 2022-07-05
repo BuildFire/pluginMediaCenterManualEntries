@@ -173,10 +173,8 @@ span.required{
 }
 .input-control.side-label{
   display: flex;
-  justify-content: space-between;
-  margin: 0 20px;
+  align-items: flex-start;
 }
-
 .input-control.side-label label:not(.label-success),
 .input-control.side-label .label-wrap{
   width: 30%;

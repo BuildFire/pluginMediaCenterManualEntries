@@ -591,7 +591,3 @@ videogular .iconButton, [videogular] .iconButton,
     width: 110%;
     z-index: 0;
 }
-
-.glyphicon-option-horizontal {
-    padding: 7px 10px !important;
-}
