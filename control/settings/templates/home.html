@@ -1,4 +1,4 @@
-<div class="input-control side-label margin-bottom-thirty">
+<div class="input-control side-label margin-bottom-twenty">
     <label for="">Allow Sharing</label>
     <div class="button-switch">
         <input id="allowSharerSwitch" type="checkbox" ng-click="Settings.setAllowShare($event)" ng-checked="Settings.data.content.allowShare">
@@ -6,7 +6,7 @@
     </div>
 </div>
 
-<div class="input-control side-label margin-bottom-thirty">
+<div class="input-control side-label margin-bottom-twenty">
     <label for="">Allow Adding Notes</label>
     <div class="button-switch">
         <input id="allowAddingNotes" type="checkbox" ng-click="Settings.setAllowAddingNotes($event)" ng-checked="Settings.data.content.allowAddingNotes">
@@ -14,7 +14,7 @@
     </div>
 </div>
 
-<div class="input-control side-label margin-bottom-thirty">
+<div class="input-control side-label margin-bottom-twenty">
     <label for="">Show Source Icon</label>
     <div class="button-switch">
         <input id="showSourceIconSwitch" type="checkbox" ng-click="Settings.setAllowSource($event)" ng-checked="Settings.data.content.allowSource">
@@ -22,7 +22,7 @@
     </div>
 </div>
 
-<div class="input-control side-label margin-bottom-thirty" ng-show="!Settings.data.content.autoPlay">
+<div class="input-control side-label margin-bottom-twenty" ng-show="!Settings.data.content.autoPlay">
     <label for="">Skip Info Page
         <span class="customTooltipBox btn-primary">
             <span class="customTooltipText">
@@ -36,7 +36,7 @@
     </div>
 </div>
 
-<div class="input-control side-label margin-bottom-thirty" ng-show="!Settings.data.content.autoPlay">
+<div class="input-control side-label margin-bottom-twenty" ng-show="!Settings.data.content.autoPlay">
     <label for="">Play All Audio Files
         <span class="customTooltipBox btn-primary">
             <span class="customTooltipText">
@@ -51,7 +51,7 @@
     </div>
 </div>
 
-<div class="input-control side-label margin-bottom-thirty">
+<div class="input-control side-label margin-bottom-twenty">
     <label for="">Auto Play
         <span class="customTooltipBox btn-primary">
             <span class="customTooltipText">
@@ -59,13 +59,13 @@
             </span>
         </span>
     </label>
-    <div class="button-switch">
+    <div class="button-switch" style="text-align: right;">
         <input id="autoPlaySwitch" type="checkbox" ng-click="Settings.setAutoPlay($event)" ng-checked="Settings.data.content.autoPlay">
         <label for="autoPlaySwitch" class="label-success"></label>
     </div>
 </div>
 
-<div class="setting-toggle margin-bottom-thirty" ng-show="Settings.data.content.autoPlay">
+<div class="setting-toggle margin-bottom-twenty" ng-show="Settings.data.content.autoPlay">
     <p class="setting-label">
         Auto Play Delay
         <span class="customTooltipBox btn-primary">
@@ -91,7 +91,7 @@
     </div>
 </div>
 
-<div class="input-control side-label margin-bottom-thirty">
+<div class="input-control side-label margin-bottom-twenty">
     <label for="">Global Playlist
         <span class="customTooltipBox btn-primary">
             <span class="customTooltipText">
@@ -105,7 +105,7 @@
     </div>
 </div>
 
-<div class="setting-toggle margin-bottom-thirty" ng-if="Settings.data.content.globalPlaylist">
+<div class="setting-toggle margin-bottom-twenty" ng-if="Settings.data.content.globalPlaylist">
     <p class="setting-label">
         Global Playlist Feature
         <span class="customTooltipBox btn-primary">
@@ -122,7 +122,7 @@
     </div>
 </div>
 
-<div class="input-control side-label margin-bottom-thirty" ng-show="Settings.data.content.globalPlaylist && Settings.data.content.globalPlaylistPlugin">
+<div class="input-control side-label margin-bottom-twenty" ng-show="Settings.data.content.globalPlaylist && Settings.data.content.globalPlaylistPlugin">
     <label for="">Add All To Playlist Button
         <span class="customTooltipBox btn-primary">
             <span class="customTooltipText">
@@ -136,7 +136,7 @@
     </div>
 </div>
 
-<div class="input-control side-label margin-bottom-thirty" ng-show="Settings.data.content.globalPlaylist && Settings.data.content.globalPlaylistPlugin">
+<div class="input-control side-label margin-bottom-twenty" ng-show="Settings.data.content.globalPlaylist && Settings.data.content.globalPlaylistPlugin">
     <label for="">Global Playlist Nav Button
         <span class="customTooltipBox btn-primary">
             <span class="customTooltipText">
@@ -150,7 +150,7 @@
     </div>
 </div>
 
-<div class="input-control side-label margin-bottom-thirty">
+<div class="input-control side-label margin-bottom-twenty">
     <label for="">Allow Offline downloads
         <span class="customTooltipBox btn-primary">
             <span class="customTooltipText">
@@ -164,7 +164,7 @@
     </div>
 </div>
 
-<div class="input-control side-label margin-bottom-thirty">
+<div class="input-control side-label margin-bottom-twenty">
     <label for="">Enable Filtering
         <span class="customTooltipBox btn-primary">
             <span class="customTooltipText">
@@ -175,5 +175,20 @@
     <div class="button-switch">
         <input id="enableFilterSwitch" type="checkbox" ng-click="Settings.setEnableFiltering($event)" ng-checked="Settings.data.content.enableFiltering">
         <label for="enableFilterSwitch" class="label-success"></label>
+    </div>
+</div>
+
+
+<div class="input-control side-label margin-bottom-twenty">
+    <label for="">Show View Count
+        <span class="customTooltipBox btn-primary">
+            <span class="customTooltipText">
+                Show number of plays for your media. The counter only shows the number of unique media plays. Repeats don't count.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch">
+        <input id="enablePlayCountSwitch" type="checkbox" ng-click="Settings.setEnablePlayCount($event)" ng-checked="Settings.data.content.showViewCount">
+        <label for="enablePlayCountSwitch" class="label-success"></label>
     </div>
 </div>

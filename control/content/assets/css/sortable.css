@@ -57,6 +57,22 @@ html[buildfire] .d-item .btn-delete-icon:after{
   top: auto;
   transition: color ease-in-out .2s;
 }
+.icon-chart-growth:before {
+  content: "\e941" !important;
+}
+html[buildfire] .d-item .btn-growth-icon::before{
+  content: "\e941";
+  font-family: "icomoon";
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: auto;
+  transition: color ease-in-out .2s;
+}
+
+
+
 html[buildfire] .d-item .btn-edit-icon::after {
   display: flex;
   align-items: center;
@@ -67,8 +83,14 @@ html[buildfire] .d-item .btn-edit-icon::after {
 html[buildfire] .d-item .btn-delete-icon:hover::after{
   color: var(--c-danger);
 }
-html[buildfire] .d-item .btn-edit-icon:hover::after{
+html[buildfire] .d-item .btn-edit-icon:hover::after, .btn-growth-icon:hover::after{
   color: var(--c-primary);
+}
+
+.btn-growth-icon:hover {
+  cursor: pointer;
+  color: var(--c-primary) !important;
+
 }
 .draggable-list-view .d-item.double-line .copy .pull-right span.btn-icon{
   top: auto;
@@ -117,16 +139,16 @@ html[buildfire] .d-item .btn-edit-icon:hover::after{
   justify-content: center !important;
 }
 
-.carousel-items .d-item .btn-delete-icon {
+.carousel-items .d-item .btn-delete-icon,.btn-growth-icon {
   top: -2px !important;
 }
 
-.carousel-items .d-item .btn-delete-icon:after {
+.carousel-items .d-item .btn-delete-icon:after,.btn-growth-icon::after {
   top: 10px !important;
 }
 
 .carousel-items .d-item .btn-delete-icon,
-.d-item .copy span.btn-icon {
+.d-item .copy span.btn-icon, .btn-growth-icon {
   margin-left: 18px !important;
   border-radius: 10%;
 }

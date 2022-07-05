@@ -635,6 +635,14 @@
                             },
                             (err, isConfirmed) => {
                                 if (isConfirmed) {
+                                    if(item.data.videoUrl){
+                                        Analytics.unregisterEvent(item.id + "_videoPlayCount");
+                                    } else if(item.data.audioUrl){
+                                        Analytics.unregisterEvent(item.id + "_audioPlayCount");
+                                    } else {
+                                        Analytics.unregisterEvent(item.id + "_articleOpenCount");
+                                    }
+
                                     if (item.data.searchEngineId) {
                                         SearchEngineService.delete(item.data.searchEngineId);
                                     }
@@ -650,7 +658,15 @@
                     }
                 };
 
-
+                ContentHome.showReport = function(item){
+                    if(item.data.videoUrl){
+                        Analytics.showReports({ eventKey: item.id + "_videoPlayCount" } );
+                    } else if(item.data.audioUrl){
+                        Analytics.showReports({ eventKey: item.id + "_audioPlayCount"});
+                    } else {
+                        Analytics.showReports({ eventKey: item.id + "_articleOpenCount" });
+                    }
+                }
                 ContentHome.goTo = function (id) {
                     console.log(id);
                     Location.go('#media/' + id);

@@ -100,6 +100,10 @@
                                 <span class="title ellipsis pull-left">{{item.data.summary}}</span>
 
                                 <div class="pull-right">
+                                    <span class="btn-icon icon-chart-growth btn-growth-icon transition-third"
+                                        ng-click="ContentHome.showReport(item)"></span>
+                                </div>
+                                <div class="pull-right">
                                     <span class="btn-icon btn-delete-icon btn-danger transition-third"
                                         ng-click="ContentHome.removeListItem($index,$event)"></span>
                                 </div>

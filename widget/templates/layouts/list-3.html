@@ -1,3 +1,17 @@
+<script>
+    buildfire.appearance.getAppTheme((err, appTheme) => {
+             if (err) return console.error(err);
+             let views = document.getElementById("views")
+             let iconView = document.getElementById("iconView")
+             let summary = document.getElementById("summary");
+             summary.style.color =  appTheme.colors.bodyText;
+
+             views.style.color =  appTheme.colors.bodyText;
+             iconView.style.color =  appTheme.colors.icons;
+
+    });
+</script>
+
 <div class="holder padding-zero list-layout-3" ng-class="{'pb75': globalPlaylist}">
     <div class="media-center-plugin layout3 list-3 text-overlay">
         <div class="plugin-banner clearfix text-overlay">
@@ -68,9 +82,14 @@
 
                         </div>
                     </div>
-                    <div class="summary">
-                        <p class="margin-bottom-zero">{{item.data.summary}}</p>
+                    <div data-ng-if="item.data.summary" class="summary">
+                        <p class="margin-bottom-zero" id="summary">{{item.data.summary}}</p>
                     </div>
+                    <p id="views" ng-if="WidgetHome.media.data.content.showViewCount" class="ellipsis margin-zero">{{item.data.count ? item.data.count : 0}} 
+                        <span id="iconView" style="float: left;margin-right: 5px;">
+                            <i class="glyphicon glyphicon-eye-open"></i>
+                        </span>
+                    </p>
 
                     <span class="list-item-date" data-ng-if="item.data.mediaDate"
                         style="font-size:11px; font-style:italic; margin-top:-4px;">{{item.data.mediaDate | jsDate |

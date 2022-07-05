@@ -1,3 +1,20 @@
+<script>
+    // get app theme
+    buildfire.appearance.getAppTheme((err, appTheme) => {
+             if (err) return console.error(err);
+             let summary = document.getElementById("summary");
+             let views = document.getElementById("views")
+             let drawericon = document.getElementById("drawericon")
+             let iconView = document.getElementById("iconView")
+
+             summary.style.color =  appTheme.colors.bodyText;
+             drawericon.style.color =  appTheme.colors.icons;
+             views.style.color =  appTheme.colors.bodyText;
+             iconView.style.color =  appTheme.colors.icons;
+
+    });
+</script>
+
 <div class="holder padding-zero list-layout-1" ng-class="{'pb40': globalPlaylist}">
     <div class="media-center-plugin layout1 text-overlay">
         <div class="plugin-banner clearfix">
@@ -30,7 +47,7 @@
                         <div class="list-item-media text-center border-radius-three overflow-hidden text-overlay">
                             <div play-btn="{{item.data.videoUrl.length > 0  || (skipMediaPage && (item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0)) }}" class="list-media-holder text-overlay">
                                 <div class="li-actions-item">
-                                    <i style="right: 0;" class="glyphicon glyphicon-option-horizontal" ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
+                                    <i id="drawericon" style="right: 0;" class="glyphicon glyphicon-option-horizontal" ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
                                 </div>
                                 <img ng-if="item.data.topImage" load-image="16x9" crop-width="240" crop-height="135" crop-type="crop" data-final-src="{{item.data.topImage | resizeImage : 240:135}}">
                                 <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png" style="max-width:99.5%">
@@ -43,7 +60,13 @@
                                 <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" class="lds-ring-small"><div></div><div></div><div></div><div></div></div>
                             </div>
                             
-                            <p class="summary ellipsis margin-zero">{{item.data.summary}}</p>
+                            <p data-ng-if="item.data.summary" id="summary" class="ellipsis margin-zero">{{item.data.summary}}</p>
+
+                            <p id="views" ng-if="WidgetHome.media.data.content.showViewCount" class="ellipsis margin-zero">{{item.data.count ? item.data.count : 0}} 
+                                <span id="iconView" style="float: left;margin-right: 5px;">
+                                    <i class="glyphicon glyphicon-eye-open"></i>
+                                </span>
+                            </p>
                       
                                 <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}} </span>
                        
