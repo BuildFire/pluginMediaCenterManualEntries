@@ -600,7 +600,7 @@
 
                 Buildfire.publicData.onUpdate(event => {
                     if(event.data && event.tag == COLLECTIONS.MediaCount){
-                        WidgetMedia.count = WidgetMedia.count ? WidgetMedia + 1 : 1;
+                        WidgetMedia.count = WidgetMedia.count ? WidgetMedia.count + 1 : 1;
                         if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                         $rootScope.refreshItems();
                         

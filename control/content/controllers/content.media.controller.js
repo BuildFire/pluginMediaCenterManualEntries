@@ -336,22 +336,42 @@
             ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: ContentMedia.item.id });
           }
 
-          RegisterEventAnalyticIfAny();
 
-          if (ContentMedia.item.data.searchEngineId) {
-            SearchEngineService.update(ContentMedia.item.data.searchEngineId, ContentMedia.item.data).then(function () {
-              update();
-            }, function () {
-              SearchEngineService.insert(ContentMedia.item.data).then(function (result) {
-                if (result && result.id)
-                  ContentMedia.item.data.searchEngineId = result.id;
+            Buildfire.dialog.confirm(
+              {
+                  title: "Data Changed",
+                  message: "Do you want to reset views if any?",
+                  confirmButton: {
+                      type: "danger",
+                      text: "Reset"
+                  }
+              },
+              (err, isConfirmed) => {
+                  updadteData();
+                  if (isConfirmed) {
+                    registerEventAnalyticsIfAny(true)
+                  } else {
+                    registerEventAnalyticsIfAny(false)
+                  } 
+              }
+            ) 
+        
+          function updadteData(){
+            if (ContentMedia.item.data.searchEngineId) {
+              SearchEngineService.update(ContentMedia.item.data.searchEngineId, ContentMedia.item.data).then(function () {
                 update();
               }, function () {
-                update();
-              });;
-            });
-          } else {
-            update();
+                SearchEngineService.insert(ContentMedia.item.data).then(function (result) {
+                  if (result && result.id)
+                    ContentMedia.item.data.searchEngineId = result.id;
+                  update();
+                }, function () {
+                  update();
+                });;
+              });
+            } else {
+              update();
+            }
           }
 
           function update() {
@@ -378,98 +398,115 @@
           }
         }
 
-        function RegisterEventAnalyticIfAny(){
-          let isRegisteringNewVideoAnalytic = false;
-          let isRegisteringNewArticleAnalytic = false;
-          let isRegisteringNewAudioAnalytic = false;
 
-          if( (ContentMedia.item.data.videoUrl != "" && ContentMedia.dbItem.videoUrl != ContentMedia.item.data.videoUrl)
-            && // check if video and audio are edited in same time
-            ContentMedia.item.data.audioUrl != "" && ContentMedia.dbItem.audioUrl != ContentMedia.item.data.audioUrl
-             ){
-              isRegisteringNewAudioAnalytic = true;
-              isRegisteringNewVideoAnalytic = true;
-              Analytics.registerEvent(
-                {
-                  title: ContentMedia.item.data.title + " Video Play Count",
-                  key: ContentMedia.item.id + "_videoPlayCount",
-                  description: "Video Play Count",
-                },
-                { silentNotification: true }
-              );
-              Analytics.registerEvent(
-                {
-                  title: ContentMedia.item.data.title + " Audio Play Count",
-                  key: ContentMedia.item.id + "_audioPlayCount",
-                  description: "Audio Play Count",
-                },
-                { silentNotification: true }
-              );
+        function registerEventAnalyticsIfAny(isResetConfirmed){
+            let isVideoUrlChanged = false;
+            let isAudioUrlChanged = false;
+            let isVideoUrlChangedToEmplty = false;
+            let isAudioUrlChangedToEmplty = false;
+            if(isResetConfirmed){
+              removeViews(media.id,"VIDEO");
+              removeViews(media.id,"AUDIO");
+              removeViews(media.id,"Article");
+            }
+            // For Video
+            if(ContentMedia.dbItem.videoUrl != "" && ContentMedia.item.data.videoUrl == ""){
+              isVideoUrlChangedToEmplty = true;
+              if(isResetConfirmed){
+                Analytics.unregisterEvent(ContentMedia.item.id + "_videoPlayCount");
+              } else {
+                Analytics.unregisterEvent(ContentMedia.item.id + "_videoPlayCount");
+              }
+            } // If There was a video and removed
 
-          } else if(ContentMedia.item.data.videoUrl != "" && // check if video is edited
-          ContentMedia.dbItem.videoUrl != ContentMedia.item.data.videoUrl){
-          
-            isRegisteringNewVideoAnalytic = true;
-           Analytics.registerEvent(
-             {
-               title: ContentMedia.item.data.title + " Video Play Count",
-               key: ContentMedia.item.id + "_videoPlayCount",
-               description: "Video Play Count",
-             },
-             { silentNotification: true }
-           );
-          } else if(ContentMedia.item.data.audioUrl != "" && // check if audio is edited
-                    ContentMedia.dbItem.audioUrl != ContentMedia.item.data.audioUrl){
-              isRegisteringNewAudioAnalytic = true;
-              Analytics.registerEvent(
-                {
-                  title: ContentMedia.item.data.title + " Audio Play Count",
-                  key: ContentMedia.item.id + "_audioPlayCount",
-                  description: "Audio Play Count",
-                },
-                { silentNotification: true }
-              );
-          } else if(ContentMedia.item.data.title != "" && // check if title is edited
-              ContentMedia.dbItem.title != ContentMedia.item.data.title){
-                isRegisteringNewArticleAnalytic = true;
-                Analytics.registerEvent(
-                  {
-                    title: ContentMedia.item.data.title + " Article Open Count",
-                    key: ContentMedia.item.id + "_articleOpenCount",
-                    description: "Article Open Count",
-                  },
-                  { silentNotification: true }
-                );
-             
-          } else if( ContentMedia.item.data.audioUrl == "" // check if video/audio edited to empty then it will be article  
-                && ContentMedia.item.data.srcUrl == ""
-                && (ContentMedia.dbItem.srcUrl != "" || ContentMedia.dbItem.audioUrl != "")){
-                  isRegisteringNewArticleAnalytic = true;
-                  Analytics.registerEvent(
-                    {
-                      title: ContentMedia.item.data.title + " Article Open Count",
-                      key: ContentMedia.item.id + "_articleOpenCount",
-                      description: "Article Open Count",
-                    },
-                    { silentNotification: true }
-                  );
-          }
-          if(isRegisteringNewVideoAnalytic || ContentMedia.item.data.videoUrl == ""){
-            removeViews(media.id,"VIDEO");
-          }
-          if(isRegisteringNewAudioAnalytic || ContentMedia.item.data.audioUrl == "" ){
-            removeViews(media.id,"AUDIO");
-          }
-          if(isRegisteringNewArticleAnalytic || isRegisteringNewAudioAnalytic || isRegisteringNewVideoAnalytic){
-            removeViews(media.id, "Article");
-          }
-          
+            if(ContentMedia.dbItem.videoUrl == "" && ContentMedia.item.data.videoUrl != ""){
+              isVideoUrlChanged = true;
+              registerVideoEvent();
+            } // Video Was Empty and Added new one
+
+            if(ContentMedia.dbItem.videoUrl != "" && ContentMedia.item.data.videoUrl != "" && ContentMedia.item.data.videoUrl != ContentMedia.dbItem.videoUrl ){
+              isVideoUrlChanged = true;
+              
+            } // Video Url Changed
+
+
+            // Audio
+            if(ContentMedia.dbItem.audioUrl != "" && ContentMedia.item.data.audioUrl == ""){
+              isAudioUrlChangedToEmplty = true;
+              if(isResetConfirmed){
+                removeViews(media.id,"AUDIO");
+                Analytics.unregisterEvent(ContentMedia.item.id + "_audioPlayCount");
+              } else {
+                Analytics.unregisterEvent(ContentMedia.item.id + "_audioPlayCount");
+              }
+            } // If There was an audio and removed
+
+            if(ContentMedia.dbItem.audioUrl == "" && ContentMedia.item.data.audioUrl != ""){
+              isAudioUrlChanged = true;
+              registerAudioEvent();
+            } // Audio was empty and added new one
+
+            if(ContentMedia.dbItem.audioUrl != "" && ContentMedia.item.data.audioUrl != "" && ContentMedia.item.data.audioUrl != ContentMedia.dbItem.audioUrl ){
+              isAudioUrlChanged = true;
+            } // Audio Url Changed
+
+
+            if(ContentMedia.dbItem.title != ContentMedia.item.data.title) {
+              if(isAudioUrlChanged){
+                registerAudioEvent()
+              }
+              if(isVideoUrlChanged){
+                registerVideoEvent()
+              }
+              if(!isAudioUrlChanged && !isVideoUrlChanged){
+                registerArticleEvent()
+              }
+            } // Title Changed
+
+            if((isVideoUrlChangedToEmplty && ContentMedia.item.data.audioUrl == "")
+             || (isAudioUrlChangedToEmplty && ContentMedia.item.data.video == "")){
+              registerArticleEvent()
+            } // IF Video  changed to Empty and Audio is empty we need to register event for article
+              // IF Audio changed to Empty and Video is empty we need to register event for article 
+            
         }
+
+        function registerAudioEvent(){
+          Analytics.registerEvent(
+            {
+              title: ContentMedia.item.data.title + " Audio Play Count",
+              key: ContentMedia.item.id + "_audioPlayCount",
+              description: "Audio Play Count",
+            },
+            { silentNotification: true }
+          );
+        }
+        function registerVideoEvent(){
+          Analytics.registerEvent(
+            {
+              title: ContentMedia.item.data.title + " Video Play Count",
+              key: ContentMedia.item.id + "_videoPlayCount",
+              description: "Video Play Count",
+            },
+            { silentNotification: true }
+          );
+        }
+        function registerArticleEvent(){
+          Analytics.registerEvent(
+            {
+              title: ContentMedia.item.data.title + " Article Open Count",
+              key: ContentMedia.item.id + "_articleOpenCount",
+              description: "Article Open Count",
+            },
+            { silentNotification: true }
+          );
+        }
+
         function removeViews(mediaId, mediaType){
           buildfire.publicData.searchAndUpdate(
             { $and: [
               { "$json.mediaId": {  $eq: mediaId} },
-              { '$json.mediaType': "Article" },
+              { '$json.mediaType': mediaType },
              ] },
             { $set: { isActive: false } },
             "MediaCount",

@@ -11,8 +11,8 @@
 
                 //scroll current view to top when loaded.
                 Buildfire.navigation.scrollTop();
+                registerAnalyticsForOldData();
                 var ContentHome = this;
-
                 var _infoData = {
                     data: {
                         content: {
@@ -425,6 +425,71 @@
                         throw (error);
                     });
                 }
+
+
+                function registerAnalyticsForOldData(){
+                    buildfire.getContext((err,context)=>{
+                        var pluginSearchOption = {
+                            filter: {
+                                   "$json.pluginId": {  $eq: context.pluginId},
+                              }
+                        };
+                        buildfire.publicData.search(pluginSearchOption,"MCMAnalytics", function(err,res){
+                            if(res && res.length == 0){
+                                MediaContent.find({}).then(function success(results) {
+                                    results.forEach(element => {
+                                        registerAnalytics(element)
+                                    });
+                                    buildfire.publicData.insert(
+                                        { pluginId: context.pluginId },
+                                        "MCMAnalytics",
+                                        false,
+                                        (err, result) => {
+                                          if (err) return console.error("Error while inserting your data", err);
+                                          console.log("Insert successful", result);
+                                        }
+                                      );
+                                })
+                            }
+                        })
+                    })
+                    
+                }
+
+                function registerAnalytics(item){
+                    if(item.data.videoUrl){
+                      Analytics.registerEvent(
+                        {
+                          title: item.data.title + " Video Play Count",
+                          key: item.id + "_videoPlayCount",
+                          description: "Video Play Count",
+                        },
+                        { silentNotification: true }
+                      );
+          
+                    } 
+                    if(item.data.audioUrl){
+                      Analytics.registerEvent(
+                        {
+                          title: item.data.title + " Audio Play Count",
+                          key: item.id + "_audioPlayCount",
+                          description: "Audio Play Count",
+                        },
+                        { silentNotification: true }
+                      );
+                    }
+                    if(!item.data.videoUrl && !item.data.audioUrl)
+                    {
+                      Analytics.registerEvent(
+                        {
+                          title: item.data.title + " Article Open Count",
+                          key: item.id + "_articleOpenCount",
+                          description: "Article Open Count",
+                        },
+                        { silentNotification: true }
+                      );
+                    }
+                  }
 
                 /**
                  * ContentHome.exportCSV() used to export people list data to CSV
