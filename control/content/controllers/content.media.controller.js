@@ -335,8 +335,17 @@
           if (!ContentMedia.item.data.deepLinkUrl) {
             ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: ContentMedia.item.id });
           }
+          var isAnalyticDataChanged = false;
+         
 
+          if(ContentMedia.dbItem.videoUrl != ContentMedia.item.data.videoUrl ||
+            ContentMedia.dbItem.audioUrl != ContentMedia.item.data.audioUrl ||
+            ContentMedia.dbItem.title != ContentMedia.item.data.title)
+          {
+            isAnalyticDataChanged = true;
+          }
 
+          if(isAnalyticDataChanged){
             Buildfire.dialog.confirm(
               {
                   title: "Data Changed",
@@ -355,6 +364,10 @@
                   } 
               }
             ) 
+          } else {
+            updadteData();
+          }
+          
         
           function updadteData(){
             if (ContentMedia.item.data.searchEngineId) {
@@ -400,74 +413,64 @@
 
 
         function registerEventAnalyticsIfAny(isResetConfirmed){
-            let isVideoUrlChanged = false;
-            let isAudioUrlChanged = false;
-            let isVideoUrlChangedToEmplty = false;
-            let isAudioUrlChangedToEmplty = false;
             if(isResetConfirmed){
               removeViews(media.id,"VIDEO");
               removeViews(media.id,"AUDIO");
               removeViews(media.id,"Article");
             }
-            // For Video
-            if(ContentMedia.dbItem.videoUrl != "" && ContentMedia.item.data.videoUrl == ""){
-              isVideoUrlChangedToEmplty = true;
-              if(isResetConfirmed){
+              //For Video
+              if(ContentMedia.dbItem.videoUrl != "" && ContentMedia.item.data.videoUrl == ""){
                 Analytics.unregisterEvent(ContentMedia.item.id + "_videoPlayCount");
-              } else {
-                Analytics.unregisterEvent(ContentMedia.item.id + "_videoPlayCount");
-              }
-            } // If There was a video and removed
-
-            if(ContentMedia.dbItem.videoUrl == "" && ContentMedia.item.data.videoUrl != ""){
-              isVideoUrlChanged = true;
-              registerVideoEvent();
-            } // Video Was Empty and Added new one
-
-            if(ContentMedia.dbItem.videoUrl != "" && ContentMedia.item.data.videoUrl != "" && ContentMedia.item.data.videoUrl != ContentMedia.dbItem.videoUrl ){
-              isVideoUrlChanged = true;
+              } // If There was a video and removed 
+              else if( (ContentMedia.dbItem.videoUrl == "" && ContentMedia.item.data.videoUrl != "") ||
+                  (ContentMedia.item.data.videoUrl != "" && ContentMedia.dbItem.title != ContentMedia.item.data.title) ){
+                    
+                    if(isResetConfirmed){
+                      buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_videoPlayCount", (err, res) => {
+                        if (err) return reject(err);
+                        registerVideoEvent();
+                      });
+                    } else {
+                      registerVideoEvent();
+                    }
+                
+              } // Video Was Empty and Added new one Or There is a video and title only changes
               
-            } // Video Url Changed
-
-
-            // Audio
-            if(ContentMedia.dbItem.audioUrl != "" && ContentMedia.item.data.audioUrl == ""){
-              isAudioUrlChangedToEmplty = true;
-              if(isResetConfirmed){
-                removeViews(media.id,"AUDIO");
+              //Audio
+              if(ContentMedia.dbItem.audioUrl != "" && ContentMedia.item.data.audioUrl == ""){
                 Analytics.unregisterEvent(ContentMedia.item.id + "_audioPlayCount");
-              } else {
-                Analytics.unregisterEvent(ContentMedia.item.id + "_audioPlayCount");
+              } 
+              else if( (ContentMedia.dbItem.audioUrl == "" && ContentMedia.item.data.audioUrl != "") ||
+              (ContentMedia.item.data.audioUrl != "" && ContentMedia.dbItem.title != ContentMedia.item.data.title)){
+                if(isResetConfirmed){
+                  buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_audioPlayCount", (err, res) => {
+                    if (err) return reject(err);
+                    registerAudioEvent();
+                  });
+                } else {
+                  registerAudioEvent();
+                }
+              } // Audio was empty and added new one Or There is a video and title only changes
+
+              
+
+
+              // For Article
+              if(ContentMedia.item.data.audioUrl != "" || ContentMedia.item.data.videoUrl != ""){
+                Analytics.unregisterEvent(ContentMedia.item.id + "_articleOpenCount");
+              } 
+              else if(ContentMedia.item.data.audioUrl == "" && ContentMedia.item.data.videoUrl == ""){
+                  if(isResetConfirmed){
+                    buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_articleOpenCount", (err, res) => {
+                      if (err) return reject(err);
+                      registerArticleEvent();
+                    });
+                  } else {
+                    registerArticleEvent()
+                  }
               }
-            } // If There was an audio and removed
+           
 
-            if(ContentMedia.dbItem.audioUrl == "" && ContentMedia.item.data.audioUrl != ""){
-              isAudioUrlChanged = true;
-              registerAudioEvent();
-            } // Audio was empty and added new one
-
-            if(ContentMedia.dbItem.audioUrl != "" && ContentMedia.item.data.audioUrl != "" && ContentMedia.item.data.audioUrl != ContentMedia.dbItem.audioUrl ){
-              isAudioUrlChanged = true;
-            } // Audio Url Changed
-
-
-            if(ContentMedia.dbItem.title != ContentMedia.item.data.title) {
-              if(isAudioUrlChanged){
-                registerAudioEvent()
-              }
-              if(isVideoUrlChanged){
-                registerVideoEvent()
-              }
-              if(!isAudioUrlChanged && !isVideoUrlChanged){
-                registerArticleEvent()
-              }
-            } // Title Changed
-
-            if((isVideoUrlChangedToEmplty && ContentMedia.item.data.audioUrl == "")
-             || (isAudioUrlChangedToEmplty && ContentMedia.item.data.video == "")){
-              registerArticleEvent()
-            } // IF Video  changed to Empty and Audio is empty we need to register event for article
-              // IF Audio changed to Empty and Video is empty we need to register event for article 
             
         }
 
