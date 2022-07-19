@@ -335,23 +335,56 @@
           if (!ContentMedia.item.data.deepLinkUrl) {
             ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: ContentMedia.item.id });
           }
+          var isAnalyticDataChanged = false;
+         
 
-          RegisterEventAnalyticIfAny();
+          if(ContentMedia.dbItem.videoUrl != ContentMedia.item.data.videoUrl ||
+            ContentMedia.dbItem.audioUrl != ContentMedia.item.data.audioUrl ||
+            ContentMedia.dbItem.title != ContentMedia.item.data.title)
+          {
+            isAnalyticDataChanged = true;
+          }
 
-          if (ContentMedia.item.data.searchEngineId) {
-            SearchEngineService.update(ContentMedia.item.data.searchEngineId, ContentMedia.item.data).then(function () {
-              update();
-            }, function () {
-              SearchEngineService.insert(ContentMedia.item.data).then(function (result) {
-                if (result && result.id)
-                  ContentMedia.item.data.searchEngineId = result.id;
+          if(isAnalyticDataChanged){
+            Buildfire.dialog.confirm(
+              {
+                  title: "Data Changed",
+                  message: "Do you want to reset views if any?",
+                  confirmButton: {
+                      type: "danger",
+                      text: "Reset"
+                  }
+              },
+              (err, isConfirmed) => {
+                  updadteData();
+                  if (isConfirmed) {
+                    registerEventAnalyticsIfAny(true)
+                  } else {
+                    registerEventAnalyticsIfAny(false)
+                  } 
+              }
+            ) 
+          } else {
+            updadteData();
+          }
+          
+        
+          function updadteData(){
+            if (ContentMedia.item.data.searchEngineId) {
+              SearchEngineService.update(ContentMedia.item.data.searchEngineId, ContentMedia.item.data).then(function () {
                 update();
               }, function () {
-                update();
-              });;
-            });
-          } else {
-            update();
+                SearchEngineService.insert(ContentMedia.item.data).then(function (result) {
+                  if (result && result.id)
+                    ContentMedia.item.data.searchEngineId = result.id;
+                  update();
+                }, function () {
+                  update();
+                });;
+              });
+            } else {
+              update();
+            }
           }
 
           function update() {
@@ -378,98 +411,105 @@
           }
         }
 
-        function RegisterEventAnalyticIfAny(){
-          let isRegisteringNewVideoAnalytic = false;
-          let isRegisteringNewArticleAnalytic = false;
-          let isRegisteringNewAudioAnalytic = false;
 
-          if( (ContentMedia.item.data.videoUrl != "" && ContentMedia.dbItem.videoUrl != ContentMedia.item.data.videoUrl)
-            && // check if video and audio are edited in same time
-            ContentMedia.item.data.audioUrl != "" && ContentMedia.dbItem.audioUrl != ContentMedia.item.data.audioUrl
-             ){
-              isRegisteringNewAudioAnalytic = true;
-              isRegisteringNewVideoAnalytic = true;
-              Analytics.registerEvent(
-                {
-                  title: ContentMedia.item.data.title + " Video Play Count",
-                  key: ContentMedia.item.id + "_videoPlayCount",
-                  description: "Video Play Count",
-                },
-                { silentNotification: true }
-              );
-              Analytics.registerEvent(
-                {
-                  title: ContentMedia.item.data.title + " Audio Play Count",
-                  key: ContentMedia.item.id + "_audioPlayCount",
-                  description: "Audio Play Count",
-                },
-                { silentNotification: true }
-              );
+        function registerEventAnalyticsIfAny(isResetConfirmed){
+            if(isResetConfirmed){
+              removeViews(media.id,"VIDEO");
+              removeViews(media.id,"AUDIO");
+              removeViews(media.id,"Article");
+            }
+              //For Video
+              if(ContentMedia.dbItem.videoUrl != "" && ContentMedia.item.data.videoUrl == ""){
+                Analytics.unregisterEvent(ContentMedia.item.id + "_videoPlayCount");
+              } // If There was a video and removed 
+              else if( (ContentMedia.dbItem.videoUrl == "" && ContentMedia.item.data.videoUrl != "") ||
+                  (ContentMedia.item.data.videoUrl != "" && ContentMedia.dbItem.title != ContentMedia.item.data.title) ){
+                    
+                    if(isResetConfirmed){
+                      buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_videoPlayCount", (err, res) => {
+                        if (err) return reject(err);
+                        registerVideoEvent();
+                      });
+                    } else {
+                      registerVideoEvent();
+                    }
+                
+              } // Video Was Empty and Added new one Or There is a video and title only changes
+              
+              //Audio
+              if(ContentMedia.dbItem.audioUrl != "" && ContentMedia.item.data.audioUrl == ""){
+                Analytics.unregisterEvent(ContentMedia.item.id + "_audioPlayCount");
+              } 
+              else if( (ContentMedia.dbItem.audioUrl == "" && ContentMedia.item.data.audioUrl != "") ||
+              (ContentMedia.item.data.audioUrl != "" && ContentMedia.dbItem.title != ContentMedia.item.data.title)){
+                if(isResetConfirmed){
+                  buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_audioPlayCount", (err, res) => {
+                    if (err) return reject(err);
+                    registerAudioEvent();
+                  });
+                } else {
+                  registerAudioEvent();
+                }
+              } // Audio was empty and added new one Or There is a video and title only changes
 
-          } else if(ContentMedia.item.data.videoUrl != "" && // check if video is edited
-          ContentMedia.dbItem.videoUrl != ContentMedia.item.data.videoUrl){
-          
-            isRegisteringNewVideoAnalytic = true;
-           Analytics.registerEvent(
-             {
-               title: ContentMedia.item.data.title + " Video Play Count",
-               key: ContentMedia.item.id + "_videoPlayCount",
-               description: "Video Play Count",
-             },
-             { silentNotification: true }
-           );
-          } else if(ContentMedia.item.data.audioUrl != "" && // check if audio is edited
-                    ContentMedia.dbItem.audioUrl != ContentMedia.item.data.audioUrl){
-              isRegisteringNewAudioAnalytic = true;
-              Analytics.registerEvent(
-                {
-                  title: ContentMedia.item.data.title + " Audio Play Count",
-                  key: ContentMedia.item.id + "_audioPlayCount",
-                  description: "Audio Play Count",
-                },
-                { silentNotification: true }
-              );
-          } else if(ContentMedia.item.data.title != "" && // check if title is edited
-              ContentMedia.dbItem.title != ContentMedia.item.data.title){
-                isRegisteringNewArticleAnalytic = true;
-                Analytics.registerEvent(
-                  {
-                    title: ContentMedia.item.data.title + " Article Open Count",
-                    key: ContentMedia.item.id + "_articleOpenCount",
-                    description: "Article Open Count",
-                  },
-                  { silentNotification: true }
-                );
-             
-          } else if( ContentMedia.item.data.audioUrl == "" // check if video/audio edited to empty then it will be article  
-                && ContentMedia.item.data.srcUrl == ""
-                && (ContentMedia.dbItem.srcUrl != "" || ContentMedia.dbItem.audioUrl != "")){
-                  isRegisteringNewArticleAnalytic = true;
-                  Analytics.registerEvent(
-                    {
-                      title: ContentMedia.item.data.title + " Article Open Count",
-                      key: ContentMedia.item.id + "_articleOpenCount",
-                      description: "Article Open Count",
-                    },
-                    { silentNotification: true }
-                  );
-          }
-          if(isRegisteringNewVideoAnalytic || ContentMedia.item.data.videoUrl == ""){
-            removeViews(media.id,"VIDEO");
-          }
-          if(isRegisteringNewAudioAnalytic || ContentMedia.item.data.audioUrl == "" ){
-            removeViews(media.id,"AUDIO");
-          }
-          if(isRegisteringNewArticleAnalytic || isRegisteringNewAudioAnalytic || isRegisteringNewVideoAnalytic){
-            removeViews(media.id, "Article");
-          }
-          
+              
+
+
+              // For Article
+              if(ContentMedia.item.data.audioUrl != "" || ContentMedia.item.data.videoUrl != ""){
+                Analytics.unregisterEvent(ContentMedia.item.id + "_articleOpenCount");
+              } 
+              else if(ContentMedia.item.data.audioUrl == "" && ContentMedia.item.data.videoUrl == ""){
+                  if(isResetConfirmed){
+                    buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_articleOpenCount", (err, res) => {
+                      if (err) return reject(err);
+                      registerArticleEvent();
+                    });
+                  } else {
+                    registerArticleEvent()
+                  }
+              }
+           
+
+            
         }
+
+        function registerAudioEvent(){
+          Analytics.registerEvent(
+            {
+              title: ContentMedia.item.data.title + " Audio Play Count",
+              key: ContentMedia.item.id + "_audioPlayCount",
+              description: "Audio Play Count",
+            },
+            { silentNotification: true }
+          );
+        }
+        function registerVideoEvent(){
+          Analytics.registerEvent(
+            {
+              title: ContentMedia.item.data.title + " Video Play Count",
+              key: ContentMedia.item.id + "_videoPlayCount",
+              description: "Video Play Count",
+            },
+            { silentNotification: true }
+          );
+        }
+        function registerArticleEvent(){
+          Analytics.registerEvent(
+            {
+              title: ContentMedia.item.data.title + " Article Open Count",
+              key: ContentMedia.item.id + "_articleOpenCount",
+              description: "Article Open Count",
+            },
+            { silentNotification: true }
+          );
+        }
+
         function removeViews(mediaId, mediaType){
           buildfire.publicData.searchAndUpdate(
             { $and: [
               { "$json.mediaId": {  $eq: mediaId} },
-              { '$json.mediaType': "Article" },
+              { '$json.mediaType': mediaType },
              ] },
             { $set: { isActive: false } },
             "MediaCount",
@@ -524,7 +564,7 @@
             
 
                 MediaContent.getById(data.id).then((item) => {
-                  registerAnalytics();
+                  registerAnalytics(item);
                   ContentMedia.item = item;
                   ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: item.id });
                   updateMasterItem(item);
@@ -563,7 +603,7 @@
           if(item.data.videoUrl){
             Analytics.registerEvent(
               {
-                title: ContentMedia.item.data.title + " Video Play Count",
+                title: item.data.title + " Video Play Count",
                 key: item.id + "_videoPlayCount",
                 description: "Video Play Count",
               },
@@ -574,7 +614,7 @@
           if(item.data.audioUrl){
             Analytics.registerEvent(
               {
-                title: ContentMedia.item.data.title + " Audio Play Count",
+                title: item.data.title + " Audio Play Count",
                 key: item.id + "_audioPlayCount",
                 description: "Audio Play Count",
               },
@@ -585,7 +625,7 @@
           {
             Analytics.registerEvent(
               {
-                title: ContentMedia.item.data.title + " Article Open Count",
+                title: item.data.title + " Article Open Count",
                 key: item.id + "_articleOpenCount",
                 description: "Article Open Count",
               },
