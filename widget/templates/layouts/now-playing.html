@@ -11,9 +11,9 @@
         <div class="media-holder">
             <div class="media-inner text-center">
                 <img ng-if="NowPlaying.currentTrack.image && NowPlaying.isOnline" load-image="1x1" crop-width="260" crop-height="260"
-                    crop-type="crop" data-final-src="{{NowPlaying.currentTrack.image | resizeImage : 260:260}}">
-                <img ng-if="NowPlaying.currentTrack.image && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.image}}" alt="ee">
-                <img ng-if="!NowPlaying.currentTrack.image" src="./assets/images/now-playing.png">
+                    crop-type="crop" data-final-src="{{NowPlaying.currentTrack.image | resizeImage : 260:260}}" alt="{{NowPlaying.currentTrack.title}} top image">
+                <img ng-if="NowPlaying.currentTrack.image && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.image}}" alt="{{NowPlaying.currentTrack.title}} top image">
+                <img ng-if="!NowPlaying.currentTrack.image" src="./assets/images/now-playing.png" alt="top image">
             </div>
         </div>
         <div class="media-player-info ellipsis">
