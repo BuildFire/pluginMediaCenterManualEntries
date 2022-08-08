@@ -27,6 +27,7 @@
                 NowPlaying.isItLast = false;
                 NowPlaying.keepPosition=0;
                 NowPlaying.finished=false;
+                NowPlaying.isAudioPlayerPlayingAnotherSong = true;
                 bookmarks.sync($scope);
 
                  Buildfire.auth.getCurrentUser((err, user) => {
@@ -394,6 +395,15 @@
                             }
                         }, 0);
                     });
+                    audioPlayer.getCurrentTrack((track) => {
+                        if(track && track.title == NowPlaying.currentTrack.title && track.url == NowPlaying.currentTrack.url){
+                            NowPlaying.isAudioPlayerPlayingAnotherSong = false;
+                        } else if(!track){
+                            NowPlaying.isAudioPlayerPlayingAnotherSong = false;
+                        }
+                      });
+                      
+                    
                 }
 
                 function updateAudioMediaCount(mediaId, trackLastPosition){
@@ -481,6 +491,7 @@
                                     audioPlayer.play(index);
                                 }
                                 else audioPlayer.play(NowPlaying.currentTrack);
+                                NowPlaying.isAudioPlayerPlayingAnotherSong = false;
                             }
                             catch (err) {
                             }
