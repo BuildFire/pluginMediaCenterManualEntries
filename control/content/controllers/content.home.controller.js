@@ -88,7 +88,7 @@
                 var header = {
                     topImage: 'Top image',
                     title: 'Title',
-                    artists: 'Artists',
+                    artists: 'Album Artists',
                     summary: 'Summary',
                     bodyHTML: 'Media Content',
                     srcUrl: 'Source URL',
