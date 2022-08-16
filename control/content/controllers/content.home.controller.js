@@ -88,14 +88,16 @@
                 var header = {
                     topImage: 'Top image',
                     title: 'Title',
+                    artists: 'Artists',
                     summary: 'Summary',
                     bodyHTML: 'Media Content',
                     srcUrl: 'Source URL',
+                    audioTitle: 'Audio Title',
                     audioUrl: 'Audio URL',
                     videoUrl: 'Video URL',
                     image: 'Thumbnail Image URL'
                 };
-                var headerRow = ["topImage", "title", "summary", "bodyHTML", "srcUrl", "audioUrl", "videoUrl", "image"];
+                var headerRow = ["topImage", "title", "artists", "summary", "bodyHTML", "srcUrl", "audioTitle", "audioUrl", "videoUrl", "image"];
                 var tmrDelayForMedia = null;
 
                 /**
