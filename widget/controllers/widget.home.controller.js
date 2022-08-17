@@ -936,11 +936,8 @@
                             WidgetHome.items = WidgetHome.items.concat(result);
                             WidgetHome.items.forEach(item => {
                                 var searchOptions = {
-                                    filter: {
-                                        $and: [
-                                          { "$json.mediaId": {  $eq: item.id} },
-                                          { '$json.isActive': true },
-                                        ],
+                                      filter: {
+                                        "_buildfire.index.string1":{$eq: item.id+"-true"}
                                       }
                                 };
                                 buildfire.publicData.search(searchOptions,COLLECTIONS.MediaCount, function(err,res){

@@ -246,14 +246,9 @@
                     if (state === 'play') { // The video started playing
                         if(!WidgetMedia.isCounted && $rootScope.user){
                                 var userCheckViewFilter = {
-                                    filter: {
-                                        $and: [
-                                          { "$json.mediaId": {  $eq: media.id} },
-                                          { "$json.userId": {  $eq: $rootScope.user._id} },
-                                          { "$json.mediaType": {  $eq: "VIDEO"} },
-
-                                          { '$json.isActive': true },
-                                        ],
+                                      filter: {
+                                        "_buildfire.index.text":
+                                        {$eq: media.id+"-"+$rootScope.user._id+"-Video-true"}
                                       }
                                 };
                                 buildfire.publicData.search(userCheckViewFilter,COLLECTIONS.MediaCount, function(err,res){
@@ -264,7 +259,13 @@
                                             mediaId: WidgetMedia.item.id,
                                             mediaType: "VIDEO",
                                             userId: $rootScope.user._id,
-                                            isActive: true
+                                            isActive: true,
+                                            _buildfire: {
+                                                index: {
+                                                  string1: WidgetMedia.item.id + "-true", 
+                                                  text: WidgetMedia.item.id +"-"+ $rootScope.user._id + "-Video-true",
+                                                },
+                                              },
                                         }
                                         buildfire.publicData.insert(data,COLLECTIONS.MediaCount,false, function(err, res){
                                             WidgetMedia.isCounted = true;
@@ -418,12 +419,8 @@
                             $rootScope.user = user;
                             let userCheckViewFilter = {
                                 filter: {
-                                    $and: [
-                                      { "$json.mediaId": {  $eq: media.id} },
-                                      { "$json.userId": {  $eq: user._id} },
-                                      { "$json.mediaType": {  $eq: "Article"} },
-                                      { '$json.isActive': true },
-                                    ],
+                                    "_buildfire.index.text":
+                                    {$eq: media.id+"-"+user._id+"-Article-true"}
                                   }
                             };
                             buildfire.publicData.search(userCheckViewFilter,COLLECTIONS.MediaCount, function(err,res){
@@ -435,7 +432,13 @@
                                             mediaId: WidgetMedia.item.id,
                                             mediaType: "Article",
                                             userId: $rootScope.user._id,
-                                            isActive: true
+                                            isActive: true,
+                                            _buildfire: {
+                                                index: {
+                                                  string1: WidgetMedia.item.id +"-true",
+                                                  text: WidgetMedia.item.id +"-"+ $rootScope.user._id + "-Article-true",
+                                                },
+                                              },
                                         }
                                         buildfire.publicData.insert(data,COLLECTIONS.MediaCount,false, function(err, res){
                                             WidgetMedia.isCounted = true;
