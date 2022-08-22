@@ -835,9 +835,6 @@ input[type=range]::-ms-track {
   color: transparent;
 }
 
-.plugin-slide img[style]{
-	width: 100%!important;
-} 
 
 .item-actions{
 	margin: 16px 0;
