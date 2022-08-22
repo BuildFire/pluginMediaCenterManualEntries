@@ -2,8 +2,8 @@
     'use strict';
     angular
         .module('mediaCenterContent')
-        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Location', 'Modals', 'SearchEngine', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv',
-            function ($scope, MediaCenterInfo, Location, Modals, SearchEngine, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv) {
+        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Location', 'Modals', 'SearchEngine', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv', 'PerfomanceIndexingService',
+            function ($scope, MediaCenterInfo, Location, Modals, SearchEngine, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv, PerfomanceIndexingService) {
                 /**
                  * Breadcrumbs  related implementation
                  */
@@ -38,7 +38,8 @@
                             itemLayout: "item-1",
                             backgroundImage: "",
                             skipMediaPage: false
-                        }
+                        },
+                        indexingUpdateDone: false
                     }
                 };
                 var MediaContent = new DB(COLLECTIONS.MediaContent);
@@ -80,6 +81,9 @@
                     ContentHome.info.data.content.sortBy = 'Media Title Z-A';
                     ContentHome.info.data.content.sortByValue = 'Media Title Z-A';
                 }
+
+                if(!ContentHome.info.data.indexingUpdateDone && Object.keys(ContentHome.info.data).length > 0) 
+                    PerfomanceIndexingService.showIndexingDialog();
                 //MediaCenter.save(ContentHome.info.data).then(function (result) {});
 
                 AppConfig.setSettings(MediaCenterInfo.data);

@@ -27,19 +27,16 @@
                 NowPlaying.isItLast = false;
                 NowPlaying.keepPosition=0;
                 NowPlaying.finished=false;
+                NowPlaying.isAudioPlayerPlayingAnotherSong = true;
                 bookmarks.sync($scope);
 
                  Buildfire.auth.getCurrentUser((err, user) => {
                                 if(user){
                                     $rootScope.user = user
                                     var userCheckViewFilter = {
-                                        filter: {
-                                            $and: [
-                                              { "$json.mediaId": {  $eq: media.id} },
-                                              { "$json.userId": {  $eq: $rootScope.user._id } },
-                                              { "$json.mediaType": {  $eq: "AUDIO" } },
-                                              { '$json.isActive': true },
-                                            ],
+                                          filter: {
+                                            "_buildfire.index.text":
+                                            {$eq: media.id+"-"+$rootScope.user._id+"-AUDIO-true"}
                                           }
                                     };
                                     buildfire.publicData.search(userCheckViewFilter,COLLECTIONS.MediaCount, function(err,res){
@@ -394,6 +391,15 @@
                             }
                         }, 0);
                     });
+                    audioPlayer.getCurrentTrack((track) => {
+                        if(track && track.title == NowPlaying.currentTrack.title && track.url == NowPlaying.currentTrack.url){
+                            NowPlaying.isAudioPlayerPlayingAnotherSong = false;
+                        } else if(!track){
+                            NowPlaying.isAudioPlayerPlayingAnotherSong = false;
+                        }
+                      });
+                      
+                    
                 }
 
                 function updateAudioMediaCount(mediaId, trackLastPosition){
@@ -419,7 +425,13 @@
                                 mediaType: "AUDIO",
                                 userId: $rootScope && $rootScope.user ?  $rootScope.user._id : 0,
                                 isActive: true,
-                                lastPosition: 0
+                                lastPosition: 0,
+                                _buildfire: {
+                                    index: {
+                                      string1: NowPlaying.item.id +"-true",
+                                      text: NowPlaying.item.id +"-"+ $rootScope.user._id + "-AUDIO-true",
+                                    },
+                                  },
                             }
                             buildfire.publicData.insert(data,COLLECTIONS.MediaCount,false, function(err, res){
                                 NowPlaying.isCounted = true;
@@ -481,6 +493,7 @@
                                     audioPlayer.play(index);
                                 }
                                 else audioPlayer.play(NowPlaying.currentTrack);
+                                NowPlaying.isAudioPlayerPlayingAnotherSong = false;
                             }
                             catch (err) {
                             }

@@ -385,5 +385,100 @@
                     return Settings.getAppId();
                 }
             };
-        }]);
+        }])
+        .factory("PerfomanceIndexingService", ['Buildfire', function (Buildfire) {
+          return {
+            buildMediaCountDataIndex: function (data) {
+                var index = {
+                    'string1': data.mediaId + "-" + (data.isActive ? "true":"false"),
+                    'text': data.mediaId + "-" + data.userId + '-' + data.mediaType + "-" + (data.isActive ? "true":"false"),
+                }
+                return index;
+            },
+
+            getMediaCountDataWithIndex: function (item) {
+                item.data._buildfire = {
+                    index: this.buildMediaCountDataIndex(item.data)
+                }
+                return item;
+            },
+            processMediaCountsData: function (record, callback) {
+                if(record.data.userId){
+                    record = this.getMediaCountDataWithIndex(record);
+                    buildfire.publicData.update(record.id, record.data, 'MediaCount', function (err, result) {
+                        if (err) return console.error(err);
+                        if (result && result.id) {
+                            callback();
+                        }
+                    });
+                } else {
+                    callback();
+                }
+               
+            },
+
+            iterateMediaCountData: function (records, index) {
+                if (index !== records.length) {
+                    this.processMediaCountsData(records[index], () => this.iterateMediaCountData(records, index + 1));
+                } else {
+                    buildfire.datastore.get('MediaCenter', (err, result) => {
+                        result.data.indexingUpdateDone = true;
+                        buildfire.datastore.save(result.data, 'MediaCenter', (err, saved) => {
+                            buildfire.dialog.alert(
+                                {
+                                    title: 'Database perfomance',
+                                    message: "Database has been successfully updated. Thank you for your patience!",
+                                }, (err, isConfirmed) => {
+                                    if (err) return console.error(err);
+                                    if (isConfirmed) {
+
+                                    }
+                                }
+                            );
+                        });
+                    });
+                }
+            },
+            startMediaCountDataIndexingUpdate: function () {
+                let searchOptions = {
+                    limit: 50,
+                    skip: 0,
+                    
+                }, records = [];
+                
+                const getMediaCountData = () => {
+                    buildfire.publicData.search(searchOptions, "MediaCount", (err, result) => {
+                        if (err) console.error(err);
+                        if (result.length < searchOptions.limit) {
+                            records = records.concat(result);
+                            console.log(records)
+                            this.iterateMediaCountData(records, 0);
+                        } else {
+                            searchOptions.skip = searchOptions.skip + searchOptions.limit;
+                            records = records.concat(result);
+                            return getMediaCountData();
+                        }
+                    })
+                }
+
+                getMediaCountData();
+            },
+            showIndexingDialog: function () {
+                buildfire.dialog.confirm(
+                    {
+                        title: 'Database perfomance',
+                        message: "We are improving your database perfomance, please do not close your browser or leave the plugin until you see success dialog. This may take a while...",
+                        confirmButton: { text: "Yes", type: "danger" },
+                    }, (err, isConfirmed) => {
+                        if (err) return console.error(err);
+                        if (isConfirmed) return this.startMediaCountDataIndexingUpdate();
+                    }
+                );
+            }
+          } 
+        
+        }])
+
+
+
 })(window.angular, window.buildfire, window.location);

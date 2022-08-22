@@ -30,21 +30,32 @@
         </div>
         <div class="slider">
             <div>
-                <div class="audio-plyer"><input style="height:45px !important" type="range" min="0.0" max="{{NowPlaying.duration}}"
+                <div ng-if="!NowPlaying.isAudioPlayerPlayingAnotherSong" >
+                    <div class="audio-plyer"><input style="height:45px !important" type="range" min="0.0" max="{{NowPlaying.duration}}"
                         ng-model="NowPlaying.currentTime" ng-change="NowPlaying.changeTime(NowPlaying.currentTime)" />
+                    </div>
+                    <div ng-if="NowPlaying.currentTime!=0" class="time-indicator" style="float:left">
+                        <span>{{NowPlaying.currentTime | secondsToDateTime}}</span>
+                    </div>
+                    <div ng-if="NowPlaying.currentTime==0" class="time-indicator" style="float: left;">
+                        <span>{{"--:--"}}</span>
+                    </div>
+                    <div ng-if="NowPlaying.duration" class="time-indicator" style="float: right;">
+                        <span>{{(NowPlaying.duration | secondsToDateTime)}}</span>
+                    </div>
+                    <div ng-if="!NowPlaying.duration" class="time-indicator" style="float: right;">
+                        <span>{{"--:--"}}</span>
+                    </div>
                 </div>
-                <div ng-if="NowPlaying.currentTime!=0" class="time-indicator" style="float:left">
-                    <span>{{NowPlaying.currentTime | secondsToDateTime}}</span>
+                <div ng-if="NowPlaying.isAudioPlayerPlayingAnotherSong" >
+                    <div class="audio-plyer"><input style="height:45px !important" type="range" value="0" />
+                    </div>
+                    <div  class="time-indicator" style="float:left">
+                        <span>00:00</span>
+                    </div>
                 </div>
-                <div ng-if="NowPlaying.currentTime==0" class="time-indicator" style="float: left;">
-                    <span>{{"--:--"}}</span>
-                </div>
-                <div ng-if="NowPlaying.duration" class="time-indicator" style="float: right;">
-                    <span>{{(NowPlaying.duration | secondsToDateTime)}}</span>
-                </div>
-                <div ng-if="!NowPlaying.duration" class="time-indicator" style="float: right;">
-                    <span>{{"--:--"}}</span>
-                </div>
+                
+                
             </div>
             <div class="volume">
                 &nbsp;<input class="volume-button rotate-270"

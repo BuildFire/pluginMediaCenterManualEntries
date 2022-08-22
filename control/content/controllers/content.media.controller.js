@@ -511,7 +511,14 @@
               { "$json.mediaId": {  $eq: mediaId} },
               { '$json.mediaType': mediaType },
              ] },
-            { $set: { isActive: false } },
+            { $set: { isActive: false,   _buildfire: {
+                                                index: {
+                                                    string1: mediaId + "-false",
+                                                },
+                                          },
+          
+                    }
+            },
             "MediaCount",
             (err, result) => {
               if (err) return console.error(err);
