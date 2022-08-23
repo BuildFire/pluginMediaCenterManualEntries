@@ -311,12 +311,17 @@
                                 if ($rootScope.autoPlay) {
                                     $rootScope.playNextItem();
                                 } else {
-                                    if(NowPlaying.isItLast && NowPlaying.settings.loopPlaylist){
-                                        NowPlaying.playing = true;
-                                        NowPlaying.paused = false;
-                                        NowPlaying.finished = false;
-                                        audioPlayer.setTime(0.1);
-                                        audioPlayer.play();
+                                    if(NowPlaying.settings.loopPlaylist){
+                                        setTimeout(() => {
+                                            audioPlayer.setTime(0.1);
+                                            NowPlaying.finished=false;
+                                            audioPlayer.pause();
+                                            setTimeout(() => {
+                                                audioPlayer.play();
+                                                NowPlaying.paused=false;
+                                                NowPlaying.playing=true;
+                                            }, 50);
+                                        }, 50);
                                     }
                                     else{
                                         if(!NowPlaying.settings.autoPlayNext) {

@@ -76,18 +76,7 @@ h5{
 .bottom.fixed-bottom.primaryBackgroundTheme{
 	padding-bottom: env(safe-area-inset-bottom);
 }
-.plugin-slider .plugin-slide,
-.plugin-slider.owl-carousel .owl-stage-outer,
-.plugin-slider.owl-carousel .owl-stage,
-.plugin-slider.owl-carousel .owl-item{
-	min-height: inherit !important;
-}
-.plugin-slider .plugin-slide img{
-    
-	height: 100% !important;
-	object-fit: cover !important;
-	min-height: inherit !important;
-}
+
 .word-break{
 	word-break: break-word;
 }
