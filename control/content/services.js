@@ -426,7 +426,7 @@
                         buildfire.datastore.save(result.data, 'MediaCenter', (err, saved) => {
                             buildfire.dialog.alert(
                                 {
-                                    title: 'Database perfomance',
+                                    title: 'MCM Update',
                                     message: "Database has been successfully updated. Thank you for your patience!",
                                 }, (err, isConfirmed) => {
                                     if (err) return console.error(err);
@@ -466,9 +466,9 @@
             showIndexingDialog: function () {
                 buildfire.dialog.confirm(
                     {
-                        title: 'Database perfomance',
+                        title: 'MCM Update',
                         message: "We are improving your database perfomance, please do not close your browser or leave the plugin until you see success dialog. This may take a while...",
-                        confirmButton: { text: "Yes", type: "danger" },
+                        confirmButton: { text: "Yes", type: "success" },
                     }, (err, isConfirmed) => {
                         if (err) return console.error(err);
                         if (isConfirmed) return this.startMediaCountDataIndexingUpdate();
