@@ -31,29 +31,41 @@
                 bookmarks.sync($scope);
 
                  Buildfire.auth.getCurrentUser((err, user) => {
-                                if(user){
-                                    $rootScope.user = user
-                                    var userCheckViewFilter = {
-                                          filter: {
-                                            "_buildfire.index.text":
-                                            {$eq: media.id+"-"+$rootScope.user._id+"-AUDIO-true"}
-                                          }
-                                    };
-                                    buildfire.publicData.search(userCheckViewFilter,COLLECTIONS.MediaCount, function(err,res){
-                                        if(res.length > 0){
-                                            NowPlaying.isAudioPlayed = true;
-                                            if(res[0].data.lastPosition){
-                                                initAudio(res[0].data.lastPosition)
-                                            } else {
-                                                initAudio(0)
-                                            }
-                                        } else {
-                                            NowPlaying.isAudioPlayed = false;
-                                            initAudio(0)
-                                        }
-                                    })
-                                } else initAudio(0)
-                            });
+                    var userCheckViewFilter = {};
+                    if(user){
+                        $rootScope.user = user
+                        var userCheckViewFilter = {
+                              filter: {
+                                "_buildfire.index.text":
+                                {$eq: media.id+"-"+$rootScope.user._id+"-AUDIO-true"}
+                              }
+                        };  
+                    } else if(Buildfire.context.deviceId){
+                        var userCheckViewFilter = {
+                            filter: {
+                              "_buildfire.index.text":
+                              {$eq: media.id+"-"+Buildfire.context.deviceId+"-AUDIO-true"}
+                            }
+                      };  
+                    } else {
+                        initAudio(0)  
+                    }
+                    if(user || Buildfire.context.deviceId){
+                        buildfire.publicData.search(userCheckViewFilter,COLLECTIONS.MediaCount, function(err,res){
+                            if(res.length > 0){
+                                NowPlaying.isAudioPlayed = true;
+                                if(res[0].data.lastPosition){
+                                    initAudio(res[0].data.lastPosition)
+                                } else {
+                                    initAudio(0)
+                                }
+                            } else {
+                                NowPlaying.isAudioPlayed = false;
+                                initAudio(0)
+                            }
+                        })
+                    }
+                });
                 
                 var playListArrayOfStrings=[
                     {key:"addedPlaylist",text:"Added to playlist"},
@@ -308,17 +320,36 @@
                             break;
                             case 'audioEnded':
                                 ready = false;
+                                updateAudioMediaCount(media.id, 0.1)
                                 if ($rootScope.autoPlay) {
                                     $rootScope.playNextItem();
                                 } else {
-                                    if(NowPlaying.isItLast && NowPlaying.settings.loopPlaylist){
-                                        NowPlaying.playing = true;
-                                        NowPlaying.paused = false;
-                                        NowPlaying.finished = false;
-                                        audioPlayer.setTime(0.1);
-                                        audioPlayer.play();
+                                    if(NowPlaying.isItLast&&NowPlaying.settings.loopPlaylist){
+                                        audioPlayer.getCurrentTrack((track) => {
+                                            if(NowPlaying.playList && NowPlaying.playList.length > 0){
+                                                NowPlaying.playList.forEach(element => {
+                                                    element.playing = false
+                                                  });
+                                                let currentTrack = NowPlaying.playList.find(x => x.title == track.title && x.url == track.url && x.album == track.album && x.image == track.image && x.backgroundImage == track.backgroundImage )
+                                                if(currentTrack){
+                                                    currentTrack.playing = true
+                                                }
+                                            }
+                                          });
+                                          
+                                        setTimeout(() => {
+                                            audioPlayer.setTime(0.1);
+                                            NowPlaying.finished=false;
+                                            audioPlayer.pause();
+                                            setTimeout(() => {
+                                                audioPlayer.play();
+                                                NowPlaying.paused=false;
+                                                NowPlaying.playing=true;
+                                            }, 50);
+                                        }, 50);
                                     }
                                     else{
+                                        isAudioEnded = true;
                                         if(!NowPlaying.settings.autoPlayNext) {
                                             NowPlaying.playing = false;
                                             NowPlaying.paused = false;
@@ -361,10 +392,10 @@
                         $scope.$digest();
                     }
                 });
-                
                 function initAudio(lastPosition){
+                    isAudioEnded = false;
                     NowPlaying.currentTime = lastPosition;
-                    NowPlaying.currentTrack = new Track(media.data, lastPosition );
+                    NowPlaying.currentTrack = new Track(media.data, lastPosition);
                     NowPlaying.currentTrack.backgroundImage = media.data.image ? media.data.image : media.data.topImage;
 
                     NowPlaying.currentTrack.image = media.data.topImage;
@@ -398,8 +429,8 @@
                             NowPlaying.isAudioPlayerPlayingAnotherSong = false;
                         }
                       });
-                      
-                    
+
+
                 }
 
                 function updateAudioMediaCount(mediaId, trackLastPosition){
@@ -412,6 +443,7 @@
                         }
                     );
                 }
+                var isAudioEnded = false;
                 /**
                  * Player related method and variables
                  */
@@ -423,22 +455,30 @@
                             let data = {
                                 mediaId: NowPlaying.item.id,
                                 mediaType: "AUDIO",
-                                userId: $rootScope && $rootScope.user ?  $rootScope.user._id : 0,
                                 isActive: true,
                                 lastPosition: 0,
                                 _buildfire: {
                                     index: {
-                                      string1: NowPlaying.item.id +"-true",
-                                      text: NowPlaying.item.id +"-"+ $rootScope.user._id + "-AUDIO-true",
+                                      string1: NowPlaying.item.id +"-true"
                                     },
                                   },
                             }
-                            buildfire.publicData.insert(data,COLLECTIONS.MediaCount,false, function(err, res){
-                                NowPlaying.isCounted = true;
-                                Analytics.trackAction(`${NowPlaying.item.id}_audioPlayCount`);
-                                Analytics.trackAction("allAudios_count");
-                                Analytics.trackAction("allMediaTypes_count");
-                            }) 
+                            if($rootScope && $rootScope.user){
+                                data.userId = $rootScope.user._id
+                                data._buildfire.index.text =  NowPlaying.item.id +"-"+ $rootScope.user._id + "-AUDIO-true"
+                            } else if(Buildfire.context.deviceId){
+                                data.userId = Buildfire.context.deviceId
+                                data._buildfire.index.text =  NowPlaying.item.id +"-"+ Buildfire.context.deviceId + "-AUDIO-true"
+
+                            }
+                            if($rootScope.user || Buildfire.context.deviceId){
+                                buildfire.publicData.insert(data,COLLECTIONS.MediaCount,false, function(err, res){
+                                    NowPlaying.isCounted = true;
+                                    Analytics.trackAction(`${NowPlaying.item.id}_audioPlayCount`);
+                                    Analytics.trackAction("allAudios_count");
+                                    Analytics.trackAction("allMediaTypes_count");
+                                }) 
+                            }
                         }
                     }
 
@@ -492,7 +532,19 @@
                                 if(index!=-1){
                                     audioPlayer.play(index);
                                 }
-                                else audioPlayer.play(NowPlaying.currentTrack);
+                                else {
+                                    if(isAudioEnded){
+                                        console.log("Hi2")
+                                        NowPlaying.currentTrack.lastPosition = 0
+                                    }
+                                    audioPlayer.play(NowPlaying.currentTrack);
+                                    audioPlayer.pause();
+                                    setTimeout(() => {
+                                        audioPlayer.play();
+                                        NowPlaying.paused=false;
+                                        NowPlaying.playing=true;
+                                    }, 50);
+                                } 
                                 NowPlaying.isAudioPlayerPlayingAnotherSong = false;
                             }
                             catch (err) {
@@ -835,6 +887,11 @@
                             NowPlaying.playlistPause(track);
                         }
                         else {
+                            if(NowPlaying.playList && NowPlaying.playList.length > 0){
+                                NowPlaying.playList.forEach(element => {
+                                    element.playing = false
+                                });
+                            }
                             NowPlaying.playlistPlay(track, index);
                         }
                     }

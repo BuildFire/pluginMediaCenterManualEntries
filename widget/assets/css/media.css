@@ -76,18 +76,7 @@ h5{
 .bottom.fixed-bottom.primaryBackgroundTheme{
 	padding-bottom: env(safe-area-inset-bottom);
 }
-.plugin-slider .plugin-slide,
-.plugin-slider.owl-carousel .owl-stage-outer,
-.plugin-slider.owl-carousel .owl-stage,
-.plugin-slider.owl-carousel .owl-item{
-	min-height: inherit !important;
-}
-.plugin-slider .plugin-slide img{
-	width: 100% !important;
-	height: 100% !important;
-	object-fit: cover !important;
-	min-height: inherit !important;
-}
+
 .word-break{
 	word-break: break-word;
 }
@@ -594,4 +583,17 @@ videogular .iconButton, [videogular] .iconButton,
 
 .glyphicon-option-horizontal {
     padding: 7px 10px !important;
+}
+
+.blured-image {
+    filter: blur(5px);
+    z-index: -1;
+    width: 100% !important;
+    position: absolute; 
+    top: 0;
+    left: 0;
+}
+
+.plugin_blured_image span img {
+    width: 100% !important;
 }
