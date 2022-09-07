@@ -906,6 +906,7 @@
                                     $rootScope.globalPlaylistItems = result.data;
                                     resolve();
                                 }
+                                $rootScope.loadingGlobalPlaylist = false;
                             }).catch(err => {
                                 console.error(err);
                                 resolve()
@@ -1395,12 +1396,19 @@
                 });
 
                 WidgetHome.bookmark = function (item) {
-                    var isBookmarked = item.data.bookmarked ? true : false;
-                    if (isBookmarked) {
-                        bookmarks.delete($scope, item);
+                    if($rootScope.user){
+                        var isBookmarked = item.data.bookmarked ? true : false;
+                        if (isBookmarked) {
+                            bookmarks.delete($scope, item);
+                        } else {
+                            bookmarks.add($scope, item);
+                        }
                     } else {
-                        bookmarks.add($scope, item);
+                        buildfire.auth.login({}, (err, user) => {
+                            console.log(err, user);
+                        });
                     }
+                 
                 };
 
                 WidgetHome.bookmarked = function (item) {

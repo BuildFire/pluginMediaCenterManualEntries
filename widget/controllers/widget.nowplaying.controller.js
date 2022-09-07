@@ -322,7 +322,7 @@
                                 ready = false;
                                 updateAudioMediaCount(media.id, 0.1)
                                 if ($rootScope.autoPlay) {
-                                    $rootScope.playNextItem();
+                                    $rootScope.playNextItem(true);
                                 } else {
                                     if(NowPlaying.isItLast&&NowPlaying.settings.loopPlaylist){
                                         audioPlayer.getCurrentTrack((track) => {
