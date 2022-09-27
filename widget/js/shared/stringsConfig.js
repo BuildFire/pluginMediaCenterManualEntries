@@ -56,6 +56,18 @@ var stringsConfig = {
         maxLength: 50,
         defaultValue: "Removed from playlist",
       },
+      autoplayOff: {
+        title: "Autoplay turned off",
+        placeholder: "No Media Found Play Next",
+        maxLength: 50,
+        defaultValue: "No Media Found Play Next",
+      },
+      playNext: {
+        title: "Play Next",
+        placeholder: "Play Next",
+        maxLength: 20,
+        defaultValue: "Play Next",
+      },
     },
   },
   globalPlaylist: {

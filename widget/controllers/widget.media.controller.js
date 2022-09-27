@@ -408,7 +408,18 @@
                 };
 
                 if (media) {
-                    if (!media.data.videoUrl && !media.data.audioUrl && $rootScope.autoPlay) return setTimeout($rootScope.playNextItem, 1500); // Wait for the page to load before moving
+                    if (!media.data.videoUrl && !media.data.audioUrl && $rootScope.autoPlay) {
+                        buildfire.dialog.toast({
+                            message: strings.get("playlist.autoplayOff"),
+                            type: "danger",
+                            actionButton: {
+                                text: strings.get("playlist.playNext"),
+                                action: () => {
+                                    setTimeout($rootScope.playNextItem, 500);
+                                }
+                            }
+                        });
+                    }
                     //Check if item has newly downloaded media
                     WidgetMedia.loadingData = true;
 
@@ -666,6 +677,7 @@
                         return;
                     }
                     WidgetMedia.showVideo = forceShow ? true : !WidgetMedia.showVideo;
+                    console.log("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
                     if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                 };
 
