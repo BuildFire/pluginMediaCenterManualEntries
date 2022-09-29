@@ -677,7 +677,6 @@
                         return;
                     }
                     WidgetMedia.showVideo = forceShow ? true : !WidgetMedia.showVideo;
-                    console.log("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
                     if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                 };
 
