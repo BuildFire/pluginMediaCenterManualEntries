@@ -30,7 +30,8 @@
                 NowPlaying.isAudioPlayerPlayingAnotherSong = true;
                 bookmarks.sync($scope);
 
-                 Buildfire.auth.getCurrentUser((err, user) => {
+                if(!NowPlaying.isOnline) initAudio(0);
+                Buildfire.auth.getCurrentUser((err, user) => {
                     var userCheckViewFilter = {};
                     if(user){
                         $rootScope.user = user
