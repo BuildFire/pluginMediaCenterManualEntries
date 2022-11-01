@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "chai": "^3.0.0",
-    "gulp": "^3.9.0",
+    "gulp": "^4.0.2",
     "gulp-eslint": "^1.0.0",
     "gulp-util": "^3.0.6",
     "jasmine-core": "^2.3.4",
@@ -34,7 +34,7 @@
     "karma-junit-reporter": "^0.3.3",
     "karma-mocha": "^0.2.0",
     "karma-phantomjs-launcher": "^0.2.0",
-    "mocha": "^2.2.5",
+    "mocha": "^10.1.0",
     "phantomjs": "^1.9.17"
   }
 }
