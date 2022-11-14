@@ -269,12 +269,16 @@
                                     }
                                     buildfire.publicData.insert(data, COLLECTIONS.MediaCount, false, function (err, res) {
                                         WidgetMedia.isCounted = true;
+                                        sendAnalytics(WidgetMedia);
                                     })
                                 }
-                                Analytics.trackAction(`${WidgetMedia.item.id}_videoPlayCount`);
-                                Analytics.trackAction("allVideos_count");
-                                Analytics.trackAction("allMediaTypes_count");
                             })
+                        } else {
+                            let lastTimeWatched = localStorage.getItem(`${WidgetMedia.item.id}_videoPlayCount`);
+                            if(!lastTimeWatched) {
+                                localStorage.setItem(`${WidgetMedia.item.id}_videoPlayCount`, new Date().getTime());
+                                sendAnalytics(WidgetMedia);
+                            }
                         }
 
                         // Make sure the audio is turned off
@@ -282,6 +286,12 @@
                         $scope.videoPlayed = true;
                     }
                 };
+
+                const sendAnalytics = (WidgetMedia) => {
+                    Analytics.trackAction(`${WidgetMedia.item.id}_videoPlayCount`);
+                    Analytics.trackAction("allVideos_count");
+                    Analytics.trackAction("allMediaTypes_count");
+                }
 
                 // To overcome an issue with google showing it's play button on their videos
                 $scope.videoAlreadyPlayed = () => {
