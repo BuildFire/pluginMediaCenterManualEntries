@@ -275,10 +275,14 @@
                             })
                         } else {
                             let lastTimeWatched = localStorage.getItem(`${WidgetMedia.item.id}_videoPlayCount`);
-                            if(!lastTimeWatched) {
+                            if (!lastTimeWatched) {
                                 localStorage.setItem(`${WidgetMedia.item.id}_videoPlayCount`, new Date().getTime());
                                 sendAnalytics(WidgetMedia);
                             }
+                        }
+                        if (!WidgetMedia.isContinuesCounted) {
+                            sendContinuesAnalytics(WidgetMedia);
+                            WidgetMedia.isContinuesCounted = true;
                         }
 
                         // Make sure the audio is turned off
@@ -291,6 +295,12 @@
                     Analytics.trackAction(`${WidgetMedia.item.id}_videoPlayCount`);
                     Analytics.trackAction("allVideos_count");
                     Analytics.trackAction("allMediaTypes_count");
+                }
+
+                const sendContinuesAnalytics = (WidgetMedia) => {
+                    Analytics.trackAction(`${WidgetMedia.item.id}_continuesVideoPlayCount`);
+                    Analytics.trackAction("allVideos_continuesCount");
+                    Analytics.trackAction("allMediaTypes_continuesCount");
                 }
 
                 // To overcome an issue with google showing it's play button on their videos
@@ -436,6 +446,9 @@
                     WidgetMedia.item = media;
                     WidgetMedia.mediaType = media.data.audioUrl ? 'AUDIO' : (media.data.videoUrl ? 'VIDEO' : null);
                     Buildfire.auth.getCurrentUser((err, user) => {
+                        if(WidgetMedia.mediaType == null) {
+                            sendArticleContinuesAnalytics(WidgetMedia);
+                        }
                         if (user) {
                             $rootScope.user = user;
                             let userCheckViewFilter = {
@@ -463,15 +476,33 @@
                                     }
                                     buildfire.publicData.insert(data, COLLECTIONS.MediaCount, false, function (err, res) {
                                         WidgetMedia.isCounted = true;
-                                        Analytics.trackAction(`${WidgetMedia.item.id}_articleOpenCount`);
-                                        Analytics.trackAction("allArticles_count");
-                                        Analytics.trackAction("allMediaTypes_count");
+                                        sendArticleAnalytics(WidgetMedia);
                                     })
                                 }
 
                             })
+                        } else {
+                            if (WidgetMedia.mediaType == null) {
+                                let lastTimeWatched = localStorage.getItem(`${WidgetMedia.item.id}_articleOpenCount`);
+                                if (!lastTimeWatched) {
+                                    localStorage.setItem(`${WidgetMedia.item.id}_articleOpenCount`, new Date().getTime());
+                                    sendArticleAnalytics(WidgetMedia);
+                                }
+                            }
                         }
                     })
+
+                    const sendArticleAnalytics = WidgetMedia => {
+                        Analytics.trackAction(`${WidgetMedia.item.id}_articleOpenCount`);
+                        Analytics.trackAction("allArticles_count");
+                        Analytics.trackAction("allMediaTypes_count");
+                    }
+
+                    const sendArticleContinuesAnalytics = WidgetMedia => {
+                        Analytics.trackAction(`${WidgetMedia.item.id}_continuesArticleOpenCount`);
+                        Analytics.trackAction("allArticles_continuesCount");
+                        Analytics.trackAction("allMediaTypes_continuesCount");
+                    }
 
                     WidgetMedia.item.srcUrl = media.data.srcUrl ? media.data.srcUrl
                         : (media.data.audioUrl ? media.data.audioUrl : media.data.videoUrl);
