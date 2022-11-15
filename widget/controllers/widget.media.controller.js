@@ -33,19 +33,19 @@
                 var allCheckViewFilter = {
                     filter: {
                         $and: [
-                          { "$json.mediaId": {  $eq: media.id} },
-                          { '$json.isActive': true },
+                            { "$json.mediaId": { $eq: media.id } },
+                            { '$json.isActive': true },
                         ],
-                      }
+                    }
                 };
-             
-                buildfire.publicData.search(allCheckViewFilter,COLLECTIONS.MediaCount, function(err,res){
-                    if(res && res.length){
+
+                buildfire.publicData.search(allCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
+                    if (res && res.length) {
                         WidgetMedia.count = res.length;
                         if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                     }
                 })
-               
+
                 let MediaCenter = new DB(COLLECTIONS.MediaCenter),
                     GlobalPlaylist = new AppDB(),
                     CachedMediaCenter = new OFSTORAGE({
@@ -111,17 +111,17 @@
                 WidgetMedia.showDrawer = function () {
                     let listItems = [];
                     if (WidgetMedia.media.data.content.allowAddingNotes !== false && $rootScope.online) {
-                        listItems.push({ id:"addNote", text: strings.get("itemDrawer.addNote") });
+                        listItems.push({ id: "addNote", text: strings.get("itemDrawer.addNote") });
                     }
                     if (WidgetMedia.media.data.content.allowOfflineDownload) {
                         if (WidgetMedia.item.data.videoUrl && $rootScope.online) {
                             if (WidgetMedia.item.data.hasDownloadedVideo) {
-                                listItems.push({ id:"removeDownloadedVideo", text: strings.get("itemDrawer.removeDownloadedVideo") });
+                                listItems.push({ id: "removeDownloadedVideo", text: strings.get("itemDrawer.removeDownloadedVideo") });
                             }
 
                             else {
                                 if ($rootScope.currentlyDownloading.indexOf(WidgetMedia.item.id) < 0)
-                                    listItems.push({ id:"downloadVideo", text: strings.get("itemDrawer.downloadVideo") });
+                                    listItems.push({ id: "downloadVideo", text: strings.get("itemDrawer.downloadVideo") });
                             }
                         }
                         if (WidgetMedia.item.data.audioUrl) {
@@ -130,34 +130,34 @@
                             }
                             else {
                                 if ($rootScope.currentlyDownloading.indexOf(WidgetMedia.item.id) < 0)
-                                listItems.push({ id: "downloadAudio", text: strings.get("homeDrawer.downloadAudio") });
+                                    listItems.push({ id: "downloadAudio", text: strings.get("homeDrawer.downloadAudio") });
                             }
                         }
                     }
 
                     if (WidgetMedia.media.data.content.allowShare && $rootScope.online) {
-                        listItems.push({ id:"share", text: strings.get("itemDrawer.share") });
+                        listItems.push({ id: "share", text: strings.get("itemDrawer.share") });
                     }
 
                     if (WidgetMedia.item.data.links.length && $rootScope.online) {
-                        listItems.push({ id:"openLinks", text: strings.get("itemDrawer.openLinks") });
+                        listItems.push({ id: "openLinks", text: strings.get("itemDrawer.openLinks") });
                     }
 
                     if (WidgetMedia.media.data.content.globalPlaylist && $rootScope.online) {
                         if ($rootScope.isInGlobalPlaylist(WidgetMedia.item.id)) {
-                            listItems.push({ id:"removeFromPlaylist", text: strings.get("itemDrawer.removeFromPlaylist") });
+                            listItems.push({ id: "removeFromPlaylist", text: strings.get("itemDrawer.removeFromPlaylist") });
                         }
                         else {
-                            listItems.push({ id:"addToPlaylist", text: strings.get("itemDrawer.addToPlaylist") });
+                            listItems.push({ id: "addToPlaylist", text: strings.get("itemDrawer.addToPlaylist") });
                         }
                     }
 
                     if ($rootScope.online) {
                         if (WidgetMedia.item.data.bookmarked) {
-                            listItems.push({ id:"removeFromFavorites", text:strings.get("itemDrawer.removeFromFavorites") });
+                            listItems.push({ id: "removeFromFavorites", text: strings.get("itemDrawer.removeFromFavorites") });
                         }
                         else {
-                            listItems.push({ id:"favorite", text: strings.get("itemDrawer.favorite") });
+                            listItems.push({ id: "favorite", text: strings.get("itemDrawer.favorite") });
                         }
                     }
 
@@ -177,7 +177,7 @@
                                 if (result.id == "removeDownloadedVideo") {
                                     $rootScope.removeDownload(WidgetMedia.item, "video");
                                 }
-                                
+
                                 if (result.id == "downloadAudio") {
                                     $rootScope.download(WidgetMedia.item, "audio");
                                 }
@@ -244,37 +244,45 @@
 
                 $scope.onVideoStateChange = function (state) {
                     if (state === 'play') { // The video started playing
-                        if(!WidgetMedia.isCounted && $rootScope.user){
-                                var userCheckViewFilter = {
-                                      filter: {
-                                        "_buildfire.index.text":
-                                        {$eq: media.id+"-"+$rootScope.user._id+"-Video-true"}
-                                      }
-                                };
-                                buildfire.publicData.search(userCheckViewFilter,COLLECTIONS.MediaCount, function(err,res){
-                                    if(res.length > 0){
-                                        WidgetMedia.isCounted = true;
-                                    } else {
-                                        let data = {
-                                            mediaId: WidgetMedia.item.id,
-                                            mediaType: "VIDEO",
-                                            userId: $rootScope.user._id,
-                                            isActive: true,
-                                            _buildfire: {
-                                                index: {
-                                                  string1: WidgetMedia.item.id + "-true", 
-                                                  text: WidgetMedia.item.id +"-"+ $rootScope.user._id + "-Video-true",
-                                                },
-                                              },
-                                        }
-                                        buildfire.publicData.insert(data,COLLECTIONS.MediaCount,false, function(err, res){
-                                            WidgetMedia.isCounted = true;
-                                            Analytics.trackAction(`${WidgetMedia.item.id}_videoPlayCount`);
-                                            Analytics.trackAction("allVideos_count");
-                                            Analytics.trackAction("allMediaTypes_count");
-                                        }) 
+                        if (!WidgetMedia.isCounted && $rootScope.user) {
+                            var userCheckViewFilter = {
+                                filter: {
+                                    "_buildfire.index.text":
+                                        { $eq: media.id + "-" + $rootScope.user._id + "-Video-true" }
+                                }
+                            };
+                            buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
+                                if (res.length > 0) {
+                                    WidgetMedia.isCounted = true;
+                                } else {
+                                    let data = {
+                                        mediaId: WidgetMedia.item.id,
+                                        mediaType: "VIDEO",
+                                        userId: $rootScope.user._id,
+                                        isActive: true,
+                                        _buildfire: {
+                                            index: {
+                                                string1: WidgetMedia.item.id + "-true",
+                                                text: WidgetMedia.item.id + "-" + $rootScope.user._id + "-Video-true",
+                                            },
+                                        },
                                     }
-                                })
+                                    buildfire.publicData.insert(data, COLLECTIONS.MediaCount, false, function (err, res) {
+                                        WidgetMedia.isCounted = true;
+                                        sendAnalytics(WidgetMedia);
+                                    })
+                                }
+                            })
+                        } else {
+                            let lastTimeWatched = localStorage.getItem(`${WidgetMedia.item.id}_videoPlayCount`);
+                            if (!lastTimeWatched) {
+                                localStorage.setItem(`${WidgetMedia.item.id}_videoPlayCount`, new Date().getTime());
+                                sendAnalytics(WidgetMedia);
+                            }
+                        }
+                        if (!WidgetMedia.isContinuesCounted) {
+                            sendContinuesAnalytics(WidgetMedia);
+                            WidgetMedia.isContinuesCounted = true;
                         }
 
                         // Make sure the audio is turned off
@@ -282,6 +290,18 @@
                         $scope.videoPlayed = true;
                     }
                 };
+
+                const sendAnalytics = (WidgetMedia) => {
+                    Analytics.trackAction(`${WidgetMedia.item.id}_videoPlayCount`);
+                    Analytics.trackAction("allVideos_count");
+                    Analytics.trackAction("allMediaTypes_count");
+                }
+
+                const sendContinuesAnalytics = (WidgetMedia) => {
+                    Analytics.trackAction(`${WidgetMedia.item.id}_continuesVideoPlayCount`);
+                    Analytics.trackAction("allVideos_continuesCount");
+                    Analytics.trackAction("allMediaTypes_continuesCount");
+                }
 
                 // To overcome an issue with google showing it's play button on their videos
                 $scope.videoAlreadyPlayed = () => {
@@ -303,21 +323,21 @@
                 WidgetMedia.changeVideoSrc = function () {
                     if (WidgetMedia.item.data.videoUrl) {
                         var myType;
-                        var videoUrlToSend = $scope.downloadedVideoUrl ? $scope.downloadedVideoUrl :  WidgetMedia.item.data.videoUrl;
+                        var videoUrlToSend = $scope.downloadedVideoUrl ? $scope.downloadedVideoUrl : WidgetMedia.item.data.videoUrl;
                         if (videoUrlToSend.includes("www.dropbox") || videoUrlToSend.includes("dl.dropbox.com")) {
                             videoUrlToSend = videoUrlToSend.replace("www.dropbox", "dl.dropboxusercontent").split("?dl=")[0];
                             videoUrlToSend = videoUrlToSend.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
                             myType = videoUrlToSend.split('.').pop();
-                        } else if(videoUrlToSend.includes("www.youtube") && videoUrlToSend.includes("/channel") &&  videoUrlToSend.includes("/live")){
-                            var liveId=videoUrlToSend.split("channel/")[1].split("/live")[0];
-                            videoUrlToSend="https://www.youtube.com/embed/live_stream?channel="+liveId;
+                        } else if (videoUrlToSend.includes("www.youtube") && videoUrlToSend.includes("/channel") && videoUrlToSend.includes("/live")) {
+                            var liveId = videoUrlToSend.split("channel/")[1].split("/live")[0];
+                            videoUrlToSend = "https://www.youtube.com/embed/live_stream?channel=" + liveId;
                             myType = videoUrlToSend.split('.').pop();
                         } else {
                             myType = videoUrlToSend.split('.').pop();
                         }
 
                         $scope.videoPlayed = false;
-              
+
                         WidgetMedia.videoPlayerConfig.sources = [{
                             src: $rootScope.online ? $sce.trustAsUrl(videoUrlToSend) : videoUrlToSend,
                             type: 'video/' + myType //"video/mp4"
@@ -426,43 +446,64 @@
                     WidgetMedia.item = media;
                     WidgetMedia.mediaType = media.data.audioUrl ? 'AUDIO' : (media.data.videoUrl ? 'VIDEO' : null);
                     Buildfire.auth.getCurrentUser((err, user) => {
-                        if(user){
+                        if(WidgetMedia.mediaType == null) {
+                            sendArticleContinuesAnalytics(WidgetMedia);
+                        }
+                        if (user) {
                             $rootScope.user = user;
                             let userCheckViewFilter = {
                                 filter: {
                                     "_buildfire.index.text":
-                                    {$eq: media.id+"-"+user._id+"-Article-true"}
-                                  }
+                                        { $eq: media.id + "-" + user._id + "-Article-true" }
+                                }
                             };
-                            buildfire.publicData.search(userCheckViewFilter,COLLECTIONS.MediaCount, function(err,res){
+                            buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
                                 console.log(res)
-                                    if(res.length > 0){
-                                        WidgetMedia.isCounted = true;
-                                    } else if (WidgetMedia.mediaType == null){
-                                        let data = {
-                                            mediaId: WidgetMedia.item.id,
-                                            mediaType: "Article",
-                                            userId: $rootScope.user._id,
-                                            isActive: true,
-                                            _buildfire: {
-                                                index: {
-                                                  string1: WidgetMedia.item.id +"-true",
-                                                  text: WidgetMedia.item.id +"-"+ $rootScope.user._id + "-Article-true",
-                                                },
-                                              },
-                                        }
-                                        buildfire.publicData.insert(data,COLLECTIONS.MediaCount,false, function(err, res){
-                                            WidgetMedia.isCounted = true;
-                                            Analytics.trackAction(`${WidgetMedia.item.id}_articleOpenCount`);
-                                            Analytics.trackAction("allArticles_count");
-                                            Analytics.trackAction("allMediaTypes_count");
-                                        }) 
+                                if (res.length > 0) {
+                                    WidgetMedia.isCounted = true;
+                                } else if (WidgetMedia.mediaType == null) {
+                                    let data = {
+                                        mediaId: WidgetMedia.item.id,
+                                        mediaType: "Article",
+                                        userId: $rootScope.user._id,
+                                        isActive: true,
+                                        _buildfire: {
+                                            index: {
+                                                string1: WidgetMedia.item.id + "-true",
+                                                text: WidgetMedia.item.id + "-" + $rootScope.user._id + "-Article-true",
+                                            },
+                                        },
                                     }
-                               
+                                    buildfire.publicData.insert(data, COLLECTIONS.MediaCount, false, function (err, res) {
+                                        WidgetMedia.isCounted = true;
+                                        sendArticleAnalytics(WidgetMedia);
+                                    })
+                                }
+
                             })
+                        } else {
+                            if (WidgetMedia.mediaType == null) {
+                                let lastTimeWatched = localStorage.getItem(`${WidgetMedia.item.id}_articleOpenCount`);
+                                if (!lastTimeWatched) {
+                                    localStorage.setItem(`${WidgetMedia.item.id}_articleOpenCount`, new Date().getTime());
+                                    sendArticleAnalytics(WidgetMedia);
+                                }
+                            }
                         }
                     })
-                   
+
+                    const sendArticleAnalytics = WidgetMedia => {
+                        Analytics.trackAction(`${WidgetMedia.item.id}_articleOpenCount`);
+                        Analytics.trackAction("allArticles_count");
+                        Analytics.trackAction("allMediaTypes_count");
+                    }
+
+                    const sendArticleContinuesAnalytics = WidgetMedia => {
+                        Analytics.trackAction(`${WidgetMedia.item.id}_continuesArticleOpenCount`);
+                        Analytics.trackAction("allArticles_continuesCount");
+                        Analytics.trackAction("allMediaTypes_continuesCount");
+                    }
+
                     WidgetMedia.item.srcUrl = media.data.srcUrl ? media.data.srcUrl
                         : (media.data.audioUrl ? media.data.audioUrl : media.data.videoUrl);
                     bookmarks.sync($scope);
@@ -613,11 +654,11 @@
                 });
 
                 Buildfire.publicData.onUpdate(event => {
-                    if(event.data && event.tag == COLLECTIONS.MediaCount){
+                    if (event.data && event.tag == COLLECTIONS.MediaCount) {
                         WidgetMedia.count = WidgetMedia.count ? WidgetMedia.count + 1 : 1;
                         if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                         $rootScope.refreshItems();
-                        
+
                     }
                 });
 
@@ -837,7 +878,7 @@
                     }
                 });
 
-                $scope.$watch('downloadedVideoUrl', function(newValue, oldValue) {
+                $scope.$watch('downloadedVideoUrl', function (newValue, oldValue) {
                     if (newValue) {
                         if (oldValue != newValue) {
                             WidgetMedia.changeVideoSrc();
