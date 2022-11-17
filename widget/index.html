@@ -73,7 +73,6 @@
     <div class="main_view">
         <div ng-class="showFeed ? 'showing' : 'notshowing'" data-back-img="{{backgroundImage}}" id="feedView" class="content slide infinite-scroll-parent" 
         scrolly="loadMore()"
-        ng-style="showFeed ? {'display':'block'} : {'display':'none'}"
         >
             <div ng-controller="WidgetHomeCtrl as WidgetHome">
                 <div ng-include="'templates/home.html'">
@@ -82,9 +81,10 @@
         </div>
         <div ng-class="WidgetHome.deepLink ? 'noSlide' : 'slide'"
             data-back-img="{{backgroundImage}}"
-            ng-view=""
             class="content infinite-scroll-parent"
-            ng-if="!showFeed"></div>
+            ng-if="!showFeed">
+            <div ng-view=""></div>
+        </div>
 
         <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>
     </div>
