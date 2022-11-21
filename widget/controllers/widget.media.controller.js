@@ -273,7 +273,7 @@
                                     })
                                 }
                             })
-                        } else {
+                        } else if(!WidgetMedia.isCounted){
                             let lastTimeWatched = localStorage.getItem(`${WidgetMedia.item.id}_videoPlayCount`);
                             if (!lastTimeWatched) {
                                 localStorage.setItem(`${WidgetMedia.item.id}_videoPlayCount`, new Date().getTime());
