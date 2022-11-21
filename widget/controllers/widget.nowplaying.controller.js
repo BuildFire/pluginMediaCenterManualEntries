@@ -744,6 +744,7 @@
                     toggle ? track.swiped = true : track.swiped = false;
                 };
 
+                // this method to make the audio url replaying multi times 
                 function validateURL(url) {
                     if (url.includes('?')) return (url + '&' + Math.floor(Math.random() * 1000))
                     return (url + '?' + Math.floor(Math.random() * 1000))
