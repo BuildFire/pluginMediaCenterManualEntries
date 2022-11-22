@@ -708,10 +708,13 @@
                                 if (isConfirmed) {
                                     if(item.data.videoUrl){
                                         Analytics.unregisterEvent(item.id + "_videoPlayCount");
+                                        Analytics.unregisterEvent(item.id + "_continuesVideoPlayCount");
                                     } else if(item.data.audioUrl){
                                         Analytics.unregisterEvent(item.id + "_audioPlayCount");
+                                        Analytics.unregisterEvent(item.id + "_continuesAudioPlayCount");
                                     } else {
                                         Analytics.unregisterEvent(item.id + "_articleOpenCount");
+                                        Analytics.unregisterEvent(item.id + "_continuesArticleOpenCount");
                                     }
 
                                     if (item.data.searchEngineId) {

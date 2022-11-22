@@ -9,8 +9,8 @@
                 var iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
                 var NowPlaying = this;
                 NowPlaying.swiped = [];
-                NowPlaying.forceAutoPlay=$rootScope.forceAutoPlay;
-                NowPlaying.transferPlaylist=$rootScope.transferAudioContentToPlayList;
+                NowPlaying.forceAutoPlay = $rootScope.forceAutoPlay;
+                NowPlaying.transferPlaylist = $rootScope.transferAudioContentToPlayList;
                 media.data.audioUrl = convertDropbox(media.data.audioUrl);
 
                 NowPlaying.currentTime = 0;
@@ -25,37 +25,37 @@
                 NowPlaying.showVolume = false;
                 NowPlaying.track = media.data.audioUrl;
                 NowPlaying.isItLast = false;
-                NowPlaying.keepPosition=0;
-                NowPlaying.finished=false;
+                NowPlaying.keepPosition = 0;
+                NowPlaying.finished = false;
                 NowPlaying.isAudioPlayerPlayingAnotherSong = true;
                 bookmarks.sync($scope);
 
                 if(!NowPlaying.isOnline) initAudio(0);
                 Buildfire.auth.getCurrentUser((err, user) => {
                     var userCheckViewFilter = {};
-                    if(user){
+                    if (user) {
                         $rootScope.user = user
                         var userCheckViewFilter = {
-                              filter: {
+                            filter: {
                                 "_buildfire.index.text":
-                                {$eq: media.id+"-"+$rootScope.user._id+"-AUDIO-true"}
-                              }
-                        };  
-                    } else if(Buildfire.context.deviceId){
+                                    { $eq: media.id + "-" + $rootScope.user._id + "-AUDIO-true" }
+                            }
+                        };
+                    } else if (Buildfire.context.deviceId) {
                         var userCheckViewFilter = {
                             filter: {
-                              "_buildfire.index.text":
-                              {$eq: media.id+"-"+Buildfire.context.deviceId+"-AUDIO-true"}
+                                "_buildfire.index.text":
+                                    { $eq: media.id + "-" + Buildfire.context.deviceId + "-AUDIO-true" }
                             }
-                      };  
+                        };
                     } else {
-                        initAudio(0)  
+                        initAudio(0)
                     }
-                    if(user || Buildfire.context.deviceId){
-                        buildfire.publicData.search(userCheckViewFilter,COLLECTIONS.MediaCount, function(err,res){
-                            if(res.length > 0){
+                    if (user || Buildfire.context.deviceId) {
+                        buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
+                            if (res.length > 0) {
                                 NowPlaying.isAudioPlayed = true;
-                                if(res[0].data.lastPosition){
+                                if (res[0].data.lastPosition) {
                                     initAudio(res[0].data.lastPosition)
                                 } else {
                                     initAudio(0)
@@ -67,124 +67,125 @@
                         })
                     }
                 });
-                
-                var playListArrayOfStrings=[
-                    {key:"addedPlaylist",text:"Added to playlist"},
-                    {key:"removedFromPlaylist",text:"Removed from playlist"},
-                    {key:"goToPlaylist",text:"Go to Playlist"},
-                    {key:"addToPlaylist",text:"Add to Playlist"},
-                    {key:"removeFromPlaylist",text:"Remove from Playlist"},
-                    {key:"cancelPlaylist",text:"Cancel"},
-                    {key:"removePlayListButton",text:"Remove"},
-                    {key:"emptyPlaylist",text:"Playlist Is Empty Text"},
-                    {key:"donePlaylist",text:"Done"}
+
+                var playListArrayOfStrings = [
+                    { key: "addedPlaylist", text: "Added to playlist" },
+                    { key: "removedFromPlaylist", text: "Removed from playlist" },
+                    { key: "goToPlaylist", text: "Go to Playlist" },
+                    { key: "addToPlaylist", text: "Add to Playlist" },
+                    { key: "removeFromPlaylist", text: "Remove from Playlist" },
+                    { key: "cancelPlaylist", text: "Cancel" },
+                    { key: "removePlayListButton", text: "Remove" },
+                    { key: "emptyPlaylist", text: "Playlist Is Empty Text" },
+                    { key: "donePlaylist", text: "Done" }
                 ];
 
-                var settingsArrayOfStrings=[
-                    {key:"automaticallyPlayNextTrack",text:"Automatically play next track"},
-                    {key:"loopPlaylist",text:"Loop playlist"},
-                    {key:"autoJumpToLastPositon",text:"Auto Jump To LastPosition"},
-                    {key:"shufflePlaylist",text:"Shuffle Playlist"},
-                    {key:"settingsDone",text:"Done"}
+                var settingsArrayOfStrings = [
+                    { key: "automaticallyPlayNextTrack", text: "Automatically play next track" },
+                    { key: "loopPlaylist", text: "Loop playlist" },
+                    { key: "autoJumpToLastPositon", text: "Auto Jump To LastPosition" },
+                    { key: "shufflePlaylist", text: "Shuffle Playlist" },
+                    { key: "settingsDone", text: "Done" }
                 ];
 
-                NowPlaying.playListStrings={};
-                NowPlaying.settingsStrings={};
-                playListArrayOfStrings.forEach(function(el){
-                    NowPlaying.playListStrings[el.key] = strings.get("playlist."+el.key)?strings.get("playlist."+el.key):el.text;
+                NowPlaying.playListStrings = {};
+                NowPlaying.settingsStrings = {};
+                playListArrayOfStrings.forEach(function (el) {
+                    NowPlaying.playListStrings[el.key] = strings.get("playlist." + el.key) ? strings.get("playlist." + el.key) : el.text;
                 });
 
-                settingsArrayOfStrings.forEach(function(el){
-                    NowPlaying.settingsStrings[el.key] = strings.get("settings."+el.key)?strings.get("settings."+el.key):el.text;
+                settingsArrayOfStrings.forEach(function (el) {
+                    NowPlaying.settingsStrings[el.key] = strings.get("settings." + el.key) ? strings.get("settings." + el.key) : el.text;
                 });
-               
+
                 /**
                  * slider to show the slider on now-playing page.
                  * @type {*|jQuery|HTMLElement}
                  */
 
-                function convertDropbox(obj){
+                function convertDropbox(obj) {
                     if (obj.includes("www.dropbox") || obj.includes("dl.dropbox.com")) {
                         obj = obj.replace("www.dropbox", "dl.dropbox").replace("dl.dropbox.com", "dl.dropboxusercontent.com").split("?dl=")[0];
                     }
                     return obj;
                 }
                 NowPlaying.isCounted = false;
-                
-              
+
+
                 /**
                  * audioPlayer is Buildfire.services.media.audioPlayer.
                  */
 
-                NowPlaying.forceAutoPlayer = function (){
-                    NowPlaying.currentTime=0;
-                    if((!NowPlaying.settings.autoPlayNext||!NowPlaying.settings.autoJumpToLastPosition)&&NowPlaying.forceAutoPlay&&!NowPlaying.isItLast){
-                        NowPlaying.settings.autoPlayNext=true;
-                        NowPlaying.settings.autoJumpToLastPosition=true;
+                NowPlaying.forceAutoPlayer = function () {
+                    NowPlaying.currentTime = 0;
+                    if ((!NowPlaying.settings.autoPlayNext || !NowPlaying.settings.autoJumpToLastPosition) && NowPlaying.forceAutoPlay && !NowPlaying.isItLast) {
+                        NowPlaying.settings.autoPlayNext = true;
+                        NowPlaying.settings.autoJumpToLastPosition = true;
                     }
-                    audioPlayer.getPlaylist(function(err,userPlayList){
-                        var result= $rootScope.myItems;
-                        var filteredPlaylist=userPlayList.tracks.filter(el=>{return el.plugin && el.plugin == buildfire.context.instanceId;});
-                        var playlistSongs=filteredPlaylist.map(el=>{return el.url;}).join('');
-                        var playlistTitles=filteredPlaylist.map(el=>{return el.title;}).join('');
-                        var playlistBackground=filteredPlaylist.map(el=>{
-                            if(el.backgroundImage){
+                    audioPlayer.getPlaylist(function (err, userPlayList) {
+                        var result = $rootScope.myItems;
+                        var filteredPlaylist = userPlayList.tracks.filter(el => { return el.plugin && el.plugin == buildfire.context.instanceId; });
+                        var playlistSongs = filteredPlaylist.map(el => { return el.url; }).join('');
+                        var playlistTitles = filteredPlaylist.map(el => { return el.title; }).join('');
+                        var playlistBackground = filteredPlaylist.map(el => {
+                            if (el.backgroundImage) {
                                 return el.backgroundImage;
-                            }else {return "none";}
+                            } else { return "none"; }
                         }).join('');
-                        var playlistTopImage=filteredPlaylist.map(el=>{
-                            if(el.image){
+                        var playlistTopImage = filteredPlaylist.map(el => {
+                            if (el.image) {
                                 return el.image;
-                            }else {return "none";}
+                            } else { return "none"; }
                         }).join('');
 
-                        var pluginSongs=result.filter(el=>el.data.audioUrl&&el.data.audioUrl.length>0);
-                        var pluginListSongs=pluginSongs.map(el=>{el.data.audioUrl = convertDropbox(el.data.audioUrl); return el.data.audioUrl;}).join('');
-                        var pluginListTitles=pluginSongs.map(el=>{return el.data.title;}).join('');
+                        var pluginSongs = result.filter(el => el.data.audioUrl && el.data.audioUrl.length > 0);
+                        var pluginListSongs = pluginSongs.map(el => { el.data.audioUrl = convertDropbox(el.data.audioUrl); return el.data.audioUrl; }).join('');
+                        var pluginListTitles = pluginSongs.map(el => { return el.data.title; }).join('');
 
-                        var pluginListBackground=pluginSongs.map(el=>{
-                            if(el.data.image){
+                        var pluginListBackground = pluginSongs.map(el => {
+                            if (el.data.image) {
                                 return el.data.image;
-                            }else {return "none";}
+                            } else { return "none"; }
                         }).join('');
-                        var pluginListTopImage=pluginSongs.map(el=>{
-                            if(el.data.topImage){
+                        var pluginListTopImage = pluginSongs.map(el => {
+                            if (el.data.topImage) {
                                 return el.data.topImage;
-                            }else {return "none";}
+                            } else { return "none"; }
                         }).join('');
-                        if(NowPlaying.transferPlaylist){
-                            if(playlistSongs!=pluginListSongs||playlistTitles!=pluginListTitles
-                                ||playlistBackground!=pluginListBackground||playlistTopImage!=pluginListTopImage){
-                                for(var i=(filteredPlaylist.length-1);i>=0;i--){
-                                    var index=NowPlaying.findTrackIndex(userPlayList,filteredPlaylist[i]);
-                                    if(index!=-1)
+                        if (NowPlaying.transferPlaylist) {
+                            if (playlistSongs != pluginListSongs || playlistTitles != pluginListTitles
+                                || playlistBackground != pluginListBackground || playlistTopImage != pluginListTopImage) {
+                                for (var i = (filteredPlaylist.length - 1); i >= 0; i--) {
+                                    var index = NowPlaying.findTrackIndex(userPlayList, filteredPlaylist[i]);
+                                    if (index != -1)
                                         audioPlayer.removeFromPlaylist(index);
                                 }
-                                pluginSongs=pluginSongs.map(el=>{
-                                        let obj=(!el.data)?el:el.data;
-                                        return {title:obj.title,url:obj.audioUrl,image:obj.topImage,
-                                        album:obj.title,startAt:0,lastPosition:0,backgroundImage:obj.image,
-                                        plugin:buildfire.context.instanceId, myId:el.id
+                                pluginSongs = pluginSongs.map(el => {
+                                    let obj = (!el.data) ? el : el.data;
+                                    return {
+                                        title: obj.title, url: obj.audioUrl, image: obj.topImage,
+                                        album: obj.title, startAt: 0, lastPosition: 0, backgroundImage: obj.image,
+                                        plugin: buildfire.context.instanceId, myId: el.id
                                     };
-                                    });
-                                NowPlaying.playList=[];
-                                for(var i=0;i<pluginSongs.length;i++){
+                                });
+                                NowPlaying.playList = [];
+                                for (var i = 0; i < pluginSongs.length; i++) {
                                     audioPlayer.addToPlaylist(pluginSongs[i]);
                                     NowPlaying.playList.push(pluginSongs[i]);
                                 }
                             }
-                        }else{
-                            for(var i=(filteredPlaylist.length-1);i>=0;i--){
-                                var index=NowPlaying.findTrackIndex(userPlayList,filteredPlaylist[i]);
-                                if(index!=-1)
+                        } else {
+                            for (var i = (filteredPlaylist.length - 1); i >= 0; i--) {
+                                var index = NowPlaying.findTrackIndex(userPlayList, filteredPlaylist[i]);
+                                if (index != -1)
                                     audioPlayer.removeFromPlaylist(index);
-                            } 
+                            }
                         }
                     });
                 }
 
-                NowPlaying.findTrackIndex = function(officialList,element){
-                    return officialList.tracks.map(el=>{return (el.myId)?el.myId:"none";}).indexOf(element.myId);
+                NowPlaying.findTrackIndex = function (officialList, element) {
+                    return officialList.tracks.map(el => { return (el.myId) ? el.myId : "none"; }).indexOf(element.myId);
                 }
 
                 NowPlaying.changeVolume = function (volume) {
@@ -245,7 +246,7 @@
                                 text: link.description,
                                 image: link.imageUrl,
                                 link: result.url
-                            }, function (err, result) {});
+                            }, function (err, result) { });
 
                         }
                     });
@@ -255,62 +256,61 @@
                  * audioPlayer.onEvent callback calls when audioPlayer event fires.
                  */
                 //var first = true;
-                var ready=false, setOder=false, first=false, open=true;
+                var ready = false, setOder = false, first = false, open = true;
                 audioPlayer.onEvent(function (e) {
                     switch (e.event) {
                         case 'play':
                             NowPlaying.playing = true;
                             NowPlaying.paused = false;
-                            audioPlayer.getPlaylist(function(err,data){
-                                first=false;
-                                NowPlaying.keepPosition=e.data.track.lastPosition;
-                                
-                                var filteredPlaylist=data.tracks.filter(el=>{return el.plugin && el.plugin == buildfire.context.instanceId;});
-                                var index=NowPlaying.findTrackIndex({tracks:filteredPlaylist},{myId:(e.data.track.myId)?e.data.track.myId:"none"});
+                            audioPlayer.getPlaylist(function (err, data) {
+                                first = false;
+                                NowPlaying.keepPosition = e.data.track.lastPosition;
 
-                                NowPlaying.isItLast=(index==(filteredPlaylist.length-1));
-                                if(index>=(filteredPlaylist.length-1)&&NowPlaying.forceAutoPlay&&!NowPlaying.settings.loopPlaylist){
-                                    NowPlaying.settings.autoPlayNext=false;
+                                var filteredPlaylist = data.tracks.filter(el => { return el.plugin && el.plugin == buildfire.context.instanceId; });
+                                var index = NowPlaying.findTrackIndex({ tracks: filteredPlaylist }, { myId: (e.data.track.myId) ? e.data.track.myId : "none" });
+
+                                NowPlaying.isItLast = (index == (filteredPlaylist.length - 1));
+                                if (index >= (filteredPlaylist.length - 1) && NowPlaying.forceAutoPlay && !NowPlaying.settings.loopPlaylist) {
+                                    NowPlaying.settings.autoPlayNext = false;
                                 }
-                                if(NowPlaying.forceAutoPlay){
-                                    audioPlayer.settings.set({autoPlayNext:false});
-                                    var myInterval=setInterval(function(){ 
-                                        if(ready){
-                                            if(!NowPlaying.isItLast){
-                                                NowPlaying.settings.autoPlayNext=true;
-                                                audioPlayer.settings.set({autoPlayNext:true});
+                                if (NowPlaying.forceAutoPlay) {
+                                    audioPlayer.settings.set({ autoPlayNext: false });
+                                    var myInterval = setInterval(function () {
+                                        if (ready) {
+                                            if (!NowPlaying.isItLast) {
+                                                NowPlaying.settings.autoPlayNext = true;
+                                                audioPlayer.settings.set({ autoPlayNext: true });
                                             }
-    
-                                            setOder=true;
+
+                                            setOder = true;
                                             clearInterval(myInterval);
                                         }
                                     }, 100);
                                 }
 
-                                });
+                            });
                             break;
                         case 'timeUpdate':
-                            ready = e.data.duration && e.data.duration!=null && e.data.duration > 0;  
-                            if(NowPlaying.forceAutoPlay)
-                                if(ready&&e.data.currentTime>=e.data.duration&&!first){
-                                    first=true;
+                            ready = e.data.duration && e.data.duration != null && e.data.duration > 0;
+                            if (NowPlaying.forceAutoPlay)
+                                if (ready && e.data.currentTime >= e.data.duration && !first) {
+                                    first = true;
                                     audioPlayer.pause();
                                     audioPlayer.setTime(0.1);
-                                    if(NowPlaying.forceAutoPlay)
-                                    setTimeout(() => {
-                                        var myInterval=setInterval(() => {
-                                            if(setOder){
-                                                setOder=false;
-                                                NowPlaying.playing=true;
-                                                audioPlayer.play();
-                                                clearInterval(myInterval);
-                                                first=false;
-                                            }
-                                        }, 100); 
-                                    }, 500);
-                                }else if(ready&&(NowPlaying.settings.autoPlayNext||NowPlaying.forceAutoPlay))
-                                {
-                                    first=true;
+                                    if (NowPlaying.forceAutoPlay)
+                                        setTimeout(() => {
+                                            var myInterval = setInterval(() => {
+                                                if (setOder) {
+                                                    setOder = false;
+                                                    NowPlaying.playing = true;
+                                                    audioPlayer.play();
+                                                    clearInterval(myInterval);
+                                                    first = false;
+                                                }
+                                            }, 100);
+                                        }, 500);
+                                } else if (ready && (NowPlaying.settings.autoPlayNext || NowPlaying.forceAutoPlay)) {
+                                    first = true;
                                     if (ready && open && NowPlaying.keepPosition > 0 && iOS) {
                                         NowPlaying.changeTime(NowPlaying.keepPosition);
                                         open = false;
@@ -319,52 +319,51 @@
                             NowPlaying.currentTime = e.data.currentTime;
                             NowPlaying.duration = e.data.duration;
                             break;
-                            case 'audioEnded':
-                                ready = false;
-                                updateAudioMediaCount(media.id, 0.1)
-                                if ($rootScope.autoPlay) {
-                                    $rootScope.playNextItem();
-                                } else {
-                                    if(NowPlaying.isItLast&&NowPlaying.settings.loopPlaylist){
-                                        audioPlayer.getCurrentTrack((track) => {
-                                            if(NowPlaying.playList && NowPlaying.playList.length > 0){
-                                                NowPlaying.playList.forEach(element => {
-                                                    element.playing = false
-                                                  });
-                                                let currentTrack = NowPlaying.playList.find(x => x.title == track.title && x.url == track.url && x.album == track.album && x.image == track.image && x.backgroundImage == track.backgroundImage )
-                                                if(currentTrack){
-                                                    currentTrack.playing = true
-                                                }
+                        case 'audioEnded':
+                            ready = false;
+                            updateAudioMediaCount(media.id, 0.1)
+                            if ($rootScope.autoPlay) {
+                                $rootScope.playNextItem();
+                            } else {
+                                if (NowPlaying.isItLast && NowPlaying.settings.loopPlaylist) {
+                                    audioPlayer.getCurrentTrack((track) => {
+                                        if (NowPlaying.playList && NowPlaying.playList.length > 0) {
+                                            NowPlaying.playList.forEach(element => {
+                                                element.playing = false
+                                            });
+                                            let currentTrack = NowPlaying.playList.find(x => x.title == track.title && x.url == track.url && x.album == track.album && x.image == track.image && x.backgroundImage == track.backgroundImage)
+                                            if (currentTrack) {
+                                                currentTrack.playing = true
                                             }
-                                          });
-                                          
-                                        setTimeout(() => {
-                                            audioPlayer.setTime(0.1);
-                                            NowPlaying.finished=false;
-                                            audioPlayer.pause();
-                                            setTimeout(() => {
-                                                audioPlayer.play();
-                                                NowPlaying.paused=false;
-                                                NowPlaying.playing=true;
-                                            }, 50);
-                                        }, 50);
-                                    }
-                                    else{
-                                        isAudioEnded = true;
-                                        if(!NowPlaying.settings.autoPlayNext) {
-                                            NowPlaying.playing = false;
-                                            NowPlaying.paused = false;
                                         }
-                                        if(NowPlaying.forceAutoPlay&&NowPlaying.isItLast&&!NowPlaying.settings.loopPlaylist)
-                                        {
-                                            NowPlaying.playing = false;
-                                            NowPlaying.paused = true;
-                                            NowPlaying.finished=true;
-                                        } 
-                                        else NowPlaying.finished=false;
-                                    }
+                                    });
+
+                                    setTimeout(() => {
+                                        audioPlayer.setTime(0.1);
+                                        NowPlaying.finished = false;
+                                        audioPlayer.pause();
+                                        setTimeout(() => {
+                                            audioPlayer.play();
+                                            NowPlaying.paused = false;
+                                            NowPlaying.playing = true;
+                                        }, 50);
+                                    }, 50);
                                 }
-                                break;
+                                else {
+                                    isAudioEnded = true;
+                                    if (!NowPlaying.settings.autoPlayNext) {
+                                        NowPlaying.playing = false;
+                                        NowPlaying.paused = false;
+                                    }
+                                    if (NowPlaying.forceAutoPlay && NowPlaying.isItLast && !NowPlaying.settings.loopPlaylist) {
+                                        NowPlaying.playing = false;
+                                        NowPlaying.paused = true;
+                                        NowPlaying.finished = true;
+                                    }
+                                    else NowPlaying.finished = false;
+                                }
+                            }
+                            break;
                         case 'pause':
                             NowPlaying.playing = false;
                             break;
@@ -382,7 +381,7 @@
                             }
                             break;
                         case 'previous':
-                                $rootScope.playPrevItem();
+                            $rootScope.playPrevItem();
                             break;
                         case 'removeFromPlaylist':
                             NowPlaying.playList = e.data && e.data.newPlaylist && e.data.newPlaylist.tracks;
@@ -393,7 +392,7 @@
                         $scope.$digest();
                     }
                 });
-                function initAudio(lastPosition){
+                function initAudio(lastPosition) {
                     isAudioEnded = false;
                     NowPlaying.currentTime = lastPosition;
                     NowPlaying.currentTrack = new Track(media.data, lastPosition);
@@ -409,7 +408,7 @@
                         $scope.$digest();
                     }
                     audioPlayer.settings.get(function (err, setting) {
-                        if(!setting.autoJumpToLastPosition){
+                        if (!setting.autoJumpToLastPosition) {
                             NowPlaying.currentTrack.startAt = 0;
                         }
                         NowPlaying.currentTime = 0;
@@ -424,34 +423,47 @@
                         }, 0);
                     });
                     audioPlayer.getCurrentTrack((track) => {
-                        if(track && track.title == NowPlaying.currentTrack.title && track.url == NowPlaying.currentTrack.url){
+                        if (track && track.title == NowPlaying.currentTrack.title && track.url == NowPlaying.currentTrack.url) {
                             NowPlaying.isAudioPlayerPlayingAnotherSong = false;
-                        } else if(!track){
+                        } else if (!track) {
                             NowPlaying.isAudioPlayerPlayingAnotherSong = false;
                         }
-                      });
+                    });
 
 
                 }
 
-                function updateAudioMediaCount(mediaId, trackLastPosition){
+                function updateAudioMediaCount(mediaId, trackLastPosition) {
                     buildfire.publicData.searchAndUpdate(
                         { mediaId: { $eq: mediaId } },
                         { $set: { lastPosition: trackLastPosition } },
                         COLLECTIONS.MediaCount,
                         (err, result) => {
-                          if (err) return console.error(err);
+                            if (err) return console.error(err);
                         }
                     );
+                }
+
+                function sendAnalytics(NowPlaying) {
+                    Analytics.trackAction(`${NowPlaying.item.id}_audioPlayCount`);
+                    Analytics.trackAction("allAudios_count");
+                    Analytics.trackAction("allMediaTypes_count");
+                }
+
+                function sendContinuesAnalytics(NowPlaying) {
+                    Analytics.trackAction(`${NowPlaying.item.id}_continuesAudioPlayCount`);
+                    Analytics.trackAction("allAudios_continuesCount");
+                    Analytics.trackAction("allMediaTypes_continuesCount");
                 }
                 var isAudioEnded = false;
                 /**
                  * Player related method and variables
                  */
                 NowPlaying.playTrack = function () {
-                     if(NowPlaying.currentTrack.isAudioPlayed === false){
+                    if (NowPlaying.currentTrack.isAudioPlayed === false) {
                         NowPlaying.currentTrack.isAudioPlayed = true;
-                        if(!NowPlaying.isCounted && !NowPlaying.isAudioPlayed){
+                        sendContinuesAnalytics(NowPlaying);
+                        if (!NowPlaying.isCounted && !NowPlaying.isAudioPlayed) {
                             NowPlaying.isAudioPlayed = true;
                             let data = {
                                 mediaId: NowPlaying.item.id,
@@ -460,30 +472,33 @@
                                 lastPosition: 0,
                                 _buildfire: {
                                     index: {
-                                      string1: NowPlaying.item.id +"-true"
+                                        string1: NowPlaying.item.id + "-true"
                                     },
-                                  },
+                                },
                             }
-                            if($rootScope && $rootScope.user){
+                            if ($rootScope && $rootScope.user) {
                                 data.userId = $rootScope.user._id
-                                data._buildfire.index.text =  NowPlaying.item.id +"-"+ $rootScope.user._id + "-AUDIO-true"
-                            } else if(Buildfire.context.deviceId){
+                                data._buildfire.index.text = NowPlaying.item.id + "-" + $rootScope.user._id + "-AUDIO-true"
+                            } else if (Buildfire.context.deviceId) {
                                 data.userId = Buildfire.context.deviceId
-                                data._buildfire.index.text =  NowPlaying.item.id +"-"+ Buildfire.context.deviceId + "-AUDIO-true"
-
+                                data._buildfire.index.text = NowPlaying.item.id + "-" + Buildfire.context.deviceId + "-AUDIO-true"
                             }
-                            if($rootScope.user || Buildfire.context.deviceId){
-                                buildfire.publicData.insert(data,COLLECTIONS.MediaCount,false, function(err, res){
+                            if ($rootScope.user || Buildfire.context.deviceId) {
+                                buildfire.publicData.insert(data, COLLECTIONS.MediaCount, false, function (err, res) {
                                     NowPlaying.isCounted = true;
-                                    Analytics.trackAction(`${NowPlaying.item.id}_audioPlayCount`);
-                                    Analytics.trackAction("allAudios_count");
-                                    Analytics.trackAction("allMediaTypes_count");
-                                }) 
+                                    sendAnalytics(NowPlaying);
+                                })
+                            } else {
+                                let lastTimeWatched = localStorage.getItem(`${NowPlaying.item.id}_audioPlayCount`);
+                                if (!lastTimeWatched) {
+                                    localStorage.setItem(`${NowPlaying.item.id}_audioPlayCount`, new Date().getTime());
+                                    sendAnalytics(NowPlaying);
+                                }
                             }
                         }
                     }
 
-                    
+
                     if (NowPlaying.settings) {
                         NowPlaying.settings.isPlayingCurrentTrack = true;
                         audioPlayer.settings.set(NowPlaying.settings);
@@ -496,45 +511,45 @@
                         });
                     }
                     NowPlaying.playing = true;
-                    if(NowPlaying.transferPlaylist && NowPlaying.forceAutoPlay)
-                        audioPlayer.getPlaylist(function(err,data){
-                            var index=NowPlaying.findTrackIndex(data,{myId:NowPlaying.item.id});
+                    if (NowPlaying.transferPlaylist && NowPlaying.forceAutoPlay)
+                        audioPlayer.getPlaylist(function (err, data) {
+                            var index = NowPlaying.findTrackIndex(data, { myId: NowPlaying.item.id });
                             if (!NowPlaying.forceAutoPlay) {
-                              index = data.tracks.find(
-                                (el) => el.url === NowPlaying.item.audioUrl
-                              );
+                                index = data.tracks.find(
+                                    (el) => el.url === NowPlaying.item.audioUrl
+                                );
                             }
-                                NowPlaying.callPlayFunction(index);
+                            NowPlaying.callPlayFunction(index);
                         });
-                    else  NowPlaying.callPlayFunction(-1);
+                    else NowPlaying.callPlayFunction(-1);
                 };
 
-                NowPlaying.callPlayFunction = function(index){
+                NowPlaying.callPlayFunction = function (index) {
                     buildfire.services.media.audioPlayer.getCurrentTrack((track) => {
-                        if(track){
+                        if (track) {
                             updateAudioMediaCount(media.id, track.lastPosition)
                         }
                     });
                     if (NowPlaying.paused) {
                         audioPlayer.play();
-                        if(NowPlaying.finished)
+                        if (NowPlaying.finished)
                             setTimeout(() => {
-                                NowPlaying.finished=false;
+                                NowPlaying.finished = false;
                                 audioPlayer.pause();
                                 setTimeout(() => {
                                     audioPlayer.play();
-                                    NowPlaying.paused=false;
-                                    NowPlaying.playing=true;
+                                    NowPlaying.paused = false;
+                                    NowPlaying.playing = true;
                                 }, 50);
                             }, 50);
                     } else {
                         setTimeout(() => {
                             try {
-                                if(index!=-1){
+                                if (index != -1) {
                                     audioPlayer.play(index);
                                 }
                                 else {
-                                    if(isAudioEnded){
+                                    if (isAudioEnded) {
                                         console.log("Hi2")
                                         NowPlaying.currentTrack.lastPosition = 0
                                     }
@@ -542,10 +557,10 @@
                                     audioPlayer.pause();
                                     setTimeout(() => {
                                         audioPlayer.play();
-                                        NowPlaying.paused=false;
-                                        NowPlaying.playing=true;
+                                        NowPlaying.paused = false;
+                                        NowPlaying.playing = true;
                                     }, 50);
-                                } 
+                                }
                                 NowPlaying.isAudioPlayerPlayingAnotherSong = false;
                             }
                             catch (err) {
@@ -639,12 +654,12 @@
                 };
                 NowPlaying.loopPlaylist = function () {
                     if (NowPlaying.settings) {
-                      NowPlaying.settings.loopPlaylist = NowPlaying.settings
-                        .loopPlaylist
-                        ? false
-                        : true;
-                      if (NowPlaying.settings.loopPlaylist)
-                        NowPlaying.settings.autoPlayNext = true;
+                        NowPlaying.settings.loopPlaylist = NowPlaying.settings
+                            .loopPlaylist
+                            ? false
+                            : true;
+                        if (NowPlaying.settings.loopPlaylist)
+                            NowPlaying.settings.autoPlayNext = true;
                     }
                     audioPlayer.settings.set(NowPlaying.settings);
                 };
@@ -684,7 +699,7 @@
                         });
                     },
                         function (err) {
-                           console.error(err);
+                            console.error(err);
                         });
 
                 };
@@ -715,9 +730,9 @@
                     });
                 };
                 NowPlaying.setSettings = function (settings) {
-                    if(!settings.autoPlayNext&&NowPlaying.forceAutoPlay && !NowPlaying.isItLast){
-                        settings.autoJumpToLastPosition=true;
-                        settings.autoPlayNext=true;
+                    if (!settings.autoPlayNext && NowPlaying.forceAutoPlay && !NowPlaying.isItLast) {
+                        settings.autoJumpToLastPosition = true;
+                        settings.autoPlayNext = true;
                     }
                     var newSettings = new AudioSettings(settings);
                     audioPlayer.settings.set(newSettings);
@@ -759,7 +774,7 @@
                     this.image = track.image;
                     this.album = track.title;
                     this.artist = track.artists;
-                    this.startAt = 0 ; // where to begin playing
+                    this.startAt = 0; // where to begin playing
                     this.isAudioPlayed = track.isAudioPlayed ? track.isAudioPlayed : false;
                 }
 
@@ -787,7 +802,7 @@
                         case COLLECTIONS.MediaContent:
                             if (event.data) {
                                 NowPlaying.item = event;
-                                 // Update item in globalPlaylist
+                                // Update item in globalPlaylist
                                 if ($rootScope.isInGlobalPlaylist(event.id)) {
                                     if (event.data) {
                                         GlobalPlaylist.insertAndUpdate(event).then(() => {
@@ -843,7 +858,7 @@
                 });
 
                 Buildfire.publicData.onUpdate(event => {
-                    if(event.data && event.tag == COLLECTIONS.MediaCount){
+                    if (event.data && event.tag == COLLECTIONS.MediaCount) {
                         $rootScope.refreshItems();
                     }
                 });
@@ -888,7 +903,7 @@
                             NowPlaying.playlistPause(track);
                         }
                         else {
-                            if(NowPlaying.playList && NowPlaying.playList.length > 0){
+                            if (NowPlaying.playList && NowPlaying.playList.length > 0) {
                                 NowPlaying.playList.forEach(element => {
                                     element.playing = false
                                 });
