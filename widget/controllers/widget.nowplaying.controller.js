@@ -553,6 +553,7 @@
                                         console.log("Hi2")
                                         NowPlaying.currentTrack.lastPosition = 0
                                     }
+                                    NowPlaying.currentTrack.url = validateURL(NowPlaying.currentTrack.url);
                                     audioPlayer.play(NowPlaying.currentTrack);
                                     audioPlayer.pause();
                                     setTimeout(() => {
@@ -578,6 +579,7 @@
                     }
                     NowPlaying.playing = true;
                     if (track) {
+                        track.url = validateURL(track.url)
                         audioPlayer.play({ url: track.url });
                         track.playing = true;
                     }
@@ -756,6 +758,12 @@
                 NowPlaying.addEvents = function (e, i, toggle, track) {
                     toggle ? track.swiped = true : track.swiped = false;
                 };
+
+                // this method to make the audio url replaying multi times 
+                function validateURL(url) {
+                    if (url.includes('?')) return (url + '&' + Math.floor(Math.random() * 1000))
+                    return (url + '?' + Math.floor(Math.random() * 1000))
+                }
 
                 /**
                  * Track Smaple
