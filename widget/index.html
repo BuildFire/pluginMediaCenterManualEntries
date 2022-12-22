@@ -81,9 +81,10 @@
         </div>
         <div ng-class="WidgetHome.deepLink ? 'noSlide' : 'slide'"
             data-back-img="{{backgroundImage}}"
-            ng-view=""
             class="content infinite-scroll-parent"
-            ng-if="!showFeed"></div>
+            ng-if="!showFeed">
+            <div ng-view=""></div>
+        </div>
 
         <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>
     </div>
