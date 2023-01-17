@@ -61,7 +61,7 @@
                                 (A.src = "https://player.vimeo.com/video/" + C + "player_id=vimeoplayer&title=0&byline=0&portrait=0&controls=1"),
                                 (A.style.width = "100%"),
                                 (A.style.height = "100%"),
-                                r.$eval(E) && (A.setAttribute("webkitallowfullscreen", ""), A.setAttribute("mozallowfullscreen", ""), A.setAttribute("allowfullscreen", "")),
+                                r.$eval(E) && (A.setAttribute("webkitallowfullscreen", ""), A.setAttribute("mozallowfullscreen", ""), A.setAttribute("allowfullscreen", ""), A.setAttribute("allow", "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture")),
                                 e.element(A.parentNode.parentNode).find("vg-overlay-play").css("height", "calc(100% - 50px)"),
                                 (m = new Vimeo.Player(A)).ready().then(function () {
                                     !(function () {
@@ -139,6 +139,7 @@
                                             c.mediaElement[0].dispatchEvent(e),
                                                 !0 === c.autoPlay &&
                                                     n(function () {
+                                                        A.src += "&autoplay=1"
                                                         c.play();
                                                     });
                                         } else m.play().then(function () {});
