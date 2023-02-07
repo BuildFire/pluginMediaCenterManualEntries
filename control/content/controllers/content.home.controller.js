@@ -39,7 +39,7 @@
                             backgroundImage: "",
                             skipMediaPage: false
                         },
-                        indexingUpdateDone: false
+                        _indexingUpdatedDone: false
                     }
                 };
                 var MediaContent = new DB(COLLECTIONS.MediaContent);
@@ -81,10 +81,9 @@
                     ContentHome.info.data.content.sortBy = 'Media Title Z-A';
                     ContentHome.info.data.content.sortByValue = 'Media Title Z-A';
                 }
-
-                if(!ContentHome.info.data.indexingUpdateDone && Object.keys(ContentHome.info.data).length > 0) 
+                // change indexingUpdateV2Done names
+                if(!ContentHome.info.data._indexingUpdatedDone && Object.keys(ContentHome.info.data).length > 0) 
                     PerfomanceIndexingService.showIndexingDialog();
-                //MediaCenter.save(ContentHome.info.data).then(function (result) {});
 
                 AppConfig.setSettings(MediaCenterInfo.data);
                 AppConfig.setAppId(MediaCenterInfo.id);

@@ -391,7 +391,10 @@
             buildMediaCountDataIndex: function (data) {
                 var index = {
                     'string1': data.mediaId + "-" + (data.isActive ? "true":"false"),
-                    'text': data.mediaId + "-" + data.userId + '-' + data.mediaType + "-" + (data.isActive ? "true":"false"),
+                    'text':data.mediaId + "-" + data.userId + '-' + data.mediaType + "-" + (data.isActive ? "true":"false"),
+                    'array1': [{
+                        'string1': data.mediaId + "-" + data.userId + '-' + data.mediaType + "-" + (data.isActive ? "true":"false"),
+                    }]
                 }
                 return index;
             },
@@ -422,7 +425,7 @@
                     this.processMediaCountsData(records[index], () => this.iterateMediaCountData(records, index + 1));
                 } else {
                     buildfire.datastore.get('MediaCenter', (err, result) => {
-                        result.data.indexingUpdateDone = true;
+                        result.data._indexingUpdatedDone = true;
                         buildfire.datastore.save(result.data, 'MediaCenter', (err, saved) => {
                             buildfire.dialog.alert(
                                 {

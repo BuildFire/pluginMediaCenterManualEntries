@@ -32,12 +32,13 @@
                 }
                 var allCheckViewFilter = {
                     filter: {
-                        $and: [
-                            { "$json.mediaId": { $eq: media.id } },
-                            { '$json.isActive': true },
-                        ],
+                        "_buildfire.index.string1": {$eq: media.id+"-true"}
                     }
                 };
+
+                buildfire.datastore.get('MediaCenter', (err, result) => {
+                    WidgetMedia._indexingUpdatedDone = result.data._indexingUpdatedDone;
+                })
 
                 buildfire.publicData.search(allCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
                     if (res && res.length) {
@@ -246,10 +247,7 @@
                     if (state === 'play') { // The video started playing
                         if (!WidgetMedia.isCounted && $rootScope.user) {
                             var userCheckViewFilter = {
-                                filter: {
-                                    "_buildfire.index.text":
-                                        { $eq: media.id + "-" + $rootScope.user._id + "-Video-true" }
-                                }
+                                filter: getIndexedFilter(media.id, $rootScope.user._id, 'VIDEO')
                             };
                             buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
                                 if (res.length > 0) {
@@ -263,7 +261,10 @@
                                         _buildfire: {
                                             index: {
                                                 string1: WidgetMedia.item.id + "-true",
-                                                text: WidgetMedia.item.id + "-" + $rootScope.user._id + "-Video-true",
+                                                text: WidgetMedia.item.id + "-" + $rootScope.user._id + "-VIDEO-true",
+                                                array1:[{
+                                                    string1: WidgetMedia.item.id + "-" + $rootScope.user._id + "-VIDEO-true",
+                                                }]
                                             },
                                         },
                                     }
@@ -290,6 +291,20 @@
                         $scope.videoPlayed = true;
                     }
                 };
+
+                const getIndexedFilter = (mediaId, userId, mediaType) => {
+                    let filter = {
+                        "_buildfire.index.text": { $eq: mediaId + "-" + userId + "-" + mediaType + "-true" }
+                    };
+
+                    if(WidgetMedia._indexingUpdatedDone === true){
+                        filter = {
+                            "_buildfire.index.array1.string1": { $eq: mediaId + "-" + userId + "-" + mediaType + "-true" }
+                        };
+                    }
+
+                    return filter;
+                }
 
                 const sendAnalytics = (WidgetMedia) => {
                     Analytics.trackAction(`${WidgetMedia.item.id}_videoPlayCount`);
@@ -452,13 +467,9 @@
                         if (user) {
                             $rootScope.user = user;
                             let userCheckViewFilter = {
-                                filter: {
-                                    "_buildfire.index.text":
-                                        { $eq: media.id + "-" + user._id + "-Article-true" }
-                                }
+                                filter: getIndexedFilter(media.id, user._id, "Article")
                             };
                             buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
-                                console.log(res)
                                 if (res.length > 0) {
                                     WidgetMedia.isCounted = true;
                                 } else if (WidgetMedia.mediaType == null) {
@@ -471,6 +482,9 @@
                                             index: {
                                                 string1: WidgetMedia.item.id + "-true",
                                                 text: WidgetMedia.item.id + "-" + $rootScope.user._id + "-Article-true",
+                                                array1: [{
+                                                    string1: WidgetMedia.item.id + "-" + $rootScope.user._id + "-Article-true",
+                                                }]
                                             },
                                         },
                                     }
