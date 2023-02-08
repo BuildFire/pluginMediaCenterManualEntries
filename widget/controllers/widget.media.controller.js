@@ -37,7 +37,7 @@
                 };
 
                 buildfire.datastore.get('MediaCenter', (err, result) => {
-                    WidgetMedia._indexingUpdatedDone = result.data._indexingUpdatedDone;
+                    WidgetMedia.indexingUpdateV2Done = result.data.indexingUpdateV2Done;
                 })
 
                 buildfire.publicData.search(allCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
@@ -297,7 +297,7 @@
                         "_buildfire.index.text": { $eq: mediaId + "-" + userId + "-" + mediaType + "-true" }
                     };
 
-                    if(WidgetMedia._indexingUpdatedDone === true){
+                    if(WidgetMedia.indexingUpdateV2Done === true){
                         filter = {
                             "_buildfire.index.array1.string1": { $eq: mediaId + "-" + userId + "-" + mediaType + "-true" }
                         };

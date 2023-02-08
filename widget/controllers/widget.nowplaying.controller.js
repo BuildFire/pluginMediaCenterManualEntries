@@ -31,7 +31,7 @@
                 bookmarks.sync($scope);
 
                 buildfire.datastore.get('MediaCenter', (err, result) => {
-                    NowPlaying._indexingUpdatedDone = result.data._indexingUpdatedDone;
+                    NowPlaying.indexingUpdateV2Done = result.data.indexingUpdateV2Done;
                 })
 
                 if(!NowPlaying.isOnline) initAudio(0);
@@ -466,7 +466,7 @@
                         "_buildfire.index.text": { $eq: mediaId + "-" + userId + "-AUDIO-true" }
                     };
 
-                    if(NowPlaying._indexingUpdatedDone){
+                    if(NowPlaying.indexingUpdateV2Done){
                         filter = {
                             "_buildfire.index.array1.string1": { $eq: mediaId + "-" + userId + "-AUDIO-true" }
                         };

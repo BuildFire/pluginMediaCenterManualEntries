@@ -39,7 +39,7 @@
                             backgroundImage: "",
                             skipMediaPage: false
                         },
-                        _indexingUpdatedDone: false
+                        indexingUpdateV2Done: false
                     }
                 };
                 var MediaContent = new DB(COLLECTIONS.MediaContent);
@@ -81,8 +81,8 @@
                     ContentHome.info.data.content.sortBy = 'Media Title Z-A';
                     ContentHome.info.data.content.sortByValue = 'Media Title Z-A';
                 }
-                // change indexingUpdateV2Done names
-                if(!ContentHome.info.data._indexingUpdatedDone && Object.keys(ContentHome.info.data).length > 0) 
+
+                if(!ContentHome.info.data.indexingUpdateV2Done && Object.keys(ContentHome.info.data).length > 0) 
                     PerfomanceIndexingService.showIndexingDialog();
 
                 AppConfig.setSettings(MediaCenterInfo.data);

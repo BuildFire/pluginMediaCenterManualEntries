@@ -425,7 +425,7 @@
                     this.processMediaCountsData(records[index], () => this.iterateMediaCountData(records, index + 1));
                 } else {
                     buildfire.datastore.get('MediaCenter', (err, result) => {
-                        result.data._indexingUpdatedDone = true;
+                        result.data.indexingUpdateV2Done = true;
                         buildfire.datastore.save(result.data, 'MediaCenter', (err, saved) => {
                             buildfire.dialog.alert(
                                 {
