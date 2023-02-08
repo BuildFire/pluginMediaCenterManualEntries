@@ -400,6 +400,7 @@
             },
 
             getMediaCountDataWithIndex: function (item) {
+                // here to check --
                 item.data._buildfire = {
                     index: this.buildMediaCountDataIndex(item.data)
                 }
@@ -446,7 +447,10 @@
                 let searchOptions = {
                     limit: 50,
                     skip: 0,
-                    
+                    filter:{
+                        "_buildfire.index.array1": undefined
+                    }
+                    // index.array1.string1 -=> null
                 }, records = [];
                 
                 const getMediaCountData = () => {
