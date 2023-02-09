@@ -448,7 +448,7 @@
                     limit: 50,
                     skip: 0,
                     filter:{
-                        "_buildfire.index.array1": undefined
+                        "_buildfire.index.array1": {$exists: false}
                     }
                     // index.array1.string1 -=> null
                 }, records = [];
