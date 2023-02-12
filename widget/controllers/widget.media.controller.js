@@ -33,7 +33,10 @@
                 var allCheckViewFilter = {
                     filter: {
                         "_buildfire.index.string1": {$eq: media.id+"-true"}
-                    }
+                    },
+                    skip: 0,
+                    limit: 1,
+                    recordCount: true
                 };
 
                 buildfire.datastore.get('MediaCenter', (err, result) => {
@@ -41,8 +44,8 @@
                 })
 
                 buildfire.publicData.search(allCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
-                    if (res && res.length) {
-                        WidgetMedia.count = res.length;
+                    if (res && res.totalRecord) {
+                        WidgetMedia.count = res.totalRecord;
                         if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                     }
                 })
