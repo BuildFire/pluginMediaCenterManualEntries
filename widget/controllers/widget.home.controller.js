@@ -245,7 +245,19 @@
                     }
                 });
 
+                WidgetHome.isDocumentFocused = function(){
+                    return (('ontouchstart' in window) ||
+                      (navigator.maxTouchPoints > 0) ||
+                      (navigator.msMaxTouchPoints > 0) ||
+                      (document.hasFocus()));
+                }
+
                 WidgetHome.goTo = function (id) {
+                    var documentFocused = WidgetHome.isDocumentFocused();
+                    // stop the video autoplay if shared via PWA to prevent video freeze
+                    if(documentFocused) $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
+                    else $rootScope.autoPlay = false;
+
                     var foundObj = WidgetHome.items.find(function (el) { return el.id == id; });
                     var index = WidgetHome.items.indexOf(foundObj);
 
@@ -1352,6 +1364,11 @@
                 };
 
                 WidgetHome.goToMedia = function (ind) {
+                    var documentFocused = WidgetHome.isDocumentFocused();
+                    // stop the video autoplay if shared via PWA to prevent video freeze
+                    if(documentFocused) $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
+                    else $rootScope.autoPlay = false;
+                    
                     if (typeof ind != 'number') {
                         var foundObj = WidgetHome.items.find(function (el) { return el.id == ind; });
                         ind = WidgetHome.items.indexOf(foundObj);
