@@ -245,7 +245,19 @@
                     }
                 });
 
+                WidgetHome.isDocumentFocused = function(){
+                    return (('ontouchstart' in window) ||
+                      (navigator.maxTouchPoints > 0) ||
+                      (navigator.msMaxTouchPoints > 0) ||
+                      (document.hasFocus()));
+                }
+
                 WidgetHome.goTo = function (id) {
+                    var documentFocused = WidgetHome.isDocumentFocused();
+                    // stop the autoplay if shared media via PWA to prevent video freeze
+                    if(documentFocused) $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
+                    else $rootScope.autoPlay = false;
+
                     var foundObj = WidgetHome.items.find(function (el) { return el.id == id; });
                     var index = WidgetHome.items.indexOf(foundObj);
 
@@ -1171,6 +1183,11 @@
                 WidgetHome.getAudioDownloadURL = function (audioUrl) {
                         var myType;
                         var audioUrlToSend = audioUrl;
+                        //  fix dropbox download link
+                        if(audioUrlToSend.includes("www.dropbox") || audioUrlToSend.includes("dl.dropbox.com")){
+                            audioUrlToSend = audioUrlToSend.replace("www.dropbox", "dl.dropboxusercontent").split("?dl=")[0];
+                            audioUrlToSend = audioUrlToSend.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
+                        }
                         myType = audioUrlToSend.split('.').pop();
                         return {
                             uri: audioUrlToSend,
@@ -1237,6 +1254,7 @@
                                 if (err) {
                                     let index = $rootScope.currentlyDownloading.indexOf(item.id);
                                     $rootScope.currentlyDownloading.splice(index, 1);
+                                    $rootScope.$apply();
                                     buildfire.dialog.toast({
                                         message: `Error`,
                                         type: 'warning',
@@ -1292,6 +1310,8 @@
                     let type;
                     if (mediaType === 'video') {
                         type = WidgetHome.getVideoDownloadURL(item.data.videoUrl).type;
+                    }else {
+                        type = WidgetHome.getAudioDownloadURL(item.data.audioUrl).type;
                     }
                     buildfire.services.fileSystem.fileManager.deleteFile(
                         {
@@ -1311,14 +1331,20 @@
                                         console.error(err);
                                         return;
                                     }
-                                    item.data.hasDownloadedVideo = false;
-                                    item.data.videoURL = "";
-                                    item.hasDownloadedMedia = item.data.hasDownloadedAudio;
+                                    if(mediaType === 'video'){
+                                        item.data.hasDownloadedVideo = false;
+                                        item.data.videoURL = "";
+                                        item.hasDownloadedMedia = item.data.hasDownloadedAudio;
+                                    }else {
+                                        item.data.hasDownloadedAudio = false;
+                                        item.hasDownloadedMedia = item.data.hasDownloadedVideo;
+                                    }
                                     if (!$rootScope.showFeed) {
                                         let homeItem = WidgetHome.items.filter(x => x.id === item.id)[0];
                                         if (homeItem) {
-                                            homeItem.data.hasDownloadedVideo = false;
-                                            homeItem.hasDownloadedMedia = homeItem.data.hasDownloadedAudio;
+                                            homeItem.data.hasDownloadedVideo = item.data.hasDownloadedVideo;
+                                            homeItem.data.hasDownloadedAudio = item.data.hasDownloadedAudio;
+                                            homeItem.hasDownloadedMedia = item.hasDownloadedMedia;
                                         }
                                     }
                                     buildfire.spinner.hide();
@@ -1352,6 +1378,11 @@
                 };
 
                 WidgetHome.goToMedia = function (ind) {
+                    var documentFocused = WidgetHome.isDocumentFocused();
+                    // stop the autoplay if shared via PWA to prevent video freeze
+                    if(documentFocused) $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
+                    else $rootScope.autoPlay = false;
+                    
                     if (typeof ind != 'number') {
                         var foundObj = WidgetHome.items.find(function (el) { return el.id == ind; });
                         ind = WidgetHome.items.indexOf(foundObj);
