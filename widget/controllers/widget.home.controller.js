@@ -254,7 +254,7 @@
 
                 WidgetHome.goTo = function (id) {
                     var documentFocused = WidgetHome.isDocumentFocused();
-                    // stop the video autoplay if shared via PWA to prevent video freeze
+                    // stop the autoplay if shared media via PWA to prevent video freeze
                     if(documentFocused) $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                     else $rootScope.autoPlay = false;
 
@@ -1365,7 +1365,7 @@
 
                 WidgetHome.goToMedia = function (ind) {
                     var documentFocused = WidgetHome.isDocumentFocused();
-                    // stop the video autoplay if shared via PWA to prevent video freeze
+                    // stop the autoplay if shared via PWA to prevent video freeze
                     if(documentFocused) $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                     else $rootScope.autoPlay = false;
                     
