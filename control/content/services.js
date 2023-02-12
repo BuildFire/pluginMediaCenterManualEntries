@@ -448,9 +448,9 @@
                     limit: 50,
                     skip: 0,
                     filter:{
-                        "_buildfire.index.array1": {$exists: false}
+                        "_buildfire.index.array1": null,
+                        "isActive": true
                     }
-                    // index.array1.string1 -=> null
                 }, records = [];
                 
                 const getMediaCountData = () => {
