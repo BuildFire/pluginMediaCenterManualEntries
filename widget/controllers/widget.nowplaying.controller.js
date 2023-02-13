@@ -19,6 +19,7 @@
                 $rootScope.seekTime = null;
                 NowPlaying.isOnline = window.navigator.onLine;
 
+                NowPlaying.indexingUpdateV2Done= false;
                 NowPlaying.item = media;
                 NowPlaying.playing = false;
                 NowPlaying.paused = false;
@@ -30,41 +31,41 @@
                 NowPlaying.isAudioPlayerPlayingAnotherSong = true;
                 bookmarks.sync($scope);
 
+                if(!NowPlaying.isOnline) initAudio(0);
                 buildfire.datastore.get('MediaCenter', (err, result) => {
                     NowPlaying.indexingUpdateV2Done = result.data.indexingUpdateV2Done;
-                })
 
-                if(!NowPlaying.isOnline) initAudio(0);
-                Buildfire.auth.getCurrentUser((err, user) => {
-                    var userCheckViewFilter = {};
-                    if (user) {
-                        $rootScope.user = user
-                        userCheckViewFilter = {
-                            filter: getIndexedFilter(media.id, $rootScope.user._id)
-                        };
-                    } else if (Buildfire.context.deviceId) {
-                        userCheckViewFilter = {
-                            filter: getIndexedFilter(media.id, Buildfire.context.deviceId)
-                        };
-                    } else {
-                        initAudio(0)
-                    }
-                    if (user || Buildfire.context.deviceId) {
-                        buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
-                            if (res.length > 0) {
-                                NowPlaying.isAudioPlayed = true;
-                                if (res[0].data.lastPosition) {
-                                    initAudio(res[0].data.lastPosition)
+                    Buildfire.auth.getCurrentUser((err, user) => {
+                        var userCheckViewFilter = {};
+                        if (user) {
+                            $rootScope.user = user
+                            userCheckViewFilter = {
+                                filter: getIndexedFilter(media.id, $rootScope.user._id)
+                            };
+                        } else if (Buildfire.context.deviceId) {
+                            userCheckViewFilter = {
+                                filter: getIndexedFilter(media.id, Buildfire.context.deviceId)
+                            };
+                        } else {
+                            initAudio(0)
+                        }
+                        if (user || Buildfire.context.deviceId) {
+                            buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
+                                if (res.length > 0) {
+                                    NowPlaying.isAudioPlayed = true;
+                                    if (res[0].data.lastPosition) {
+                                        initAudio(res[0].data.lastPosition)
+                                    } else {
+                                        initAudio(0)
+                                    }
                                 } else {
+                                    NowPlaying.isAudioPlayed = false;
                                     initAudio(0)
                                 }
-                            } else {
-                                NowPlaying.isAudioPlayed = false;
-                                initAudio(0)
-                            }
-                        })
-                    }
-                });
+                            })
+                        }
+                    });
+                })
 
                 var playListArrayOfStrings = [
                     { key: "addedPlaylist", text: "Added to playlist" },
@@ -319,7 +320,7 @@
                             break;
                         case 'audioEnded':
                             ready = false;
-                            updateAudioLastPosition(media.id, 0)
+                            updateAudioLastPosition(media.id, 0.1)
                             if ($rootScope.autoPlay) {
                                 $rootScope.playNextItem();
                             } else {

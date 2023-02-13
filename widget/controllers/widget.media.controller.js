@@ -15,6 +15,7 @@
                 WidgetMedia.emptyBG = '../../../styles/media/holder-16x9.png';
                 WidgetMedia.isWeb = Buildfire.getContext().device.platform == 'web';
                 WidgetMedia.loadingData = false;
+                WidgetMedia.indexingUpdateV2Done = false;
 
                 WidgetMedia.fullScreen = false;
                 WidgetMedia.oldVideoStyle = { position: "", width: "", height: "", marginTop: "" };
