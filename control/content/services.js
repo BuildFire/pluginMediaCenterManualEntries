@@ -448,8 +448,7 @@
                     limit: 50,
                     skip: 0,
                     filter:{
-                        "_buildfire.index.array1": null,
-                        "isActive": true
+                        "_buildfire.index.array1": null
                     }
                 }, records = [];
                 

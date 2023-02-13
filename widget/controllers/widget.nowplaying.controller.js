@@ -434,11 +434,11 @@
                 function updateAudioLastPosition(mediaId, trackLastPosition) {
                     let searchFilter = null;
                     if ($rootScope && $rootScope.user) {
-                        searchFilter = getIndexedFilter(NowPlaying.item.id, $rootScope.user._id);
+                        searchFilter = getIndexedFilter(mediaId, $rootScope.user._id);
                     } else if (Buildfire.context.deviceId) {
-                        searchFilter = getIndexedFilter(NowPlaying.item.id, Buildfire.context.deviceId);
+                        searchFilter = getIndexedFilter(mediaId, Buildfire.context.deviceId);
                     }
-                    if(searchFilter)
+                    if(searchFilter){
                         buildfire.publicData.searchAndUpdate(
                             searchFilter,
                             { $set: { lastPosition: trackLastPosition } },
@@ -447,6 +447,7 @@
                                 if (err) return console.error(err);
                             }
                         );
+                    }
                 }
 
                 function sendAnalytics(NowPlaying) {
