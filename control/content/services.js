@@ -400,7 +400,6 @@
             },
 
             getMediaCountDataWithIndex: function (item) {
-                // here to check --
                 item.data._buildfire = {
                     index: this.buildMediaCountDataIndex(item.data)
                 }

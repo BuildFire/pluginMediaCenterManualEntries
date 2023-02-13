@@ -30,6 +30,11 @@
                         }
                     };
                 }
+                
+                buildfire.datastore.get('MediaCenter', (err, result) => {
+                    WidgetMedia.indexingUpdateV2Done = result.data.indexingUpdateV2Done;
+                })
+
                 var allCheckViewFilter = {
                     filter: {
                         "_buildfire.index.string1": {$eq: media.id+"-true"}
@@ -38,10 +43,6 @@
                     limit: 1,
                     recordCount: true
                 };
-
-                buildfire.datastore.get('MediaCenter', (err, result) => {
-                    WidgetMedia.indexingUpdateV2Done = result.data.indexingUpdateV2Done;
-                })
 
                 buildfire.publicData.search(allCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
                     if (res && res.totalRecord) {

@@ -406,9 +406,9 @@
                         $scope.$digest();
                     }
                     audioPlayer.settings.get(function (err, setting) {
-                        // if (!setting.autoJumpToLastPosition) {
-                        //     NowPlaying.currentTrack.startAt = 0;
-                        // }
+                        if (!setting.autoJumpToLastPosition) {
+                            NowPlaying.currentTrack.startAt = 0;
+                        }
                         NowPlaying.currentTime = 0;
                         NowPlaying.settings = setting;
                         NowPlaying.volume = setting.volume;
