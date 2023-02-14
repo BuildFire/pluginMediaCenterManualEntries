@@ -796,16 +796,24 @@
                                     downloadedIDS.length ?
                                         WidgetHome.items = WidgetHome.items.map(item => {
                                             if (downloadedIDS.indexOf(item.id) > -1) {
-                                                item.hasDownloadedMedia = true;
                                                 let downloadedItem = res[downloadedIDS.indexOf(item.id)];
+                                                item.downloadedItem = downloadedItem;
                                                 if (downloadedItem.mediaType == "video") {
                                                     if (downloadedItem.originalMediaUrl != item.data.videoUrl || !downloadedItem.originalMediaUrl || item.data.videoUrl.length == 0)
                                                         item.data.hasDownloadedVideo = true;
                                                     else
                                                         item.data.hasDownloadedVideo = true;
+                                                    item.hasDownloadedMedia = true;
                                                 }
-                                                else if (downloadedItem.mediaType == "audio")
-                                                    item.data.hasDownloadedAudio = true;
+                                                else if (downloadedItem.mediaType == "audio"){
+                                                    if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                                        item.hasDownloadedMedia = false;
+                                                        item.data.hasDownloadedAudio = false;
+                                                    }else{
+                                                        item.data.hasDownloadedAudio = true;
+                                                        item.hasDownloadedMedia = true;
+                                                    }
+                                                }
                                             }
                                             return item;
                                         }) : null;
@@ -866,14 +874,21 @@
                                 if (downloadedIDS.length > 0) {
                                     WidgetHome.items = WidgetHome.items.map(item => {
                                         if (downloadedIDS.indexOf(item.id) > -1) {
-                                            item.hasDownloadedMedia = true;
                                             let downloadedItem = res[downloadedIDS.indexOf(item.id)];
+                                            item.downloadedItem = downloadedItem;
                                             if (downloadedItem.mediaType == "video") {
                                                 item.data.hasDownloadedVideo = true;
+                                                item.hasDownloadedMedia = true;
                                             }
 
                                             else if (downloadedItem.mediaType == "audio") {
-                                                item.data.hasDownloadedAudio = true;
+                                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                                    item.hasDownloadedMedia = false;
+                                                    item.data.hasDownloadedAudio = false;
+                                                }else{
+                                                    item.data.hasDownloadedAudio = true;
+                                                    item.hasDownloadedMedia = true;
+                                                }
                                             }
                                         }
 
@@ -948,12 +963,15 @@
                             WidgetHome.items = WidgetHome.items.concat(result);
                             WidgetHome.items.forEach(item => {
                                 var searchOptions = {
-                                      filter: {
-                                        "_buildfire.index.string1":{$eq: item.id+"-true"}
-                                      }
+                                        filter: {
+                                        "_buildfire.index.string1": item.id+"-true"
+                                        },
+                                        skip: 0,
+                                        limit: 1,
+                                        recordCount: true
                                 };
                                 buildfire.publicData.search(searchOptions,COLLECTIONS.MediaCount, function(err,res){
-                                    item.data.count = res.length
+                                    item.data.count = res.totalRecord;
                                     if (!$scope.$$phase && !$scope.$root.$$phase) {
                                         $scope.$apply();
                                     }
@@ -1064,7 +1082,7 @@
                         }
 
                         if (item.data.audioUrl) {
-                            if (item.data.hasDownloadedAudio) {
+                            if (item.data.hasDownloadedAudio && WidgetHome.validateDownload(item)) {
                                 listItems.push({ id: "removeDownloadedAudio", text: strings.get("homeDrawer.removeDownloadedAudio") });
                             }
 
@@ -1261,15 +1279,17 @@
                                     });
                                     return;
                                 }
-                                new OfflineAccess({
-                                    db: DownloadedMedia,
-                                }).save({
+                                let _downloadOptions = {
                                     mediaId: item.id,
                                     mediaType: mediaType,
                                     mediaPath: filePath,
+                                    dropboxDownloadUpdated: true,
                                     originalMediaUrl: mediaType == 'video' ? item.data.videoUrl : item.data.audioUrl,
                                     createdOn: new Date(),
-                                }, (err, result) => {
+                                }
+                                new OfflineAccess({
+                                    db: DownloadedMedia,
+                                }).save(_downloadOptions, (err, result) => {
                                     if (err) {
                                         console.error(err);
                                         return;
@@ -1283,6 +1303,7 @@
                                         item.data.hasDownloadedAudio = true;
 
                                     item.hasDownloadedMedia = true;
+                                    item.downloadedItem = _downloadOptions;
                                     if (!$rootScope.showFeed) {
                                         let homeItem = WidgetHome.items.filter(x => x.id === item.id)[0];
                                         if (homeItem) {
@@ -1292,6 +1313,7 @@
                                                 homeItem.data.hasDownloadedAudio = true;
 
                                             homeItem.hasDownloadedMedia = true;
+                                            homeItem.downloadedItem = _downloadOptions;
                                         }
                                     }
                                     buildfire.dialog.toast({
@@ -1338,6 +1360,7 @@
                                     }else {
                                         item.data.hasDownloadedAudio = false;
                                         item.hasDownloadedMedia = item.data.hasDownloadedVideo;
+                                        item.downloadedItem = {};
                                     }
                                     if (!$rootScope.showFeed) {
                                         let homeItem = WidgetHome.items.filter(x => x.id === item.id)[0];
@@ -1345,6 +1368,7 @@
                                             homeItem.data.hasDownloadedVideo = item.data.hasDownloadedVideo;
                                             homeItem.data.hasDownloadedAudio = item.data.hasDownloadedAudio;
                                             homeItem.hasDownloadedMedia = item.hasDownloadedMedia;
+                                            homeItem.downloadedItem = {};
                                         }
                                     }
                                     buildfire.spinner.hide();
@@ -1569,5 +1593,21 @@
                 var onRefresh = Buildfire.datastore.onRefresh(function () {
                     Location.goToHome();
                 });
+
+                WidgetHome.validateDownload = (item) => {
+                    if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox")) && item.downloadedItem && !item.downloadedItem.dropboxDownloadUpdated){
+                        item.hasDownloadedMedia = false;
+                        new OfflineAccess({
+                            db: DownloadedMedia,
+                        }).delete({
+                            mediaId: item.id,
+                            mediaType: 'audio',
+                        }, (err, res) => {
+                            console.log('item removed from offline cache');
+                        })
+                        return false
+                    }
+                    return true;
+                }
             }]);
 })(window.angular);

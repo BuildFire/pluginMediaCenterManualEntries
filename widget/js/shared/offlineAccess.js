@@ -20,12 +20,12 @@ class OfflineAccess {
 
                 result.push(new OfflineMedia({
                     id: result.length + 1,
-                    // userId: this.userId,
                     instanceId: this.instanceId,
                     mediaId: data.mediaId,
                     mediaType: data.mediaType,
                     mediaPath: data.mediaPath,
                     originalMediaUrl: data.originalMediaUrl,
+                    dropboxDownloadUpdated: data.dropboxDownloadUpdated,
                     createdOn: data.createdOn || new Date(),
                     lastUpdatedOn: new Date(),
                 }))
@@ -58,6 +58,7 @@ class OfflineAccess {
                         instanceId: this.instanceId,
                         mediaId: data.mediaId,
                         mediaType: data.mediaType,
+                        dropboxDownloadUpdated: data.dropboxDownloadUpdated,
                         mediaPath: data.mediaPath,
                         createdOn: data.createdOn,
                         lastUpdatedOn: new Date(),
