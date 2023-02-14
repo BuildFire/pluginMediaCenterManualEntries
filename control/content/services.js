@@ -429,7 +429,7 @@
                         buildfire.datastore.save(result.data, 'MediaCenter', (err, saved) => {
                             buildfire.dialog.alert(
                                 {
-                                    title: 'Performance Updated',
+                                    title: 'Database Optimization',
                                     message: "Database has been successfully updated. Thank you for your patience!",
                                 }, (err, isConfirmed) => {
                                     if (err) return console.error(err);
@@ -471,7 +471,7 @@
             showIndexingDialog: function () {
                 buildfire.dialog.confirm(
                     {
-                        title: 'Performance optimization',
+                        title: 'Database Optimization',
                         message: "We are improving your database performance, please do not close your browser or leave the feature until you see success dialog. This may take a while...",
                         confirmButton: { text: "Yes", type: "success" },
                     }, (err, isConfirmed) => {
