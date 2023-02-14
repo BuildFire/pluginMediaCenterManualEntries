@@ -35,7 +35,14 @@ var downloads = {
                                             fileName: item.id + "." + type
                                         },
                                         (err, isDeleted) => {
-                                            if(err) console.error(err);
+                                            if (err) {
+                                                buildfire.dialog.toast({
+                                                    message: `Error while deleting downloads`,
+                                                    type: 'warning',
+                                                });
+                                                console.error("Error from dm home" + err);
+                                            }
+                                            
                                             new OfflineAccess({
                                                 db: db,
                                             }).delete({
