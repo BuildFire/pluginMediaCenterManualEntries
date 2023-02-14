@@ -248,6 +248,7 @@
                                                         if (downloadedItem.mediaType == "audio") {
                                                             result.data.hasDownloadedAudio = true;
                                                             result.data.audioUrl = downloadedItem.mediaPath;
+                                                            result.data.topImage = '';
                                                         }
 
                                                     });
