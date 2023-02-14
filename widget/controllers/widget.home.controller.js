@@ -804,12 +804,19 @@
                                                     else
                                                         item.data.hasDownloadedVideo = true;
                                                 }
-                                                else if (downloadedItem.mediaType == "audio")
-                                                    item.data.hasDownloadedAudio = true;
+                                                else if (downloadedItem.mediaType == "audio"){
+                                                    if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                                        item.hasDownloadedMedia = false;
+                                                        item.data.hasDownloadedAudio = false;
+                                                    }else{
+                                                        item.data.hasDownloadedAudio = true;
+                                                    }
+                                                }
                                             }
                                             return item;
                                         }) : null;
 
+                                    downloads.syncDownloadsAudios({items:$scope.WidgetHome.items, downloadedMedias:res, index:0, db:DownloadedMedia, callback:downloads.syncDownloadsAudios});
                                     downloads.sync($scope, DownloadedMedia);
                                     callback(err, true);
                                 });
@@ -873,7 +880,12 @@
                                             }
 
                                             else if (downloadedItem.mediaType == "audio") {
-                                                item.data.hasDownloadedAudio = true;
+                                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                                    item.hasDownloadedMedia = false;
+                                                    item.data.hasDownloadedAudio = false;
+                                                }else{
+                                                    item.data.hasDownloadedAudio = true;
+                                                }
                                             }
                                         }
 
@@ -1267,6 +1279,7 @@
                                     mediaId: item.id,
                                     mediaType: mediaType,
                                     mediaPath: filePath,
+                                    dropboxDownloadUpdated: true,
                                     originalMediaUrl: mediaType == 'video' ? item.data.videoUrl : item.data.audioUrl,
                                     createdOn: new Date(),
                                 }, (err, result) => {

@@ -9,7 +9,7 @@ var downloads = {
                     message: `Error while syncing downloads`,
                     type: 'warning',
                 });
-                return callback(err);
+                return console.error(err);
             }
             if (res) {
                 downloadedIDS = res.map(a => a.mediaId);
@@ -35,14 +35,7 @@ var downloads = {
                                             fileName: item.id + "." + type
                                         },
                                         (err, isDeleted) => {
-                                            if (err) {
-                                                buildfire.dialog.toast({
-                                                    message: `Error while deleting downloads`,
-                                                    type: 'warning',
-                                                });
-                                                console.error("Error from dm home" + err);
-                                            }
-
+                                            if(err) console.error(err);
                                             new OfflineAccess({
                                                 db: db,
                                             }).delete({
@@ -60,8 +53,12 @@ var downloads = {
                             }
 
                             else if (downloadedItem.mediaType == "audio") {
-                                item.data.hasDownloadedAudio = true;
-                                item.hasDownloadedMedia = true;
+                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                    item.data.hasDownloadedAudio = false;
+                                }else{
+                                    item.data.hasDownloadedAudio = true;
+                                    item.hasDownloadedMedia = true;
+                                }
                             }
                         }
                         else {
@@ -124,10 +121,14 @@ var downloads = {
                             }
 
                             else if (downloadedItem.mediaType == "audio") {
-                                if (!window.navigator.onLine) {
-                                    $scope.WidgetMedia.item.data.audioUrl = downloadedItem.mediaPath;
+                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                    $scope.WidgetMedia.item.data.hasDownloadedAudio = false;
+                                }else{
+                                    if (!window.navigator.onLine) {
+                                        $scope.WidgetMedia.item.data.audioUrl = downloadedItem.mediaPath;
+                                    }
+                                    $scope.WidgetMedia.item.hasDownloadedAudio = true;
                                 }
-                                $scope.WidgetMedia.item.hasDownloadedAudio = true;
                             }
 
                         });
@@ -143,5 +144,41 @@ var downloads = {
                 $scope.$apply();
             }
         });
+    },
+    syncDownloadsAudios: function(options){
+        var {items, downloadedMedias, index, db, callback} = options;
+        if (index !== items.length) {
+            let downloadedIDS = downloadedMedias.map(a => a.mediaId);
+            let downloadedItem = downloadedMedias[downloadedIDS.indexOf(items[index].id)];
+
+            if((items[index].data.audioUrl.includes("www.dropbox") || items[index].data.audioUrl.includes("dl.dropbox.com")) && downloadedItem && !downloadedItem.dropboxDownloadUpdated){
+                let type = downloadedItem.mediaPath.split('.').pop();
+                buildfire.dialog.toast({
+                    message: `Some downloads are deleted`,
+                    type: 'warning',
+                });
+                buildfire.services.fileSystem.fileManager.deleteFile(
+                    {
+                        path: "/data/mediaCenterManual/" + buildfire.getContext().instanceId + "/" + downloadedItem.mediaType + "/",
+                        fileName: items[index].id + "." + type
+                    },
+                    (err, isDeleted) => {
+                        if(err) console.log(err);
+                        new OfflineAccess({
+                            db: db,
+                        }).delete({
+                            mediaId: items[index].id,
+                            mediaType: downloadedItem.mediaType,
+                        })
+                        setTimeout(() => {
+                            callback({items, downloadedMedias, index:index+1, db, callback:downloads.syncDownloadsAudios});
+                        }, 500);
+
+                    }
+                );
+            }else{
+                callback({items, downloadedMedias, index:index+1, db, callback:downloads.syncDownloadsAudios});
+            }
+        }
     }
 }
