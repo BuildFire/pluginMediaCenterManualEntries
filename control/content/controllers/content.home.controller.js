@@ -39,7 +39,7 @@
                             backgroundImage: "",
                             skipMediaPage: false
                         },
-                        indexingUpdateDone: false
+                        indexingUpdateV2Done: false
                     }
                 };
                 var MediaContent = new DB(COLLECTIONS.MediaContent);
@@ -82,9 +82,23 @@
                     ContentHome.info.data.content.sortByValue = 'Media Title Z-A';
                 }
 
-                if(!ContentHome.info.data.indexingUpdateDone && Object.keys(ContentHome.info.data).length > 0) 
-                    PerfomanceIndexingService.showIndexingDialog();
-                //MediaCenter.save(ContentHome.info.data).then(function (result) {});
+                if(!ContentHome.info.data.indexingUpdateV2Done && Object.keys(ContentHome.info.data).length > 0){
+                    var searchOptions = {
+                        skip: 0,
+                        limit: 1,
+                        recordCount: true
+                    };
+                    buildfire.publicData.search(searchOptions, 'MediaCount', function (err, result) {
+                        if(result && result.totalRecord >=1) PerfomanceIndexingService.showIndexingDialog();
+                        else{
+                            ContentHome.info.data.indexingUpdateV2Done = true;
+                            buildfire.datastore.save(ContentHome.info.data, 'MediaCenter', (err, saved) => {
+                                if(err) console.log('error while updating the MediaCenter collection...')
+                                if(saved) console.log('no data to be updated ...')
+                            })
+                        }
+                    })
+                }
 
                 AppConfig.setSettings(MediaCenterInfo.data);
                 AppConfig.setAppId(MediaCenterInfo.id);
