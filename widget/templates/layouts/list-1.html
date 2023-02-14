@@ -56,7 +56,7 @@
                         <div class="list-item-copy text-left">
                             <div class="date-row">
                                 <p class="ellipsis margin-zero text-primary title"><a class="text-primary">{{item.data.title}}</a></p>
-                                <i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload" style="margin-top: 2px; margin-left: auto;" class="glyphicon glyphicon-ok-circle" role="button"></i>
+                                <i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload && WidgetHome.validateDownload(item)" style="margin-top: 2px; margin-left: auto;" class="glyphicon glyphicon-ok-circle" role="button"></i>
                                 <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" class="lds-ring-small"><div></div><div></div><div></div><div></div></div>
                             </div>
                             

@@ -105,7 +105,9 @@
                                                                 else if (downloadedItem.mediaType == "audio") {
                                                                     if((result.data.audioUrl.includes("www.dropbox") || result.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
                                                                         result.data.hasDownloadedAudio = false;
+                                                                        result.hasDownloadedMedia = false;
                                                                     }else{
+                                                                        result.hasDownloadedMedia = true;
                                                                         result.data.hasDownloadedAudio = true;
                                                                     }
                                                                 }
@@ -161,8 +163,10 @@
                                                             else if (downloadedItem.mediaType == "audio") {
                                                                 if((result.data.audioUrl.includes("www.dropbox") || result.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
                                                                     result.data.hasDownloadedAudio = false;
-                                                                }else{
-                                                                    result.data.hasDownloadedAudio = true;
+                                                                        result.hasDownloadedMedia = false;
+                                                                    }else{
+                                                                        result.hasDownloadedMedia = true;
+                                                                        result.data.hasDownloadedAudio = true;
                                                                     result.data.audioUrl = downloadedItem.mediaPath;
                                                                 }
                                                             }
@@ -256,7 +260,9 @@
                                                         if (downloadedItem.mediaType == "audio") {
                                                             if((result.data.audioUrl.includes("www.dropbox") || result.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
                                                                 result.data.hasDownloadedAudio = false;
+                                                                result.hasDownloadedMedia = false;
                                                             }else{
+                                                                result.hasDownloadedMedia = true;
                                                                 result.data.hasDownloadedAudio = true;
                                                                 result.data.audioUrl = downloadedItem.mediaPath;
                                                                 result.data.topImage = '';

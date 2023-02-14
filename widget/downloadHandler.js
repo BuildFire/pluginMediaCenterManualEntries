@@ -17,6 +17,7 @@ var downloads = {
                     $scope.WidgetHome.item = $scope.WidgetHome.items.map(item => {
                         if (downloadedIDS.indexOf(item.id) > -1) {
                             let downloadedItem = res[downloadedIDS.indexOf(item.id)];
+                            item.downloadedItem = downloadedItem;
                             if (downloadedItem.mediaType == "video") {
                                 if ((downloadedItem.originalMediaUrl != item.data.videoUrl || !downloadedItem.originalMediaUrl || item.data.videoUrl.length == 0) && window.navigator.onLine) {
                                     item.hasDownloadedMedia = false;
@@ -81,6 +82,7 @@ var downloads = {
                     let matchingItems = res.filter(item => item.mediaId == $scope.WidgetMedia.item.id);
                     if (matchingItems.length > 0) {
                         matchingItems.map(downloadedItem => {
+                            item.downloadedItem = downloadedItem;
                             if (downloadedItem.mediaType == "video") {
                                 if ((downloadedItem.originalMediaUrl != $scope.WidgetMedia.item.data.videoUrl || !downloadedItem.originalMediaUrl || $scope.WidgetMedia.item.data.videoUrl.length == 0) && window.navigator.onLine) {
                                     let type = downloadedItem.mediaPath.split('.').pop();

@@ -64,7 +64,7 @@
                                     class="text-primary">{{item.data.title}}</a> </p>
                             <div style="display: flex; flex-direction: row;">
 
-                                <i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
+                                <i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload && WidgetHome.validateDownload(item)"
                                     style=" margin-right: 10px;" class="glyphicon glyphicon-ok-circle"
                                     ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
                                 <div style="margin-right: 10px;" data-ng-if="currentlyDownloading.indexOf(item.id) > -1"

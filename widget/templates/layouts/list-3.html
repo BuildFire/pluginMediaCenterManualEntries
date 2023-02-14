@@ -61,7 +61,7 @@
                         </p>
                         <div class="action" style="display: flex; flex-direction: row;">
                             <div class="li-actions-item">
-                                <i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
+                                <i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload && WidgetHome.validateDownload(item)"
                                     style="margin-left: auto; margin-top: 2px;" class="glyphicon glyphicon-ok-circle"
                                     role="button"></i>
                                 <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" class="lds-ring-small">
