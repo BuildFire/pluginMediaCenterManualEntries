@@ -153,41 +153,5 @@ var downloads = {
                 $scope.$apply();
             }
         });
-    },
-    syncDownloadsAudios: function(options){
-        var {items, downloadedMedias, index, db, callback} = options;
-        if (index !== items.length) {
-            let downloadedIDS = downloadedMedias.map(a => a.mediaId);
-            let downloadedItem = downloadedMedias[downloadedIDS.indexOf(items[index].id)];
-
-            if((items[index].data.audioUrl.includes("www.dropbox") || items[index].data.audioUrl.includes("dl.dropbox.com")) && downloadedItem && !downloadedItem.dropboxDownloadUpdated){
-                let type = downloadedItem.mediaPath.split('.').pop();
-                buildfire.dialog.toast({
-                    message: `Some downloads are deleted`,
-                    type: 'warning',
-                });
-                buildfire.services.fileSystem.fileManager.deleteFile(
-                    {
-                        path: "/data/mediaCenterManual/" + buildfire.getContext().instanceId + "/" + downloadedItem.mediaType + "/",
-                        fileName: items[index].id + "." + type
-                    },
-                    (err, isDeleted) => {
-                        if(err) console.log(err);
-                        new OfflineAccess({
-                            db: db,
-                        }).delete({
-                            mediaId: items[index].id,
-                            mediaType: downloadedItem.mediaType,
-                        })
-                        setTimeout(() => {
-                            callback({items, downloadedMedias, index:index+1, db, callback:downloads.syncDownloadsAudios});
-                        }, 500);
-
-                    }
-                );
-            }else{
-                callback({items, downloadedMedias, index:index+1, db, callback:downloads.syncDownloadsAudios});
-            }
-        }
     }
 }
