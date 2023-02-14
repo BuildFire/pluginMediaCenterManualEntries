@@ -62,6 +62,7 @@ var downloads = {
                             else if (downloadedItem.mediaType == "audio") {
                                 if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
                                     item.data.hasDownloadedAudio = false;
+                                    item.hasDownloadedMedia = false;
                                 }else{
                                     item.data.hasDownloadedAudio = true;
                                     item.hasDownloadedMedia = true;
@@ -130,6 +131,7 @@ var downloads = {
                             else if (downloadedItem.mediaType == "audio") {
                                 if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
                                     $scope.WidgetMedia.item.data.hasDownloadedAudio = false;
+                                    $scope.WidgetMedia.item.hasDownloadedMedia = false;
                                 }else{
                                     if (!window.navigator.onLine) {
                                         $scope.WidgetMedia.item.data.audioUrl = downloadedItem.mediaPath;

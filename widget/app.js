@@ -103,7 +103,11 @@
                                                                 }
 
                                                                 else if (downloadedItem.mediaType == "audio") {
-                                                                    result.data.hasDownloadedAudio = true;
+                                                                    if((result.data.audioUrl.includes("www.dropbox") || result.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                                                        result.data.hasDownloadedAudio = false;
+                                                                    }else{
+                                                                        result.data.hasDownloadedAudio = true;
+                                                                    }
                                                                 }
 
                                                             });
@@ -155,8 +159,12 @@
                                                             }
 
                                                             else if (downloadedItem.mediaType == "audio") {
-                                                                result.data.hasDownloadedAudio = true;
-                                                                result.data.audioUrl = downloadedItem.mediaPath;
+                                                                if((result.data.audioUrl.includes("www.dropbox") || result.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                                                    result.data.hasDownloadedAudio = false;
+                                                                }else{
+                                                                    result.data.hasDownloadedAudio = true;
+                                                                    result.data.audioUrl = downloadedItem.mediaPath;
+                                                                }
                                                             }
 
                                                         });
@@ -246,11 +254,14 @@
                                                 if (matchingItems.length > 0) {
                                                     matchingItems.map(downloadedItem => {
                                                         if (downloadedItem.mediaType == "audio") {
-                                                            result.data.hasDownloadedAudio = true;
-                                                            result.data.audioUrl = downloadedItem.mediaPath;
-                                                            result.data.topImage = '';
+                                                            if((result.data.audioUrl.includes("www.dropbox") || result.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                                                result.data.hasDownloadedAudio = false;
+                                                            }else{
+                                                                result.data.hasDownloadedAudio = true;
+                                                                result.data.audioUrl = downloadedItem.mediaPath;
+                                                                result.data.topImage = '';
+                                                            }
                                                         }
-
                                                     });
                                                 }
                                             }
