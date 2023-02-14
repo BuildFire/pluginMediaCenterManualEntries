@@ -429,7 +429,7 @@
                         buildfire.datastore.save(result.data, 'MediaCenter', (err, saved) => {
                             buildfire.dialog.alert(
                                 {
-                                    title: 'MCM Update',
+                                    title: 'Performance Updated',
                                     message: "Database has been successfully updated. Thank you for your patience!",
                                 }, (err, isConfirmed) => {
                                     if (err) return console.error(err);
@@ -447,7 +447,7 @@
                     limit: 50,
                     skip: 0,
                     filter:{
-                        "_buildfire.index.array1": null
+                        "_buildfire.index.array1.string1": null
                     }
                 }, records = [];
                 
@@ -471,8 +471,8 @@
             showIndexingDialog: function () {
                 buildfire.dialog.confirm(
                     {
-                        title: 'MCM Update',
-                        message: "We are improving your database perfomance, please do not close your browser or leave the plugin until you see success dialog. This may take a while...",
+                        title: 'Performance optimization',
+                        message: "We are improving your database performance, please do not close your browser or leave the feature until you see success dialog. This may take a while...",
                         confirmButton: { text: "Yes", type: "success" },
                     }, (err, isConfirmed) => {
                         if (err) return console.error(err);

@@ -464,13 +464,15 @@
                 }
 
                 function getIndexedFilter(mediaId, userId) {
-                    let filter = {
-                        "_buildfire.index.text": { $eq: mediaId + "-" + userId + "-AUDIO-true" }
-                    };
+                    let filter = {};
 
                     if(NowPlaying.indexingUpdateV2Done){
                         filter = {
-                            "_buildfire.index.array1.string1": { $eq: mediaId + "-" + userId + "-AUDIO-true" }
+                            "_buildfire.index.array1.string1": mediaId + "-" + userId + "-AUDIO-true" 
+                        };
+                    }else{
+                        filter = {
+                            "_buildfire.index.text": mediaId + "-" + userId + "-AUDIO-true" 
                         };
                     }
 

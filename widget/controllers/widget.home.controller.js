@@ -937,7 +937,7 @@
                             WidgetHome.items.forEach(item => {
                                 var searchOptions = {
                                         filter: {
-                                        "_buildfire.index.string1":{$eq: item.id+"-true"}
+                                        "_buildfire.index.string1": item.id+"-true"
                                         },
                                         skip: 0,
                                         limit: 1,

@@ -38,7 +38,7 @@
 
                 var allCheckViewFilter = {
                     filter: {
-                        "_buildfire.index.string1": {$eq: media.id+"-true"}
+                        "_buildfire.index.string1": media.id+"-true"
                     },
                     skip: 0,
                     limit: 1,
@@ -298,13 +298,15 @@
                 };
 
                 const getIndexedFilter = (mediaId, userId, mediaType) => {
-                    let filter = {
-                        "_buildfire.index.text": { $eq: mediaId + "-" + userId + "-" + mediaType + "-true" }
-                    };
+                    let filter = {};
 
                     if(WidgetMedia.indexingUpdateV2Done === true){
                         filter = {
-                            "_buildfire.index.array1.string1": { $eq: mediaId + "-" + userId + "-" + mediaType + "-true" }
+                            "_buildfire.index.array1.string1": mediaId + "-" + userId + "-" + mediaType + "-true" 
+                        };
+                    }else{
+                        filter = {
+                            "_buildfire.index.text": mediaId + "-" + userId + "-" + mediaType + "-true" 
                         };
                     }
 
