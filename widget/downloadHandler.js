@@ -157,12 +157,13 @@ var downloads = {
         });
     },
 	syncDownloadsAudios: function(options){
+        debugger
         var {items, downloadedItems, index, db, callback} = options;
-        if (index !== items.length) {
-            let downloadedIDS = downloadedItems.map(a => a.mediaId);
-            let downloadedItem = downloadedItems[downloadedIDS.indexOf(items[index].id)];
+        if (index !== downloadedItems.length) {
+            let downloadedItem = downloadedItems[index];
+            let item = items.find(i=>i.id === downloadedItem.mediaId);
 
-            if((items[index].data.audioUrl.includes("www.dropbox") || items[index].data.audioUrl.includes("dl.dropbox.com")) && downloadedItem && !downloadedItem.dropboxDownloadUpdated){
+            if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && downloadedItem && !downloadedItem.dropboxDownloadUpdated){
                 let type = downloadedItem.mediaPath.split('.').pop();
                 buildfire.dialog.toast({
                     message: `Some downloads are deleted`,
@@ -171,14 +172,14 @@ var downloads = {
                 buildfire.services.fileSystem.fileManager.deleteFile(
                     {
                         path: "/data/mediaCenterManual/" + buildfire.getContext().instanceId + "/" + downloadedItem.mediaType + "/",
-                        fileName: items[index].id + "." + type
+                        fileName: item.id + "." + type
                     },
                     (err, isDeleted) => {
                         if(err) console.log(err);
                         new OfflineAccess({
                             db: db,
                         }).delete({
-                            mediaId: items[index].id,
+                            mediaId: item.id,
                             mediaType: downloadedItem.mediaType,
                         })
                         setTimeout(() => {
