@@ -114,13 +114,8 @@
                                                                 }
 
                                                                 else if (downloadedItem.mediaType == "audio") {
-                                                                    if((result.data.audioUrl.includes("www.dropbox") || result.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxAudioUpdated){
-                                                                        result.data.hasDownloadedAudio = false;
-                                                                        result.hasDownloadedMedia = false;
-                                                                    }else{
-                                                                        result.hasDownloadedMedia = true;
-                                                                        result.data.hasDownloadedAudio = true;
-                                                                    }
+                                                                    result.hasDownloadedMedia = true;
+                                                                    result.data.hasDownloadedAudio = true;
                                                                 }
 
                                                             });
@@ -183,14 +178,9 @@
                                                             }
 
                                                             else if (downloadedItem.mediaType == "audio") {
-                                                                if((result.data.audioUrl.includes("www.dropbox") || result.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxAudioUpdated){
-                                                                    result.data.hasDownloadedAudio = false;
-                                                                        result.hasDownloadedMedia = false;
-                                                                    }else{
-                                                                        result.hasDownloadedMedia = true;
-                                                                        result.data.hasDownloadedAudio = true;
-                                                                    result.data.audioUrl = downloadedItem.mediaPath;
-                                                                }
+                                                                result.hasDownloadedMedia = true;
+                                                                result.data.hasDownloadedAudio = true;
+                                                                result.data.audioUrl = downloadedItem.mediaPath;
                                                             }
 
                                                         });
@@ -276,19 +266,25 @@
                                         DownloadedMedia.get((err, res) => {
                                             if (err) {}
                                             if (res) {
+                                                res = res.filter(item=>{
+                                                    if(!item){
+                                                        return false;
+                                                    }
+                                
+                                                    if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated){
+                                                        return false;
+                                                    }else{
+                                                        return true;
+                                                    }
+                                                })
                                                 let matchingItems = res.filter(item => item.mediaId == mediaId);
                                                 if (matchingItems.length > 0) {
                                                     matchingItems.map(downloadedItem => {
                                                         if (downloadedItem.mediaType == "audio") {
-                                                            if((result.data.audioUrl.includes("www.dropbox") || result.data.audioUrl.includes("dl.dropbox")) && !downloadedItem.dropboxAudioUpdated){
-                                                                result.data.hasDownloadedAudio = false;
-                                                                result.hasDownloadedMedia = false;
-                                                            }else{
-                                                                result.hasDownloadedMedia = true;
-                                                                result.data.hasDownloadedAudio = true;
-                                                                result.data.audioUrl = downloadedItem.mediaPath;
-                                                                result.data.topImage = '';
-                                                            }
+                                                            result.hasDownloadedMedia = true;
+                                                            result.data.hasDownloadedAudio = true;
+                                                            result.data.audioUrl = downloadedItem.mediaPath;
+                                                            result.data.topImage = '';
                                                         }
                                                     });
                                                 }
@@ -348,12 +344,7 @@
             $httpProvider.interceptors.push(interceptor);
 
         }])
-        .run(['Location', '$location', '$rootScope', '$window', 'Messaging',  'OFSTORAGE','EVENTS', 'PATHS', 'DB', 'COLLECTIONS', function (Location, $location, $rootScope, $window, Messaging, OFSTORAGE, EVENTS, PATHS, DB, COLLECTIONS) {
-            var DownloadedMedia = new OFSTORAGE({
-                path: "/data/mediaCenterManual",
-                fileName: "downloadedMedia"
-            });
-
+        .run(['Location', '$location', '$rootScope', '$window', 'Messaging', 'EVENTS', 'PATHS', 'DB', 'COLLECTIONS', function (Location, $location, $rootScope, $window, Messaging, EVENTS, PATHS, DB, COLLECTIONS) {
             buildfire.navigation.onBackButtonClick = function () {
                 if ($rootScope.fullScreen) {
                     $rootScope.goingBackFullScreen = true;
