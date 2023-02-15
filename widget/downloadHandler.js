@@ -12,17 +12,9 @@ var downloads = {
                 return console.error(err);
             }
             if (res) {
-                res = res.filter(item=>{
-                    if(!item){
-                        return false;
-                    }
-
-                    if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated){
-                        return false;
-                    }else{
-                        return true;
-                    }
-                })
+                // filtering old dropbox audio downloaded links, removing them from the "response"
+                res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
+                
                 downloadedIDS = res.map(a => a.mediaId);
                 if ($scope.WidgetHome) {
                     $scope.WidgetHome.item = $scope.WidgetHome.items.map(item => {

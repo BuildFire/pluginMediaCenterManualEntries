@@ -72,17 +72,8 @@
                                                         });
                                                     }
                                                     if (res) {
-                                                        res = res.filter(item=>{
-                                                            if(!item){
-                                                                return false;
-                                                            }
-                                        
-                                                            if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated){
-                                                                return false;
-                                                            }else{
-                                                                return true;
-                                                            }
-                                                        })
+                                                        res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
+
                                                         let matchingItems = res.filter(item => item.mediaId == mediaId);
                                                         if (matchingItems.length > 0) {
                                                             matchingItems.map(downloadedItem => {
@@ -157,17 +148,8 @@
 
                                                 }
                                                 if (res) {
-                                                    res = res.filter(item=>{
-                                                        if(!item){
-                                                            return false;
-                                                        }
-                                    
-                                                        if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated){
-                                                            return false;
-                                                        }else{
-                                                            return true;
-                                                        }
-                                                    })
+                                                    res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
+                                                    
                                                     let matchingItems = res.filter(item => item.mediaId == mediaId);
                                                     if (matchingItems.length > 0) {
                                                         matchingItems.map(downloadedItem => {
@@ -266,17 +248,8 @@
                                         DownloadedMedia.get((err, res) => {
                                             if (err) {}
                                             if (res) {
-                                                res = res.filter(item=>{
-                                                    if(!item){
-                                                        return false;
-                                                    }
-                                
-                                                    if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated){
-                                                        return false;
-                                                    }else{
-                                                        return true;
-                                                    }
-                                                })
+                                                res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
+
                                                 let matchingItems = res.filter(item => item.mediaId == mediaId);
                                                 if (matchingItems.length > 0) {
                                                     matchingItems.map(downloadedItem => {
