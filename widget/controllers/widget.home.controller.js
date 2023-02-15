@@ -41,7 +41,7 @@
                 buildfire.navigation.onAppLauncherActive(() => {
                     $rootScope.refreshItems();
                 });
-                
+
                 var _infoData = {
                     data: {
                         content: {
@@ -131,7 +131,7 @@
                         $rootScope.allowOfflineDownload = MediaCenterInfo.data.content.allowOfflineDownload;
                         $rootScope.enableFiltering = MediaCenterInfo.data.content.enableFiltering;
                         $rootScope.showViewCount = MediaCenterInfo.data.content.showViewCount;
-                       
+
                         if (isLauncher && MediaCenterInfo.data.content.enableFiltering) {
                             slideElement.classList.add("launcher-with-filter");
                         } else {
@@ -818,6 +818,7 @@
                                             return item;
                                         }) : null;
 
+									downloads.syncDownloadsAudios({items:WidgetHome.items, downloadedItems:res, index:0, DownloadedMedia, callback:downloads.syncDownloadsAudios})
                                     downloads.sync($scope, DownloadedMedia);
                                     callback(err, true);
                                 });
@@ -1406,7 +1407,7 @@
                     // stop the autoplay if shared via PWA to prevent video freeze
                     if(documentFocused) $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                     else $rootScope.autoPlay = false;
-                    
+
                     if (typeof ind != 'number') {
                         var foundObj = WidgetHome.items.find(function (el) { return el.id == ind; });
                         ind = WidgetHome.items.indexOf(foundObj);
@@ -1597,14 +1598,6 @@
                 WidgetHome.validateDownload = (item) => {
                     if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox")) && item.downloadedItem && !item.downloadedItem.dropboxDownloadUpdated){
                         item.hasDownloadedMedia = false;
-                        new OfflineAccess({
-                            db: DownloadedMedia,
-                        }).delete({
-                            mediaId: item.id,
-                            mediaType: 'audio',
-                        }, (err, res) => {
-                            console.log('item removed from offline cache');
-                        })
                         return false
                     }
                     return true;
