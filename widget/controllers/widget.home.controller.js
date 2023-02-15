@@ -1083,7 +1083,7 @@
                         }
 
                         if (item.data.audioUrl) {
-                            if (item.data.hasDownloadedAudio && WidgetHome.validateDownload(item)) {
+                            if (item.data.hasDownloadedAudio ) {
                                 listItems.push({ id: "removeDownloadedAudio", text: strings.get("homeDrawer.removeDownloadedAudio") });
                             }
 

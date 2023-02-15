@@ -258,7 +258,7 @@
                                                 if (matchingItems.length > 0) {
                                                     matchingItems.map(downloadedItem => {
                                                         if (downloadedItem.mediaType == "audio") {
-                                                            if((result.data.audioUrl.includes("www.dropbox") || result.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                                            if((result.data.audioUrl.includes("www.dropbox") || result.data.audioUrl.includes("dl.dropbox")) && !downloadedItem.dropboxDownloadUpdated){
                                                                 result.data.hasDownloadedAudio = false;
                                                                 result.hasDownloadedMedia = false;
                                                             }else{
