@@ -84,7 +84,6 @@
 
                 if(!ContentHome.info.data.indexingUpdateDone && Object.keys(ContentHome.info.data).length > 0) 
                     PerfomanceIndexingService.showIndexingDialog();
-                //MediaCenter.save(ContentHome.info.data).then(function (result) {});
 
                 AppConfig.setSettings(MediaCenterInfo.data);
                 AppConfig.setAppId(MediaCenterInfo.id);

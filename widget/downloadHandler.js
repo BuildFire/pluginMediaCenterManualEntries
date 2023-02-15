@@ -9,14 +9,18 @@ var downloads = {
                     message: `Error while syncing downloads`,
                     type: 'warning',
                 });
-                return callback(err);
+                return console.error(err);
             }
             if (res) {
+                // filtering old dropbox audio downloaded links, removing them from the "response"
+                res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
+                
                 downloadedIDS = res.map(a => a.mediaId);
                 if ($scope.WidgetHome) {
                     $scope.WidgetHome.item = $scope.WidgetHome.items.map(item => {
                         if (downloadedIDS.indexOf(item.id) > -1) {
                             let downloadedItem = res[downloadedIDS.indexOf(item.id)];
+                            item.downloadedItem = downloadedItem;
                             if (downloadedItem.mediaType == "video") {
                                 if ((downloadedItem.originalMediaUrl != item.data.videoUrl || !downloadedItem.originalMediaUrl || item.data.videoUrl.length == 0) && window.navigator.onLine) {
                                     item.hasDownloadedMedia = false;
@@ -60,8 +64,13 @@ var downloads = {
                             }
 
                             else if (downloadedItem.mediaType == "audio") {
-                                item.data.hasDownloadedAudio = true;
-                                item.hasDownloadedMedia = true;
+                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxAudioUpdated){
+                                    item.data.hasDownloadedAudio = false;
+                                    item.hasDownloadedMedia = false;
+                                }else{
+                                    item.data.hasDownloadedAudio = true;
+                                    item.hasDownloadedMedia = true;
+                                }
                             }
                         }
                         else {
@@ -76,6 +85,7 @@ var downloads = {
                     let matchingItems = res.filter(item => item.mediaId == $scope.WidgetMedia.item.id);
                     if (matchingItems.length > 0) {
                         matchingItems.map(downloadedItem => {
+                            item.downloadedItem = downloadedItem;
                             if (downloadedItem.mediaType == "video") {
                                 if ((downloadedItem.originalMediaUrl != $scope.WidgetMedia.item.data.videoUrl || !downloadedItem.originalMediaUrl || $scope.WidgetMedia.item.data.videoUrl.length == 0) && window.navigator.onLine) {
                                     let type = downloadedItem.mediaPath.split('.').pop();
@@ -124,10 +134,15 @@ var downloads = {
                             }
 
                             else if (downloadedItem.mediaType == "audio") {
-                                if (!window.navigator.onLine) {
-                                    $scope.WidgetMedia.item.data.audioUrl = downloadedItem.mediaPath;
+                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxAudioUpdated){
+                                    $scope.WidgetMedia.item.data.hasDownloadedAudio = false;
+                                    $scope.WidgetMedia.item.hasDownloadedMedia = false;
+                                }else{
+                                    if (!window.navigator.onLine) {
+                                        $scope.WidgetMedia.item.data.audioUrl = downloadedItem.mediaPath;
+                                    }
+                                    $scope.WidgetMedia.item.hasDownloadedAudio = true;
                                 }
-                                $scope.WidgetMedia.item.hasDownloadedAudio = true;
                             }
 
                         });

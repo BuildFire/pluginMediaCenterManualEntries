@@ -460,6 +460,27 @@
                  * Player related method and variables
                  */
                 NowPlaying.playTrack = function () {
+                    if(!NowPlaying.isOnline && (!NowPlaying.item.data.hasDownloadedAudio || !$rootScope.allowOfflineDownload)){
+                        buildfire.dialog.show(
+                            {
+                                title: "Audio not available offline",
+                                message:
+                                    "The Audio you are trying to play has not been downloaded.",
+                                isMessageHTML: true,
+                                actionButtons: [
+                                    {
+                                        text: "Ok",
+                                        type: "primary",
+                                        action: () => {
+                                        },
+                                    },
+                                ],
+                            },
+                            (err, actionButton) => {
+                            }
+                        );
+                        return;
+                    }
                     if (NowPlaying.currentTrack.isAudioPlayed === false) {
                         NowPlaying.currentTrack.isAudioPlayed = true;
                         sendContinuesAnalytics(NowPlaying);
