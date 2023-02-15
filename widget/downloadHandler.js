@@ -164,25 +164,16 @@ var downloads = {
             if( downloadedItem && (downloadedItem.originalMediaUrl.includes("www.dropbox") || downloadedItem.originalMediaUrl.includes("dl.dropbox")) && !downloadedItem.dropboxDownloadUpdated){
                 let type = downloadedItem.mediaPath.split('.').pop();
                
-                buildfire.services.fileSystem.fileManager.deleteFile(
-                    {
-                        path: "/data/mediaCenterManual/" + buildfire.getContext().instanceId + "/" + downloadedItem.mediaType + "/",
-                        fileName: downloadedItem.mediaId + "." + type
-                    },
-                    (err, isDeleted) => {
-                        if(err) console.log(err);
-                        new OfflineAccess({
-                            db: db,
-                        }).delete({
-                            mediaId: downloadedItem.mediaId,
-                            mediaType: downloadedItem.mediaType,
-                        })
-                        setTimeout(() => {
-                            callback({downloadedItems, index:index+1, db, callback:downloads.syncDownloadsAudios});
-                        }, 500);
-
-                    }
-                );
+                new OfflineAccess({
+                    db: db,
+                }).delete({
+                    mediaId: downloadedItem.mediaId,
+                    mediaType: downloadedItem.mediaType,
+                })
+                setTimeout(() => {
+                    callback({downloadedItems, index:index+1, db, callback:downloads.syncDownloadsAudios});
+                }, 500);
+                   
             }else{
                 callback({downloadedItems, index:index+1, db, callback:downloads.syncDownloadsAudios});
             }
