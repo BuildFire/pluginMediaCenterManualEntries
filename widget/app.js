@@ -77,7 +77,7 @@
                                                                 return false;
                                                             }
                                         
-                                                            if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxDownloadUpdated){
+                                                            if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated){
                                                                 return false;
                                                             }else{
                                                                 return true;
@@ -114,7 +114,7 @@
                                                                 }
 
                                                                 else if (downloadedItem.mediaType == "audio") {
-                                                                    if((result.data.audioUrl.includes("www.dropbox") || result.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                                                    if((result.data.audioUrl.includes("www.dropbox") || result.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxAudioUpdated){
                                                                         result.data.hasDownloadedAudio = false;
                                                                         result.hasDownloadedMedia = false;
                                                                     }else{
@@ -167,7 +167,7 @@
                                                             return false;
                                                         }
                                     
-                                                        if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxDownloadUpdated){
+                                                        if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated){
                                                             return false;
                                                         }else{
                                                             return true;
@@ -183,7 +183,7 @@
                                                             }
 
                                                             else if (downloadedItem.mediaType == "audio") {
-                                                                if((result.data.audioUrl.includes("www.dropbox") || result.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                                                if((result.data.audioUrl.includes("www.dropbox") || result.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxAudioUpdated){
                                                                     result.data.hasDownloadedAudio = false;
                                                                         result.hasDownloadedMedia = false;
                                                                     }else{
@@ -280,7 +280,7 @@
                                                 if (matchingItems.length > 0) {
                                                     matchingItems.map(downloadedItem => {
                                                         if (downloadedItem.mediaType == "audio") {
-                                                            if((result.data.audioUrl.includes("www.dropbox") || result.data.audioUrl.includes("dl.dropbox")) && !downloadedItem.dropboxDownloadUpdated){
+                                                            if((result.data.audioUrl.includes("www.dropbox") || result.data.audioUrl.includes("dl.dropbox")) && !downloadedItem.dropboxAudioUpdated){
                                                                 result.data.hasDownloadedAudio = false;
                                                                 result.hasDownloadedMedia = false;
                                                             }else{

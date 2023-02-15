@@ -17,7 +17,7 @@ var downloads = {
                         return false;
                     }
 
-                    if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxDownloadUpdated){
+                    if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated){
                         return false;
                     }else{
                         return true;
@@ -72,7 +72,7 @@ var downloads = {
                             }
 
                             else if (downloadedItem.mediaType == "audio") {
-                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxAudioUpdated){
                                     item.data.hasDownloadedAudio = false;
                                     item.hasDownloadedMedia = false;
                                 }else{
@@ -142,7 +142,7 @@ var downloads = {
                             }
 
                             else if (downloadedItem.mediaType == "audio") {
-                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxAudioUpdated){
                                     $scope.WidgetMedia.item.data.hasDownloadedAudio = false;
                                     $scope.WidgetMedia.item.hasDownloadedMedia = false;
                                 }else{

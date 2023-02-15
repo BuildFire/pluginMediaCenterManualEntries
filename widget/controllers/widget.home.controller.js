@@ -797,7 +797,7 @@
                                             return false;
                                         }
                     
-                                        if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxDownloadUpdated){
+                                        if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated){
                                             return false;
                                         }else{
                                             return true;
@@ -881,7 +881,7 @@
                                         return false;
                                     }
                 
-                                    if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxDownloadUpdated){
+                                    if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated){
                                         return false;
                                     }else{
                                         return true;
@@ -1292,7 +1292,7 @@
                                     mediaId: item.id,
                                     mediaType: mediaType,
                                     mediaPath: filePath,
-                                    dropboxDownloadUpdated: true,
+                                    dropboxAudioUpdated: true,
                                     originalMediaUrl: mediaType == 'video' ? item.data.videoUrl : item.data.audioUrl,
                                     createdOn: new Date(),
                                 }
