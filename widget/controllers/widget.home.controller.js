@@ -818,7 +818,7 @@
                                             return item;
                                         }) : null;
 
-									downloads.syncDownloadsAudios({items:WidgetHome.items, downloadedItems:res, index:0, DownloadedMedia, callback:downloads.syncDownloadsAudios})
+									downloads.syncDownloadsAudios({downloadedItems:res, index:0, db:DownloadedMedia, callback:downloads.syncDownloadsAudios})
                                     downloads.sync($scope, DownloadedMedia);
                                     callback(err, true);
                                 });

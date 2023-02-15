@@ -158,12 +158,11 @@ var downloads = {
     },
 	syncDownloadsAudios: function(options){
         debugger
-        var {items, downloadedItems, index, db, callback} = options;
+        var {downloadedItems, index, db, callback} = options;
         if (index !== downloadedItems.length) {
             let downloadedItem = downloadedItems[index];
-            let item = items.find(i=>i.id === downloadedItem.mediaId);
 
-            if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && downloadedItem && !downloadedItem.dropboxDownloadUpdated){
+            if( downloadedItem && (downloadedItem.originalMediaUrl.includes("www.dropbox") || downloadedItem.originalMediaUrl.includes("dl.dropbox")) && !downloadedItem.dropboxDownloadUpdated){
                 let type = downloadedItem.mediaPath.split('.').pop();
                 buildfire.dialog.toast({
                     message: `Some downloads are deleted`,
@@ -172,24 +171,24 @@ var downloads = {
                 buildfire.services.fileSystem.fileManager.deleteFile(
                     {
                         path: "/data/mediaCenterManual/" + buildfire.getContext().instanceId + "/" + downloadedItem.mediaType + "/",
-                        fileName: item.id + "." + type
+                        fileName: downloadedItem.mediaId + "." + type
                     },
                     (err, isDeleted) => {
                         if(err) console.log(err);
                         new OfflineAccess({
                             db: db,
                         }).delete({
-                            mediaId: item.id,
+                            mediaId: downloadedItem.mediaId,
                             mediaType: downloadedItem.mediaType,
                         })
                         setTimeout(() => {
-                            callback({items, downloadedItems, index:index+1, db, callback:downloads.syncDownloadsAudios});
+                            callback({downloadedItems, index:index+1, db, callback:downloads.syncDownloadsAudios});
                         }, 500);
 
                     }
                 );
             }else{
-                callback({items, downloadedItems, index:index+1, db, callback:downloads.syncDownloadsAudios});
+                callback({downloadedItems, index:index+1, db, callback:downloads.syncDownloadsAudios});
             }
         }
 	}
