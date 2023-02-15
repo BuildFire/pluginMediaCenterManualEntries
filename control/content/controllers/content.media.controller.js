@@ -582,7 +582,10 @@
         function removeViews(mediaId, mediaType) {
           buildfire.publicData.searchAndUpdate(
             {
-              "_buildfire.index.string1": mediaId + "-true" 
+              $and: [
+                { "$json.mediaId": { $eq: mediaId } },
+                { '$json.mediaType': mediaType },
+              ]
             },
             {
               $set: {
