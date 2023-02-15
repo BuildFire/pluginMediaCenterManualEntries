@@ -72,7 +72,17 @@
                                                         });
                                                     }
                                                     if (res) {
-                                                        res = $rootScope.syncDownloadsAudios(res);
+                                                        res = res.filter(item=>{
+                                                            if(!item){
+                                                                return false;
+                                                            }
+                                        
+                                                            if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxDownloadUpdated){
+                                                                return false;
+                                                            }else{
+                                                                return true;
+                                                            }
+                                                        })
                                                         let matchingItems = res.filter(item => item.mediaId == mediaId);
                                                         if (matchingItems.length > 0) {
                                                             matchingItems.map(downloadedItem => {
@@ -152,7 +162,17 @@
 
                                                 }
                                                 if (res) {
-                                                    res = $rootScope.syncDownloadsAudios(res);
+                                                    res = res.filter(item=>{
+                                                        if(!item){
+                                                            return false;
+                                                        }
+                                    
+                                                        if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxDownloadUpdated){
+                                                            return false;
+                                                        }else{
+                                                            return true;
+                                                        }
+                                                    })
                                                     let matchingItems = res.filter(item => item.mediaId == mediaId);
                                                     if (matchingItems.length > 0) {
                                                         matchingItems.map(downloadedItem => {
@@ -256,7 +276,6 @@
                                         DownloadedMedia.get((err, res) => {
                                             if (err) {}
                                             if (res) {
-                                                res = $rootScope.syncDownloadsAudios(res);
                                                 let matchingItems = res.filter(item => item.mediaId == mediaId);
                                                 if (matchingItems.length > 0) {
                                                     matchingItems.map(downloadedItem => {
@@ -420,22 +439,6 @@
                         if (!$rootScope.$$phase) $rootScope.$digest();
                     }
                 };
-            }
-
-            $rootScope.syncDownloadsAudios = (downloadedMedia) => {
-                const filteredMedia = downloadedMedia.filter(item=>{
-                    if(!item){
-                        return false;
-                    }
-
-                    if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxDownloadUpdated){
-                        return false;
-                    }else{
-                        return true;
-                    }
-                })
-
-                return filteredMedia;
             }
 
             $rootScope.$on('$routeChangeSuccess', () => {

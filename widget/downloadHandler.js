@@ -12,6 +12,17 @@ var downloads = {
                 return console.error(err);
             }
             if (res) {
+                res = res.filter(item=>{
+                    if(!item){
+                        return false;
+                    }
+
+                    if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxDownloadUpdated){
+                        return false;
+                    }else{
+                        return true;
+                    }
+                })
                 downloadedIDS = res.map(a => a.mediaId);
                 if ($scope.WidgetHome) {
                     $scope.WidgetHome.item = $scope.WidgetHome.items.map(item => {

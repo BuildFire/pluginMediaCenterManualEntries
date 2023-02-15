@@ -792,7 +792,17 @@
                                 DownloadedMedia.get((err, res) => {
                                     let downloadedIDS = [];
                                     if (err || (!res && !res.length)) return callback(err, null);
-                                    res = $rootScope.syncDownloadsAudios(res);
+                                    res = res.filter(item=>{
+                                        if(!item){
+                                            return false;
+                                        }
+                    
+                                        if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxDownloadUpdated){
+                                            return false;
+                                        }else{
+                                            return true;
+                                        }
+                                    })
                                     downloadedIDS = res.map(item => item.mediaId);
                                     downloadedIDS.length ?
                                         WidgetHome.items = WidgetHome.items.map(item => {
@@ -866,7 +876,17 @@
                                 return callback(err);
                             }
                             if (res) {
-                                res = $rootScope.syncDownloadsAudios(res);
+                                res = res.filter(item=>{
+                                    if(!item){
+                                        return false;
+                                    }
+                
+                                    if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxDownloadUpdated){
+                                        return false;
+                                    }else{
+                                        return true;
+                                    }
+                                })
                                 downloadedIDS = res.map(item => item.mediaId);
                                 if (downloadedIDS.length > 0) {
                                     WidgetHome.items = WidgetHome.items.map(item => {
