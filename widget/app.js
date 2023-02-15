@@ -72,6 +72,7 @@
                                                         });
                                                     }
                                                     if (res) {
+                                                        res = $rootScope.syncDownloadsAudios(res);
                                                         let matchingItems = res.filter(item => item.mediaId == mediaId);
                                                         if (matchingItems.length > 0) {
                                                             matchingItems.map(downloadedItem => {
@@ -151,6 +152,7 @@
 
                                                 }
                                                 if (res) {
+                                                    res = $rootScope.syncDownloadsAudios(res);
                                                     let matchingItems = res.filter(item => item.mediaId == mediaId);
                                                     if (matchingItems.length > 0) {
                                                         matchingItems.map(downloadedItem => {
@@ -254,6 +256,7 @@
                                         DownloadedMedia.get((err, res) => {
                                             if (err) {}
                                             if (res) {
+                                                res = $rootScope.syncDownloadsAudios(res);
                                                 let matchingItems = res.filter(item => item.mediaId == mediaId);
                                                 if (matchingItems.length > 0) {
                                                     matchingItems.map(downloadedItem => {
@@ -416,6 +419,17 @@
 
 
             // $rootScope.online = $window.navigator.onLine;
+            $rootScope.syncDownloadsAudios = (downloadedMedia) => {
+                const filteredMedia = downloadedMedia.filter(item=>{
+                    if( item && item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxDownloadUpdated){
+                        return false;
+                    }else{
+                        return true;
+                    }
+                })
+
+                return filteredMedia;
+            }
 
             $rootScope.$on('$routeChangeSuccess', () => {
                 var path = $location.path();

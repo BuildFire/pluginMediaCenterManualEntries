@@ -792,6 +792,7 @@
                                 DownloadedMedia.get((err, res) => {
                                     let downloadedIDS = [];
                                     if (err || (!res && !res.length)) return callback(err, null);
+                                    res = $rootScope.syncDownloadsAudios(res);
                                     downloadedIDS = res.map(item => item.mediaId);
                                     downloadedIDS.length ?
                                         WidgetHome.items = WidgetHome.items.map(item => {
@@ -806,7 +807,7 @@
                                                     item.hasDownloadedMedia = true;
                                                 }
                                                 else if (downloadedItem.mediaType == "audio"){
-                                                    if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                                    if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox")) && !downloadedItem.dropboxDownloadUpdated){
                                                         item.hasDownloadedMedia = false;
                                                         item.data.hasDownloadedAudio = false;
                                                     }else{
@@ -818,7 +819,6 @@
                                             return item;
                                         }) : null;
 
-									downloads.syncDownloadsAudios({downloadedItems:res, index:0, db:DownloadedMedia, callback:downloads.syncDownloadsAudios})
                                     downloads.sync($scope, DownloadedMedia);
                                     callback(err, true);
                                 });
@@ -871,6 +871,7 @@
                                 return callback(err);
                             }
                             if (res) {
+                                res = $rootScope.syncDownloadsAudios(res);
                                 downloadedIDS = res.map(item => item.mediaId);
                                 if (downloadedIDS.length > 0) {
                                     WidgetHome.items = WidgetHome.items.map(item => {
@@ -883,7 +884,7 @@
                                             }
 
                                             else if (downloadedItem.mediaType == "audio") {
-                                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox")) && !downloadedItem.dropboxDownloadUpdated){
                                                     item.hasDownloadedMedia = false;
                                                     item.data.hasDownloadedAudio = false;
                                                 }else{

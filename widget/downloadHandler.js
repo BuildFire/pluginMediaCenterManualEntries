@@ -155,28 +155,5 @@ var downloads = {
                 $scope.$apply();
             }
         });
-    },
-	syncDownloadsAudios: function(options){
-        var {downloadedItems, index, db, callback} = options;
-        if (index !== downloadedItems.length) {
-            let downloadedItem = downloadedItems[index];
-
-            if( downloadedItem && (downloadedItem.originalMediaUrl.includes("www.dropbox") || downloadedItem.originalMediaUrl.includes("dl.dropbox")) && !downloadedItem.dropboxDownloadUpdated){
-                let type = downloadedItem.mediaPath.split('.').pop();
-               
-                new OfflineAccess({
-                    db: db,
-                }).delete({
-                    mediaId: downloadedItem.mediaId,
-                    mediaType: downloadedItem.mediaType,
-                })
-                setTimeout(() => {
-                    callback({downloadedItems, index:index+1, db, callback:downloads.syncDownloadsAudios});
-                }, 500);
-                   
-            }else{
-                callback({downloadedItems, index:index+1, db, callback:downloads.syncDownloadsAudios});
-            }
-        }
-	}
+    }
 }
