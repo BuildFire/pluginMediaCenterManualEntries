@@ -64,7 +64,7 @@
                                     class="text-primary">{{item.data.title}}</a> </p>
                             <div style="display: flex; flex-direction: row;">
 
-                                <i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload && WidgetHome.validateDownload(item)"
+                                <i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload "
                                     style=" margin-right: 10px;" class="glyphicon glyphicon-ok-circle"
                                     ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
                                 <div style="margin-right: 10px;" data-ng-if="currentlyDownloading.indexOf(item.id) > -1"
@@ -83,7 +83,7 @@
 
 
                         <p data-ng-if="item.data.summary" id="summary" class="summary ellipsis margin-zero">{{item.data.summary}}</p>
-                        <p id="views" ng-if="WidgetHome.media.data.content.showViewCount" class="ellipsis margin-zero">{{item.data.count ? item.data.count : 0}} 
+                        <p id="views" ng-if="WidgetHome.media.data.content.showViewCount" class="ellipsis margin-zero">{{item.data.count ? item.data.count : 0}}
                             <span id="iconView" style="float: left;margin-right: 5px;">
                                 <i class="glyphicon glyphicon-eye-open"></i>
                             </span>

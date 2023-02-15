@@ -41,7 +41,7 @@
                 buildfire.navigation.onAppLauncherActive(() => {
                     $rootScope.refreshItems();
                 });
-                
+
                 var _infoData = {
                     data: {
                         content: {
@@ -131,7 +131,7 @@
                         $rootScope.allowOfflineDownload = MediaCenterInfo.data.content.allowOfflineDownload;
                         $rootScope.enableFiltering = MediaCenterInfo.data.content.enableFiltering;
                         $rootScope.showViewCount = MediaCenterInfo.data.content.showViewCount;
-                       
+
                         if (isLauncher && MediaCenterInfo.data.content.enableFiltering) {
                             slideElement.classList.add("launcher-with-filter");
                         } else {
@@ -792,27 +792,24 @@
                                 DownloadedMedia.get((err, res) => {
                                     let downloadedIDS = [];
                                     if (err || (!res && !res.length)) return callback(err, null);
+                                    res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
+
                                     downloadedIDS = res.map(item => item.mediaId);
                                     downloadedIDS.length ?
                                         WidgetHome.items = WidgetHome.items.map(item => {
                                             if (downloadedIDS.indexOf(item.id) > -1) {
                                                 let downloadedItem = res[downloadedIDS.indexOf(item.id)];
                                                 item.downloadedItem = downloadedItem;
+                                                item.hasDownloadedMedia = true;
+
                                                 if (downloadedItem.mediaType == "video") {
                                                     if (downloadedItem.originalMediaUrl != item.data.videoUrl || !downloadedItem.originalMediaUrl || item.data.videoUrl.length == 0)
                                                         item.data.hasDownloadedVideo = true;
                                                     else
                                                         item.data.hasDownloadedVideo = true;
-                                                    item.hasDownloadedMedia = true;
                                                 }
                                                 else if (downloadedItem.mediaType == "audio"){
-                                                    if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
-                                                        item.hasDownloadedMedia = false;
-                                                        item.data.hasDownloadedAudio = false;
-                                                    }else{
-                                                        item.data.hasDownloadedAudio = true;
-                                                        item.hasDownloadedMedia = true;
-                                                    }
+                                                    item.data.hasDownloadedAudio = true;
                                                 }
                                             }
                                             return item;
@@ -870,6 +867,8 @@
                                 return callback(err);
                             }
                             if (res) {
+                                res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
+                                
                                 downloadedIDS = res.map(item => item.mediaId);
                                 if (downloadedIDS.length > 0) {
                                     WidgetHome.items = WidgetHome.items.map(item => {
@@ -882,13 +881,8 @@
                                             }
 
                                             else if (downloadedItem.mediaType == "audio") {
-                                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
-                                                    item.hasDownloadedMedia = false;
-                                                    item.data.hasDownloadedAudio = false;
-                                                }else{
-                                                    item.data.hasDownloadedAudio = true;
-                                                    item.hasDownloadedMedia = true;
-                                                }
+                                                item.data.hasDownloadedAudio = true;
+                                                item.hasDownloadedMedia = true;
                                             }
                                         }
 
@@ -963,15 +957,12 @@
                             WidgetHome.items = WidgetHome.items.concat(result);
                             WidgetHome.items.forEach(item => {
                                 var searchOptions = {
-                                        filter: {
-                                        "_buildfire.index.string1": item.id+"-true"
-                                        },
-                                        skip: 0,
-                                        limit: 1,
-                                        recordCount: true
+                                      filter: {
+                                        "_buildfire.index.string1":{$eq: item.id+"-true"}
+                                      }
                                 };
                                 buildfire.publicData.search(searchOptions,COLLECTIONS.MediaCount, function(err,res){
-                                    item.data.count = res.totalRecord;
+                                    item.data.count = res.length
                                     if (!$scope.$$phase && !$scope.$root.$$phase) {
                                         $scope.$apply();
                                     }
@@ -1082,7 +1073,7 @@
                         }
 
                         if (item.data.audioUrl) {
-                            if (item.data.hasDownloadedAudio && WidgetHome.validateDownload(item)) {
+                            if (item.data.hasDownloadedAudio ) {
                                 listItems.push({ id: "removeDownloadedAudio", text: strings.get("homeDrawer.removeDownloadedAudio") });
                             }
 
@@ -1283,7 +1274,7 @@
                                     mediaId: item.id,
                                     mediaType: mediaType,
                                     mediaPath: filePath,
-                                    dropboxDownloadUpdated: true,
+                                    dropboxAudioUpdated: true,
                                     originalMediaUrl: mediaType == 'video' ? item.data.videoUrl : item.data.audioUrl,
                                     createdOn: new Date(),
                                 }
@@ -1406,7 +1397,7 @@
                     // stop the autoplay if shared via PWA to prevent video freeze
                     if(documentFocused) $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                     else $rootScope.autoPlay = false;
-                    
+
                     if (typeof ind != 'number') {
                         var foundObj = WidgetHome.items.find(function (el) { return el.id == ind; });
                         ind = WidgetHome.items.indexOf(foundObj);
@@ -1594,20 +1585,5 @@
                     Location.goToHome();
                 });
 
-                WidgetHome.validateDownload = (item) => {
-                    if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox")) && item.downloadedItem && !item.downloadedItem.dropboxDownloadUpdated){
-                        item.hasDownloadedMedia = false;
-                        new OfflineAccess({
-                            db: DownloadedMedia,
-                        }).delete({
-                            mediaId: item.id,
-                            mediaType: 'audio',
-                        }, (err, res) => {
-                            console.log('item removed from offline cache');
-                        })
-                        return false
-                    }
-                    return true;
-                }
             }]);
 })(window.angular);

@@ -12,6 +12,9 @@ var downloads = {
                 return console.error(err);
             }
             if (res) {
+                // filtering old dropbox audio downloaded links, removing them from the "response"
+                res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
+                
                 downloadedIDS = res.map(a => a.mediaId);
                 if ($scope.WidgetHome) {
                     $scope.WidgetHome.item = $scope.WidgetHome.items.map(item => {
@@ -43,7 +46,7 @@ var downloads = {
                                                 });
                                                 console.error("Error from dm home" + err);
                                             }
-                                            
+
                                             new OfflineAccess({
                                                 db: db,
                                             }).delete({
@@ -61,7 +64,7 @@ var downloads = {
                             }
 
                             else if (downloadedItem.mediaType == "audio") {
-                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxAudioUpdated){
                                     item.data.hasDownloadedAudio = false;
                                     item.hasDownloadedMedia = false;
                                 }else{
@@ -131,7 +134,7 @@ var downloads = {
                             }
 
                             else if (downloadedItem.mediaType == "audio") {
-                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxDownloadUpdated){
+                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxAudioUpdated){
                                     $scope.WidgetMedia.item.data.hasDownloadedAudio = false;
                                     $scope.WidgetMedia.item.hasDownloadedMedia = false;
                                 }else{
