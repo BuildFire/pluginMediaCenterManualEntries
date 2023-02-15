@@ -157,17 +157,13 @@ var downloads = {
         });
     },
 	syncDownloadsAudios: function(options){
-        debugger
         var {downloadedItems, index, db, callback} = options;
         if (index !== downloadedItems.length) {
             let downloadedItem = downloadedItems[index];
 
             if( downloadedItem && (downloadedItem.originalMediaUrl.includes("www.dropbox") || downloadedItem.originalMediaUrl.includes("dl.dropbox")) && !downloadedItem.dropboxDownloadUpdated){
                 let type = downloadedItem.mediaPath.split('.').pop();
-                buildfire.dialog.toast({
-                    message: `Some downloads are deleted`,
-                    type: 'warning',
-                });
+               
                 buildfire.services.fileSystem.fileManager.deleteFile(
                     {
                         path: "/data/mediaCenterManual/" + buildfire.getContext().instanceId + "/" + downloadedItem.mediaType + "/",
