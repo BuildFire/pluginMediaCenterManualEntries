@@ -964,15 +964,12 @@
                             WidgetHome.items = WidgetHome.items.concat(result);
                             WidgetHome.items.forEach(item => {
                                 var searchOptions = {
-                                        filter: {
-                                        "_buildfire.index.string1": item.id+"-true"
-                                        },
-                                        skip: 0,
-                                        limit: 1,
-                                        recordCount: true
+                                      filter: {
+                                        "_buildfire.index.string1":{$eq: item.id+"-true"}
+                                      }
                                 };
                                 buildfire.publicData.search(searchOptions,COLLECTIONS.MediaCount, function(err,res){
-                                    item.data.count = res.totalRecord;
+                                    item.data.count = res.length
                                     if (!$scope.$$phase && !$scope.$root.$$phase) {
                                         $scope.$apply();
                                     }

@@ -391,10 +391,7 @@
             buildMediaCountDataIndex: function (data) {
                 var index = {
                     'string1': data.mediaId + "-" + (data.isActive ? "true":"false"),
-                    'text':data.mediaId + "-" + data.userId + '-' + data.mediaType + "-" + (data.isActive ? "true":"false"),
-                    'array1': [{
-                        'string1': data.mediaId + "-" + data.userId + '-' + data.mediaType + "-" + (data.isActive ? "true":"false"),
-                    }]
+                    'text': data.mediaId + "-" + data.userId + '-' + data.mediaType + "-" + (data.isActive ? "true":"false"),
                 }
                 return index;
             },
@@ -425,11 +422,11 @@
                     this.processMediaCountsData(records[index], () => this.iterateMediaCountData(records, index + 1));
                 } else {
                     buildfire.datastore.get('MediaCenter', (err, result) => {
-                        result.data.indexingUpdateV2Done = true;
+                        result.data.indexingUpdateDone = true;
                         buildfire.datastore.save(result.data, 'MediaCenter', (err, saved) => {
                             buildfire.dialog.alert(
                                 {
-                                    title: 'Database Optimization',
+                                    title: 'MCM Update',
                                     message: "Database has been successfully updated. Thank you for your patience!",
                                 }, (err, isConfirmed) => {
                                     if (err) return console.error(err);
@@ -446,9 +443,7 @@
                 let searchOptions = {
                     limit: 50,
                     skip: 0,
-                    filter:{
-                        "_buildfire.index.array1.string1": null
-                    }
+                    
                 }, records = [];
                 
                 const getMediaCountData = () => {
@@ -471,8 +466,8 @@
             showIndexingDialog: function () {
                 buildfire.dialog.confirm(
                     {
-                        title: 'Database Optimization',
-                        message: "We are improving your database performance, please do not close your browser or leave the feature until you see success dialog. This may take a while...",
+                        title: 'MCM Update',
+                        message: "We are improving your database perfomance, please do not close your browser or leave the plugin until you see success dialog. This may take a while...",
                         confirmButton: { text: "Yes", type: "success" },
                     }, (err, isConfirmed) => {
                         if (err) return console.error(err);
