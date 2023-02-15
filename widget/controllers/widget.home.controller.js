@@ -799,21 +799,16 @@
                                             if (downloadedIDS.indexOf(item.id) > -1) {
                                                 let downloadedItem = res[downloadedIDS.indexOf(item.id)];
                                                 item.downloadedItem = downloadedItem;
+                                                item.hasDownloadedMedia = true;
+
                                                 if (downloadedItem.mediaType == "video") {
                                                     if (downloadedItem.originalMediaUrl != item.data.videoUrl || !downloadedItem.originalMediaUrl || item.data.videoUrl.length == 0)
                                                         item.data.hasDownloadedVideo = true;
                                                     else
                                                         item.data.hasDownloadedVideo = true;
-                                                    item.hasDownloadedMedia = true;
                                                 }
                                                 else if (downloadedItem.mediaType == "audio"){
-                                                    if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox")) && !downloadedItem.dropboxDownloadUpdated){
-                                                        item.hasDownloadedMedia = false;
-                                                        item.data.hasDownloadedAudio = false;
-                                                    }else{
-                                                        item.data.hasDownloadedAudio = true;
-                                                        item.hasDownloadedMedia = true;
-                                                    }
+                                                    item.data.hasDownloadedAudio = true;
                                                 }
                                             }
                                             return item;
@@ -884,13 +879,8 @@
                                             }
 
                                             else if (downloadedItem.mediaType == "audio") {
-                                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox")) && !downloadedItem.dropboxDownloadUpdated){
-                                                    item.hasDownloadedMedia = false;
-                                                    item.data.hasDownloadedAudio = false;
-                                                }else{
-                                                    item.data.hasDownloadedAudio = true;
-                                                    item.hasDownloadedMedia = true;
-                                                }
+                                                item.data.hasDownloadedAudio = true;
+                                                item.hasDownloadedMedia = true;
                                             }
                                         }
 
@@ -1593,12 +1583,5 @@
                     Location.goToHome();
                 });
 
-                WidgetHome.validateDownload = (item) => {
-                    if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox")) && item.downloadedItem && !item.downloadedItem.dropboxDownloadUpdated){
-                        item.hasDownloadedMedia = false;
-                        return false
-                    }
-                    return true;
-                }
             }]);
 })(window.angular);

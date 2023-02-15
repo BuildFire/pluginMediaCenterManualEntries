@@ -329,7 +329,12 @@
             $httpProvider.interceptors.push(interceptor);
 
         }])
-        .run(['Location', '$location', '$rootScope', '$window', 'Messaging', 'EVENTS', 'PATHS', 'DB', 'COLLECTIONS', function (Location, $location, $rootScope, $window, Messaging, EVENTS, PATHS, DB, COLLECTIONS) {
+        .run(['Location', '$location', '$rootScope', '$window', 'Messaging',  'OFSTORAGE','EVENTS', 'PATHS', 'DB', 'COLLECTIONS', function (Location, $location, $rootScope, $window, Messaging, OFSTORAGE, EVENTS, PATHS, DB, COLLECTIONS) {
+            var DownloadedMedia = new OFSTORAGE({
+                path: "/data/mediaCenterManual",
+                fileName: "downloadedMedia"
+            });
+
             buildfire.navigation.onBackButtonClick = function () {
                 if ($rootScope.fullScreen) {
                     $rootScope.goingBackFullScreen = true;
@@ -417,11 +422,13 @@
                 };
             }
 
-
-            // $rootScope.online = $window.navigator.onLine;
             $rootScope.syncDownloadsAudios = (downloadedMedia) => {
                 const filteredMedia = downloadedMedia.filter(item=>{
-                    if( item && item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxDownloadUpdated){
+                    if(!item){
+                        return false;
+                    }
+
+                    if(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxDownloadUpdated){
                         return false;
                     }else{
                         return true;
