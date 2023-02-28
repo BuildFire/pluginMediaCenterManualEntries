@@ -264,7 +264,7 @@
                 $rootScope.activePlayerEvents = audioPlayer.onEvent(function (e) {
                     switch (e.event) {
                         case 'play':
-                            if(typeof $rootScope.audioFromPlayList === 'number' && NowPlaying.settings.autoPlayNext){
+                            if(typeof $rootScope.audioFromPlayList === 'number'){
                                 NowPlaying.currentTrack = NowPlaying.playList[$rootScope.audioFromPlayList];
                             }
                             NowPlaying.playing = true;
@@ -272,7 +272,7 @@
                             audioPlayer.getPlaylist(function (err, data) {
                                 first = false;
                                 NowPlaying.keepPosition = e.data.track.lastPosition;
-
+                                // need to check --  el.plugin ???
                                 var filteredPlaylist = data.tracks.filter(el => { return el.plugin && el.plugin == buildfire.context.instanceId; });
                                 var index = NowPlaying.findTrackIndex({ tracks: filteredPlaylist }, { myId: (e.data.track.myId) ? e.data.track.myId : "none" });
 
@@ -329,7 +329,7 @@
                         case 'audioEnded':
                             ready = false;
                             updateAudioMediaCount(media.id, 0.1)
-                            if(typeof $rootScope.audioFromPlayList === 'number' && NowPlaying.settings.autoPlayNext){
+                            if(typeof $rootScope.audioFromPlayList === 'number'){
                                 NowPlaying.playlistPause(NowPlaying.playList[$rootScope.audioFromPlayList]);
                                 return false;
                             }
@@ -337,6 +337,7 @@
                                 $rootScope.playNextItem();
                             } else {
                                 if (NowPlaying.isItLast && NowPlaying.settings.loopPlaylist) {
+                                    if(typeof $rootScope.audioFromPlayList === 'number'){
                                     audioPlayer.getCurrentTrack((track) => {
                                         if (NowPlaying.playList && NowPlaying.playList.length > 0) {
                                             NowPlaying.playList.forEach(element => {
@@ -359,7 +360,7 @@
                                             NowPlaying.playing = true;
                                         }, 50);
                                     }, 50);
-                                }
+                                }}
                                 else {
                                     isAudioEnded = true;
                                     if (!NowPlaying.settings.autoPlayNext) {
@@ -379,24 +380,34 @@
                             NowPlaying.playing = false;
                             break;
                         case 'next':
+                            debugger
+                            if(typeof $rootScope.audioFromPlayList === 'number'){
+                                $rootScope.audioFromPlayList = e.data.index;
+                                NowPlaying.playList[$rootScope.audioFromPlayList].playing = true;
+                                if(!NowPlaying.settings.autoJumpToLastPosition){
+                                    audioPlayer.setTime(0);
+                                }
+                                return false;
+                            }
+                            // if (NowPlaying.settings.autoPlayNext) {
+                            //     // param: userInput
+                            //     $rootScope.playNextItem(true);
+                            // } else if (e && e.data && e.data.track) {
+                            //     e.data.track.lastPosition = 0;
+                            //     NowPlaying.currentTrack = e.data.track;
+                            //     NowPlaying.playing = true;
+                            // } else {
+                            //     // param: userInput
+                            //     $rootScope.playNextItem(true);
+                            // }
+                            break;
+                        case 'previous':
                             if(typeof $rootScope.audioFromPlayList === 'number' && NowPlaying.settings.autoPlayNext){
                                 $rootScope.audioFromPlayList = e.data.index;
                                 NowPlaying.playList[$rootScope.audioFromPlayList].playing = true;
+                                audioPlayer.setTime(0);
                                 return false;
                             }
-                            if ($rootScope.autoPlay) {
-                                // param: userInput
-                                $rootScope.playNextItem(true);
-                            } else if (e && e.data && e.data.track) {
-                                e.data.track.lastPosition = 0;
-                                NowPlaying.currentTrack = e.data.track;
-                                NowPlaying.playing = true;
-                            } else {
-                                // param: userInput
-                                $rootScope.playNextItem(true);
-                            }
-                            break;
-                        case 'previous':
                             $rootScope.playPrevItem();
                             break;
                         case 'removeFromPlaylist':
@@ -609,15 +620,15 @@
                 }
 
 
-                NowPlaying.playlistPlay = function (track) {
+                NowPlaying.playlistPlay = function (track, index) {
                     if (NowPlaying.settings) {
                         NowPlaying.settings.isPlayingCurrentTrack = true;
                         audioPlayer.settings.set(NowPlaying.settings);
                     }
                     NowPlaying.playing = true;
                     if (track) {
-                        track.url = validateURL(track.url)
-                        audioPlayer.play({ url: track.url });
+                        NowPlaying.isAudioPlayerPlayingAnotherSong = false;
+                        audioPlayer.play(index);
                         track.playing = true;
                     }
                     if (!$scope.$$phase) {
@@ -666,11 +677,19 @@
                 };
 
                 NowPlaying.next = function () {
-                    $rootScope.playNextItem(true);
+                    if(typeof $rootScope.audioFromPlayList === 'number'){
+                        audioPlayer.next();
+                    }else{
+                        $rootScope.playNextItem(true);
+                    }
                 };
 
                 NowPlaying.prev = function () {
-                    $rootScope.playPrevItem();
+                    if(typeof $rootScope.audioFromPlayList === 'number'){
+                        audioPlayer.previous();
+                    }else{
+                        $rootScope.playPrevItem();
+                    }
                 };
 
                 NowPlaying.shufflePlaylist = function () {
@@ -703,6 +722,7 @@
                     audioPlayer.settings.set(NowPlaying.settings);
                 };
                 NowPlaying.addToPlaylist = function (track) {
+                    console.log("🚀 ~ file: widget.nowplaying.controller.js:728 ~ track:", track)
                     if (track) {
                         buildfire.dialog.toast({
                             message: NowPlaying.playListStrings.addedPlaylist
@@ -945,12 +965,7 @@
                  * track play pause from playlist
                  */
 
-                NowPlaying.playlistPlayPause = function (track, index) {
-                    $rootScope.audioFromPlayList = index;
-                    if ($rootScope.autoPlay) {
-                        NowPlaying.settings.autoPlayNext = true;
-                        audioPlayer.settings.set({ autoPlayNext: true });
-                    }
+                NowPlaying.playlistPlayPause = function (track, index) {                   
                     if (NowPlaying.playing) {
                         if (track.playing) {
                             NowPlaying.playlistPause(track);
@@ -969,7 +984,11 @@
                             NowPlaying.settings.isPlayingCurrentTrack = true;
                             NowPlaying.playing = true;
                             track.playing = true;
-                            audioPlayer.play();
+                            if($rootScope.audioFromPlayList == index){
+                                audioPlayer.play();
+                            }else{
+                                audioPlayer.play(index);
+                            }
                         }
                         else {
                             NowPlaying.playlistPlay(track, index);
@@ -978,6 +997,7 @@
                     else {
                         NowPlaying.playlistPlay(track, index);
                     }
+                    $rootScope.audioFromPlayList = index;
                 };
 
                 /**
