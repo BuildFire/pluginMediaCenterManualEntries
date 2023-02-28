@@ -264,15 +264,13 @@
                 $rootScope.activePlayerEvents = audioPlayer.onEvent(function (e) {
                     switch (e.event) {
                         case 'play':
-                            if(typeof $rootScope.audioFromPlayList === 'number'){
-                                NowPlaying.currentTrack = NowPlaying.playList[$rootScope.audioFromPlayList];
-                            }
+                            NowPlaying.currentTrack = e.data.track;
                             NowPlaying.playing = true;
                             NowPlaying.paused = false;
                             audioPlayer.getPlaylist(function (err, data) {
                                 first = false;
                                 NowPlaying.keepPosition = e.data.track.lastPosition;
-                                // need to check --  el.plugin ???
+
                                 var filteredPlaylist = data.tracks.filter(el => { return el.plugin && el.plugin == buildfire.context.instanceId; });
                                 var index = NowPlaying.findTrackIndex({ tracks: filteredPlaylist }, { myId: (e.data.track.myId) ? e.data.track.myId : "none" });
 
@@ -338,29 +336,30 @@
                             } else {
                                 if (NowPlaying.isItLast && NowPlaying.settings.loopPlaylist) {
                                     if(typeof $rootScope.audioFromPlayList === 'number'){
-                                    audioPlayer.getCurrentTrack((track) => {
-                                        if (NowPlaying.playList && NowPlaying.playList.length > 0) {
-                                            NowPlaying.playList.forEach(element => {
-                                                element.playing = false
-                                            });
-                                            let currentTrack = NowPlaying.playList.find(x => x.title == track.title && x.url == track.url && x.album == track.album && x.image == track.image && x.backgroundImage == track.backgroundImage)
-                                            if (currentTrack) {
-                                                currentTrack.playing = true
+                                        audioPlayer.getCurrentTrack((track) => {
+                                            if (NowPlaying.playList && NowPlaying.playList.length > 0) {
+                                                NowPlaying.playList.forEach(element => {
+                                                    element.playing = false
+                                                });
+                                                let currentTrack = NowPlaying.playList.find(x => x.title == track.title && x.url == track.url && x.album == track.album && x.image == track.image && x.backgroundImage == track.backgroundImage)
+                                                if (currentTrack) {
+                                                    currentTrack.playing = true
+                                                }
                                             }
-                                        }
-                                    });
+                                        });
 
-                                    setTimeout(() => {
-                                        audioPlayer.setTime(0.1);
-                                        NowPlaying.finished = false;
-                                        audioPlayer.pause();
                                         setTimeout(() => {
-                                            audioPlayer.play();
-                                            NowPlaying.paused = false;
-                                            NowPlaying.playing = true;
+                                            audioPlayer.setTime(0.1);
+                                            NowPlaying.finished = false;
+                                            audioPlayer.pause();
+                                            setTimeout(() => {
+                                                audioPlayer.play();
+                                                NowPlaying.paused = false;
+                                                NowPlaying.playing = true;
+                                            }, 50);
                                         }, 50);
-                                    }, 50);
-                                }}
+                                    }
+                                }
                                 else {
                                     isAudioEnded = true;
                                     if (!NowPlaying.settings.autoPlayNext) {
@@ -380,7 +379,6 @@
                             NowPlaying.playing = false;
                             break;
                         case 'next':
-                            debugger
                             if(typeof $rootScope.audioFromPlayList === 'number'){
                                 $rootScope.audioFromPlayList = e.data.index;
                                 NowPlaying.playList[$rootScope.audioFromPlayList].playing = true;
@@ -389,17 +387,6 @@
                                 }
                                 return false;
                             }
-                            // if (NowPlaying.settings.autoPlayNext) {
-                            //     // param: userInput
-                            //     $rootScope.playNextItem(true);
-                            // } else if (e && e.data && e.data.track) {
-                            //     e.data.track.lastPosition = 0;
-                            //     NowPlaying.currentTrack = e.data.track;
-                            //     NowPlaying.playing = true;
-                            // } else {
-                            //     // param: userInput
-                            //     $rootScope.playNextItem(true);
-                            // }
                             break;
                         case 'previous':
                             if(typeof $rootScope.audioFromPlayList === 'number' && NowPlaying.settings.autoPlayNext){
@@ -722,7 +709,6 @@
                     audioPlayer.settings.set(NowPlaying.settings);
                 };
                 NowPlaying.addToPlaylist = function (track) {
-                    console.log("🚀 ~ file: widget.nowplaying.controller.js:728 ~ track:", track)
                     if (track) {
                         buildfire.dialog.toast({
                             message: NowPlaying.playListStrings.addedPlaylist
