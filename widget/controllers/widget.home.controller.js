@@ -851,6 +851,9 @@
                         }
                         let cachedItems = [];
                         if (err) {
+                            buildfire.dialog.toast({
+                                message: `No Cached Items`,
+                            });
                             return callback(err);
                         }
                         if (res) {
@@ -1513,12 +1516,14 @@
                             CachedMediaCenter.get((err, res) => {
                                 if (err) {
                                     WidgetHome.media = _infoData;
+                                    buildfire.dialog.toast({
+                                        message: `White screen occurred`,
+                                    });
+                                }else {
+                                    WidgetHome.media = res;
                                 }
 
-                                else {
-                                    WidgetHome.media = res;
-                                    WidgetHome.loadMore();
-                                }
+                                WidgetHome.loadMore();
                                 setTimeout(() => {
                                     if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                                 }, 0);
