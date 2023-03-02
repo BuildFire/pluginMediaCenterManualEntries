@@ -13,7 +13,7 @@ var downloads = {
             }
             if (res) {
                 // filtering old dropbox audio downloaded links, removing them from the "response"
-                res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
+                res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdatedV2)))
                 
                 downloadedIDS = res.map(a => a.mediaId);
                 if ($scope.WidgetHome) {
@@ -64,7 +64,7 @@ var downloads = {
                             }
 
                             else if (downloadedItem.mediaType == "audio") {
-                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxAudioUpdated){
+                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxAudioUpdatedV2){
                                     item.data.hasDownloadedAudio = false;
                                     item.hasDownloadedMedia = false;
                                 }else{
@@ -134,7 +134,7 @@ var downloads = {
                             }
 
                             else if (downloadedItem.mediaType == "audio") {
-                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxAudioUpdated){
+                                if((item.data.audioUrl.includes("www.dropbox") || item.data.audioUrl.includes("dl.dropbox.com")) && !downloadedItem.dropboxAudioUpdatedV2){
                                     $scope.WidgetMedia.item.data.hasDownloadedAudio = false;
                                     $scope.WidgetMedia.item.hasDownloadedMedia = false;
                                 }else{

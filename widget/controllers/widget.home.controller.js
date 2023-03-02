@@ -792,7 +792,7 @@
                                 DownloadedMedia.get((err, res) => {
                                     let downloadedIDS = [];
                                     if (err || (!res && !res.length)) return callback(err, null);
-                                    res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
+                                    res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdatedV2)))
 
                                     downloadedIDS = res.map(item => item.mediaId);
                                     downloadedIDS.length ?
@@ -870,7 +870,7 @@
                                 return callback(err);
                             }
                             if (res) {
-                                res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
+                                res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdatedV2)))
                                 
                                 downloadedIDS = res.map(item => item.mediaId);
                                 if (downloadedIDS.length > 0) {
@@ -1250,17 +1250,21 @@
                         return;
                     }
                     beginDownload(() => {
-                        let { uri, type, source } = mediaType == 'video' ? WidgetHome.getVideoDownloadURL(item.data.videoUrl)
+                        let returnAsWebUri= false;
+                        let { uri, type, source } = mediaType == 'video' ? (
+                                returnAsWebUri= true,
+                                WidgetHome.getVideoDownloadURL(item.data.videoUrl)
+                            )
                             : WidgetHome.getAudioDownloadURL(item.data.audioUrl);
                         if (source && (source === 'youtube' || source === 'vimeo')) return downloadInvalid();
                         $rootScope.currentlyDownloading.push(item.id);
                         if (!$rootScope.$$phase && !$rootScope.$root.$$phase) $rootScope.$apply();
                         buildfire.services.fileSystem.fileManager.download(
                             {
-                                uri: uri,
+                                uri,
                                 path: "/data/mediaCenterManual/" + Buildfire.getContext().instanceId + "/" + mediaType + "/",
                                 fileName: item.id + "." + type,
-                                returnAsWebUri: true
+                                returnAsWebUri
                             },
                             (err, filePath) => {
                                 if (err) {
@@ -1277,7 +1281,7 @@
                                     mediaId: item.id,
                                     mediaType: mediaType,
                                     mediaPath: filePath,
-                                    dropboxAudioUpdated: true,
+                                    dropboxAudioUpdatedV2: true,
                                     originalMediaUrl: mediaType == 'video' ? item.data.videoUrl : item.data.audioUrl,
                                     createdOn: new Date(),
                                 }
@@ -1516,9 +1520,6 @@
                             CachedMediaCenter.get((err, res) => {
                                 if (err) {
                                     WidgetHome.media = _infoData;
-                                    buildfire.dialog.toast({
-                                        message: `White screen occurred`,
-                                    });
                                 }else {
                                     WidgetHome.media = res;
                                 }
