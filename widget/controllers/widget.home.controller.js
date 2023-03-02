@@ -61,6 +61,7 @@
                             dateIndexed: true,
                             dateCreatedIndexed: true,
                             enableFiltering: false,
+                            allowOfflineDownload: true
                         },
                         design: {
                             listLayout: "list-1",
