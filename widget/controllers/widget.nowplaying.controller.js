@@ -258,7 +258,7 @@
                 //var first = true;
                 var ready = false, setOder = false, first = false, open = true;
                 if($rootScope.activePlayerEvents){
-                    // clear all previous events to avoid repeat events
+                    // Prevent the repetition of events by clearing all previous occurrences, as repeated events tend to occur when the user plays multiple audio files.
                     $rootScope.activePlayerEvents.clear();
                 }
                 $rootScope.activePlayerEvents = audioPlayer.onEvent(function (e) {
@@ -613,8 +613,9 @@
                         audioPlayer.settings.set(NowPlaying.settings);
                     }
                     NowPlaying.playing = true;
-                    if (track) {
+                    if (typeof index==='number') {
                         NowPlaying.isAudioPlayerPlayingAnotherSong = false;
+                        audioPlayer.pause();
                         audioPlayer.play(index);
                         track.playing = true;
                     }
@@ -966,6 +967,9 @@
                         }
                     }
                     else if (NowPlaying.paused) {
+                        NowPlaying.playList.forEach(element => {
+                            element.playing = false
+                        });
                         if (track.url == NowPlaying.currentTrack.url) {
                             NowPlaying.settings.isPlayingCurrentTrack = true;
                             NowPlaying.playing = true;
