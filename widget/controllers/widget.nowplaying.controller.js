@@ -335,30 +335,28 @@
                                 $rootScope.playNextItem();
                             } else {
                                 if (NowPlaying.isItLast && NowPlaying.settings.loopPlaylist) {
-                                    if(typeof $rootScope.audioFromPlayList === 'number'){
-                                        audioPlayer.getCurrentTrack((track) => {
-                                            if (NowPlaying.playList && NowPlaying.playList.length > 0) {
-                                                NowPlaying.playList.forEach(element => {
-                                                    element.playing = false
-                                                });
-                                                let currentTrack = NowPlaying.playList.find(x => x.title == track.title && x.url == track.url && x.album == track.album && x.image == track.image && x.backgroundImage == track.backgroundImage)
-                                                if (currentTrack) {
-                                                    currentTrack.playing = true
-                                                }
+                                    audioPlayer.getCurrentTrack((track) => {
+                                        if (NowPlaying.playList && NowPlaying.playList.length > 0) {
+                                            NowPlaying.playList.forEach(element => {
+                                                element.playing = false
+                                            });
+                                            let currentTrack = NowPlaying.playList.find(x => x.title == track.title && x.url == track.url && x.album == track.album && x.image == track.image && x.backgroundImage == track.backgroundImage)
+                                            if (currentTrack) {
+                                                currentTrack.playing = true
                                             }
-                                        });
+                                        }
+                                    });
 
+                                    setTimeout(() => {
+                                        audioPlayer.setTime(0.1);
+                                        NowPlaying.finished = false;
+                                        audioPlayer.pause();
                                         setTimeout(() => {
-                                            audioPlayer.setTime(0.1);
-                                            NowPlaying.finished = false;
-                                            audioPlayer.pause();
-                                            setTimeout(() => {
-                                                audioPlayer.play();
-                                                NowPlaying.paused = false;
-                                                NowPlaying.playing = true;
-                                            }, 50);
+                                            audioPlayer.play();
+                                            NowPlaying.paused = false;
+                                            NowPlaying.playing = true;
                                         }, 50);
-                                    }
+                                    }, 50);
                                 }
                                 else {
                                     isAudioEnded = true;
@@ -952,7 +950,7 @@
                  * track play pause from playlist
                  */
 
-                NowPlaying.playlistPlayPause = function (track, index) {                   
+                NowPlaying.playlistPlayPause = function (track, index) {
                     if (NowPlaying.playing) {
                         if (track.playing) {
                             NowPlaying.playlistPause(track);

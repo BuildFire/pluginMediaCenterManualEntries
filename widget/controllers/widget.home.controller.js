@@ -852,9 +852,6 @@
                         }
                         let cachedItems = [];
                         if (err) {
-                            buildfire.dialog.toast({
-                                message: `No Cached Items`,
-                            });
                             return callback(err);
                         }
                         if (res) {
