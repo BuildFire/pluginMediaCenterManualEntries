@@ -72,7 +72,8 @@
                                                         });
                                                     }
                                                     if (res) {
-                                                        res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdatedV2)))
+                                                        res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
+                                                        res = res.filter(item=>(!(item.mediaType==='audio' && !item.audioDownloadUpdated && buildfire.getContext().device.platform === "iOS")))
 
                                                         let matchingItems = res.filter(item => item.mediaId == mediaId);
                                                         if (matchingItems.length > 0) {
@@ -148,8 +149,9 @@
 
                                                 }
                                                 if (res) {
-                                                    res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdatedV2)))
-                                                    
+                                                    res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
+                                                    res = res.filter(item=>(!(item.mediaType==='audio' && !item.audioDownloadUpdated && buildfire.getContext().device.platform === "iOS")))
+
                                                     let matchingItems = res.filter(item => item.mediaId == mediaId);
                                                     if (matchingItems.length > 0) {
                                                         matchingItems.map(downloadedItem => {
@@ -248,7 +250,8 @@
                                         DownloadedMedia.get((err, res) => {
                                             if (err) {}
                                             if (res) {
-                                                res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdatedV2)))
+                                                res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
+                                                res = res.filter(item=>(!(item.mediaType==='audio' && !item.audioDownloadUpdated && buildfire.getContext().device.platform === "iOS")))
 
                                                 let matchingItems = res.filter(item => item.mediaId == mediaId);
                                                 if (matchingItems.length > 0) {
