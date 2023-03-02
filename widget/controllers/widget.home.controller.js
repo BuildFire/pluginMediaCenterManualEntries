@@ -1248,6 +1248,7 @@
                         return;
                     }
                     beginDownload(() => {
+                        // Use "returnAsWebUri" property for downloaded videos on IOS to enable playback, but avoid using it for downloaded audio files as it may cause errors.
                         let returnAsWebUri= false;
                         let { uri, type, source } = mediaType == 'video' ? (
                                 returnAsWebUri= true,
