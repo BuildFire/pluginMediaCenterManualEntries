@@ -14,7 +14,10 @@ var downloads = {
             if (res) {
                 // filtering old dropbox audio downloaded links, removing them from the "response"
                 res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
-                
+               
+                // filtering old iOS audio downloaded links, removing them from the "response"
+                res = res.filter(item=>(!(item.mediaType==='audio' && !item.audioDownloadUpdated && buildfire.getContext().device.platform === "iOS")))
+
                 downloadedIDS = res.map(a => a.mediaId);
                 if ($scope.WidgetHome) {
                     $scope.WidgetHome.item = $scope.WidgetHome.items.map(item => {

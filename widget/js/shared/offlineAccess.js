@@ -26,6 +26,7 @@ class OfflineAccess {
                     mediaPath: data.mediaPath,
                     originalMediaUrl: data.originalMediaUrl,
                     dropboxAudioUpdated: data.dropboxAudioUpdated,
+                    audioDownloadUpdated: data.audioDownloadUpdated,
                     createdOn: data.createdOn || new Date(),
                     lastUpdatedOn: new Date(),
                 }))
@@ -59,6 +60,7 @@ class OfflineAccess {
                         mediaId: data.mediaId,
                         mediaType: data.mediaType,
                         dropboxAudioUpdated: data.dropboxAudioUpdated,
+                        audioDownloadUpdated: data.audioDownloadUpdated,
                         mediaPath: data.mediaPath,
                         createdOn: data.createdOn,
                         lastUpdatedOn: new Date(),

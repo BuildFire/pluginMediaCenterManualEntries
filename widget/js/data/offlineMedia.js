@@ -6,6 +6,7 @@ class OfflineMedia {
         this.mediaPath = data.mediaPath || '';
         this.originalMediaUrl = data.originalMediaUrl || '';
         this.dropboxAudioUpdated = typeof(data.dropboxAudioUpdated)==='boolean' ? data.dropboxAudioUpdated : false;
+        this.audioDownloadUpdated = typeof(data.audioDownloadUpdated)==='boolean' ? data.audioDownloadUpdated : false;
         this.createdOn = data.createdOn || '';
         this.lastUpdatedOn = data.lastUpdatedOn || '';
     }
