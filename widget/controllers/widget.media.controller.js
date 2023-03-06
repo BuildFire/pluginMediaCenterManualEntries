@@ -507,7 +507,6 @@
                     WidgetMedia.item.srcUrl = media.data.srcUrl ? media.data.srcUrl
                         : (media.data.audioUrl ? media.data.audioUrl : media.data.videoUrl);
                     bookmarks.sync($scope);
-                    if (!WidgetMedia.isWeb) downloads.sync($scope, DownloadedMedia);
                     WidgetMedia.changeVideoSrc();
 
                     WidgetMedia.iframeSrcUrl = $sce.trustAsUrl(WidgetMedia.item.data.srcUrl);

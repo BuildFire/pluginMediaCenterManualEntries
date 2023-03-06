@@ -61,6 +61,7 @@
                             dateIndexed: true,
                             dateCreatedIndexed: true,
                             enableFiltering: false,
+                            allowOfflineDownload: true
                         },
                         design: {
                             listLayout: "list-1",
@@ -792,7 +793,8 @@
                                 DownloadedMedia.get((err, res) => {
                                     let downloadedIDS = [];
                                     if (err || (!res && !res.length)) return callback(err, null);
-                                    res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
+                                    res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)));
+                                    res = res.filter(item=>(!(item.mediaType==='audio' && !item.audioDownloadUpdated && buildfire.getContext().device.platform === "iOS")));
 
                                     downloadedIDS = res.map(item => item.mediaId);
                                     downloadedIDS.length ?
@@ -868,6 +870,7 @@
                             }
                             if (res) {
                                 res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
+                                res = res.filter(item=>(!(item.mediaType==='audio' && !item.audioDownloadUpdated && buildfire.getContext().device.platform === "iOS")))
                                 
                                 downloadedIDS = res.map(item => item.mediaId);
                                 if (downloadedIDS.length > 0) {
@@ -1247,17 +1250,22 @@
                         return;
                     }
                     beginDownload(() => {
-                        let { uri, type, source } = mediaType == 'video' ? WidgetHome.getVideoDownloadURL(item.data.videoUrl)
+                        // Use "returnAsWebUri" property for downloaded videos on IOS to enable playback, but avoid using it for downloaded audio files as it may cause errors.
+                        let returnAsWebUri= false;
+                        let { uri, type, source } = mediaType == 'video' ? (
+                                returnAsWebUri= true,
+                                WidgetHome.getVideoDownloadURL(item.data.videoUrl)
+                            )
                             : WidgetHome.getAudioDownloadURL(item.data.audioUrl);
                         if (source && (source === 'youtube' || source === 'vimeo')) return downloadInvalid();
                         $rootScope.currentlyDownloading.push(item.id);
                         if (!$rootScope.$$phase && !$rootScope.$root.$$phase) $rootScope.$apply();
                         buildfire.services.fileSystem.fileManager.download(
                             {
-                                uri: uri,
+                                uri,
                                 path: "/data/mediaCenterManual/" + Buildfire.getContext().instanceId + "/" + mediaType + "/",
                                 fileName: item.id + "." + type,
-                                returnAsWebUri: true
+                                returnAsWebUri
                             },
                             (err, filePath) => {
                                 if (err) {
@@ -1275,6 +1283,7 @@
                                     mediaType: mediaType,
                                     mediaPath: filePath,
                                     dropboxAudioUpdated: true,
+                                    audioDownloadUpdated: true,
                                     originalMediaUrl: mediaType == 'video' ? item.data.videoUrl : item.data.audioUrl,
                                     createdOn: new Date(),
                                 }
@@ -1513,12 +1522,11 @@
                             CachedMediaCenter.get((err, res) => {
                                 if (err) {
                                     WidgetHome.media = _infoData;
+                                }else {
+                                    WidgetHome.media = res;
                                 }
 
-                                else {
-                                    WidgetHome.media = res;
-                                    WidgetHome.loadMore();
-                                }
+                                WidgetHome.loadMore();
                                 setTimeout(() => {
                                     if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                                 }, 0);
