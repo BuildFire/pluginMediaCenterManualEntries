@@ -36,17 +36,11 @@
                     if (user) {
                         $rootScope.user = user
                         var userCheckViewFilter = {
-                            filter: {
-                                "_buildfire.index.text":
-                                    { $eq: media.id + "-" + $rootScope.user._id + "-AUDIO-true" }
-                            }
+                            filter: getIndexedFilter(media.id, $rootScope.user._id)
                         };
                     } else if (Buildfire.context.deviceId) {
                         var userCheckViewFilter = {
-                            filter: {
-                                "_buildfire.index.text":
-                                    { $eq: media.id + "-" + Buildfire.context.deviceId + "-AUDIO-true" }
-                            }
+                            filter: getIndexedFilter(media.id, Buildfire.context.deviceId)
                         };
                     } else {
                         initAudio(0)
@@ -326,7 +320,7 @@
                             break;
                         case 'audioEnded':
                             ready = false;
-                            updateAudioMediaCount(media.id, 0.1)
+                            updateAudioLastPosition(media.id, 0.1)
                             if(typeof $rootScope.audioFromPlayList === 'number'){
                                 NowPlaying.playlistPause(NowPlaying.playList[$rootScope.audioFromPlayList]);
                                 return false;
@@ -445,15 +439,23 @@
 
                 }
 
-                function updateAudioMediaCount(mediaId, trackLastPosition) {
-                    buildfire.publicData.searchAndUpdate(
-                        { mediaId: { $eq: mediaId } },
-                        { $set: { lastPosition: trackLastPosition } },
-                        COLLECTIONS.MediaCount,
-                        (err, result) => {
-                            if (err) return console.error(err);
-                        }
-                    );
+                function updateAudioLastPosition(mediaId, trackLastPosition) {
+                    let searchFilter = null;
+                    if ($rootScope && $rootScope.user) {
+                        searchFilter = getIndexedFilter(mediaId, $rootScope.user._id);
+                    } else if (Buildfire.context.deviceId) {
+                        searchFilter = getIndexedFilter(mediaId, Buildfire.context.deviceId);
+                    }
+                    if(searchFilter){
+                        buildfire.publicData.searchAndUpdate(
+                            searchFilter,
+                            { $set: { lastPosition: trackLastPosition } },
+                            COLLECTIONS.MediaCount,
+                            (err, result) => {
+                                if (err) return console.error(err);
+                            }
+                        );
+                    }
                 }
 
                 function sendAnalytics(NowPlaying) {
@@ -466,6 +468,22 @@
                     Analytics.trackAction(`${NowPlaying.item.id}_continuesAudioPlayCount`);
                     Analytics.trackAction("allAudios_continuesCount");
                     Analytics.trackAction("allMediaTypes_continuesCount");
+                }
+
+                function getIndexedFilter(mediaId, userId) {
+                    let filter = {};
+
+                    if($rootScope.indexingUpdateDoneV2){
+                        filter = {
+                            "_buildfire.index.array1.string1": "mediaCount-" + mediaId + "-" + userId + "-AUDIO-true" 
+                        };
+                    }else{
+                        filter = {
+                            "_buildfire.index.text": mediaId + "-" + userId + "-AUDIO-true" 
+                        };
+                    }
+
+                    return filter;
                 }
                 var isAudioEnded = false;
                 /**
@@ -505,17 +523,25 @@
                                 lastPosition: 0,
                                 _buildfire: {
                                     index: {
-                                        string1: NowPlaying.item.id + "-true"
+                                        string1: NowPlaying.item.id + "-true",
+                                        array1:[]
                                     },
                                 },
                             }
                             if ($rootScope && $rootScope.user) {
                                 data.userId = $rootScope.user._id
-                                data._buildfire.index.text = NowPlaying.item.id + "-" + $rootScope.user._id + "-AUDIO-true"
+                                data._buildfire.index.array1[0] = {string1: "mediaCount-" + NowPlaying.item.id + "-" + $rootScope.user._id + "-AUDIO-true"}
+                                if(!$rootScope.indexingUpdateDoneV2){
+                                    data._buildfire.index.text = NowPlaying.item.id + "-" + $rootScope.user._id + "-AUDIO-true"
+                                }
                             } else if (Buildfire.context.deviceId) {
                                 data.userId = Buildfire.context.deviceId
-                                data._buildfire.index.text = NowPlaying.item.id + "-" + Buildfire.context.deviceId + "-AUDIO-true"
+                                data._buildfire.index.array1[0] = {string1: "mediaCount-" + NowPlaying.item.id + "-" + Buildfire.context.deviceId + "-AUDIO-true"}
+                                if(!$rootScope.indexingUpdateDoneV2){
+                                    data._buildfire.index.text = NowPlaying.item.id + "-" + Buildfire.context.deviceId + "-AUDIO-true"
+                                }
                             }
+                            
                             if ($rootScope.user || Buildfire.context.deviceId) {
                                 buildfire.publicData.insert(data, COLLECTIONS.MediaCount, false, function (err, res) {
                                     NowPlaying.isCounted = true;
@@ -560,7 +586,7 @@
                 NowPlaying.callPlayFunction = function (index) {
                     buildfire.services.media.audioPlayer.getCurrentTrack((track) => {
                         if (track) {
-                            updateAudioMediaCount(media.id, track.lastPosition)
+                            updateAudioLastPosition(media.id, track.lastPosition)
                         }
                     });
                     if (NowPlaying.paused) {
@@ -627,7 +653,7 @@
                         audioPlayer.settings.set(NowPlaying.settings);
                     }
                     NowPlaying.currentTrack.lastPosition = NowPlaying.currentTime;
-                    updateAudioMediaCount(media.id, NowPlaying.currentTime)
+                    updateAudioLastPosition(media.id, NowPlaying.currentTime)
                     NowPlaying.playing = false;
                     NowPlaying.paused = true;
                     audioPlayer.pause();

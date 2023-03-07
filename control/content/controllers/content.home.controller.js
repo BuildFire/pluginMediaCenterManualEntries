@@ -39,7 +39,8 @@
                             backgroundImage: "",
                             skipMediaPage: false
                         },
-                        indexingUpdateDone: false
+                        indexingUpdateDone: true,
+                        indexingUpdateDoneV2: true
                     }
                 };
                 var MediaContent = new DB(COLLECTIONS.MediaContent);
@@ -82,8 +83,18 @@
                     ContentHome.info.data.content.sortByValue = 'Media Title Z-A';
                 }
 
-                if(!ContentHome.info.data.indexingUpdateDone && Object.keys(ContentHome.info.data).length > 0) 
-                    PerfomanceIndexingService.showIndexingDialog();
+                // Check the number of the old views data, If it's zero, all data is update.
+                if(!ContentHome.info.data.indexingUpdateDoneV2){
+                    buildfire.publicData.search({filter:{"_buildfire.index.array1.string1":null}},"MediaCount", function(err,res){
+                        if(res.length === 0){
+                            MediaCenterInfo.data.indexingUpdateDoneV2 = true;
+                            ContentHome.info.data.indexingUpdateDoneV2 = true;
+                            MediaCenter.save(ContentHome.info).then((e,r)=>{
+                                if(e) return console.error(e);
+                            })
+                        }
+                    })
+                }
 
                 AppConfig.setSettings(MediaCenterInfo.data);
                 AppConfig.setAppId(MediaCenterInfo.id);

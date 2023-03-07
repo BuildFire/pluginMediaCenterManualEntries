@@ -389,9 +389,16 @@
         .factory("PerfomanceIndexingService", ['Buildfire', function (Buildfire) {
           return {
             buildMediaCountDataIndex: function (data) {
+                var mediaType = data.mediaType;
+                if(mediaType === "VIDEO"){
+                    mediaType = "Video"
+                }
                 var index = {
                     'string1': data.mediaId + "-" + (data.isActive ? "true":"false"),
-                    'text': data.mediaId + "-" + data.userId + '-' + data.mediaType + "-" + (data.isActive ? "true":"false"),
+                    'text': data.mediaId + "-" + data.userId + '-' + mediaType + "-" + (data.isActive ? "true":"false"),
+                    "array1":[{
+                        "string1": "mediaCount-" + data.mediaId + "-" + data.userId + '-' + mediaType + "-" + (data.isActive ? "true":"false"),
+                    }]
                 }
                 return index;
             },
@@ -422,7 +429,7 @@
                     this.processMediaCountsData(records[index], () => this.iterateMediaCountData(records, index + 1));
                 } else {
                     buildfire.datastore.get('MediaCenter', (err, result) => {
-                        result.data.indexingUpdateDone = true;
+                        result.data.indexingUpdateDoneV2 = true;
                         buildfire.datastore.save(result.data, 'MediaCenter', (err, saved) => {
                             buildfire.dialog.alert(
                                 {
