@@ -87,7 +87,7 @@
                 if(!ContentHome.info.data.indexingUpdateDoneV2){
                     buildfire.publicData.search({filter:{$and:[
                         {"_buildfire.index.array1.string1":null},
-                        {"_buildfire.index.text":{$exists:true}}
+                        {"_buildfire.index.string1":{$exists:true}}
                     ]}},"MediaCount", function(err,res){
                         if(res.length === 0){
                             MediaCenterInfo.data.indexingUpdateDoneV2 = true;
