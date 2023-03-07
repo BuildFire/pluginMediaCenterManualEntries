@@ -32,16 +32,16 @@
                 }
                 var allCheckViewFilter = {
                     filter: {
-                        $and: [
-                            { "$json.mediaId": { $eq: media.id } },
-                            { '$json.isActive': true },
-                        ],
-                    }
+                        "_buildfire.index.string1": media.id+"-true"
+                    },
+                    skip: 0,
+                    limit: 1,
+                    recordCount: true
                 };
 
                 buildfire.publicData.search(allCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
-                    if (res && res.length) {
-                        WidgetMedia.count = res.length;
+                    if (res && res.totalRecord) {
+                        WidgetMedia.count = res.totalRecord;
                         if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                     }
                 })
@@ -246,10 +246,7 @@
                     if (state === 'play') { // The video started playing
                         if (!WidgetMedia.isCounted && $rootScope.user) {
                             var userCheckViewFilter = {
-                                filter: {
-                                    "_buildfire.index.text":
-                                        { $eq: media.id + "-" + $rootScope.user._id + "-Video-true" }
-                                }
+                                filter: getIndexedFilter(WidgetMedia.item.id, $rootScope.user._id, 'Video')
                             };
                             buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
                                 if (res.length > 0) {
@@ -263,9 +260,14 @@
                                         _buildfire: {
                                             index: {
                                                 string1: WidgetMedia.item.id + "-true",
-                                                text: WidgetMedia.item.id + "-" + $rootScope.user._id + "-Video-true",
+                                                array1:[{
+                                                    string1: "mediaCount-" + WidgetMedia.item.id + "-" + $rootScope.user._id + "-Video-true",
+                                                }]
                                             },
                                         },
+                                    }
+                                    if(!$rootScope.indexingUpdateDoneV2){
+                                        data._buildfire.index.text = WidgetMedia.item.id + "-" + $rootScope.user._id + "-Video-true";
                                     }
                                     buildfire.publicData.insert(data, COLLECTIONS.MediaCount, false, function (err, res) {
                                         WidgetMedia.isCounted = true;
@@ -303,6 +305,21 @@
                     Analytics.trackAction("allMediaTypes_continuesCount");
                 }
 
+                const getIndexedFilter = (mediaId, userId, mediaType) => {
+                    let filter = {};
+
+                    if($rootScope.indexingUpdateDoneV2 === true){
+                        filter = {
+                            "_buildfire.index.array1.string1": "mediaCount-" + mediaId + "-" + userId + "-" + mediaType + "-true" 
+                        };
+                    }else{
+                        filter = {
+                            "_buildfire.index.text": mediaId + "-" + userId + "-" + mediaType + "-true" 
+                        };
+                    }
+
+                    return filter;
+                }
                 // To overcome an issue with google showing it's play button on their videos
                 $scope.videoAlreadyPlayed = () => {
                     if (WidgetMedia.item && WidgetMedia.item.data && WidgetMedia.item.data.videoUrl) {
@@ -452,10 +469,7 @@
                         if (user) {
                             $rootScope.user = user;
                             let userCheckViewFilter = {
-                                filter: {
-                                    "_buildfire.index.text":
-                                        { $eq: media.id + "-" + user._id + "-Article-true" }
-                                }
+                                filter: getIndexedFilter(WidgetMedia.item.id, user._id, "Article")
                             };
                             buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
                                 console.log(res)
@@ -470,9 +484,14 @@
                                         _buildfire: {
                                             index: {
                                                 string1: WidgetMedia.item.id + "-true",
-                                                text: WidgetMedia.item.id + "-" + $rootScope.user._id + "-Article-true",
+                                                array1:[{
+                                                    string1: "mediaCount-" + WidgetMedia.item.id + "-" + $rootScope.user._id + "-Article-true",
+                                                }]
                                             },
                                         },
+                                    }
+                                    if(!$rootScope.indexingUpdateDoneV2){
+                                        data._buildfire.index.text= WidgetMedia.item.id + "-" + $rootScope.user._id + "-Article-true";
                                     }
                                     buildfire.publicData.insert(data, COLLECTIONS.MediaCount, false, function (err, res) {
                                         WidgetMedia.isCounted = true;
