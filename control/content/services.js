@@ -395,6 +395,7 @@
                 }
                 var index = {
                     'string1': data.mediaId + "-" + (data.isActive ? "true":"false"),
+                    "text": data.mediaId + "-" + data.userId + '-' + mediaType + "-" + (data.isActive ? "true":"false"),
                     "array1":[{
                         "string1": "mediaCount-" + data.mediaId + "-" + data.userId + '-' + mediaType + "-" + (data.isActive ? "true":"false"),
                     }]
