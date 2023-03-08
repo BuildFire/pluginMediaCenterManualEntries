@@ -92,7 +92,7 @@
                         if(res.length === 0){
                             MediaCenterInfo.data.indexingUpdateDoneV2 = true;
                             ContentHome.info.data.indexingUpdateDoneV2 = true;
-                            MediaCenter.save(ContentHome.info).then((e,r)=>{
+                            MediaCenter.save(ContentHome.info.data).then((e,r)=>{
                                 if(e) return console.error(e);
                             })
                         }
