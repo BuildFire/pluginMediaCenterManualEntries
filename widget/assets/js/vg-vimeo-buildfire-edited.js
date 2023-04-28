@@ -58,11 +58,12 @@
                                 ((C = O),
                                 (C = u[1] ? u[1].split("/")[0] + "?h=" + u[2]+"&" : u[2] + "?"),
                                 m ? (A = m.element) : ((A = document.createElement("iframe")), e.element(c.mediaElement[0]).replaceWith(e.element(A))),
-                                (A.src = "https://player.vimeo.com/video/" + C + "player_id=vimeoplayer&title=0&byline=0&portrait=0&controls=1"),
                                 (A.style.width = "100%"),
                                 (A.style.height = "100%"),
                                 r.$eval(E) && (A.setAttribute("webkitallowfullscreen", ""), A.setAttribute("mozallowfullscreen", ""), A.setAttribute("allowfullscreen", ""), A.setAttribute("allow", "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture")),
                                 e.element(A.parentNode.parentNode).find("vg-overlay-play").css("height", "calc(100% - 50px)"),
+                                // move src after the appending attributes so the full screen icon will be appeared in the controls
+                                (A.src = "https://player.vimeo.com/video/" + C + "player_id=vimeoplayer&title=0&byline=0&portrait=0&controls=1"),
                                 (m = new Vimeo.Player(A)).ready().then(function () {
                                     !(function () {
                                         if (
