@@ -122,6 +122,8 @@
            * else init it with bootstrap data
            */
           if (media) {
+            media.data.topImage = getImageUrl(media.data.topImage);
+            media.data.image = getImageUrl(media.data.image);
             ContentMedia.item = media;
             ContentMedia.dbItem = {
               id: media.id,
@@ -650,6 +652,8 @@
 
                 MediaContent.getById(data.id).then((item) => {
                   registerAnalytics(item);
+                  item.data.topImage = getImageUrl(item.data.topImage);
+                  item.data.image = getImageUrl(item.data.image);
                   ContentMedia.item = item;
                   ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: item.id });
                   updateMasterItem(item);
@@ -833,8 +837,15 @@
         //    $scope.$apply();
         //  }
         //};
-
-
+        
+        // correct image src for dropbox to crop/resize and show it 
+        function getImageUrl(imageSrc) {
+          if (imageSrc && imageSrc.includes("dropbox.com")) {
+            imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent").split("?dl=")[0];
+            imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com").split("?dl=")[0];
+          }
+          return imageSrc;
+      }
 
         /* Build fire thumbnail component to add thumbnail image*/
         var audioImage = new Buildfire.components.images.thumbnail("#audioImage", {

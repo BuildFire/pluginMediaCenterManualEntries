@@ -952,6 +952,16 @@
                     });
                 };
 
+                // correct image src for dropbox to crop/resize and show it 
+                function getImageUrl(imageSrc) {
+                   if (imageSrc) {
+                      imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent").split("?dl=")[0];
+                      imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com").split("?dl=")[0];
+                      imageSrc = imageSrc.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
+                    }
+                    return imageSrc;
+                }
+
                 WidgetHome.loadMore = () => {
                     updateGetOptions();
                     const getRecords = () => {
@@ -962,6 +972,11 @@
                         WidgetHome.currentlyLoading = true;
 
                         MediaContent.find(searchOptions).then((result) => {
+                            result = result.map(item=>{
+                                item.data.topImage = getImageUrl(item.data.topImage);
+                                item.data.image = getImageUrl(item.data.image);
+                                return item
+                            })
                             WidgetHome.items = WidgetHome.items.concat(result);
                             WidgetHome.items.forEach(item => {
                                 var searchOptions = {
