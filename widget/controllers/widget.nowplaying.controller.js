@@ -12,6 +12,8 @@
                 NowPlaying.forceAutoPlay = $rootScope.forceAutoPlay;
                 NowPlaying.transferPlaylist = $rootScope.transferAudioContentToPlayList;
                 media.data.audioUrl = convertDropbox(media.data.audioUrl);
+                media.data.topImage = convertDropbox(media.data.topImage);
+                media.data.image = convertDropbox(media.data.image);
 
                 NowPlaying.currentTime = 0;
 
@@ -133,7 +135,12 @@
                         }).join('');
 
                         var pluginSongs = result.filter(el => el.data.audioUrl && el.data.audioUrl.length > 0);
-                        var pluginListSongs = pluginSongs.map(el => { el.data.audioUrl = convertDropbox(el.data.audioUrl); return el.data.audioUrl; }).join('');
+                        var pluginListSongs = pluginSongs.map(el => { 
+                            el.data.audioUrl = convertDropbox(el.data.audioUrl); 
+                            el.data.topImage = convertDropbox(el.data.topImage); 
+                            el.data.image = convertDropbox(el.data.image); 
+                            return el.data.audioUrl; 
+                        }).join('');
                         var pluginListTitles = pluginSongs.map(el => { return el.data.title; }).join('');
 
                         var pluginListBackground = pluginSongs.map(el => {
