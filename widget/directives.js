@@ -61,10 +61,13 @@
             return {
                 restrict: 'A',
                 link: function (scope, element, attrs) {
-                    var raw = element[0];
+                    let raw = element[0], timeOut = null, timer = 300;
                     element.on('scroll', function () {
-                        if (raw.scrollTop + raw.offsetHeight == raw.scrollHeight) { //at the bottom
-                            scope.$apply(attrs.scrolly);
+                        if (raw.scrollTop + raw.offsetHeight >= (raw.scrollHeight*0.60)) { //at the bottom
+                            clearTimeout(timeOut);
+                            timeOut = setTimeout(()=>{
+                                scope.$apply(attrs.scrolly);
+                            }, timer)
                         }
                     })
                 }
