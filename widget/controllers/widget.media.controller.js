@@ -336,6 +336,15 @@
                         url: "./assets/css/videogular.css"
                     }
                 };
+                // correct image src for dropbox to crop/resize and show it 
+                function getImageUrl(imageSrc) {
+                    if (imageSrc) {
+                      imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent").split("?dl=")[0];
+                      imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com").split("?dl=")[0];
+                      imageSrc = imageSrc.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
+                    }
+                    return imageSrc;
+                }
 
                 WidgetMedia.changeVideoSrc = function () {
                     if (WidgetMedia.item.data.videoUrl) {
@@ -460,6 +469,8 @@
                     //Check if item has newly downloaded media
                     WidgetMedia.loadingData = true;
 
+                    media.data.topImage = getImageUrl(media.data.topImage);
+                    media.data.image = getImageUrl(media.data.image);
                     WidgetMedia.item = media;
                     WidgetMedia.mediaType = media.data.audioUrl ? 'AUDIO' : (media.data.videoUrl ? 'VIDEO' : null);
                     Buildfire.auth.getCurrentUser((err, user) => {
@@ -603,6 +614,8 @@
                     switch (event.tag) {
                         case COLLECTIONS.MediaContent:
                             if (event.data) {
+                                event.data.topImage = getImageUrl(event.data.topImage);
+                                event.data.image = getImageUrl(event.data.image);
                                 WidgetMedia.item = event;
                                 $scope.$digest();
                                 // Update item in globalPlaylist

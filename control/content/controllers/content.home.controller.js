@@ -290,6 +290,14 @@
                     && !ContentHome.info.data.content.updatedRecords) {
                     ContentHome.updateRecords(ContentHome.info.data.content.sortBy);
                 }
+                // correct image src for dropbox to crop/resize and show it 
+                function getImageUrl(imageSrc) {
+                    if (imageSrc && imageSrc.includes("dropbox.com")) {
+                        imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent").split("?dl=")[0];
+                        imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com").split("?dl=")[0];
+                      }
+                    return imageSrc;
+                }
 
                 /**
                  * ContentHome.getMore is used to load the items
@@ -313,6 +321,12 @@
                             searchOptions.skip = searchOptions.skip + _limit;
                             ContentHome.noMore = false;
                         }
+
+                        result = result.map(item=>{
+                            item.data.topImage = getImageUrl(item.data.topImage);
+                            item.data.image = getImageUrl(item.data.image);
+                            return item;
+                        })
 
                         ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
                         ContentHome.isBusy = false;
