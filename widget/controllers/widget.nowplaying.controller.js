@@ -65,33 +65,34 @@
                 });
 
                 var playListArrayOfStrings = [
-                    { key: "addedPlaylist", text: "Added to playlist" },
-                    { key: "removedFromPlaylist", text: "Removed from playlist" },
-                    { key: "goToPlaylist", text: "Go to Playlist" },
-                    { key: "addToPlaylist", text: "Add to Playlist" },
-                    { key: "removeFromPlaylist", text: "Remove from Playlist" },
-                    { key: "cancelPlaylist", text: "Cancel" },
-                    { key: "removePlayListButton", text: "Remove" },
-                    { key: "emptyPlaylist", text: "Playlist Is Empty Text" },
-                    { key: "donePlaylist", text: "Done" }
+                    { key: "addedToPlaylistToastMessage", text: "Added to playlist" },
+                    { key: "removedFromPlaylistToastMessage", text: "Removed from playlist" },
+                    { key: "goToPlaylistButton", text: "Go to Playlist" },
+                    { key: "addToPlaylistButton", text: "Add to Playlist" },
+                    { key: "removeFromPlaylistButton", text: "Remove from Playlist" },
+                    { key: "cancelButton", text: "Cancel" },
+                    { key: "removeButton", text: "Remove" },
+                    { key: "playlistIsEmptyText", text: "Playlist Is Empty Text" },
+                    { key: "doneButton", text: "Done" }
                 ];
 
                 var settingsArrayOfStrings = [
-                    { key: "automaticallyPlayNextTrack", text: "Automatically play next track" },
-                    { key: "loopPlaylist", text: "Loop playlist" },
-                    { key: "autoJumpToLastPositon", text: "Auto Jump To LastPosition" },
-                    { key: "shufflePlaylist", text: "Shuffle Playlist" },
-                    { key: "settingsDone", text: "Done" }
+                    { key: "automaticallyPlayNextTrackButton", text: "Automatically play next track" },
+                    { key: "loopPlaylistButton", text: "Loop playlist" },
+                    { key: "autoJumpToLastPositionButton", text: "Auto Jump To LastPosition" },
+                    { key: "shufflePlaylistButton", text: "Shuffle Playlist" },
+                    { key: "doneButton", text: "Done" }
                 ];
 
                 NowPlaying.playListStrings = {};
                 NowPlaying.settingsStrings = {};
                 playListArrayOfStrings.forEach(function (el) {
-                    NowPlaying.playListStrings[el.key] = strings.get("playlist." + el.key) ? strings.get("playlist." + el.key) : el.text;
+                    console.log(getString("audioPlaylist." + el.key));
+                    NowPlaying.playListStrings[el.key] = getString("audioPlaylist." + el.key) ? getString("audioPlaylist." + el.key) : el.text;
                 });
 
                 settingsArrayOfStrings.forEach(function (el) {
-                    NowPlaying.settingsStrings[el.key] = strings.get("settings." + el.key) ? strings.get("settings." + el.key) : el.text;
+                    NowPlaying.settingsStrings[el.key] = getString("settings." + el.key) ? getString("settings." + el.key) : el.text;
                 });
 
                 /**
@@ -743,7 +744,7 @@
                 NowPlaying.addToPlaylist = function (track) {
                     if (track) {
                         buildfire.dialog.toast({
-                            message: NowPlaying.playListStrings.addedPlaylist
+                            message: NowPlaying.playListStrings.addedToPlaylistToastMessage
                         });
                         audioPlayer.addToPlaylist(track);
                     }
@@ -751,7 +752,7 @@
                 NowPlaying.removeFromPlaylist = function (track, index) {
                     Modals.removeTrackModal().then(function (data) {
                         buildfire.dialog.toast({
-                            message: NowPlaying.playListStrings.removedFromPlaylist
+                            message: NowPlaying.playListStrings.removedFromPlaylistToastMessage
                         });
                         if (NowPlaying.playList) {
                             NowPlaying.playList.filter(function (val, index) {
@@ -772,7 +773,7 @@
                     Modals.removeTrackModal().then(function (data) {
                         audioPlayer.removeFromPlaylist(index);
                         buildfire.dialog.toast({
-                            message: NowPlaying.playListStrings.removedFromPlaylist
+                            message: NowPlaying.playListStrings.removeFromPlaylistButton
                         });
                     },
                         function (err) {

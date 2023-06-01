@@ -29,15 +29,15 @@
             var RemoveTrackPopup = this;
 
             var modalArrayOfStrings=[
-                {key:"rtModalTitle",text:"Confirm"},
-                {key:"rtModalText",text:"Are you sure you want to remove this track from the playlist?"},
-                {key:"rtModalCancel",text:"Cancel"},
-                {key:"rtModalRemove",text:"Remove"}
+                {key:"modalTitle",text:"Confirm"},
+                {key:"modalText",text:"Are you sure you want to remove this track from the playlist?"},
+                {key:"cancelButton",text:"Cancel"},
+                {key:"removeButton",text:"Remove"}
             ];
 
             RemoveTrackPopup.modalString={};
             modalArrayOfStrings.forEach(function(el){
-                RemoveTrackPopup.modalString[el.key] = strings.get("removeTrackModal."+el.key)?strings.get("removeTrackModal."+el.key):el.text;
+                RemoveTrackPopup.modalString[el.key] = getString("removeTrackModal."+el.key)?getString("removeTrackModal."+el.key):el.text;
             });
             
             RemoveTrackPopup.ok = function () {

@@ -1,0 +1,333 @@
+{
+    "mainInfo": "Change values to update main wall labels and messages",
+    "sections": {
+        "audioPlaylist": {
+            "title": "Audio Playlist",
+            "labels": {
+                "goToPlaylistButton": {
+                    "title": "Go To Playlist Button",
+                    "placeholder": "Go to Playlist",
+                    "maxLength": 50,
+                    "defaultValue": "Go to Playlist"
+                },
+                "addToPlaylistButton": {
+                    "title": "Add To Playlist Button",
+                    "placeholder": "Add to Playlist",
+                    "maxLength": 50,
+                    "defaultValue": "Add to Playlist"
+                },
+                "removeFromPlaylistButton": {
+                    "title": "Remove From Playlist Button",
+                    "placeholder": "Remove from Playlist",
+                    "maxLength": 50,
+                    "defaultValue": "Remove from Playlist"
+                },
+                "cancelButton": {
+                    "title": "Cancel Button",
+                    "placeholder": "Cancel",
+                    "maxLength": 20,
+                    "defaultValue": "Cancel"
+                },
+                "removeButton": {
+                    "title": "Remove Button",
+                    "placeholder": "Remove",
+                    "maxLength": 20,
+                    "defaultValue": "Remove"
+                },
+                "playlistIsEmptyText": {
+                    "title": "Playlist Is Empty Text",
+                    "placeholder": "Playlist is empty.",
+                    "maxLength": 50,
+                    "defaultValue": "Playlist is empty."
+                },
+                "doneButton": {
+                    "title": "Done Button",
+                    "placeholder": "Done",
+                    "maxLength": 20,
+                    "defaultValue": "Done"
+                },
+                "addedToPlaylistToastMessage": {
+                    "title": "Added To Playlist Toast Message",
+                    "placeholder": "Added to playlist",
+                    "maxLength": 50,
+                    "defaultValue": "Added to playlist"
+                },
+                "removedFromPlaylistToastMessage": {
+                    "title": "Removed From Playlist Toast Message",
+                    "placeholder": "Removed from playlist",
+                    "maxLength": 50,
+                    "defaultValue": "Removed from playlist"
+                },
+                "autoPlayTurnedOff": {
+                    "title": "Autoplay turned off",
+                    "placeholder": "No Media Found Play Next",
+                    "maxLength": 50,
+                    "defaultValue": "No Media Found Play Next"
+                },
+                "playNext": {
+                    "title": "Play Next",
+                    "placeholder": "Play Next",
+                    "maxLength": 20,
+                    "defaultValue": "Play Next"
+                }
+            }
+        },
+        "globalPlaylist": {
+            "title": "Global Playlist",
+            "labels": {
+                "itemAddedToPlaylist": {
+                    "title": "Item Added to Playlist",
+                    "placeholder": "Item added to playlist",
+                    "maxLength": 50,
+                    "defaultValue": "Item added to playlist"
+                },
+                "itemRemovedFromPlaylist": {
+                    "title": "Item Removed from Playlist",
+                    "placeholder": "Item removed from playlist",
+                    "maxLength": 50,
+                    "defaultValue": "Item removed from playlist"
+                },
+                "AddedAllItemsToPlaylist": {
+                    "title": "Added All Items to Playlist",
+                    "placeholder": "Added all items to playlist",
+                    "maxLength": 50,
+                    "defaultValue": "Added all items to playlist"
+                },
+                "ifNotAllItemsCouldBeAdded": {
+                    "title": "If Not All Items Could Be Added",
+                    "placeholder": "Added maximum allowed number of items to the playlist.",
+                    "maxLength": 80,
+                    "defaultValue": "Added maximum allowed number of items to the playlist."
+                },
+                "removedAllItemsFromPlaylist": {
+                    "title": "Removed All Items From pPlaylist",
+                    "placeholder": "Removed all items from playlist",
+                    "maxLength": 50,
+                    "defaultValue": "Removed all items from playlist"
+                },
+                "playlistLimitReached": {
+                    "title": "Playlist Limit Reached!",
+                    "placeholder": "Playlist limit reached!",
+                    "maxLength": 50,
+                    "defaultValue": "Playlist limit reached!"
+                }
+            }
+        },
+        "settings": {
+            "title": "Settings",
+            "labels": {
+                "automaticallyPlayNextTrackButton": {
+                    "title": "Automatically Play Next Track Button",
+                    "placeholder": "Automatically play next track",
+                    "maxLength": 50,
+                    "defaultValue": "Automatically play next track"
+                },
+                "loopPlaylistButton": {
+                    "title": "Loop Playlist Button",
+                    "placeholder": "Loop playlist",
+                    "maxLength": 50,
+                    "defaultValue": "Loop playlist"
+                },
+                "autoJumpToLastPositionButton": {
+                    "title": "Auto Jump To Last Position Button",
+                    "placeholder": "Auto Jump To Last Position",
+                    "maxLength": 50,
+                    "defaultValue": "Auto Jump To Last Position"
+                },
+                "shufflePlaylistButton": {
+                    "title": "Shuffle Playlist Button",
+                    "placeholder": "Shuffle Playlist",
+                    "maxLength": 50,
+                    "defaultValue": "Shuffle Playlist"
+                },
+                "doneButton": {
+                    "title": "Done Button",
+                    "placeholder": "Done",
+                    "maxLength": 20,
+                    "defaultValue": "Done"
+                }
+            }
+        },
+        "removeTrackModal": {
+            "title": "Remove Track Modal",
+            "labels": {
+                "modalTitle": {
+                    "title": "Modal Title",
+                    "placeholder": "Confirm",
+                    "maxLength": 20,
+                    "defaultValue": "Confirm"
+                },
+                "modalText": {
+                    "title": "Modal Text",
+                    "placeholder": "Are you sure you want to remove this track from the playlist?",
+                    "maxLength": 70,
+                    "defaultValue": "Are you sure you want to remove this track from the playlist?"
+                },
+                "cancelButton": {
+                    "title": "Cancel Button",
+                    "placeholder": "Cancel",
+                    "maxLength": 20,
+                    "defaultValue": "Cancel"
+                },
+                "removeButton": {
+                    "title": "Remove Button",
+                    "placeholder": "Remove",
+                    "maxLength": 20,
+                    "defaultValue": "Remove"
+                }
+            }
+        },
+        "deepLink": {
+            "title": "Deep link to media that does not exist",
+            "labels": {
+                "mediaDoesNotExist": {
+                    "title": "Deep Link To Media That Does Not Exist",
+                    "placeholder": "Media does not exist!",
+                    "maxLength": 50,
+                    "defaultValue": "Media does not exist!"
+                }
+            }
+        },
+        "filtersScreen": {
+            "title": "Filters screen",
+            "labels": {
+                "applyButton": {
+                    "title": "Apply",
+                    "placeholder": "APPLY",
+                    "maxLength": 20,
+                    "defaultValue": "APPLY"
+                }
+            }
+        },
+        "homeScreenDrawerOptions": {
+            "title": "Home Screen Drawer Options",
+            "labels": {
+                "shareOption": {
+                    "title": "Share Option",
+                    "placeholder": "Share",
+                    "maxLength": 50,
+                    "defaultValue": "Share"
+                },
+                "addNoteOption": {
+                    "title": "Add Note Option",
+                    "placeholder": "Add Note",
+                    "maxLength": 50,
+                    "defaultValue": "Add Note"
+                },
+                "openLinksOption": {
+                    "title": "Open Links Option",
+                    "placeholder": "Open Links",
+                    "maxLength": 50,
+                    "defaultValue": "Open Links"
+                },
+                "downloadVideoOption": {
+                    "title": "Download Video Option",
+                    "placeholder": "Download Video",
+                    "maxLength": 50,
+                    "defaultValue": "Download Video"
+                },
+                "removeDownloadedVideoOption": {
+                    "title": "Remove Downloaded Video Option",
+                    "placeholder": "Remove Downloaded Video",
+                    "maxLength": 50,
+                    "defaultValue": "Remove Downloaded Video"
+                },
+                "downloadAudioOption": {
+                    "title": "Download Audio Option",
+                    "placeholder": "Download Audio",
+                    "maxLength": 50,
+                    "defaultValue": "Download Audio"
+                },
+                "removeDownloadedAudioOption": {
+                    "title": "Remove Downloaded Audio Option",
+                    "placeholder": "Remove Downloaded Audio",
+                    "maxLength": 50,
+                    "defaultValue": "Remove Downloaded Audio"
+                },
+                "addToPlaylistOption": {
+                    "title": "Add to Playlist Option",
+                    "placeholder": "Add to Playlist",
+                    "maxLength": 50,
+                    "defaultValue": "Add to Playlist"
+                },
+                "removeFromPlaylistOption": {
+                    "title": "Remove from Playlist Option",
+                    "placeholder": "Remove from Playlist",
+                    "maxLength": 50,
+                    "defaultValue": "Remove from Playlist"
+                },
+                "favoriteOption": {
+                    "title": "Favorite Option",
+                    "placeholder": "Favorite",
+                    "maxLength": 50,
+                    "defaultValue": "Favorite"
+                },
+                "removeFromFavoritesOption": {
+                    "title": "Remove from Favorites Option",
+                    "placeholder": "Remove from favorites",
+                    "maxLength": 50,
+                    "defaultValue": "Remove from favorites"
+                }
+            }
+        },
+        "itemScreenDrawerOptions": {
+            "title": "Item Screen Drawer Options",
+            "labels": {
+                "shareOption": {
+                    "title": "Share Option",
+                    "placeholder": "Share",
+                    "maxLength": 50,
+                    "defaultValue": "Share"
+                },
+                "addNoteOption": {
+                    "title": "Add Note Option",
+                    "placeholder": "Add Note",
+                    "maxLength": 50,
+                    "defaultValue": "Add Note"
+                },
+                "openLinksOption": {
+                    "title": "Open Links Option",
+                    "placeholder": "Open Links",
+                    "maxLength": 50,
+                    "defaultValue": "Open Links"
+                },
+                "downloadVideoOption": {
+                    "title": "Download Video Option",
+                    "placeholder": "Download Video",
+                    "maxLength": 50,
+                    "defaultValue": "Download Video"
+                },
+                "removeDownloadedVideoOption": {
+                    "title": "Remove Downloaded Video Option",
+                    "placeholder": "Remove Downloaded Video",
+                    "maxLength": 50,
+                    "defaultValue": "Remove Downloaded Video"
+                },
+                "addToPlaylistOption": {
+                    "title": "Add to Playlist Option",
+                    "placeholder": "Add to Playlist",
+                    "maxLength": 50,
+                    "defaultValue": "Add to Playlist"
+                },
+                "removeFromPlaylistOption": {
+                    "title": "Remove from Playlist Option",
+                    "placeholder": "Remove from Playlist",
+                    "maxLength": 50,
+                    "defaultValue": "Remove from Playlist"
+                },
+                "favoriteOption": {
+                    "title": "Favorite Option",
+                    "placeholder": "Favorite",
+                    "maxLength": 50,
+                    "defaultValue": "Favorite"
+                },
+                "removeFromFavoritesOption": {
+                    "title": "Remove from favorites Option",
+                    "placeholder": "Remove from favorites",
+                    "maxLength": 50,
+                    "defaultValue": "Remove from favorites"
+                }
+            }
+        }
+    }
+}

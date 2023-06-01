@@ -45,6 +45,14 @@
 	-webkit-overflow-scrolling:touch;	
     background-color:#fff;
 }
+
+.ellipsis{
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 .media-center-plugin.layout2 .people-banner .people-bg{
 	background:rgba(0,0,0,0.8);
 }
@@ -215,9 +223,18 @@
 	display:block;
 	font-size:15px;
 	line-height:20px;
+	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Media Player Settings Overlay */
+.media-player-settings {
+	overflow-x: hidden;
+}
+.media-player-settings .settings-list .item .col-md-10.pull-left{
+	width: 85%;
+}
 .media-player-settings .settings-list .item{
 	border-bottom:1px solid #333;
 	padding:12px 0;

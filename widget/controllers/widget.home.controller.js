@@ -22,12 +22,12 @@
 
 
                 $rootScope.globalPlaylistStrings = {
-                    itemAdded: strings.get('globalPlaylist.itemAdded'),
-                    itemRemoved: strings.get('globalPlaylist.itemRemoved'),
-                    addedAllItemsToPlaylist: strings.get('globalPlaylist.addedAllItemsToPlaylist'),
-                    addedItemsToPlaylist: strings.get('globalPlaylist.addedItemsToPlaylist'),
-                    removedAllItemsFromPlaylist: strings.get('globalPlaylist.removedAllItemsFromPlaylist'),
-                    playlistLimitReached: strings.get('globalPlaylist.playlistLimitReached')
+                    itemAdded: getString('globalPlaylist.itemAddedToPlaylist'),
+                    itemRemoved: getString('globalPlaylist.itemRemovedFromPlaylist'),
+                    addedAllItemsToPlaylist: getString('globalPlaylist.AddedAllItemsToPlaylist'),
+                    addedItemsToPlaylist: getString('globalPlaylist.addedItemsToPlaylist'),
+                    removedAllItemsFromPlaylist: getString('globalPlaylist.removedAllItemsFromPlaylist'),
+                    playlistLimitReached: getString('globalPlaylist.playlistLimitReached')
                 }
 
                 const isLauncher = window.location.href.includes('launcherPlugin');
@@ -1084,55 +1084,55 @@
                     $event.stopImmediatePropagation();
                     let listItems = [];
                     if (WidgetHome.media.data.content.allowAddingNotes !== false && $rootScope.online) {
-                        listItems.push({ id: "addNote", text: strings.get("homeDrawer.addNote") });
+                        listItems.push({ id: "addNote", text: getString("homeScreenDrawerOptions.addNoteOption") });
                     }
                     if (WidgetHome.media.data.content.allowOfflineDownload && $rootScope.online) {
                         if (item.data.videoUrl) {
                             if (item.data.hasDownloadedVideo) {
-                                listItems.push({ id: "removeDownloadedVideo", text: strings.get("homeDrawer.removeDownloadedVideo") });
+                                listItems.push({ id: "removeDownloadedVideo", text: getString("homeScreenDrawerOptions.removeDownloadedVideoOption") });
                             }
 
                             else {
                                 if ($rootScope.currentlyDownloading.indexOf(item.id) < 0)
-                                    listItems.push({ id: "downloadVideo", text: strings.get("homeDrawer.downloadVideo") });
+                                    listItems.push({ id: "downloadVideo", text: getString("homeScreenDrawerOptions.downloadVideoOption") });
                             }
                         }
 
                         if (item.data.audioUrl) {
                             if (item.data.hasDownloadedAudio ) {
-                                listItems.push({ id: "removeDownloadedAudio", text: strings.get("homeDrawer.removeDownloadedAudio") });
+                                listItems.push({ id: "removeDownloadedAudio", text: getString("homeScreenDrawerOptions.removeDownloadedAudioOption") });
                             }
 
                             else {
                                 if ($rootScope.currentlyDownloading.indexOf(item.id) < 0)
-                                listItems.push({ id: "downloadAudio", text: strings.get("homeDrawer.downloadAudio") });
+                                listItems.push({ id: "downloadAudio", text: getString("homeScreenDrawerOptions.downloadAudioOption") });
                             }
                         }
                     }
 
                     if (WidgetHome.media.data.content.allowShare && $rootScope.online) {
-                        listItems.push({ id: "share", text: strings.get("homeDrawer.share") });
+                        listItems.push({ id: "share", text: getString("homeScreenDrawerOptions.shareOption") });
                     }
 
                     if (item.data.links.length && $rootScope.online) {
-                        listItems.push({ id: "openLinks", text: strings.get("homeDrawer.openLinks") });
+                        listItems.push({ id: "openLinks", text: getString("homeScreenDrawerOptions.openLinksOption") });
                     }
 
                     if (WidgetHome.media.data.content.globalPlaylist && $rootScope.online) {
                         if ($rootScope.isInGlobalPlaylist(item.id)) {
-                            listItems.push({ id: "removeFromPlaylist", text: strings.get("homeDrawer.removeFromPlaylist") });
+                            listItems.push({ id: "removeFromPlaylist", text: getString("homeScreenDrawerOptions.removeFromPlaylistOption") });
                         }
                         else {
-                            listItems.push({ id: "addToPlaylist", text: strings.get("homeDrawer.addToPlaylist") });
+                            listItems.push({ id: "addToPlaylist", text: getString("homeScreenDrawerOptions.addToPlaylistOption") });
                         }
                     }
 
                     if ($rootScope.online) {
                         if (item.data.bookmarked) {
-                            listItems.push({ id: "removeFromFavorites", text: strings.get("homeDrawer.removeFromFavorites") });
+                            listItems.push({ id: "removeFromFavorites", text: getString("homeScreenDrawerOptions.removeFromFavoritesOption") });
                         }
                         else {
-                            listItems.push({ id: "favorite", text: strings.get("homeDrawer.favorite") });
+                            listItems.push({ id: "favorite", text: getString("homeScreenDrawerOptions.favoriteOption") });
                         }
                     }
 
