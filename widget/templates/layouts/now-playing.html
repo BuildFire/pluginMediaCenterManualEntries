@@ -127,17 +127,17 @@
                             </div>
                             <div class="remove-btn text-center dangerBackgroundTheme" style="background:red;"
                                 ng-click="NowPlaying.removeTrackFromPlayList($index)">
-                                <span class="whiteTheme">{{NowPlaying.playListStrings.removeFromPlaylistButton}}</span>
+                                <span class="whiteTheme">{{NowPlaying.playListStrings.removeFromPlaylist}}</span>
                             </div>
                         </div>
                     </div>
                     <div ng-if="!NowPlaying.playList.length">
-                        <h3 class="ellipsis">{{NowPlaying.playListStrings.playlistIsEmptyText}}</h3>
+                        <h3 class="ellipsis">{{NowPlaying.playListStrings.emptyPlaylist}}</h3>
                     </div>
                 </div>
             </div>
             <div class="margin-top-ten margin-bottom-ten">
-                <a ng-click="NowPlaying.closePlayListOverlay()" class="primaryTheme">{{NowPlaying.playListStrings.doneButton}}</a>
+                <a ng-click="NowPlaying.closePlayListOverlay()" class="primaryTheme">{{NowPlaying.playListStrings.donePlaylist}}</a>
             </div>
         </div>
     </div>
@@ -162,16 +162,16 @@
                 <hr class="none">
                 <div class="more-info-list padded">
                     <div class="text-center item">
-                        <a ng-click="NowPlaying.getFromPlaylist()" class="whiteTheme">{{NowPlaying.playListStrings.goToPlaylistButton}}</a>
+                        <a ng-click="NowPlaying.getFromPlaylist()" class="whiteTheme">{{NowPlaying.playListStrings.goToPlaylist}}</a>
                     </div>
                     <div class="text-center item" ng-if="!NowPlaying.transferPlaylist">
-                        <a ng-click="NowPlaying.addToPlaylist(NowPlaying.currentTrack)" class="whiteTheme">{{NowPlaying.playListStrings.addToPlaylistButton}}</a>
+                        <a ng-click="NowPlaying.addToPlaylist(NowPlaying.currentTrack)" class="whiteTheme">{{NowPlaying.playListStrings.addToPlaylist}}</a>
                     </div>
                     <div class="text-center item" ng-if="!NowPlaying.transferPlaylist">
-                        <a ng-click="NowPlaying.removeFromPlaylist(NowPlaying.currentTrack)" class="whiteTheme">{{NowPlaying.playListStrings.removeFromPlaylistButton}}</a>
+                        <a ng-click="NowPlaying.removeFromPlaylist(NowPlaying.currentTrack)" class="whiteTheme">{{NowPlaying.playListStrings.removeFromPlaylist}}</a>
                     </div>
                     <div class="text-center item">
-                        <a ng-click="NowPlaying.closeMoreInfoOverlay()" class="whiteTheme">{{NowPlaying.playListStrings.cancelButton}}</a>
+                        <a ng-click="NowPlaying.closeMoreInfoOverlay()" class="whiteTheme">{{NowPlaying.playListStrings.cancelPlaylist}}</a>
                     </div>
                 </div>
             </div>
@@ -186,7 +186,7 @@
                 <div class="settings-list padded padding-top-zero">
                     <div class="item clearfix row" ng-if="!NowPlaying.forceAutoPlay && !globalPlaylist">
                         <div class="col-md-10 pull-left text-left">
-                            <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.automaticallyPlayNextTrackButton}}</span>
+                            <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.automaticallyPlayNextTrack}}</span>
                         </div>
                         <div class="col-md-2 pull-right text-right">
                             <div class="checkbox checkbox-primary checked no-label margin-zero">
@@ -198,7 +198,7 @@
                     </div>
                     <div class="item clearfix row">
                         <div class="col-md-10 pull-left text-left">
-                            <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.loopPlaylistButton}}</span>
+                            <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.loopPlaylist}}</span>
                         </div>
                         <div class="col-md-2 pull-right text-right">
                             <div class="checkbox checkbox-primary checked no-label margin-zero">
@@ -210,7 +210,7 @@
                     </div>
                     <div class="item clearfix row" ng-if="!NowPlaying.forceAutoPlay">
                         <div class="col-md-10 pull-left text-left">
-                            <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.autoJumpToLastPositionButton}}</span>
+                            <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.autoJumpToLastPositon}}</span>
                         </div>
                         <div class="col-md-2 pull-right text-right">
                             <div class="checkbox checkbox-primary checked no-label margin-zero">
@@ -222,7 +222,7 @@
                     </div>
                     <div class="item clearfix row" ng-if="!NowPlaying.transferPlaylist">
                         <div class="col-md-10 pull-left text-left" >
-                            <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.shufflePlaylistButton}}</span>
+                            <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.shufflePlaylist}}</span>
                         </div>
                         <div class="col-md-2 pull-right text-right">
                             <div class="checkbox checkbox-primary checked no-label margin-zero">
@@ -235,7 +235,7 @@
                 </div>
             </div>
             <div class="margin-bottom-ten">
-                <a ng-click="NowPlaying.closeSettingsOverlay()" class="whiteTheme">{{NowPlaying.settingsStrings.doneButton}}</a>
+                <a ng-click="NowPlaying.closeSettingsOverlay()" class="whiteTheme">{{NowPlaying.settingsStrings.settingsDone}}</a>
             </div>
         </div>
     </div>

@@ -65,30 +65,30 @@
                 });
 
                 var playListArrayOfStrings = [
-                    { key: "addedToPlaylistToastMessage", text: "Added to playlist" },
-                    { key: "removedFromPlaylistToastMessage", text: "Removed from playlist" },
-                    { key: "goToPlaylistButton", text: "Go to Playlist" },
-                    { key: "addToPlaylistButton", text: "Add to Playlist" },
-                    { key: "removeFromPlaylistButton", text: "Remove from Playlist" },
-                    { key: "cancelButton", text: "Cancel" },
-                    { key: "removeButton", text: "Remove" },
-                    { key: "playlistIsEmptyText", text: "Playlist Is Empty Text" },
-                    { key: "doneButton", text: "Done" }
+                    { key: "addedPlaylist", text: "Added to playlist" },
+                    { key: "removedFromPlaylist", text: "Removed from playlist" },
+                    { key: "goToPlaylist", text: "Go to Playlist" },
+                    { key: "addToPlaylist", text: "Add to Playlist" },
+                    { key: "removeFromPlaylist", text: "Remove from Playlist" },
+                    { key: "cancelPlaylist", text: "Cancel" },
+                    { key: "removePlayListButton", text: "Remove" },
+                    { key: "emptyPlaylist", text: "Playlist Is Empty Text" },
+                    { key: "donePlaylist", text: "Done" }
                 ];
 
                 var settingsArrayOfStrings = [
-                    { key: "automaticallyPlayNextTrackButton", text: "Automatically play next track" },
-                    { key: "loopPlaylistButton", text: "Loop playlist" },
-                    { key: "autoJumpToLastPositionButton", text: "Auto Jump To LastPosition" },
-                    { key: "shufflePlaylistButton", text: "Shuffle Playlist" },
-                    { key: "doneButton", text: "Done" }
+                    { key: "automaticallyPlayNextTrack", text: "Automatically play next track" },
+                    { key: "loopPlaylist", text: "Loop playlist" },
+                    { key: "autoJumpToLastPositon", text: "Auto Jump To LastPosition" },
+                    { key: "shufflePlaylist", text: "Shuffle Playlist" },
+                    { key: "settingsDone", text: "Done" }
                 ];
 
                 NowPlaying.playListStrings = {};
                 NowPlaying.settingsStrings = {};
                 playListArrayOfStrings.forEach(function (el) {
-                    console.log(getString("audioPlaylist." + el.key));
-                    NowPlaying.playListStrings[el.key] = getString("audioPlaylist." + el.key) ? getString("audioPlaylist." + el.key) : el.text;
+                    console.log(getString("playlist." + el.key));
+                    NowPlaying.playListStrings[el.key] = getString("playlist." + el.key) ? getString("playlist." + el.key) : el.text;
                 });
 
                 settingsArrayOfStrings.forEach(function (el) {
@@ -744,7 +744,7 @@
                 NowPlaying.addToPlaylist = function (track) {
                     if (track) {
                         buildfire.dialog.toast({
-                            message: NowPlaying.playListStrings.addedToPlaylistToastMessage
+                            message: NowPlaying.playListStrings.addedPlaylist
                         });
                         audioPlayer.addToPlaylist(track);
                     }
@@ -752,7 +752,7 @@
                 NowPlaying.removeFromPlaylist = function (track, index) {
                     Modals.removeTrackModal().then(function (data) {
                         buildfire.dialog.toast({
-                            message: NowPlaying.playListStrings.removedFromPlaylistToastMessage
+                            message: NowPlaying.playListStrings.removedFromPlaylist
                         });
                         if (NowPlaying.playList) {
                             NowPlaying.playList.filter(function (val, index) {
@@ -773,7 +773,7 @@
                     Modals.removeTrackModal().then(function (data) {
                         audioPlayer.removeFromPlaylist(index);
                         buildfire.dialog.toast({
-                            message: NowPlaying.playListStrings.removeFromPlaylistButton
+                            message: NowPlaying.playListStrings.removeFromPlaylist
                         });
                     },
                         function (err) {

@@ -29,10 +29,10 @@
             var RemoveTrackPopup = this;
 
             var modalArrayOfStrings=[
-                {key:"modalTitle",text:"Confirm"},
-                {key:"modalText",text:"Are you sure you want to remove this track from the playlist?"},
-                {key:"cancelButton",text:"Cancel"},
-                {key:"removeButton",text:"Remove"}
+                {key:"rtModalTitle",text:"Confirm"},
+                {key:"rtModalText",text:"Are you sure you want to remove this track from the playlist?"},
+                {key:"rtModalCancel",text:"Cancel"},
+                {key:"rtModalRemove",text:"Remove"}
             ];
 
             RemoveTrackPopup.modalString={};
