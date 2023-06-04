@@ -773,7 +773,7 @@
                     Modals.removeTrackModal().then(function (data) {
                         audioPlayer.removeFromPlaylist(index);
                         buildfire.dialog.toast({
-                            message: NowPlaying.playListStrings.removeFromPlaylist
+                            message: NowPlaying.playListStrings.removedFromPlaylist
                         });
                     },
                         function (err) {
