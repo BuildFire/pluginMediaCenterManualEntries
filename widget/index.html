@@ -118,11 +118,10 @@
         </div>
     </div>
 </body>
+<script src="./utils/stringsKeys.js"></script>
 <script src="./utils/strings.js"></script>
 <script>
-    prepareStrings().then(()=>{
-        initLangStr();
-    });
+    initLangStr();
 
     function callPlayer(frame_id, func, args) {
         if (window.jQuery && frame_id instanceof jQuery) frame_id = frame_id.get(0).id;

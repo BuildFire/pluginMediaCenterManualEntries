@@ -1,22 +1,3 @@
-let stringsKeys = {};
-const prepareStrings = () => {
-    return fetch('../resources/languages.json')
-        .then((response) => response.json())
-        .then((data) => {
-            for (const key in data.sections) {
-                if (Object.hasOwnProperty.call(data.sections, key)) {
-                    const element = data.sections[key];
-                    for (const stringKey in element.labels) {
-                        stringsKeys[`${key}.${stringKey}`] = '';
-                    }
-                }
-            }
-        })
-        .catch((error) => {
-            console.error('Error loading JSON file:', error);
-        });
-};
-
 const getString = (key) => {
     return stringsKeys[key];
 };

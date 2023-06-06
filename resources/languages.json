@@ -202,7 +202,7 @@
         "homeDrawer": {
             "title": "Home Screen Drawer Options",
             "labels": {
-                "shareOption": {
+                "share": {
                     "title": "Share Option",
                     "placeholder": "Share",
                     "maxLength": 50,
