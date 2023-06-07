@@ -14,7 +14,7 @@ const getLanguage = (key) => {
     });
 };
 
-const initLangStr = () => {
+const initLanguageStrings = () => {
     return new Promise((resolve, reject) => {
         const arr = Object.keys(stringsKeys).map((el) => getLanguage(el));
         Promise.all(arr)
