@@ -217,15 +217,15 @@
 .media-player-more-info .more-info-list .item:first-child{
 	border-top:1px solid #333;
 }
-.media-player-more-info .more-info-list .item a{
-	color:#fff;
-	padding:10px;
-	display:block;
-	font-size:15px;
-	line-height:20px;
+.media-player-more-info .more-info-list .item a {
+	color: #fff;
+	padding: 10px;
+	display: block;
+	font-size: 15px;
+	line-height: 20px;
 	white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 /* Media Player Settings Overlay */

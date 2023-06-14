@@ -87,7 +87,6 @@
                 NowPlaying.playListStrings = {};
                 NowPlaying.settingsStrings = {};
                 playListArrayOfStrings.forEach(function (el) {
-                    console.log(getString("playlist." + el.key));
                     NowPlaying.playListStrings[el.key] = getString("playlist." + el.key) ? getString("playlist." + el.key) : el.text;
                 });
 
