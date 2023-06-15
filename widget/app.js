@@ -301,11 +301,9 @@
                         return config;
                     },
                     response: function (response) {
-                        return initLanguageStrings().then(()=>{
-                            counter--;
-                            buildfire.spinner.hide();
-                            return response;
-                        });
+                        counter--;
+                        buildfire.spinner.hide();
+                        return response;
                     },
                     responseError: function (rejection) {
                         counter--;
