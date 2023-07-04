@@ -322,7 +322,7 @@
                     "defaultValue": "Favorite"
                 },
                 "removeFromFavorites": {
-                    "title": "Remove From favorites",
+                    "title": "Remove From Favorites",
                     "placeholder": "Remove from favorites",
                     "maxLength": 50,
                     "defaultValue": "Remove from favorites"
