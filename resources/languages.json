@@ -59,7 +59,7 @@
                     "defaultValue": "Removed from playlist"
                 },
                 "autoplayOff": {
-                    "title": "Autoplay turned off",
+                    "title": "No Media Found To Play Next",
                     "placeholder": "No Media Found To Play Next",
                     "maxLength": 50,
                     "defaultValue": "No Media Found To Play Next"
