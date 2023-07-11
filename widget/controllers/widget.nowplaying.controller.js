@@ -87,11 +87,11 @@
                 NowPlaying.playListStrings = {};
                 NowPlaying.settingsStrings = {};
                 playListArrayOfStrings.forEach(function (el) {
-                    NowPlaying.playListStrings[el.key] = strings.get("playlist." + el.key) ? strings.get("playlist." + el.key) : el.text;
+                    NowPlaying.playListStrings[el.key] = getString("playlist." + el.key) ? getString("playlist." + el.key) : el.text;
                 });
 
                 settingsArrayOfStrings.forEach(function (el) {
-                    NowPlaying.settingsStrings[el.key] = strings.get("settings." + el.key) ? strings.get("settings." + el.key) : el.text;
+                    NowPlaying.settingsStrings[el.key] = getString("settings." + el.key) ? getString("settings." + el.key) : el.text;
                 });
 
                 /**

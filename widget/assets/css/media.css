@@ -139,54 +139,54 @@ h5{
     margin: 0 auto;
 }
 
-.layout3 .titleFlexBox {
+.third-layout .title-flex-box {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.layout3 .titleFlexBox .li-actions-item .star {
+.third-layout .title-flex-box .li-actions-item .star {
   position: relative;
   line-height: 1;
   margin-right: 0;
 }
 
-.layout3 .titleFlexBox .li-actions-item .share {
+.third-layout .title-flex-box .li-actions-item .share {
   right: 10px;
   top: 1px;
 }
 
-.layout3.list-3 .titleFlexBox .li-actions-item i {
+.third-layout.list-3 .title-flex-box .li-actions-item i {
     margin-left: 10px;
 }
 
-.layout3.list-3 .titleFlexBox .action {
+.third-layout.list-3 .title-flex-box .action {
   margin-left: 15px;
 }
 
-.layout3.list-3 .titleFlexBox .li-actions-item {
+.third-layout.list-3 .title-flex-box .li-actions-item {
   display: flex;
 }
 
-.layout3.list-3 .list-item-media{
+.third-layout.list-3 .list-item-media{
     display: flex;
     align-items: center;
     overflow: hidden;
 }
-.layout3.list-3 .list-item-media .list-media-holder{
+.third-layout.list-3 .list-item-media .list-media-holder{
     flex-shrink: 0;
 }
-.layout3.list-3 .list-item-media .li-actions-item{
+.third-layout.list-3 .list-item-media .li-actions-item{
     position: relative;
 }
-.layout3.list-3 .list-item-media .list-media-holder .li-actions-item{
+.third-layout.list-3 .list-item-media .list-media-holder .li-actions-item{
     position: absolute;
 }
-.layout3.list-3 .li-actions-item .star{
+.third-layout.list-3 .li-actions-item .star{
     margin-right: 0;
     padding: .25rem !important;
 }
-.layout3.list-3 .list-layout .list-item-media .list-media-holder{
+.third-layout.list-3 .list-layout .list-item-media .list-media-holder{
     margin: .25rem;
     margin-right: 0;
 }
@@ -549,17 +549,17 @@ videogular .iconButton, [videogular] .iconButton,
     padding-right: 0.3rem;
 }
 
-/* .layout2 .people-holder {
+/* .second-layout .people-holder {
     display: flex;
 }
 
-.layout2 .people-media img {
+.second-layout .people-media img {
     flex-shrink: 0;
     width: 35%;
     padding: .75rem;
 }
 
-.layout2 .people-info p {
+.second-layout .people-info p {
     font-size: .875rem;
     text-align: left;
 } */
