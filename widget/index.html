@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="mediaCenterWidget">
 <head lang="en">
+    <meta name="buildfire" content="enablePluginJsonLoad">
     <meta charset="UTF-8">
 
     <!-- CSS -->
@@ -24,8 +25,6 @@
     <script src="../../../scripts/owlCarousel/owlCarousel.js"></script>
     <!-- JS -->
     <script src="js/shared/analytics.js"></script>
-    <script src="js/shared/stringsConfig.js"></script>
-    <script src="js/shared/strings.js"></script>
     <script src="../../../scripts/angular/ng-infinite-scroll.custom.js"></script>
     <script src = "js/data/offlineMedia.js"></script>
     <script src = "js/shared/offlineAccess.js"></script>
@@ -79,7 +78,7 @@
                 </div>
             </div>
         </div>
-        <div ng-class="WidgetHome.deepLink ? 'noSlide' : 'slide'"
+        <div ng-class="WidgetHome.deepLink ? 'no-slide' : 'slide'"
             data-back-img="{{backgroundImage}}"
             class="content infinite-scroll-parent"
             ng-if="!showFeed">
@@ -119,9 +118,11 @@
         </div>
     </div>
 </body>
+<script src="./utils/stringsKeys.js"></script>
+<script src="./utils/strings.js"></script>
 <script>
-    window.strings = new buildfire.services.Strings("en-us", stringsConfig);
-    strings.init();
+    initLanguageStrings();
+    
     function callPlayer(frame_id, func, args) {
         if (window.jQuery && frame_id instanceof jQuery) frame_id = frame_id.get(0).id;
         var iframe = document.getElementById(frame_id);

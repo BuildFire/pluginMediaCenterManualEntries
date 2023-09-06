@@ -111,53 +111,53 @@
                 WidgetMedia.showDrawer = function () {
                     let listItems = [];
                     if (WidgetMedia.media.data.content.allowAddingNotes !== false && $rootScope.online) {
-                        listItems.push({ id: "addNote", text: strings.get("itemDrawer.addNote") });
+                        listItems.push({ id: "addNote", text: getString("itemDrawer.addNote") });
                     }
                     if (WidgetMedia.media.data.content.allowOfflineDownload) {
                         if (WidgetMedia.item.data.videoUrl && $rootScope.online) {
                             if (WidgetMedia.item.data.hasDownloadedVideo) {
-                                listItems.push({ id: "removeDownloadedVideo", text: strings.get("itemDrawer.removeDownloadedVideo") });
+                                listItems.push({ id: "removeDownloadedVideo", text: getString("itemDrawer.removeDownloadedVideo") });
                             }
 
                             else {
                                 if ($rootScope.currentlyDownloading.indexOf(WidgetMedia.item.id) < 0)
-                                    listItems.push({ id: "downloadVideo", text: strings.get("itemDrawer.downloadVideo") });
+                                    listItems.push({ id: "downloadVideo", text: getString("itemDrawer.downloadVideo") });
                             }
                         }
                         if (WidgetMedia.item.data.audioUrl) {
                             if (WidgetMedia.item.data.hasDownloadedAudio) {
-                                listItems.push({ id: "removeDownloadedAudio", text: strings.get("homeDrawer.removeDownloadedAudio") });
+                                listItems.push({ id: "removeDownloadedAudio", text: getString("homeDrawer.removeDownloadedAudio") });
                             }
                             else {
                                 if ($rootScope.currentlyDownloading.indexOf(WidgetMedia.item.id) < 0)
-                                    listItems.push({ id: "downloadAudio", text: strings.get("homeDrawer.downloadAudio") });
+                                    listItems.push({ id: "downloadAudio", text: getString("homeDrawer.downloadAudio") });
                             }
                         }
                     }
 
                     if (WidgetMedia.media.data.content.allowShare && $rootScope.online) {
-                        listItems.push({ id: "share", text: strings.get("itemDrawer.share") });
+                        listItems.push({ id: "share", text: getString("itemDrawer.share") });
                     }
 
                     if (WidgetMedia.item.data.links.length && $rootScope.online) {
-                        listItems.push({ id: "openLinks", text: strings.get("itemDrawer.openLinks") });
+                        listItems.push({ id: "openLinks", text: getString("itemDrawer.openLinks") });
                     }
 
                     if (WidgetMedia.media.data.content.globalPlaylist && $rootScope.online) {
                         if ($rootScope.isInGlobalPlaylist(WidgetMedia.item.id)) {
-                            listItems.push({ id: "removeFromPlaylist", text: strings.get("itemDrawer.removeFromPlaylist") });
+                            listItems.push({ id: "removeFromPlaylist", text: getString("itemDrawer.removeFromPlaylist") });
                         }
                         else {
-                            listItems.push({ id: "addToPlaylist", text: strings.get("itemDrawer.addToPlaylist") });
+                            listItems.push({ id: "addToPlaylist", text: getString("itemDrawer.addToPlaylist") });
                         }
                     }
 
                     if ($rootScope.online) {
                         if (WidgetMedia.item.data.bookmarked) {
-                            listItems.push({ id: "removeFromFavorites", text: strings.get("itemDrawer.removeFromFavorites") });
+                            listItems.push({ id: "removeFromFavorites", text: getString("itemDrawer.removeFromFavorites") });
                         }
                         else {
-                            listItems.push({ id: "favorite", text: strings.get("itemDrawer.favorite") });
+                            listItems.push({ id: "favorite", text: getString("itemDrawer.favorite") });
                         }
                     }
 
@@ -456,10 +456,10 @@
                 if (media) {
                     if (!media.data.videoUrl && !media.data.audioUrl && $rootScope.autoPlay) {
                         buildfire.dialog.toast({
-                            message: strings.get("playlist.autoplayOff"),
+                            message: getString("playlist.autoplayOff"),
                             type: "danger",
                             actionButton: {
-                                text: strings.get("playlist.playNext"),
+                                text: getString("playlist.playNext"),
                                 action: () => {
                                     setTimeout($rootScope.playNextItem, 500);
                                 }

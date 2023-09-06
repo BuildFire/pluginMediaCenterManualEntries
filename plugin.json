@@ -17,13 +17,21 @@
     "settings": {
       "enabled": true
     },
-    "customTabs": [
-      {
-        "enabled": true,
-        "title": "Language",
-        "url": "/strings/index.html"
-      }
-    ]
+    "language": {
+      "enabled": true,
+      "languageJsonPath": "resources/languages.json",
+      "tagName": "bfLanguageSettings_en-us"
+    },
+    "cssInjection": { 
+      "enabled": true,
+      "layouts": [ 
+        {
+            "name": "Layout 1",
+            "imageUrl": "resources/layouts_img/layout1.png",
+            "cssPath": "widget/layouts/layout1.css"
+        }
+     ]
+    }
   },
   "widget": {
   },

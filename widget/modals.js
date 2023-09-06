@@ -37,7 +37,7 @@
 
             RemoveTrackPopup.modalString={};
             modalArrayOfStrings.forEach(function(el){
-                RemoveTrackPopup.modalString[el.key] = strings.get("removeTrackModal."+el.key)?strings.get("removeTrackModal."+el.key):el.text;
+                RemoveTrackPopup.modalString[el.key] = getString("removeTrackModal."+el.key)?getString("removeTrackModal."+el.key):el.text;
             });
             
             RemoveTrackPopup.ok = function () {
