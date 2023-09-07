@@ -907,7 +907,6 @@
                             initializing = false;
                         });
                     } else {
-						console.log('------------->>>>>>>>>>>>>>>');
                         WidgetMedia.changeVideoSrc();
                     }
                 });
@@ -915,8 +914,6 @@
                 $scope.$watch('downloadedVideoUrl', function (newValue, oldValue) {
                     if (newValue) {
                         if (oldValue != newValue) {
-						console.log('------6+++++++++++++++>>>>>>>>>>>>>>');
-
                             WidgetMedia.changeVideoSrc();
                         }
                     }
