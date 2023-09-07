@@ -137,7 +137,7 @@
                     trusted: true,
                     theme: 'modern'
                 };
-   
+
                 ContentHome.showFilters = ContentHome.info.data.content.enableFiltering;
                 ContentHome.isBusy = false;
                 /* tells if data is being fetched*/
@@ -201,7 +201,7 @@
                         } else if (!ContentHome.info.data.content.dateIndexed && order.key == "mediaDateIndex") {//so it don't couse issues before data is updated
                             order.key = "mediaDate";
                         }
-                        //END Handles Indexing Changes mediaDate/mediaDateIndex                        
+                        //END Handles Indexing Changes mediaDate/mediaDateIndex
                         var sort = {};
                         sort[order.key] = order.order;
                         if ((order.name == "Media Title A-Z" || order.name === "Media Title Z-A")) {
@@ -290,11 +290,11 @@
                     && !ContentHome.info.data.content.updatedRecords) {
                     ContentHome.updateRecords(ContentHome.info.data.content.sortBy);
                 }
-                // correct image src for dropbox to crop/resize and show it 
+                // correct image src for dropbox to crop/resize and show it
                 function getImageUrl(imageSrc) {
                     if (imageSrc && imageSrc.includes("dropbox.com")) {
-                        imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent").split("?dl=")[0];
-                        imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com").split("?dl=")[0];
+                        imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent");
+                        imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com");
                       }
                     return imageSrc;
                 }
@@ -486,7 +486,7 @@
                             }
                         })
                     })
-                    
+
                 }
 
                 function registerAnalytics(item){
@@ -499,8 +499,8 @@
                         },
                         { silentNotification: true }
                       );
-          
-                    } 
+
+                    }
                     if(item.data.audioUrl){
                       Analytics.registerEvent(
                         {

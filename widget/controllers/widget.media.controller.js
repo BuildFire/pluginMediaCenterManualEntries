@@ -310,11 +310,11 @@
 
                     if($rootScope.indexingUpdateDoneV2 === true){
                         filter = {
-                            "_buildfire.index.array1.string1": "mediaCount-" + mediaId + "-" + userId + "-" + mediaType + "-true" 
+                            "_buildfire.index.array1.string1": "mediaCount-" + mediaId + "-" + userId + "-" + mediaType + "-true"
                         };
                     }else{
                         filter = {
-                            "_buildfire.index.text": mediaId + "-" + userId + "-" + mediaType + "-true" 
+                            "_buildfire.index.text": mediaId + "-" + userId + "-" + mediaType + "-true"
                         };
                     }
 
@@ -336,11 +336,11 @@
                         url: "./assets/css/videogular.css"
                     }
                 };
-                // correct image src for dropbox to crop/resize and show it 
+                // correct image src for dropbox to crop/resize and show it
                 function getImageUrl(imageSrc) {
                     if (imageSrc) {
-                      imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent").split("?dl=")[0];
-                      imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com").split("?dl=")[0];
+                      imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent");
+                      imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com");
                       imageSrc = imageSrc.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
                     }
                     return imageSrc;
@@ -351,7 +351,7 @@
                         var myType;
                         var videoUrlToSend = $scope.downloadedVideoUrl ? $scope.downloadedVideoUrl : WidgetMedia.item.data.videoUrl;
                         if (videoUrlToSend.includes("www.dropbox") || videoUrlToSend.includes("dl.dropbox.com")) {
-                            videoUrlToSend = videoUrlToSend.replace("www.dropbox", "dl.dropboxusercontent").split("?dl=")[0];
+                            videoUrlToSend = videoUrlToSend.replace("www.dropbox", "dl.dropboxusercontent");
                             videoUrlToSend = videoUrlToSend.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
                             myType = videoUrlToSend.split('.').pop();
                         } else if (videoUrlToSend.includes("www.youtube") && videoUrlToSend.includes("/channel") && videoUrlToSend.includes("/live")) {
@@ -361,10 +361,11 @@
                         } else {
                             myType = videoUrlToSend.split('.').pop();
                         }
+						myType = myType.split("?")[0];
 
                         $scope.videoPlayed = false;
 
-                        WidgetMedia.videoPlayerConfig.sources = [{
+						WidgetMedia.videoPlayerConfig.sources = [{
                             src: $rootScope.online ? $sce.trustAsUrl(videoUrlToSend) : videoUrlToSend,
                             type: 'video/' + myType //"video/mp4"
                         }];
@@ -840,7 +841,7 @@
                         var source;
                         var videoUrlToSend = WidgetMedia.item.data.videoUrl;
                         if (videoUrlToSend.includes("www.dropbox") || videoUrlToSend.includes("dl.dropbox.com")) {
-                            videoUrlToSend = videoUrlToSend.replace("www.dropbox", "dl.dropboxusercontent").split("?dl=")[0];
+                            videoUrlToSend = videoUrlToSend.replace("www.dropbox", "dl.dropboxusercontent");
                             videoUrlToSend = videoUrlToSend.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
                             myType = videoUrlToSend.split('.').pop();
                             source = "dropbox";
@@ -848,6 +849,7 @@
                             source = videoUrlToSend.includes("youtube.com") ? "youtube" : videoUrlToSend.includes("vimeo") ? "vimeo" : "other";
                             myType = videoUrlToSend.split('.').pop();
                         }
+						myType = myType.split("?")[0];
                         return {
                             uri: videoUrlToSend,
                             type: myType,
@@ -861,7 +863,7 @@
                         var myType;
                         var audioUrlToSend = WidgetMedia.item.data.audioUrl;
                         myType = audioUrlToSend.split('.').pop();
-
+						myType = myType.split("?")[0];
                         return {
                             uri: audioUrlToSend,
                             type: myType,
@@ -905,6 +907,7 @@
                             initializing = false;
                         });
                     } else {
+						console.log('------------->>>>>>>>>>>>>>>');
                         WidgetMedia.changeVideoSrc();
                     }
                 });
@@ -912,6 +915,8 @@
                 $scope.$watch('downloadedVideoUrl', function (newValue, oldValue) {
                     if (newValue) {
                         if (oldValue != newValue) {
+						console.log('------6+++++++++++++++>>>>>>>>>>>>>>');
+
                             WidgetMedia.changeVideoSrc();
                         }
                     }
