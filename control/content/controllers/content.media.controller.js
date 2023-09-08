@@ -455,7 +455,7 @@
           if (ContentMedia.dbItem.videoUrl != "" && ContentMedia.item.data.videoUrl == "") {
             Analytics.unregisterEvent(ContentMedia.item.id + "_videoPlayCount");
             Analytics.unregisterEvent(ContentMedia.item.id + "_continuesVideoPlayCount");
-          } // If There was a video and removed 
+          } // If There was a video and removed
           else if ((ContentMedia.dbItem.videoUrl == "" && ContentMedia.item.data.videoUrl != "") ||
             (ContentMedia.item.data.videoUrl != "" && ContentMedia.dbItem.title != ContentMedia.item.data.title)) {
 
@@ -837,12 +837,12 @@
         //    $scope.$apply();
         //  }
         //};
-        
-        // correct image src for dropbox to crop/resize and show it 
+
+        // correct image src for dropbox to crop/resize and show it
         function getImageUrl(imageSrc) {
           if (imageSrc && imageSrc.includes("dropbox.com")) {
-            imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent").split("?dl=")[0];
-            imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com").split("?dl=")[0];
+            imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent");
+            imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com");
           }
           return imageSrc;
       }

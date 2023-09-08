@@ -876,7 +876,7 @@
                             if (res) {
                                 res = res.filter(item=>(!(item.mediaType==='audio' && (item.originalMediaUrl.includes("www.dropbox") || item.originalMediaUrl.includes("dl.dropbox")) && !item.dropboxAudioUpdated)))
                                 res = res.filter(item=>(!(item.mediaType==='audio' && !item.audioDownloadUpdated && buildfire.getContext().device.platform === "iOS")))
-                                
+
                                 downloadedIDS = res.map(item => item.mediaId);
                                 if (downloadedIDS.length > 0) {
                                     WidgetHome.items = WidgetHome.items.map(item => {
@@ -952,11 +952,11 @@
                     });
                 };
 
-                // correct image src for dropbox to crop/resize and show it 
+                // correct image src for dropbox to crop/resize and show it
                 function getImageUrl(imageSrc) {
                    if (imageSrc) {
-                      imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent").split("?dl=")[0];
-                      imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com").split("?dl=")[0];
+                      imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent");
+                      imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com");
                       imageSrc = imageSrc.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
                     }
                     return imageSrc;
@@ -1199,7 +1199,7 @@
                         var source;
                         var videoUrlToSend = videoURL;
                         if (videoUrlToSend.includes("www.dropbox") || videoUrlToSend.includes("dl.dropbox.com")) {
-                            videoUrlToSend = videoUrlToSend.replace("www.dropbox", "dl.dropboxusercontent").split("?dl=")[0];
+                            videoUrlToSend = videoUrlToSend.replace("www.dropbox", "dl.dropboxusercontent");
                             videoUrlToSend = videoUrlToSend.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
                             myType = videoUrlToSend.split('.').pop();
                             source = "dropbox";
@@ -1207,6 +1207,8 @@
                             source = videoUrlToSend.includes("youtube.com") ? "youtube" : videoUrlToSend.includes("vimeo") ? "vimeo" : "other";
                             myType = videoUrlToSend.split('.').pop();
                         }
+						myType = myType.split("?")[0];
+
                         return {
                             uri: videoUrlToSend,
                             type: myType,
@@ -1220,10 +1222,11 @@
                         var audioUrlToSend = audioUrl;
                         //  fix dropbox download link
                         if(audioUrlToSend.includes("www.dropbox") || audioUrlToSend.includes("dl.dropbox.com")){
-                            audioUrlToSend = audioUrlToSend.replace("www.dropbox", "dl.dropboxusercontent").split("?dl=")[0];
+                            audioUrlToSend = audioUrlToSend.replace("www.dropbox", "dl.dropboxusercontent");
                             audioUrlToSend = audioUrlToSend.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
                         }
                         myType = audioUrlToSend.split('.').pop();
+						myType = myType.split("?")[0];
                         return {
                             uri: audioUrlToSend,
                             type: myType,
