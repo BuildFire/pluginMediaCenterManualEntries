@@ -137,6 +137,7 @@
                         $rootScope.allowOfflineDownload = MediaCenterInfo.data.content.allowOfflineDownload;
                         $rootScope.enableFiltering = MediaCenterInfo.data.content.enableFiltering;
                         $rootScope.showViewCount = MediaCenterInfo.data.content.showViewCount;
+                        $rootScope.indicatePlayedItems = MediaCenterInfo.data.content.indicatePlayedItems;
 
                         if (isLauncher && MediaCenterInfo.data.content.enableFiltering) {
                             slideElement.classList.add("launcher-with-filter");

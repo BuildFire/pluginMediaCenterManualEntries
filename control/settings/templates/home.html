@@ -192,3 +192,17 @@
         <label for="enablePlayCountSwitch" class="label-success"></label>
     </div>
 </div>
+
+<div class="input-control side-label margin-bottom-twenty">
+    <label for="">Indicate Played Items
+        <span class="customTooltipBox btn-primary">
+            <span class="customTooltipText">
+                Visually mark a media item that the user has already opened.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch">
+        <input id="enableIndicatePlayedItems" type="checkbox" ng-click="Settings.setEnableIndicatePlayedItems($event)" ng-checked="Settings.data.content.indicatePlayedItems">
+        <label for="enableIndicatePlayedItems" class="label-success"></label>
+    </div>
+</div>

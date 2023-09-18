@@ -44,6 +44,9 @@
                 if (typeof (Settings.data.content.showViewCount) == 'undefined') {
                     Settings.data.content.showViewCount = false;
                 }
+                if (typeof (Settings.data.content.indicatePlayedItems ) == 'undefined') {
+                    Settings.data.content.indicatePlayedItems  = false;
+                }
             }, (err) => {
                 console.error(err);
             });
@@ -189,6 +192,14 @@
                 let value = e.target.checked;
                 if (value != Settings.data.content.showViewCount) {
                     Settings.data.content.showViewCount = value;
+                    MediaCenter.save(Settings.data).then(() => { });
+                }
+            }
+
+            Settings.setEnableIndicatePlayedItems = (e) => {
+                let value = e.target.checked;
+                if (value != Settings.data.content.indicatePlayedItems ) {
+                    Settings.data.content.indicatePlayedItems  = value;
                     MediaCenter.save(Settings.data).then(() => { });
                 }
             }
