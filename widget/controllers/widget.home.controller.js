@@ -1,8 +1,8 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetHomeCtrl', ['$scope', '$timeout', '$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location',
-            function ($scope, $timeout, $window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location) {
+        .controller('WidgetHomeCtrl', ['$scope', '$timeout', '$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location', 'MediaMetaDataDB',
+            function ($scope, $timeout, $window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location, MediaMetaDataDB) {
                 $rootScope.loadingGlobalPlaylist = true;
                 $rootScope.showFeed = true;
                 $rootScope.currentlyDownloading = [];
@@ -80,6 +80,7 @@
                 let MediaContent = new DB(COLLECTIONS.MediaContent),
                     MediaCenter = new DB(COLLECTIONS.MediaCenter),
                     GlobalPlaylist = new AppDB(),
+                    MediaMetaData = new MediaMetaDataDB(COLLECTIONS.MediaMetaData),
                     CachedMediaContent = new OFSTORAGE({
                         path: "/data/mediaCenterManual",
                         fileName: "cachedMediaContent"
@@ -964,37 +965,70 @@
                 }
 
                 WidgetHome.loadMore = () => {
+                    // get the metadata for items
+                    MediaMetaData.get().then((metadata) => {
+                        WidgetHome.openedItems = metadata.data.openedItems;
+                    });
                     updateGetOptions();
                     const getRecords = () => {
-
                         if (WidgetHome.currentlyLoading || WidgetHome.noMore) return;
                         buildfire.spinner.show();
                         WidgetHome.stopScroll = true;
                         WidgetHome.currentlyLoading = true;
 
                         MediaContent.find(searchOptions).then((result) => {
-                            result = result.map(item=>{
+                            result = result.map((item) => {
                                 item.data.topImage = getImageUrl(item.data.topImage);
                                 item.data.image = getImageUrl(item.data.image);
-                                return item
-                            })
+                                return item;
+                            });
                             WidgetHome.items = WidgetHome.items.concat(result);
-                            WidgetHome.items.forEach(item => {
+                            WidgetHome.items.forEach((item) => {
                                 var searchOptions = {
                                     filter: {
-                                        "_buildfire.index.string1": item.id+"-true"
+                                        '_buildfire.index.string1': item.id + '-true',
                                     },
                                     skip: 0,
                                     limit: 1,
-                                    recordCount: true
+                                    recordCount: true,
                                 };
-                                buildfire.publicData.search(searchOptions,COLLECTIONS.MediaCount, function(err,res){
-                                    item.data.count = res.totalRecord
-                                    if (!$scope.$$phase && !$scope.$root.$$phase) {
-                                        $scope.$apply();
+                                // ! -------------- here the logic
+                                if (
+                                    item.data.audioUrl.trim() === '' &&
+                                    item.data.videoUrl.trim() === ''
+                                ) {
+                                    if (WidgetHome.openedItems.includes(item.id)) {
+                                        item.data.opened = true;
+                                    } else {
+                                        item.data.opened = false;
                                     }
-                                })
-                            })
+                                } else {
+                                    if (
+                                        WidgetHome.openedItems.includes(
+                                            `${item.data.audioUrl}_${item.id}`
+                                        ) ||
+                                        WidgetHome.openedItems.includes(
+                                            `${item.data.videoUrl}_${item.id}`
+                                        )
+                                    ) {
+                                        item.data.opened = true;
+                                    } else {
+                                        item.data.opened = false;
+                                    }
+                                }
+
+                                // ! End -------------- here the logic
+                                buildfire.publicData.search(
+                                    searchOptions,
+                                    COLLECTIONS.MediaCount,
+                                    function (err, res) {
+                                        item.data.count = res.totalRecord;
+                                        if (!$scope.$$phase && !$scope.$root.$$phase) {
+                                            $scope.$apply();
+                                        }
+                                    }
+                                );
+                            });
                             const finish = () => {
                                 $rootScope.myItems = WidgetHome.items;
                                 $rootScope.loadingData = false;
@@ -1005,7 +1039,7 @@
                                 if (!WidgetHome.items.length) {
                                     angular.element('#emptyContainer').css('display', 'block');
                                 }
-                            }
+                            };
 
                             if (result.length < searchOptions.limit) {
                                 WidgetHome.noMore = true;
@@ -1022,7 +1056,7 @@
                                 }
                             });
                         });
-                    }
+                    };
 
                     if ($rootScope.globalPlaylist && $rootScope.online) {
                         getCurrentUser(() => {
@@ -1031,21 +1065,22 @@
                             getGlobalPlaylistItems()
                                 .then(getRecords)
                                 .finally(() => {
-                                    $rootScope.loadingGlobalPlaylist = false
+                                    $rootScope.loadingGlobalPlaylist = false;
                                 });
                         });
                     } else if ($rootScope.online) {
-                        getGlobalPlaylistItems().then(getRecords).finally(() => {
-                            setTimeout(() => {
-                                WidgetHome.isBusy = false;
-                                $rootScope.loadingData = false;
-                                $rootScope.loadingGlobalPlaylist = false;
-                                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                            }, 0);
-                        });
-                    }
-                    else {
-                        getCachedItems((err, res) => { });
+                        getGlobalPlaylistItems()
+                            .then(getRecords)
+                            .finally(() => {
+                                setTimeout(() => {
+                                    WidgetHome.isBusy = false;
+                                    $rootScope.loadingData = false;
+                                    $rootScope.loadingGlobalPlaylist = false;
+                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                }, 0);
+                            });
+                    } else {
+                        getCachedItems((err, res) => {});
                     }
                 }
                 //==============================================================================================================

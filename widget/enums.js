@@ -26,10 +26,14 @@
             MediaContent: "MediaContent",
             MediaCenter: "MediaCenter",
             CategoryContent:"CategoryContent",
-            MediaCount:"MediaCount"
+            MediaCount:"MediaCount",
+            MediaMetaData : "MediaMetaData"
         })
         .constant('PATHS', {
             MEDIA: "MEDIA",
             HOME: "HOME"
+        })
+        .constant('localStorageKeys', {
+            openedMediaItems: "openedMediaItems",
         });
 })(window.angular, undefined);

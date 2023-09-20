@@ -1,8 +1,8 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('NowPlayingCtrl', ['$scope', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', 'Location', 'EVENTS', 'PATHS', 'DB', 'AppDB',
-            function ($scope, media, Buildfire, Modals, COLLECTIONS, $rootScope, Location, EVENTS, PATHS, DB, AppDB) {
+        .controller('NowPlayingCtrl', ['$scope', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', 'Location', 'EVENTS', 'PATHS', 'DB', 'AppDB', 'openedMediaItems', 'MediaMetaDataDB',
+            function ($scope, media, Buildfire, Modals, COLLECTIONS, $rootScope, Location, EVENTS, PATHS, DB, AppDB, openedMediaItems, MediaMetaDataDB) {
                 $rootScope.blackBackground = true;
                 $rootScope.showFeed = false;
                 var audioPlayer = Buildfire.services.media.audioPlayer;
@@ -31,6 +31,8 @@
                 NowPlaying.finished = false;
                 NowPlaying.isAudioPlayerPlayingAnotherSong = true;
                 bookmarks.sync($scope);
+
+                const MediaMetaData = new MediaMetaDataDB(COLLECTIONS.MediaMetaData);
 
                 if(!NowPlaying.isOnline) initAudio(0);
                 Buildfire.auth.getCurrentUser((err, user) => {
@@ -554,12 +556,14 @@
                                     NowPlaying.isCounted = true;
                                     sendAnalytics(NowPlaying);
                                 })
+                                openedMediaHandler.add(NowPlaying.item, 'Audio', openedMediaItems, MediaMetaData);
                             } else {
                                 let lastTimeWatched = localStorage.getItem(`${NowPlaying.item.id}_audioPlayCount`);
                                 if (!lastTimeWatched) {
                                     localStorage.setItem(`${NowPlaying.item.id}_audioPlayCount`, new Date().getTime());
                                     sendAnalytics(NowPlaying);
                                 }
+                                openedMediaHandler.add(NowPlaying.item, 'Audio', openedMediaItems, null);
                             }
                         }
                     }

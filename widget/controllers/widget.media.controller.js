@@ -1,8 +1,8 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope', 'Location', 'OFSTORAGE',
-            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope, Location, OFSTORAGE) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope', 'Location', 'OFSTORAGE', 'openedMediaItems', 'MediaMetaDataDB',
+            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope, Location, OFSTORAGE, openedMediaItems, MediaMetaDataDB) {
                 var WidgetMedia = this;
                 WidgetMedia.API = null;
                 $rootScope.online = $window.navigator.onLine;
@@ -48,6 +48,7 @@
 
                 let MediaCenter = new DB(COLLECTIONS.MediaCenter),
                     GlobalPlaylist = new AppDB(),
+                    MediaMetaData = new MediaMetaDataDB(COLLECTIONS.MediaMetaData),
                     CachedMediaCenter = new OFSTORAGE({
                         path: "/data/mediaCenterManual",
                         fileName: "cachedMediaCenter"
@@ -273,6 +274,7 @@
                                         WidgetMedia.isCounted = true;
                                         sendAnalytics(WidgetMedia);
                                     })
+                                    openedMediaHandler.add(WidgetMedia.item, 'Video', openedMediaItems, MediaMetaData);
                                 }
                             })
                         } else if(!WidgetMedia.isCounted){
@@ -281,6 +283,7 @@
                                 localStorage.setItem(`${WidgetMedia.item.id}_videoPlayCount`, new Date().getTime());
                                 sendAnalytics(WidgetMedia);
                             }
+                            openedMediaHandler.add(WidgetMedia.item, 'Video', openedMediaItems, null);
                         }
                         if (!WidgetMedia.isContinuesCounted) {
                             sendContinuesAnalytics(WidgetMedia);
@@ -508,6 +511,7 @@
                                         WidgetMedia.isCounted = true;
                                         sendArticleAnalytics(WidgetMedia);
                                     })
+                                    openedMediaHandler.add(WidgetMedia.item, 'Article', openedMediaItems, MediaMetaData);
                                 }
 
                             })
@@ -519,6 +523,7 @@
                                     sendArticleAnalytics(WidgetMedia);
                                 }
                             }
+                            openedMediaHandler.add(WidgetMedia.item, 'Article', openedMediaItems, null);
                         }
                     })
 

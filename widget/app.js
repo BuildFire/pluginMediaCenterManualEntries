@@ -320,7 +320,10 @@
             $httpProvider.interceptors.push(interceptor);
 
         }])
-        .run(['Location', '$location', '$rootScope', '$window', 'Messaging', 'EVENTS', 'PATHS', 'DB', 'COLLECTIONS', function (Location, $location, $rootScope, $window, Messaging, EVENTS, PATHS, DB, COLLECTIONS) {
+        .run(['Location', '$location', '$rootScope', '$window', 'Messaging', 'EVENTS', 'PATHS', 'DB', 'COLLECTIONS','openedMediaItems', 'MediaMetaDataDB', function (Location, $location, $rootScope, $window, Messaging, EVENTS, PATHS, DB, COLLECTIONS, openedMediaItems, MediaMetaDataDB) {            
+            let MediaMetaData = new MediaMetaDataDB(COLLECTIONS.MediaMetaData);
+            openedMediaHandler.sync(openedMediaItems, MediaMetaData);
+            
             buildfire.navigation.onBackButtonClick = function () {
                 if ($rootScope.fullScreen) {
                     $rootScope.goingBackFullScreen = true;

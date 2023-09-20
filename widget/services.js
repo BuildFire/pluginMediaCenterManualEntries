@@ -487,5 +487,81 @@
             };
 
             return AppDB;
+        }])
+        .factory("MediaMetaDataDB", ['$rootScope', 'Buildfire', '$q', 'MESSAGES', 'CODES', function ($rootScope, Buildfire, $q, MESSAGES, CODES) {
+            function MediaMetaDataDB(tagName) {
+                this._tagName = tagName;
+            }
+            
+            MediaMetaDataDB.prototype.get = function () {
+                const that = this;
+                const deferred = $q.defer();
+                Buildfire.userData.get(that._tagName, (err, result) => {
+                    if (err && err.code == CODES.NOT_FOUND) {
+                        return deferred.resolve();
+                    }
+                    else if (err) {
+                        return deferred.reject(err);
+                    }
+                    else if(result && !result.data.openedItems){
+                        that.save({ openedItems: [] }).then((res) => {
+                            deferred.resolve(res);
+                        });
+                    }
+                    else {
+                        return deferred.resolve(result);
+                    }
+                });
+                return deferred.promise;
+            };
+
+
+            MediaMetaDataDB.prototype.save = function (data) {
+                const that = this;
+                const deferred = $q.defer();
+                if (typeof data == 'undefined') {
+                    return deferred.reject(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
+                };
+
+                Buildfire.userData.save(data, that._tagName, (err, result) => {
+                    if (err) {
+                        return deferred.reject(err);
+                    }
+                    else if (result) {
+                        return deferred.resolve(result);
+                    } else {
+                        return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
+                    }
+                });
+                return deferred.promise;
+            };
+
+            return MediaMetaDataDB;
+        }])
+        .factory("openedMediaItems", ['Buildfire', 'localStorageKeys', function (Buildfire, localStorageKeys) {
+            const openedMediaItems = {
+                get: function () {
+                    let result;
+                    Buildfire.localStorage.getItem(localStorageKeys.openedMediaItems,(error, value) => {
+                        if (value) {
+                            result = value;
+                        } else {
+                            result = this.save([]);
+                        }
+                    });
+                    return JSON.parse(result);
+                },
+        
+                save: function (data) {
+                    data = JSON.stringify(data);
+                    Buildfire.localStorage.setItem(localStorageKeys.openedMediaItems, data);
+                    return data;
+                }
+            };
+        
+            return openedMediaItems;
         }]);
+        
+        
+        
 })(window.angular, window.buildfire, window.location);
