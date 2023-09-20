@@ -213,9 +213,11 @@
                             <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.autoJumpToLastPositon}}</span>
                         </div>
                         <div class="col-md-2 pull-right text-right">
-                            <div class="checkbox checkbox-primary checked no-label margin-zero">
+                            <div class="checkbox checkbox-primary no-label margin-zero">
                                 <input type="checkbox" id="repeat" ng-model="NowPlaying.settings.autoJumpToLastPosition"
-                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)">
+                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)"
+                                    ng-checked="NowPlaying.autoJumpToLastPosition"
+                                    >
                                 <label for="repeat"></label>
                             </div>
                         </div>

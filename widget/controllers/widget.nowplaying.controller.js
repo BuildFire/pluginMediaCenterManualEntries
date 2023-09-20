@@ -10,6 +10,7 @@
                 var NowPlaying = this;
                 NowPlaying.swiped = [];
                 NowPlaying.forceAutoPlay = $rootScope.forceAutoPlay;
+                NowPlaying.autoJumpToLastPosition = $rootScope.autoJumpToLastPosition;
                 NowPlaying.transferPlaylist = $rootScope.transferAudioContentToPlayList;
                 media.data.audioUrl = convertDropbox(media.data.audioUrl);
                 media.data.topImage = convertDropbox(media.data.topImage);
@@ -423,6 +424,7 @@
                         $scope.$digest();
                     }
                     audioPlayer.settings.get(function (err, setting) {
+                        setting.autoJumpToLastPosition = NowPlaying.autoJumpToLastPosition;
                         if (!setting.autoJumpToLastPosition) {
                             NowPlaying.currentTrack.startAt = 0;
                         }
@@ -936,7 +938,10 @@
                                 $rootScope.showGlobalPlaylistNavButton = event.data.content.showGlobalPlaylistNavButton;
                                 $rootScope.showGlobalAddAllToPlaylistButton = event.data.content.showGlobalAddAllToPlaylistButton;
                                 $rootScope.allowOfflineDownload = event.data.content.allowOfflineDownload;
-
+                                $rootScope.autoJumpToLastPosition = event.data.content.startWithAutoJumpByDefault;
+                                NowPlaying.autoJumpToLastPosition = $rootScope.autoJumpToLastPosition;
+                                NowPlaying.settings.autoJumpToLastPosition = $rootScope.autoJumpToLastPosition;
+                                NowPlaying.setSettings(NowPlaying.settings)
                                 // Update Data in media contoller
                                 $rootScope.refreshItems();
                                 if (!$scope.$$phase) {

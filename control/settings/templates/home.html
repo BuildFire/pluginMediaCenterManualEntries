@@ -206,3 +206,17 @@
         <label for="enableIndicatePlayedItems" class="label-success"></label>
     </div>
 </div>
+
+<div class="input-control side-label margin-bottom-twenty">
+    <label for="">Auto Jump to Last Position
+        <span class="customTooltipBox btn-primary">
+            <span class="customTooltipText">
+                This setting allows users to resume media playback from where they left off upon returning to the app. You have the choice to set it as enabled or disabled by default. Note that changing this setting on one Media Center Manual instance will apply it to all installed instances.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch">
+        <input id="enableStartWithAutoJumpByDefault " type="checkbox" ng-click="Settings.setEnableStartWithAutoJumpByDefault ($event)" ng-checked="Settings.data.content.startWithAutoJumpByDefault ">
+        <label for="enableStartWithAutoJumpByDefault " class="label-success"></label>
+    </div>
+</div>
