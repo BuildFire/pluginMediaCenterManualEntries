@@ -349,6 +349,7 @@
                             $rootScope.showGlobalAddAllToPlaylistButton = WidgetHome.media.data.content.showGlobalAddAllToPlaylistButton;
                             $rootScope.allowOfflineDownload = WidgetHome.media.data.content.allowOfflineDownload;
                             $rootScope.enableFiltering = WidgetHome.media.data.content.enableFiltering;
+                            $rootScope.indicatePlayedItems = WidgetHome.media.data.content.indicatePlayedItems;
                             $rootScope.autoJumpToLastPosition = WidgetHome.media.data.content.startWithAutoJumpByDefault ;
 
                             if (view && event.data.content && event.data.content.images) {

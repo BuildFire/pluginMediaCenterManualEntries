@@ -88,9 +88,13 @@
                                 <i class="glyphicon glyphicon-eye-open"></i>
                             </span>
                         </p>
-                        <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate | jsDate |
-                            date:"MMMM dd, yyyy"}}</span>
-                        </span>
+
+                        <div class="date-container">
+                            <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate | jsDate |
+                                date:"MMMM dd, yyyy"}}</span>
+                            </span>
+                            <img ng-if="item.data.opened && WidgetHome.media.data.content.indicatePlayedItems" class="done-icon" src="assets/css/icons/ic_done_mark.svg" alt="done-mark">
+                        </div>
                         <!-- <div class="li-actions-item" style="bottom:5%;">
                             <i class="glyphicon bookmark star" style="top:unset !important; bottom:10%;"
                                 ng-class="{ 'glyphicon-star-empty' : !item.data.bookmarked, 'glyphicon-star' : item.data.bookmarked}"

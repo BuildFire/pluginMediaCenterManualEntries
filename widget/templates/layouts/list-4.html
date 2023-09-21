@@ -92,9 +92,12 @@
                                     <i class="glyphicon glyphicon-eye-open"></i>
                                 </span>
                             </p>
-                            <span class="list-item-date"
-                                data-ng-if="WidgetHome.items[$index].data.mediaDate">{{WidgetHome.items[$index].data.mediaDate
-                                | jsDate | date:"MMMM dd, yyyy"}}</span>
+                            <div class="date-container">
+                                <span class="list-item-date"
+                                    data-ng-if="WidgetHome.items[$index].data.mediaDate">{{WidgetHome.items[$index].data.mediaDate
+                                    | jsDate | date:"MMMM dd, yyyy"}}</span>
+                                <img ng-if="item.data.opened && WidgetHome.media.data.content.indicatePlayedItems" class="done-icon" src="assets/css/icons/ic_done_mark.svg" alt="done-mark">
+                            </div>
                         </div>
                     </div>
                     <div class="list-item-even col-xs-6 pull-left clickable text-overlay "
@@ -139,9 +142,12 @@
                                     <i class="glyphicon glyphicon-eye-open"></i>
                                 </span>
                             </p>
-                            <span class="list-item-date"
-                                data-ng-if="WidgetHome.items[$index + 1].data.mediaDate">{{WidgetHome.items[$index +
-                                1].data.mediaDate | jsDate | date:"MMMM dd, yyyy"}}</span>
+                            <div class="date-container">
+                                <span class="list-item-date"
+                                    data-ng-if="WidgetHome.items[$index + 1].data.mediaDate">{{WidgetHome.items[$index +
+                                    1].data.mediaDate | jsDate | date:"MMMM dd, yyyy"}}</span>
+                                <img ng-if="item.data.opened && WidgetHome.media.data.content.indicatePlayedItems" class="done-icon" src="assets/css/icons/ic_done_mark.svg" alt="done-mark">
+                            </div>
                         </div>
                     </div>
                 </div>

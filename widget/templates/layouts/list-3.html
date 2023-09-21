@@ -89,10 +89,12 @@
                             <i class="glyphicon glyphicon-eye-open"></i>
                         </span>
                     </p>
-
-                    <span class="list-item-date" data-ng-if="item.data.mediaDate"
-                        style="font-size:11px; font-style:italic; margin-top:-4px;">{{item.data.mediaDate | jsDate |
-                        date:"MMMM dd, yyyy"}}</span>
+                    <div class="date-container">
+                        <span class="list-item-date" data-ng-if="item.data.mediaDate"
+                            style="font-size:11px; font-style:italic; margin-top:-4px;">{{item.data.mediaDate | jsDate |
+                            date:"MMMM dd, yyyy"}}</span>
+                        <img ng-if="item.data.opened && WidgetHome.media.data.content.indicatePlayedItems" class="done-icon" src="assets/css/icons/ic_done_mark.svg" alt="done-mark">
+                    </div>
                 </div>
             </div>
         </div>
