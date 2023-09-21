@@ -21,15 +21,6 @@
                 $rootScope.resizeImg = (url) => buildfire.imageLib.resizeImage(url);
 
 
-                $rootScope.globalPlaylistStrings = {
-                    itemAdded: getString('globalPlaylist.itemAdded'),
-                    itemRemoved: getString('globalPlaylist.itemRemoved'),
-                    addedAllItemsToPlaylist: getString('globalPlaylist.addedAllItemsToPlaylist'),
-                    addedItemsToPlaylist: getString('globalPlaylist.addedItemsToPlaylist'),
-                    removedAllItemsFromPlaylist: getString('globalPlaylist.removedAllItemsFromPlaylist'),
-                    playlistLimitReached: getString('globalPlaylist.playlistLimitReached')
-                }
-
                 const isLauncher = window.location.href.includes('launcherPlugin');
                 const slideElement = document.querySelector(".slide");
                 if (isLauncher) {
@@ -607,7 +598,7 @@
                             $rootScope.globalPlaylistItems.playlist = {};
                             $rootScope.addAllToPlaylistLoading = false;
                             buildfire.dialog.toast({
-                                message: $rootScope.globalPlaylistStrings.removedAllItemsFromPlaylist,
+                                message: getString('globalPlaylist.removedAllItemsFromPlaylist'),
                                 type: 'success',
                                 duration: 2000
                             });
@@ -620,7 +611,7 @@
                         var freeSlots = $rootScope.globalPlaylistLimit - takenSlots;
                         if (typeof $rootScope.globalPlaylistLimit === 'number' && freeSlots < 1) {
                             buildfire.dialog.toast({
-                                message: $rootScope.globalPlaylistStrings.playlistLimitReached,
+                                message: getString('globalPlaylist.playlistLimitReached'),
                                 type: 'warning'
                             });
                             $rootScope.addAllToPlaylistLoading = false;
@@ -634,8 +625,8 @@
                                 }
 
                                 var message = (itemsToAdd.length == WidgetHome.items.length) ?
-                                    $rootScope.globalPlaylistStrings.addedAllItemsToPlaylist :
-                                    $rootScope.globalPlaylistStrings.addedItemsToPlaylist;
+                                    getString('globalPlaylist.addedAllItemsToPlaylist') :
+                                    getString('globalPlaylist.addedItemsToPlaylist');
                                 buildfire.dialog.toast({
                                     message: message,
                                     type: 'success',
@@ -653,7 +644,7 @@
                         GlobalPlaylist.delete(item.id).then(() => {
                             delete $rootScope.globalPlaylistItems.playlist[item.id];
                             buildfire.dialog.toast({
-                                message: $rootScope.globalPlaylistStrings.itemRemoved,
+                                message: getString('globalPlaylist.itemRemoved'),
                                 type: 'success',
                                 duration: 2000
                             });
@@ -661,7 +652,7 @@
                     } else {
                         if (typeof $rootScope.globalPlaylistLimit === 'number' && Object.keys($rootScope.globalPlaylistItems.playlist).length >= $rootScope.globalPlaylistLimit) {
                             buildfire.dialog.toast({
-                                message: $rootScope.globalPlaylistStrings.playlistLimitReached,
+                                message: getString('globalPlaylist.playlistLimitReached'),
                                 type: 'warning',
                                 duration: 3000
                             });
@@ -670,7 +661,7 @@
                             GlobalPlaylist.insertAndUpdate(item).then(() => {
                                 $rootScope.globalPlaylistItems.playlist[item.id] = item.data;
                                 buildfire.dialog.toast({
-                                    message: $rootScope.globalPlaylistStrings.itemAdded,
+                                    message: getString('globalPlaylist.itemAdded'),
                                     type: 'success',
                                     duration: 2000
                                 });
@@ -924,10 +915,10 @@
 
                 const getGlobalPlaylistItems = () => {
                     return new Promise(resolve => {
-                        $rootScope.loadingGlobalPlaylist = true;
                         GlobalPlaylist.get()
-                            .then(result => {
-                                if (!result.data.playlist) {
+                        .then(result => {
+                            if (!result.data.playlist) {
+                                    $rootScope.loadingGlobalPlaylist = true;
                                     // If there is no object, then create the parent object
                                     GlobalPlaylist.save({ playlist: {} })
                                         .then(result => {

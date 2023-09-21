@@ -45,7 +45,7 @@
                     <div class="clickable col-xs-6 pull-left text-overlay" ng-repeat="item in WidgetHome.items track by $index"
                          ng-click="WidgetHome.goToMedia($index)" class="list-item-odd">
                         <div class="list-item-media text-center border-radius-three overflow-hidden text-overlay">
-                            <div play-btn="{{item.data.videoUrl.length > 0  || (skipMediaPage && (item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0)) }}" class="list-media-holder text-overlay">
+                            <div play-btn="{{item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0 }}" class="list-media-holder text-overlay">
                                 <div class="li-actions-item">
                                     <i id="drawericon" style="right: 0;" class="glyphicon glyphicon-option-horizontal" ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
                                 </div>
@@ -56,7 +56,9 @@
                         <div class="list-item-copy text-left">
                             <div class="date-row">
                                 <p class="ellipsis margin-zero text-primary title"><a class="text-primary">{{item.data.title}}</a></p>
-                                <i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload " style="margin-top: 2px; margin-left: auto;" class="glyphicon glyphicon-ok-circle" role="button"></i>
+                                <svg data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload " xmlns="http://www.w3.org/2000/svg" width="15" height="16" viewBox="0 0 15 16" fill="none">
+                                    <path d="M7.49996 0.916992C3.59704 0.916992 0.416626 4.09741 0.416626 8.00033C0.416626 11.9032 3.59704 15.0837 7.49996 15.0837C11.4029 15.0837 14.5833 11.9032 14.5833 8.00033C14.5833 4.09741 11.4029 0.916992 7.49996 0.916992ZM6.79163 6.58366V3.75033H8.20829V6.58366H10.3333L7.49996 9.41699L4.66663 6.58366H6.79163ZM11.0416 11.542H3.95829V10.1253H11.0416V11.542Z" fill="var(--bf-theme-success)"/>
+                                </svg>
                                 <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" class="lds-ring-small"><div></div><div></div><div></div><div></div></div>
                             </div>
 
