@@ -504,12 +504,12 @@
                         return deferred.reject(err);
                     }
                     else if(result && !result.data.openedItems){
-                        that.save({ openedItems: [] }).then((res) => {
+                        that.save(new MediaMetaData()).then((res) => {
                             deferred.resolve(res);
                         });
                     }
                     else {
-                        return deferred.resolve(result);
+                        return deferred.resolve(new MediaMetaData({...result.data, id: result.id}));
                     }
                 });
                 return deferred.promise;

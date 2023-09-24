@@ -961,7 +961,7 @@
                 WidgetHome.loadMore = () => {
                     // get the metadata for items
                     MediaMetaData.get().then((metadata) => {
-                        WidgetHome.openedItems = metadata.data.openedItems;
+                        WidgetHome.openedItems = metadata.openedItems;
                     });
                     updateGetOptions();
                     const getRecords = () => {

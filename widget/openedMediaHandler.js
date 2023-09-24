@@ -3,7 +3,7 @@
 const openedMediaHandler = {
     sync: function sync(localOpenedMediaItems, MediaMetaDataDB) {
         MediaMetaDataDB.get().then((response) => {
-            this._syncToLocalMediaItems(localOpenedMediaItems, response.data.openedItems).then(
+            this._syncToLocalMediaItems(localOpenedMediaItems, response.openedItems).then(
                 (response) => {
                     let openedItems = JSON.parse(response);
                     this._syncToMediaMetaData(openedItems, MediaMetaDataDB);
@@ -50,7 +50,7 @@ const openedMediaHandler = {
             MediaMetaDataDB.get().then((response) => {
                 const payload = {
                     $set: {
-                        openedItems: [...response.data.openedItems, key],
+                        openedItems: [...response.openedItems, key],
                     },
                 };
                 MediaMetaDataDB.save(payload);
