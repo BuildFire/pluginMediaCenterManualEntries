@@ -327,6 +327,7 @@
                                 }
                             NowPlaying.currentTime = e.data.currentTime;
                             NowPlaying.duration = e.data.duration;
+                            NowPlaying.progressBarStyle(e.data.currentTime);
                             break;
                         case 'audioEnded':
                             ready = false;
@@ -1054,6 +1055,21 @@
                         Location.goToHome();
                     });
                 });
+
+                /**
+                 * progress bar style
+                 * @param {*} value 
+                 */
+                NowPlaying.progressBarStyle = function (value) {
+                    const percentage = (value / NowPlaying.duration) * 100;
+                    if (percentage) {
+                        document.documentElement.style.setProperty(
+                            '--played-tracker-percentage',
+                            `${percentage}%`
+                        );
+                        console.log(document.documentElement.style.getPropertyValue('--value'));
+                    }
+                };
             }
         ]);
 })(window.angular);

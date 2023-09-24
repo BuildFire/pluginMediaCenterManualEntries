@@ -3,11 +3,6 @@
     ng-style="{'background-image': 'url(' + NowPlaying.currentTrack.backgroundImage + ')'}"
     class="now-playing-backgroundImage"></div>
     <div class="media-center-plugin" ng-if="!(NowPlaying.openMoreInfo || NowPlaying.openSettings)">
-        <div class="media-header-link">
-            <span ng-if="!globalPlaylist" class="btn btn-icon" ng-click="NowPlaying.getFromPlaylist()">
-                <img src="assets/css/icons/ic_playlist.svg" alt="playlist">
-            </span>
-        </div>
         <div class="media-holder">
             <div class="media-inner text-center">
                 <img ng-if="NowPlaying.currentTrack.image && NowPlaying.isOnline" load-image="1x1" crop-width="260" crop-height="260"
@@ -94,11 +89,14 @@
             <span class="icon icon-repeat icon-sm primaryTheme hidden whiteTheme"></span>
         </div>
         <div class="media-player-action-btns">
+            <span  ng-style="{'visibility': allowAddingNotes !== false ? 'visible' : 'hidden'}"  class="glyphicon glyphicon-edit whiteTheme" ng-click="NowPlaying.addNote()"></span>
+            <span ng-if="!globalPlaylist" class="btn btn-icon" ng-click="NowPlaying.getFromPlaylist()">
+                <img class="playList-icon" src="assets/css/icons/ic_playlist.svg" alt="playlist">
+            </span>
             <span ng-if="!globalPlaylist" class="glyphicon glyphicon-option-horizontal whiteTheme"
                 ng-click="NowPlaying.openMoreInfoOverlay()"></span>
+                <i ng-if="globalPlaylist" class="btn btn-icon glyphicon whiteTheme" style="font-size: 17px; opacity: .5;" ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(NowPlaying.item.id), 'glyphicon-minus' : isInGlobalPlaylist(NowPlaying.item.id) }" ng-click="toggleGlobalPlaylistItem(NowPlaying.item)" role="button"></i>
             <span class="glyphicon glyphicon-cog whiteTheme" ng-click="NowPlaying.getSettings()"></span>
-            <i ng-if="globalPlaylist" class="btn btn-icon glyphicon whiteTheme" style="font-size: 17px; opacity: .5;" ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(NowPlaying.item.id), 'glyphicon-minus' : isInGlobalPlaylist(NowPlaying.item.id) }" ng-click="toggleGlobalPlaylistItem(NowPlaying.item)" role="button"></i>
-            <span  ng-style="{'visibility': allowAddingNotes !== false ? 'visible' : 'hidden'}"  class="glyphicon glyphicon-edit whiteTheme" ng-click="NowPlaying.addNote()"></span>
         </div>
     </div>
 
