@@ -31,6 +31,32 @@
                 NowPlaying.keepPosition = 0;
                 NowPlaying.finished = false;
                 NowPlaying.isAudioPlayerPlayingAnotherSong = true;
+                const playbackSpeedOptions = [
+                    {
+                        text: '<div class="bodyTextTheme">0.5x</div>',
+                        displayText: '0.5x',
+                        value: 0.5,
+                        default: false
+                    },
+                    {
+                        text: '<div class="bodyTextTheme">1.0x</div>',
+                        displayText: '1.0x',
+                        value: 1,
+                        default: true
+                    },
+                    {
+                        text: '<div class="bodyTextTheme">1.5x</div>',
+                        displayText: '1.5x',
+                        value: 1.5,
+                        default: false
+                    },
+                    {
+                        text: '<div class="bodyTextTheme">2.0x</div>',
+                        displayText: '2.0x',
+                        value: 2,
+                        default: false
+                    },
+                ];
                 bookmarks.sync($scope);
 
                 const MediaMetaData = new MediaMetaDataDB(COLLECTIONS.MediaMetaData);
@@ -426,6 +452,9 @@
                     }
                     audioPlayer.settings.get(function (err, setting) {
                         setting.autoJumpToLastPosition = NowPlaying.autoJumpToLastPosition;
+                        // todo : until Mahmoud done 
+                        setting.playbackRate = 1;
+                        // todo End -----------------
                         if (!setting.autoJumpToLastPosition) {
                             NowPlaying.currentTrack.startAt = 0;
                         }
@@ -878,6 +907,7 @@
                  * @param autoJumpToLastPosition
                  * @param shufflePlaylist
                  * @param isPlayingCurrentTrack
+                 * @param playbackRate
                  * @constructor
                  */
                 function AudioSettings(settings) {
@@ -886,6 +916,7 @@
                     this.autoJumpToLastPosition = settings.autoJumpToLastPosition; //If a track has [lastPosition] use it to start playing the audio from there
                     this.shufflePlaylist = settings.shufflePlaylist;// shuffle the playlist
                     this.isPlayingCurrentTrack = settings.isPlayingCurrentTrack;// tells whether current track is playing or not
+                    this.playbackRate = settings.playbackRate;// Track playback speed rate
                 }
 
                 var GlobalPlaylist = new AppDB();
@@ -1055,6 +1086,35 @@
                         Location.goToHome();
                     });
                 });
+
+                //! --------------------------- Playback options --------------------------------------
+                NowPlaying.openPlaybackDrawer = function () {
+                    buildfire.components.drawer.open(
+                        {
+                            content: '<b>Playback Speed</b>',
+                            enableFilter: false,
+                            listItems: playbackSpeedOptions,
+                        },
+                        (err, result) => {
+                            if (err) return console.error(err);
+                            setPlaybackSpeed(result.value);
+                            buildfire.components.drawer.closeDrawer();
+                        }
+                    );
+                };
+
+                const setPlaybackSpeed = function (value) {
+                    if (NowPlaying.settings && value) {
+                        NowPlaying.settings.playbackRate = value;
+                        audioPlayer.settings.set(NowPlaying.settings);
+                        // todo : uncomment this line after Mahmoud work done
+                        // audioPlayer.setPlaybackRate(value);
+                        $scope.$digest();
+                    }
+                };
+                
+                
+                //! --------------------------- End : Playback options --------------------------------------
 
                 /**
                  * progress bar style

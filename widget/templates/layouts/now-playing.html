@@ -89,6 +89,7 @@
             <span class="icon icon-repeat icon-sm primaryTheme hidden whiteTheme"></span>
         </div>
         <div class="media-player-action-btns">
+            <span class="playback-speed whiteTheme" ng-click="NowPlaying.openPlaybackDrawer()">{{NowPlaying.settings.playbackRate || 1 | number:'1'}}x</span>
             <span  ng-style="{'visibility': allowAddingNotes !== false ? 'visible' : 'hidden'}"  class="glyphicon glyphicon-edit whiteTheme" ng-click="NowPlaying.addNote()"></span>
             <span ng-if="!globalPlaylist" class="btn btn-icon" ng-click="NowPlaying.getFromPlaylist()">
                 <img class="playList-icon" src="assets/css/icons/ic_playlist.svg" alt="playlist">
