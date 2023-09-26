@@ -1,38 +1,39 @@
 'use strict';
 
 const openedMediaHandler = {
-    sync: function sync(localOpenedMediaItems, MediaMetaDataDB) {
-        MediaMetaDataDB.get().then((response) => {
-            this._syncToLocalMediaItems(localOpenedMediaItems, response.openedItems).then(
-                (response) => {
-                    let openedItems = JSON.parse(response);
-                    this._syncToMediaMetaData(openedItems, MediaMetaDataDB);
-                }
-            );
-        });
+    sync(localOpenedMediaItems, MediaMetaDataDB) {
+        MediaMetaDataDB.get()
+            .then((response) => {
+                const localItems = localOpenedMediaItems.get();
+    
+                const mergedItems = [...localItems, ...response.openedItems];
+    
+                const uniqueMergedItems = [...new Set(mergedItems)];
+    
+                localOpenedMediaItems.save(uniqueMergedItems);
+                return uniqueMergedItems;
+            })
+            .then((uniqueMergedItems) => {
+                this._syncToMediaMetaData(uniqueMergedItems, MediaMetaDataDB);
+            })
+            .catch((error) => {
+                console.error('Error during sync:', error);
+            });
     },
+    
 
-    _syncToLocalMediaItems: function _syncToLocalMediaItems(localOpenedMediaItems, mediaMetaData) {
-        return new Promise((resolve, reject) => {
-            const localMediaItems = localOpenedMediaItems.get();
-            const mergedItemsSet = new Set([...localMediaItems, ...mediaMetaData]);
-            const mergedItems = Array.from(mergedItemsSet);
-            resolve(localOpenedMediaItems.save(mergedItems));
-        });
-    },
-
-    _syncToMediaMetaData: function _syncToMediaMetaData(localOpenedMediaItems, MediaMetaDataDB) {
+    _syncToMediaMetaData(localOpenedMediaItems, MediaMetaDataDB) {
         const payload = {
             $set: {
                 openedItems: localOpenedMediaItems,
             },
         };
-
         MediaMetaDataDB.save(payload);
     },
 
-    add(item, mediaType, localOpenedMediaItems, MediaMetaDataDB) {
+    add(item, mediaType, localOpenedMediaItems, MediaMetaDataDB, userId) {
         let key = '';
+
         if (mediaType === 'Article') {
             key = item.id;
         } else if (mediaType === 'Video') {
@@ -40,21 +41,28 @@ const openedMediaHandler = {
         } else if (mediaType === 'Audio') {
             key = `${item.data.audioUrl}_${item.id}`;
         } else {
-            return console.warn('Unexpected media type');
+            console.warn('Unexpected media type');
+            return;
         }
 
         const localMediaItems = localOpenedMediaItems.get();
-        localOpenedMediaItems.save([...localMediaItems, key]);
+        localMediaItems.push(key);
+        localOpenedMediaItems.save(localMediaItems);
 
         if (MediaMetaDataDB) {
-            MediaMetaDataDB.get().then((response) => {
-                const payload = {
-                    $set: {
-                        openedItems: [...response.openedItems, key],
-                    },
-                };
-                MediaMetaDataDB.save(payload);
-            });
+            MediaMetaDataDB.get()
+                .then((response) => {
+                    const payload = {
+                        $set: {
+                            openedItems: [...response.openedItems, key],
+                            lastUpdatedBy: userId
+                        },
+                    };
+                    return MediaMetaDataDB.save(payload);
+                })
+                .catch((error) => {
+                    console.error('Error while adding to MediaMetaDataDB:', error);
+                });
         }
     },
 };

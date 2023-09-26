@@ -588,7 +588,7 @@
                                     NowPlaying.isCounted = true;
                                     sendAnalytics(NowPlaying);
                                 })
-                                openedMediaHandler.add(NowPlaying.item, 'Audio', openedMediaItems, MediaMetaData);
+                                openedMediaHandler.add(NowPlaying.item, 'Audio', openedMediaItems, MediaMetaData, $rootScope.user.userId);
                             } else {
                                 let lastTimeWatched = localStorage.getItem(`${NowPlaying.item.id}_audioPlayCount`);
                                 if (!lastTimeWatched) {
@@ -721,7 +721,7 @@
                     if (NowPlaying.currentTime + 5 >= NowPlaying.currentTrack.duration)
                         audioPlayer.setTime(NowPlaying.currentTrack.duration);
                     else
-                        audioPlayer.setTime(NowPlaying.currentTime + 5);
+                    audioPlayer.setTime(NowPlaying.currentTime + 5);
                 };
 
                 NowPlaying.backward = function () {
@@ -1118,18 +1118,29 @@
 
                 /**
                  * progress bar style
-                 * @param {*} value 
+                 * @param {Number} value 
                  */
                 NowPlaying.progressBarStyle = function (value) {
-                    const percentage = (value / NowPlaying.duration) * 100;
+                    const percentage = ((value / NowPlaying.duration) * 100) + 2;
+                    let thumpPercentage = ((value / NowPlaying.duration) * 100);
+                
                     if (percentage) {
-                        document.documentElement.style.setProperty(
-                            '--played-tracker-percentage',
-                            `${percentage}%`
-                        );
-                        console.log(document.documentElement.style.getPropertyValue('--value'));
+                        setCSSProperty('--played-tracker-percentage', `${percentage}%`);
+                        setCSSProperty('--played-tracker-thump-percentage', `${thumpPercentage}%`);
+                        setCSSProperty('--isPlaying', value < 0.5 ? 0 : 1);
+                    }
+                
+                    if (thumpPercentage > 99.99) {
+                        thumpPercentage -= 5;
+                        setCSSProperty('--played-tracker-thump-percentage', `${thumpPercentage}%`);
+                        setCSSProperty('--isPlaying', 0);
                     }
                 };
+                
+                function setCSSProperty(property, value) {
+                    document.documentElement.style.setProperty(property, value);
+                }
+                
             }
         ]);
 })(window.angular);

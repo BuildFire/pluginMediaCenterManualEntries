@@ -504,8 +504,9 @@
                         return deferred.reject(err);
                     }
                     else if(result && !result.data.openedItems){
-                        that.save(new MediaMetaData()).then((res) => {
-                            deferred.resolve(res);
+                        const data = new MediaMetaData();
+                        that.save(data).then((res) => {
+                            deferred.resolve(new MediaMetaData(res.data));
                         });
                     }
                     else {

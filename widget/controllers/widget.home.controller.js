@@ -1,8 +1,8 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetHomeCtrl', ['$scope', '$timeout', '$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location', 'MediaMetaDataDB',
-            function ($scope, $timeout, $window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location, MediaMetaDataDB) {
+        .controller('WidgetHomeCtrl', ['$scope', '$timeout', '$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location', 'MediaMetaDataDB','openedMediaItems',
+            function ($scope, $timeout, $window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location, MediaMetaDataDB, openedMediaItems) {
                 $rootScope.loadingGlobalPlaylist = true;
                 $rootScope.showFeed = true;
                 $rootScope.currentlyDownloading = [];
@@ -959,10 +959,9 @@
                 }
 
                 WidgetHome.loadMore = () => {
-                    // get the metadata for items
-                    MediaMetaData.get().then((metadata) => {
-                        WidgetHome.openedItems = metadata.openedItems;
-                    });
+
+                    WidgetHome.openedItems = openedMediaItems.get();
+                    
                     updateGetOptions();
                     const getRecords = () => {
                         if (WidgetHome.currentlyLoading || WidgetHome.noMore) return;
@@ -986,32 +985,9 @@
                                     limit: 1,
                                     recordCount: true,
                                 };
-                                // ! -------------- here the logic
-                                if (
-                                    item.data.audioUrl.trim() === '' &&
-                                    item.data.videoUrl.trim() === ''
-                                ) {
-                                    if (WidgetHome.openedItems.includes(item.id)) {
-                                        item.data.opened = true;
-                                    } else {
-                                        item.data.opened = false;
-                                    }
-                                } else {
-                                    if (
-                                        WidgetHome.openedItems.includes(
-                                            `${item.data.audioUrl}_${item.id}`
-                                        ) ||
-                                        WidgetHome.openedItems.includes(
-                                            `${item.data.videoUrl}_${item.id}`
-                                        )
-                                    ) {
-                                        item.data.opened = true;
-                                    } else {
-                                        item.data.opened = false;
-                                    }
-                                }
 
-                                // ! End -------------- here the logic
+                                item.data.opened = isOpened(item);
+                                
                                 buildfire.publicData.search(
                                     searchOptions,
                                     COLLECTIONS.MediaCount,
@@ -1077,6 +1053,17 @@
                         getCachedItems((err, res) => {});
                     }
                 }
+
+                // check if the item is opened
+                const isOpened = (item) => {
+                    return WidgetHome.openedItems.some(openedItem => {
+                        const itemId = item.id;
+                        const audioUrlItemId = `${item.data.audioUrl}_${itemId}`;
+                        const videoUrlItemId = `${item.data.videoUrl}_${itemId}`;
+                        return [itemId, audioUrlItemId, videoUrlItemId].includes(openedItem);
+                    });
+                };
+                
                 //==============================================================================================================
 
                 WidgetHome.openLinks = function (actionItems) {

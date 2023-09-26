@@ -69,11 +69,11 @@
                         src="assets/css/icons/ic_fast_rewind.svg" alt=""></span>
                 <span ng-if="autoPlay" class="btn btn-icon" ng-click="NowPlaying.prev()"><i style="font-size: 18px; color: #D7D7D8;" class="glyphicon glyphicon-step-backward" role="button"></i></span>
                 <button class="btn btn-icon btn-lg btn-primary">
-                    <span ng-if="!NowPlaying.playing" class="icon icon-main whiteTheme"
+                    <span ng-if="!NowPlaying.playing" class="icon icon-main whiteTheme play-pause-icon"
                         ng-click="NowPlaying.playTrack()">
                         <img src="assets/css/icons/ic_play2.svg" alt="">
                     </span>
-                    <span ng-if="NowPlaying.playing" class="icon icon-main whiteTheme"
+                    <span ng-if="NowPlaying.playing" class="icon icon-main whiteTheme play-pause-icon"
                         ng-click="NowPlaying.pauseTrack()">
                         <img src="assets/css/icons/ic_pause_2.svg" alt="">
                     </span>

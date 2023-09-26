@@ -20,7 +20,7 @@
                 WidgetMedia.oldVideoStyle = { position: "", width: "", height: "", marginTop: "" };
                 WidgetMedia.oldiFrameStyle = { height: "" };
                 WidgetMedia.oldBackgroundStyle = { height: "", color: "" };
-
+                
                 var Android = /(android)/i.test(navigator.userAgent);
                 if (!buildfire.isWeb() && Android) {
                     document.onfullscreenchange = function (event) {
@@ -274,7 +274,7 @@
                                         WidgetMedia.isCounted = true;
                                         sendAnalytics(WidgetMedia);
                                     })
-                                    openedMediaHandler.add(WidgetMedia.item, 'Video', openedMediaItems, MediaMetaData);
+                                    openedMediaHandler.add(WidgetMedia.item, 'Video', openedMediaItems, MediaMetaData, $rootScope.user.userId);
                                 }
                             })
                         } else if(!WidgetMedia.isCounted){
@@ -511,7 +511,7 @@
                                         WidgetMedia.isCounted = true;
                                         sendArticleAnalytics(WidgetMedia);
                                     })
-                                    openedMediaHandler.add(WidgetMedia.item, 'Article', openedMediaItems, MediaMetaData);
+                                    openedMediaHandler.add(WidgetMedia.item, 'Article', openedMediaItems, MediaMetaData, $rootScope.user.userId);
                                 }
 
                             })
