@@ -71,7 +71,7 @@
                             </p>
                             <div class="date-container">
                                 <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}} </span>
-                                <img ng-if="item.data.opened && WidgetHome.media.data.content.showViewCount" class="done-icon" src="assets/css/icons/ic_done_mark.svg" alt="done-mark">
+                                <img ng-if="item.data.opened && WidgetHome.media.data.content.indicatePlayedItems" class="done-icon" src="assets/css/icons/ic_done_mark.svg" alt="done-mark">
                             </div>
                             <!-- <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" role="button" class="loader"></div> -->
 
