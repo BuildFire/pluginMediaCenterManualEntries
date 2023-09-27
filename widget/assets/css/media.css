@@ -262,6 +262,13 @@ h5{
     height: 64px;
 }
 
+.holder.now-playing .media-player-btns .active{
+	fill: var(--bf-theme-primary);
+}
+.holder.now-playing .media-player-btns .not-active{
+	fill: #FFF;
+}
+
 
 .btn.btn-icon {
     background-color: transparent;

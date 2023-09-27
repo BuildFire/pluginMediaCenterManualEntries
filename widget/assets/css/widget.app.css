@@ -990,6 +990,10 @@ img.done-icon {
 	height: 100%;
 }
 
+.list-item-media .list-media-holder img{
+	width: 100%;
+}
+
 .first-layout .li-actions-item i,
 .fourth-layout .li-actions-item i,
 .third-layout .list-item-media .li-actions-item {
