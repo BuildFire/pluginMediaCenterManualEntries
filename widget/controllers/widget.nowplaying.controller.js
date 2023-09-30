@@ -438,7 +438,7 @@
                 function initAudio(lastPosition) {
                     isAudioEnded = false;
                     NowPlaying.currentTime = lastPosition;
-                    NowPlaying.currentTrack = new Track(media.data, lastPosition);
+                    NowPlaying.currentTrack = new Track({...media.data, id: media.id}, lastPosition);
                     NowPlaying.currentTrack.backgroundImage = media.data.image ? media.data.image : media.data.topImage;
 
                     NowPlaying.currentTrack.image = media.data.topImage;
@@ -469,7 +469,20 @@
                             }
                         }, 0);
                     });
+                    
+                    buildfire.services.media.audioPlayer.isPaused((err, isPaused) => {
+                        if (err) return console.err(err);
+                      
+                        if (isPaused) {
+                            NowPlaying.playing = false
+                        } else {
+                            NowPlaying.playing = true;
+                        }
+                      });                    
                     audioPlayer.getCurrentTrack((track) => {
+                        if(track && (track.url.split("?")[0] === NowPlaying.currentTrack.url.split("?")[0])){
+                            NowPlaying.isAudioPlayerPlayingAnotherSong = false;
+                        }
                         if (track && track.title == NowPlaying.currentTrack.title && track.url == NowPlaying.currentTrack.url) {
                             NowPlaying.isAudioPlayerPlayingAnotherSong = false;
                         } else if (!track) {
@@ -898,6 +911,12 @@
                     this.artist = track.artists;
                     this.startAt = 0; // where to begin playing
                     this.isAudioPlayed = track.isAudioPlayed ? track.isAudioPlayed : false;
+                    this.deepLinkData = {
+                        pluginInstanceId: Buildfire.context.instanceId,
+                        payload:{
+                            id: track.id
+                        }
+                    }
                 }
 
                 /**
@@ -1121,26 +1140,12 @@
                  * @param {Number} value 
                  */
                 NowPlaying.progressBarStyle = function (value) {
-                    const percentage = ((value / NowPlaying.duration) * 100) + 2;
-                    let thumpPercentage = ((value / NowPlaying.duration) * 100);
+                    const percentage = ((value / NowPlaying.duration) * 100) ;
                 
                     if (percentage) {
-                        setCSSProperty('--played-tracker-percentage', `${percentage}%`);
-                        setCSSProperty('--played-tracker-thump-percentage', `${thumpPercentage}%`);
-                        setCSSProperty('--isPlaying', value < 0.5 ? 0 : 1);
-                    }
-                
-                    if (thumpPercentage > 99.99) {
-                        thumpPercentage -= 5;
-                        setCSSProperty('--played-tracker-thump-percentage', `${thumpPercentage}%`);
-                        setCSSProperty('--isPlaying', 0);
+                        document.documentElement.style.setProperty('--played-tracker-percentage', `${percentage}%`);
                     }
                 };
-                
-                function setCSSProperty(property, value) {
-                    document.documentElement.style.setProperty(property, value);
-                }
-                
             }
         ]);
 })(window.angular);
