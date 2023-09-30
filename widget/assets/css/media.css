@@ -1,7 +1,5 @@
 :root {
     --played-tracker-percentage: 0%;
-    --played-tracker-thump-percentage: 0%;
-    --isPlaying: 0;
 }
 
 /* Global Styles ////////////////////////////////////////////////////////////////////////////// */
@@ -206,10 +204,6 @@ h5{
 }
 
 .holder.now-playing .media-holder .media-inner, .more-info .media-holder .media-inner {
-    max-width: 280px;
-    min-width: 280px;
-    max-height: 280px;
-    min-height: 280px;
     display: table;
     vertical-align: middle;
 }
@@ -328,6 +322,7 @@ h5{
 	height: 32px;
     width: 100%;
     background: unset;
+    position: relative;
 }
 
 .audio-plyer input[type=range]:focus {
@@ -352,9 +347,6 @@ h5{
 	cursor: pointer;
     -webkit-appearance: none;
     background: var(--bf-theme-primary);
-    position: absolute;
-    left: var(--played-tracker-thump-percentage);
-	transition: left calc(.3s * var(--isPlaying)) ease;
 }
 
 .audio-plyer input[type=range]:focus::-webkit-slider-runnable-track {
@@ -379,9 +371,6 @@ h5{
 	-webkit-appearance: none;
 	margin-top: -5px;
 	border-radius: 10px;
-    position: absolute;
-    left: var(--played-tracker-thump-percentage);
-	transition: left calc(.3s * var(--isPlaying)) ease;
 }
 
 .audio-plyer input[type=range]::-ms-track {

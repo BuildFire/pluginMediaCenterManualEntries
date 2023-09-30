@@ -60,7 +60,7 @@
                             <a class="text-primary">{{item.data.title}}</a>
                         </p>
                         <div class="action" style="display: flex; flex-direction: row;">
-                            <div class="li-actions-item">
+                            <div class="li-actions-item" style="align-items: center;">
                                 <svg data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload "  
                                     xmlns="http://www.w3.org/2000/svg" width="15" height="16" viewBox="0 0 15 16" fill="none">
                                     <path d="M7.49996 0.916992C3.59704 0.916992 0.416626 4.09741 0.416626 8.00033C0.416626 11.9032 3.59704 15.0837 7.49996 15.0837C11.4029 15.0837 14.5833 11.9032 14.5833 8.00033C14.5833 4.09741 11.4029 0.916992 7.49996 0.916992ZM6.79163 6.58366V3.75033H8.20829V6.58366H10.3333L7.49996 9.41699L4.66663 6.58366H6.79163ZM11.0416 11.542H3.95829V10.1253H11.0416V11.542Z" 
@@ -93,9 +93,14 @@
                     </p>
                     <div class="date-container">
                         <span class="list-item-date" data-ng-if="item.data.mediaDate"
-                            style="font-size:11px; font-style:italic; margin-top:-4px;">{{item.data.mediaDate | jsDate |
+                            style="font-size:11px; font-style:italic;">{{item.data.mediaDate | jsDate |
                             date:"MMMM dd, yyyy"}}</span>
-                        <img ng-if="item.data.opened && WidgetHome.media.data.content.indicatePlayedItems" class="done-icon" src="assets/css/icons/ic_done_mark.svg" alt="done-mark">
+                            <svg ng-if="item.data.opened && WidgetHome.media.data.content.indicatePlayedItems" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <g clip-path="url(#clip0_1115_4307)">
+                                    <path d="M0 0H18V18H0V0Z" fill="transparent" fill-opacity="0.6"/>
+                                    <path d="M6.75005 12.1502L3.60005 9.00019L2.55005 10.0502L6.75005 14.2502L15.75 5.2502L14.7 4.2002L6.75005 12.1502Z" fill="var(--bf-theme-success)"/>
+                                </g>
+                            </svg>
                     </div>
                 </div>
             </div>

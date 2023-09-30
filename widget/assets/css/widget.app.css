@@ -1628,7 +1628,15 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
 }
 
 .date-container {
-	display: inline;
+	display: flex;
+    margin-top: 6px;
+    align-items: flex-end;
+    gap: 8px;
+	min-height: 20px;
+}
+
+.list-layout-3 .date-container{
+	align-items: flex-start;
 }
 
 .playList-icon{

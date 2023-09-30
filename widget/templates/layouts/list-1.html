@@ -50,7 +50,7 @@
                                     <i id="drawericon" style="right: 0;" class="glyphicon glyphicon-option-horizontal" ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
                                 </div>
                                 <img ng-if="item.data.topImage" load-image="16x9" crop-width="240" crop-height="135" crop-type="crop" data-final-src="{{item.data.topImage | resizeImage : 240:135}}">
-                                <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png" style="max-width:99.5%">
+                                <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png" style="max-width:100%">
                             </div>
                         </div>
                         <div class="list-item-copy text-left">
@@ -71,7 +71,12 @@
                             </p>
                             <div class="date-container">
                                 <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate  | jsDate | date:"MMMM dd, yyyy"}} </span>
-                                <img ng-if="item.data.opened && WidgetHome.media.data.content.indicatePlayedItems" class="done-icon" src="assets/css/icons/ic_done_mark.svg" alt="done-mark">
+                                <svg ng-if="item.data.opened && WidgetHome.media.data.content.indicatePlayedItems" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                    <g clip-path="url(#clip0_1115_4307)">
+                                        <path d="M0 0H18V18H0V0Z" fill="transparent" fill-opacity="0.6"/>
+                                        <path d="M6.75005 12.1502L3.60005 9.00019L2.55005 10.0502L6.75005 14.2502L15.75 5.2502L14.7 4.2002L6.75005 12.1502Z" fill="var(--bf-theme-success)"/>
+                                    </g>
+                                </svg>
                             </div>
                             <!-- <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" role="button" class="loader"></div> -->
 
