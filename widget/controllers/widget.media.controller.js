@@ -407,7 +407,7 @@
                                 globalPlaylist: false,
                                 dateIndexed: true,
                                 dateCreatedIndexed: true,
-                                showViewCount: false
+                                showViewCount: false,
                             },
                             design: {
                                 listLayout: "list-1",
@@ -522,8 +522,8 @@
                                     localStorage.setItem(`${WidgetMedia.item.id}_articleOpenCount`, new Date().getTime());
                                     sendArticleAnalytics(WidgetMedia);
                                 }
+                                openedMediaHandler.add(WidgetMedia.item, 'Article', openedMediaItems, null);
                             }
-                            openedMediaHandler.add(WidgetMedia.item, 'Article', openedMediaItems, null);
                         }
                     })
 

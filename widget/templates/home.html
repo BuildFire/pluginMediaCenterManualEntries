@@ -1,4 +1,4 @@
-<div id="home">
+<div id="home" ng-init="showNavbar()">
     <div ng-if="showOfflineBox" class="offline-box fadeIn" ng-style="backgroundColor">
         <div>
           <!-- <div>
@@ -18,4 +18,4 @@
         ng-include="'templates/layouts/' + WidgetHome.media.data.design.listLayout+ '.html'"
     ></div>
 </div>
-<div id="emptyState" class="bitmap" style="display: none"></div>
+<div ng-init="showNavbar()" id="emptyState" class="bitmap" style="display: none"></div>

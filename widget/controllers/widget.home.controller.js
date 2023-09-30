@@ -52,7 +52,7 @@
                             dateIndexed: true,
                             dateCreatedIndexed: true,
                             enableFiltering: false,
-                            allowOfflineDownload: true
+                            allowOfflineDownload: true,
                         },
                         design: {
                             listLayout: "list-1",
@@ -84,7 +84,6 @@
                         path: "/data/mediaCenterManual",
                         fileName: "downloadedMedia"
                     });
-
                 const getCurrentUser = (callback) => {
                     Buildfire.auth.getCurrentUser((err, user) => {
                         $rootScope.user = user;
@@ -186,6 +185,7 @@
                             $rootScope.showGlobalAddAllToPlaylistButton = WidgetHome.media.data.content.showGlobalAddAllToPlaylistButton;
                             $rootScope.allowOfflineDownload = WidgetHome.media.data.content.allowOfflineDownload;
                             $rootScope.enableFiltering = WidgetHome.media.data.content.enableFiltering;
+                            $rootScope.indicatePlayedItems = WidgetHome.media.data.content.indicatePlayedItems;
 
                             if (isLauncher && WidgetHome.media.data.content.enableFiltering) {
                                 slideElement.classList.add("launcher-with-filter");
@@ -815,6 +815,7 @@
                                                     item.data.hasDownloadedAudio = true;
                                                 }
                                             }
+                                            item.data.opened = isOpened(item);
                                             return item;
                                         }) : null;
 
@@ -864,6 +865,7 @@
                         // });
                         if (!cachedItems) cachedItems = [];
                         WidgetHome.items = cachedItems;
+                        WidgetHome.items.forEach((item) => item.data.opened = isOpened(item));
                         DownloadedMedia.get((err, res) => {
                             let downloadedIDS = [];
                             if (err) {

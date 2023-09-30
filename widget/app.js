@@ -442,6 +442,20 @@
                 $rootScope.$emit('deviceLocked', {});
                 //callPlayer('ytPlayer', 'pauseVideo');
             });
+
+            $rootScope.hideNavbar = function () {
+                buildfire.appearance.navbar.hide(null, (err) => {
+                    if (err) return console.error(err);
+                    console.log("Navbar is hidden");
+                });
+            };
+
+            $rootScope.showNavbar= function () {
+                buildfire.appearance.navbar.show(null, (err) => {
+                if (err) return console.error(err);
+                console.log("Navbar is visible");
+                });
+            }
         }]);
 
 })(window.angular, window.buildfire);
