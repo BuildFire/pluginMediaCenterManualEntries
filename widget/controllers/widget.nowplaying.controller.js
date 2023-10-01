@@ -1110,7 +1110,7 @@
                 NowPlaying.openPlaybackDrawer = function () {
                     buildfire.components.drawer.open(
                         {
-                            content: '<b>Playback Speed</b>',
+                            content: `<b class="ellipsis" style="display:block;">${getString("playlist.playbackSpeed") }</b>`,
                             enableFilter: false,
                             listItems: playbackSpeedOptions,
                         },
