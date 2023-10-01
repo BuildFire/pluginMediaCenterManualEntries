@@ -451,7 +451,11 @@
                         $scope.$digest();
                     }
                     audioPlayer.settings.get(function (err, setting) {
-                        setting.autoJumpToLastPosition = NowPlaying.autoJumpToLastPosition;
+                        if(isSettingsChanged(setting)) {
+                            setting.autoJumpToLastPosition = NowPlaying.autoJumpToLastPosition;
+                        }else{
+                            NowPlaying.autoJumpToLastPosition = setting.autoJumpToLastPosition;
+                        }
                         // todo : until Mahmoud done 
                         setting.playbackRate = 1;
                         // todo End -----------------
@@ -858,10 +862,13 @@
                         }
                     });
                 };
-                NowPlaying.setSettings = function (settings) {
+                NowPlaying.setSettings = function (settings, cpSync = false) {
                     if (!settings.autoPlayNext && NowPlaying.forceAutoPlay && !NowPlaying.isItLast) {
                         settings.autoJumpToLastPosition = true;
                         settings.autoPlayNext = true;
+                    }
+                    if(!cpSync){
+                        NowPlaying.settings.enableUserPreferences = true;
                     }
                     var newSettings = new AudioSettings(settings);
                     audioPlayer.settings.set(newSettings);
@@ -936,6 +943,7 @@
                     this.shufflePlaylist = settings.shufflePlaylist;// shuffle the playlist
                     this.isPlayingCurrentTrack = settings.isPlayingCurrentTrack;// tells whether current track is playing or not
                     this.playbackRate = settings.playbackRate;// Track playback speed rate
+                    this.enableUserPreferences = settings.enableUserPreferences || false;
                 }
 
                 var GlobalPlaylist = new AppDB();
@@ -990,9 +998,11 @@
                                 $rootScope.showGlobalAddAllToPlaylistButton = event.data.content.showGlobalAddAllToPlaylistButton;
                                 $rootScope.allowOfflineDownload = event.data.content.allowOfflineDownload;
                                 $rootScope.autoJumpToLastPosition = event.data.content.startWithAutoJumpByDefault;
-                                NowPlaying.autoJumpToLastPosition = $rootScope.autoJumpToLastPosition;
-                                NowPlaying.settings.autoJumpToLastPosition = $rootScope.autoJumpToLastPosition;
-                                NowPlaying.setSettings(NowPlaying.settings)
+                                if(isSettingsChanged(NowPlaying.settings)){
+                                    NowPlaying.autoJumpToLastPosition = $rootScope.autoJumpToLastPosition;
+                                    NowPlaying.settings.autoJumpToLastPosition = $rootScope.autoJumpToLastPosition;
+                                }
+                                NowPlaying.setSettings(NowPlaying.settings, true)
                                 // Update Data in media contoller
                                 $rootScope.refreshItems();
                                 if (!$scope.$$phase) {
@@ -1146,6 +1156,33 @@
                         document.documentElement.style.setProperty('--played-tracker-percentage', `${percentage}%`);
                     }
                 };
+
+                const isSettingsChanged = (settings) =>{
+                    let isInitialSettings = false;
+                    // Define the initial values
+                    const initialSettings = {
+                        autoPlayNext: false,
+                        loopPlaylist: false,
+                        autoJumpToLastPosition: false,
+                        shufflePlaylist: false,
+                        volume: 1,
+                        playbackRate: 1,
+                    };
+                
+                    // Compare each key in the settings object with the initialSettings
+                    for (const key in settings) {
+                        if ((settings.hasOwnProperty(key) && settings[key] !== initialSettings[key])) {
+                            isInitialSettings = true;
+                        }
+                    }
+
+                    if(isInitialSettings && !settings.enableUserPreferences){
+                        return true;
+                    }else{
+                        return false;
+                    }
+        
+                }
             }
         ]);
 })(window.angular);
