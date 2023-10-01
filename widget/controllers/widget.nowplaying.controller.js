@@ -130,7 +130,7 @@
 
                 function convertDropbox(obj) {
                     if (obj.includes("www.dropbox") || obj.includes("dl.dropbox.com")) {
-                        obj = obj.replace("www.dropbox", "dl.dropbox").replace("dl.dropbox.com", "dl.dropboxusercontent.com").split("?dl=")[0];
+                        obj = obj.replace("www.dropbox", "dl.dropbox").replace("dl.dropbox.com", "dl.dropboxusercontent.com");
                     }
                     return obj;
                 }
@@ -164,11 +164,11 @@
                         }).join('');
 
                         var pluginSongs = result.filter(el => el.data.audioUrl && el.data.audioUrl.length > 0);
-                        var pluginListSongs = pluginSongs.map(el => { 
-                            el.data.audioUrl = convertDropbox(el.data.audioUrl); 
-                            el.data.topImage = convertDropbox(el.data.topImage); 
-                            el.data.image = convertDropbox(el.data.image); 
-                            return el.data.audioUrl; 
+                        var pluginListSongs = pluginSongs.map(el => {
+                            el.data.audioUrl = convertDropbox(el.data.audioUrl);
+                            el.data.topImage = convertDropbox(el.data.topImage);
+                            el.data.image = convertDropbox(el.data.image);
+                            return el.data.audioUrl;
                         }).join('');
                         var pluginListTitles = pluginSongs.map(el => { return el.data.title; }).join('');
 
@@ -533,11 +533,11 @@
 
                     if($rootScope.indexingUpdateDoneV2){
                         filter = {
-                            "_buildfire.index.array1.string1": "mediaCount-" + mediaId + "-" + userId + "-AUDIO-true" 
+                            "_buildfire.index.array1.string1": "mediaCount-" + mediaId + "-" + userId + "-AUDIO-true"
                         };
                     }else{
                         filter = {
-                            "_buildfire.index.text": mediaId + "-" + userId + "-AUDIO-true" 
+                            "_buildfire.index.text": mediaId + "-" + userId + "-AUDIO-true"
                         };
                     }
 
@@ -599,7 +599,7 @@
                                     data._buildfire.index.text = NowPlaying.item.id + "-" + Buildfire.context.deviceId + "-AUDIO-true"
                                 }
                             }
-                            
+
                             if ($rootScope.user || Buildfire.context.deviceId) {
                                 buildfire.publicData.insert(data, COLLECTIONS.MediaCount, false, function (err, res) {
                                     NowPlaying.isCounted = true;
@@ -893,7 +893,7 @@
                     toggle ? track.swiped = true : track.swiped = false;
                 };
 
-                // this method to make the audio url replaying multi times 
+                // this method to make the audio url replaying multi times
                 function validateURL(url) {
                     if (url.includes('?')) return (url + '&' + Math.floor(Math.random() * 1000))
                     return (url + '?' + Math.floor(Math.random() * 1000))
