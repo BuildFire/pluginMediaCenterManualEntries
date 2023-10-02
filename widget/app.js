@@ -343,6 +343,7 @@
                             }
                         });
                         $("#showFeedBtn").click();
+                        $rootScope.showNavbar();
                         $rootScope.showGlobalPlaylistButtons = true;
                         if (!$rootScope.$$phase) $rootScope.$digest();
                     } else {

@@ -297,6 +297,7 @@
                             NowPlaying.currentTrack = e.data.track;
                             NowPlaying.playing = true;
                             NowPlaying.paused = false;
+                            setPlaybackSpeed(NowPlaying.settings.playbackRate)
                             audioPlayer.getPlaylist(function (err, data) {
                                 first = false;
                                 NowPlaying.keepPosition = e.data.track.lastPosition;
@@ -456,15 +457,14 @@
                         }else{
                             NowPlaying.autoJumpToLastPosition = setting.autoJumpToLastPosition;
                         }
-                        // todo : until Mahmoud done 
-                        setting.playbackRate = 1;
-                        // todo End -----------------
+
                         if (!setting.autoJumpToLastPosition) {
                             NowPlaying.currentTrack.startAt = 0;
                         }
                         NowPlaying.currentTime = 0;
                         NowPlaying.settings = setting;
                         NowPlaying.volume = setting.volume;
+                        setPlaybackSpeed(setting.playbackRate)
                         NowPlaying.forceAutoPlayer();
                         audioPlayer.settings.set(NowPlaying.settings);
                         setTimeout(() => {
@@ -1133,11 +1133,10 @@
                 };
 
                 const setPlaybackSpeed = function (value) {
-                    if (NowPlaying.settings && value) {
+                    if (value) {
                         NowPlaying.settings.playbackRate = value;
                         audioPlayer.settings.set(NowPlaying.settings);
-                        // todo : uncomment this line after Mahmoud work done
-                        // audioPlayer.setPlaybackRate(value);
+                        audioPlayer.setPlaybackRate(value);
                         $scope.$digest();
                     }
                 };

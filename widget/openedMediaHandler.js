@@ -5,7 +5,7 @@ const openedMediaHandler = {
         MediaMetaDataDB.get()
             .then((result) => {
                 let uniqueMergedItems = [];
-                localOpenedMediaItems.get((error, response) => {
+                const localItems = localOpenedMediaItems.get((error, response) => {
                     const mergedItems = [...response, ...result.openedItems];
                     uniqueMergedItems = [...new Set(mergedItems)];
                     localOpenedMediaItems.save(uniqueMergedItems);
