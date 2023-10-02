@@ -541,23 +541,68 @@
         }])
         .factory("openedMediaItems", ['Buildfire', 'localStorageKeys', function (Buildfire, localStorageKeys) {
             const openedMediaItems = {
-                get: function () {
-                    let result;
-                    Buildfire.localStorage.getItem(localStorageKeys.openedMediaItems,(error, value) => {
-                        if (value) {
-                            result = value;
+                get: function (callback) {
+                    const currentInstance = Buildfire.context.instanceId;
+                    Buildfire.localStorage.getItem(
+                        localStorageKeys.openedMediaItems,
+                        (error, value) => {
+                            if (error) return callback(error, null);
+                            if (!value) {
+                                this.save([]);
+                                callback(null, []);
+                            } else {
+                                try {
+                                    value = JSON.parse(value);
+                                    if (value && value.hasOwnProperty(currentInstance)) {
+                                        callback(null, value[currentInstance].openedMediaItems);
+                                    } else {
+                                        this.save([]);
+                                        callback(null, []);
+                                    }
+                                } catch (error) {
+                                    callback(error, null);
+                                }
+                            }
+                        }
+                    );
+                },
+
+                getAll: function (callback) {
+                    Buildfire.localStorage.getItem(
+                        localStorageKeys.openedMediaItems,
+                        (error, value) => {
+                            if (error) return callback(error, null);
+
+                            value = JSON.parse(value);
+                            callback(null, value);
+                        }
+                    );
+                },
+
+                save: function (data) {
+                    const currentInstance = Buildfire.context.instanceId;
+                    const formatObject = {
+                        [currentInstance]: {
+                            openedMediaItems: data,
+                        },
+                    };
+                    if (!data) return;
+
+                    this.getAll((error, response) => {
+                        if (error) return console.error(error);
+                        if (response) {
+                            Buildfire.localStorage.setItem(localStorageKeys.openedMediaItems, {
+                                ...response,
+                                ...formatObject,
+                            });
                         } else {
-                            result = this.save([]);
+                            Buildfire.localStorage.setItem(
+                                localStorageKeys.openedMediaItems,
+                                formatObject
+                            );
                         }
                     });
-                    return JSON.parse(result);
                 },
-        
-                save: function (data) {
-                    data = JSON.stringify(data);
-                    Buildfire.localStorage.setItem(localStorageKeys.openedMediaItems, data);
-                    return data;
-                }
             };
         
             return openedMediaItems;

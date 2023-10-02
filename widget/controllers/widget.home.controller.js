@@ -11,6 +11,7 @@
                 WidgetHome.deepLink = false;
                 $rootScope.loadingData = true;
                 WidgetHome.isWeb = Buildfire.getContext().device.platform == 'web';
+                WidgetHome.openedItems = [];
                 // $rootScope.online = $window.navigator.onLine;
                 $rootScope.online = $window.navigator.onLine;
                 WidgetHome.online = $rootScope.online;
@@ -962,8 +963,7 @@
 
                 WidgetHome.loadMore = () => {
 
-                    WidgetHome.openedItems = openedMediaItems.get();
-                    
+                    localOpenedItems();
                     updateGetOptions();
                     const getRecords = () => {
                         if (WidgetHome.currentlyLoading || WidgetHome.noMore) return;
@@ -1637,6 +1637,14 @@
                 var onRefresh = Buildfire.datastore.onRefresh(function () {
                     Location.goToHome();
                 });
+
+                // get opened items
+                const localOpenedItems = ()=>{
+                    openedMediaItems.get((error, response)=>{
+                        if (error)  WidgetHome.openedItems = [];
+                        WidgetHome.openedItems = response;
+                    });
+                }
 
             }]);
 })(window.angular);

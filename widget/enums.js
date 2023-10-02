@@ -34,6 +34,6 @@
             HOME: "HOME"
         })
         .constant('localStorageKeys', {
-            openedMediaItems: "openedMediaItems",
+            openedMediaItems: "plugin_mediaCenterManual_config",
         });
 })(window.angular, undefined);

@@ -3,14 +3,13 @@
 const openedMediaHandler = {
     sync(localOpenedMediaItems, MediaMetaDataDB) {
         MediaMetaDataDB.get()
-            .then((response) => {
-                const localItems = localOpenedMediaItems.get();
-    
-                const mergedItems = [...localItems, ...response.openedItems];
-    
-                const uniqueMergedItems = [...new Set(mergedItems)];
-    
-                localOpenedMediaItems.save(uniqueMergedItems);
+            .then((result) => {
+                let uniqueMergedItems = [];
+                localOpenedMediaItems.get((error, response) => {
+                    const mergedItems = [...response, ...result.openedItems];
+                    uniqueMergedItems = [...new Set(mergedItems)];
+                    localOpenedMediaItems.save(uniqueMergedItems);
+                });
                 return uniqueMergedItems;
             })
             .then((uniqueMergedItems) => {
@@ -20,7 +19,6 @@ const openedMediaHandler = {
                 console.error('Error during sync:', error);
             });
     },
-    
 
     _syncToMediaMetaData(localOpenedMediaItems, MediaMetaDataDB) {
         const payload = {
@@ -45,24 +43,27 @@ const openedMediaHandler = {
             return;
         }
 
-        const localMediaItems = localOpenedMediaItems.get();
-        localMediaItems.push(key);
-        localOpenedMediaItems.save(localMediaItems);
+        localOpenedMediaItems.get((error, response) => {
+            if (error) return console.error(error);
 
-        if (MediaMetaDataDB) {
-            MediaMetaDataDB.get()
-                .then((response) => {
-                    const payload = {
-                        $set: {
-                            openedItems: [...response.openedItems, key],
-                            lastUpdatedBy: userId
-                        },
-                    };
-                    return MediaMetaDataDB.save(payload);
-                })
-                .catch((error) => {
-                    console.error('Error while adding to MediaMetaDataDB:', error);
-                });
-        }
+            response = [...response, key];
+            localOpenedMediaItems.save(response);
+
+            if (MediaMetaDataDB) {
+                MediaMetaDataDB.get()
+                    .then((response) => {
+                        const payload = {
+                            $set: {
+                                openedItems: [...response.openedItems, key],
+                                lastUpdatedBy: userId,
+                            },
+                        };
+                        return MediaMetaDataDB.save(payload);
+                    })
+                    .catch((error) => {
+                        console.error('Error while adding to MediaMetaDataDB:', error);
+                    });
+            }
+        });
     },
 };
