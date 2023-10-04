@@ -1646,12 +1646,15 @@
                 });
 
                 // get opened items
-                const localOpenedItems = ()=>{
-                    openedMediaItems.get((error, response)=>{
-                        if (error)  WidgetHome.openedItems = [];
-                        WidgetHome.openedItems = response;
+                const localOpenedItems = () => {
+                    getCurrentUser(() => {
+                        if (!$rootScope.user) return (WidgetHome.openedItems = []);
+                        openedMediaItems.get((error, response) => {
+                            if (error) WidgetHome.openedItems = [];
+                            WidgetHome.openedItems = response;
+                        });
                     });
-                }
+                };
 
             }]);
 })(window.angular);
