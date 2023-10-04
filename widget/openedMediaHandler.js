@@ -4,8 +4,14 @@ const openedMediaHandler = {
     sync(localOpenedMediaItems, MediaMetaDataDB) {
         return MediaMetaDataDB.get()
             .then((result) => {                
-                localOpenedMediaItems.save(result.openedItems);
-                return result.openedItems;
+                let uniqueMergedItems = [];
+                localOpenedMediaItems.get((error, response) => {
+                    if(error) response = [];
+                    const mergedItems = [...response, ...result.openedItems];
+                    uniqueMergedItems = [...new Set(mergedItems)];
+                    localOpenedMediaItems.save(uniqueMergedItems);
+                });
+                return uniqueMergedItems;
             })
             .then((uniqueMergedItems) => {
                 this._syncToMediaMetaData(uniqueMergedItems, MediaMetaDataDB);
