@@ -544,7 +544,7 @@
                 get: function (callback) {
                     const currentInstance = Buildfire.context.instanceId;
                     Buildfire.localStorage.getItem(
-                        localStorageKeys.openedMediaItems,
+                        localStorageKeys.PLUGIN_MEDIA_CENTER_MANUAL_CONFIG,
                         (error, value) => {
                             if (error) return callback(error, null);
                             if (!value) {
@@ -569,7 +569,7 @@
 
                 getAll: function (callback) {
                     Buildfire.localStorage.getItem(
-                        localStorageKeys.openedMediaItems,
+                        localStorageKeys.PLUGIN_MEDIA_CENTER_MANUAL_CONFIG,
                         (error, value) => {
                             if (error) return callback(error, null);
 
@@ -591,13 +591,13 @@
                     this.getAll((error, response) => {
                         if (error) return console.error(error);
                         if (response) {
-                            Buildfire.localStorage.setItem(localStorageKeys.openedMediaItems, {
+                            Buildfire.localStorage.setItem(localStorageKeys.PLUGIN_MEDIA_CENTER_MANUAL_CONFIG, {
                                 ...response,
                                 ...formatObject,
                             });
                         } else {
                             Buildfire.localStorage.setItem(
-                                localStorageKeys.openedMediaItems,
+                                localStorageKeys.PLUGIN_MEDIA_CENTER_MANUAL_CONFIG,
                                 formatObject
                             );
                         }

@@ -611,7 +611,6 @@
                                     localStorage.setItem(`${NowPlaying.item.id}_audioPlayCount`, new Date().getTime());
                                     sendAnalytics(NowPlaying);
                                 }
-                                openedMediaHandler.add(NowPlaying.item, 'Audio', openedMediaItems, null);
                             }
                         }
                     }

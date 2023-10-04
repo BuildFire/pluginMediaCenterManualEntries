@@ -25,7 +25,6 @@ const openedMediaHandler = {
     },
 
     add(item, mediaType, localOpenedMediaItems, MediaMetaDataDB, userId) {
-        if (!userId) return;
         let key = '';
 
         if (mediaType === 'Article') {
@@ -45,21 +44,19 @@ const openedMediaHandler = {
             response = [...response, key];
             localOpenedMediaItems.save(response);
 
-            if (MediaMetaDataDB) {
-                MediaMetaDataDB.get()
-                    .then((response) => {
-                        const payload = {
-                            $set: {
-                                openedItems: [...response.openedItems, key],
-                                lastUpdatedBy: userId,
-                            },
-                        };
-                        return MediaMetaDataDB.save(payload);
-                    })
-                    .catch((error) => {
-                        console.error('Error while adding to MediaMetaDataDB:', error);
-                    });
-            }
+            MediaMetaDataDB.get()
+                .then((response) => {
+                    const payload = {
+                        $set: {
+                            openedItems: [...response.openedItems, key],
+                            lastUpdatedBy: userId,
+                        },
+                    };
+                    return MediaMetaDataDB.save(payload);
+                })
+                .catch((error) => {
+                    console.error('Error while adding to MediaMetaDataDB:', error);
+                });
         });
     },
 };

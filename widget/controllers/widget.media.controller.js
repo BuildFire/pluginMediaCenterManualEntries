@@ -283,7 +283,6 @@
                                 localStorage.setItem(`${WidgetMedia.item.id}_videoPlayCount`, new Date().getTime());
                                 sendAnalytics(WidgetMedia);
                             }
-                            openedMediaHandler.add(WidgetMedia.item, 'Video', openedMediaItems, null);
                         }
                         if (!WidgetMedia.isContinuesCounted) {
                             sendContinuesAnalytics(WidgetMedia);
@@ -524,7 +523,6 @@
                                     localStorage.setItem(`${WidgetMedia.item.id}_articleOpenCount`, new Date().getTime());
                                     sendArticleAnalytics(WidgetMedia);
                                 }
-                                openedMediaHandler.add(WidgetMedia.item, 'Article', openedMediaItems, null);
                             }
                         }
                     })
