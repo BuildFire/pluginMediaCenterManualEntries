@@ -54,6 +54,7 @@
                             dateCreatedIndexed: true,
                             enableFiltering: false,
                             allowOfflineDownload: true,
+                            indicatePlayedItems: false,
                         },
                         design: {
                             listLayout: "list-1",

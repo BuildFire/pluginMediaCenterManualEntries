@@ -409,6 +409,7 @@
                                 dateIndexed: true,
                                 dateCreatedIndexed: true,
                                 showViewCount: false,
+                                indicatePlayedItems: false,
                             },
                             design: {
                                 listLayout: "list-1",
