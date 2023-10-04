@@ -796,12 +796,13 @@
                     bookmarks.sync($scope);
                     if (!WidgetMedia.isWeb) downloads.sync($scope, DownloadedMedia);
                     $rootScope.user = user;
-                    $rootScope.refreshItems();
+                    $rootScope.refreshItems(true);
                 });
 
                 buildfire.auth.onLogout(function () {
                     buildfire.spinner.show();
                     bookmarks.sync($scope);
+                    openedMediaItems.reset();
                     if (!WidgetMedia.isWeb) downloads.sync($scope, DownloadedMedia);
                     $rootScope.user = null;
                     $rootScope.refreshItems();

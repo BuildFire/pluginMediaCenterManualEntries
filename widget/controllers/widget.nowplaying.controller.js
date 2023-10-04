@@ -297,7 +297,6 @@
                             NowPlaying.currentTrack = e.data.track;
                             NowPlaying.playing = true;
                             NowPlaying.paused = false;
-                            setPlaybackSpeed(NowPlaying.settings.playbackRate)
                             audioPlayer.getPlaylist(function (err, data) {
                                 first = false;
                                 NowPlaying.keepPosition = e.data.track.lastPosition;
@@ -464,7 +463,6 @@
                         NowPlaying.currentTime = 0;
                         NowPlaying.settings = setting;
                         NowPlaying.volume = setting.volume;
-                        setPlaybackSpeed(setting.playbackRate)
                         NowPlaying.forceAutoPlayer();
                         audioPlayer.settings.set(NowPlaying.settings);
                         setTimeout(() => {
@@ -472,6 +470,7 @@
                                 NowPlaying.playTrack();
                             }
                         }, 0);
+                        $scope.$apply();
                     });
                     
                     buildfire.services.media.audioPlayer.isPaused((err, isPaused) => {
@@ -933,7 +932,7 @@
                  * @param autoJumpToLastPosition
                  * @param shufflePlaylist
                  * @param isPlayingCurrentTrack
-                 * @param playbackRate
+                 * @param playbackSpeed
                  * @constructor
                  */
                 function AudioSettings(settings) {
@@ -942,7 +941,7 @@
                     this.autoJumpToLastPosition = settings.autoJumpToLastPosition; //If a track has [lastPosition] use it to start playing the audio from there
                     this.shufflePlaylist = settings.shufflePlaylist;// shuffle the playlist
                     this.isPlayingCurrentTrack = settings.isPlayingCurrentTrack;// tells whether current track is playing or not
-                    this.playbackRate = settings.playbackRate;// Track playback speed rate
+                    this.playbackSpeed = settings.playbackSpeed;// Track playback speed rate
                     this.enableUserPreferences = settings.enableUserPreferences || false;
                 }
 
@@ -1039,12 +1038,13 @@
                     buildfire.spinner.show();
                     bookmarks.sync($scope);
                     $rootScope.user = user;
-                    $rootScope.refreshItems();
+                    $rootScope.refreshItems(true);
                 });
 
                 buildfire.auth.onLogout(function () {
                     buildfire.spinner.show();
                     bookmarks.sync($scope);
+                    openedMediaItems.reset();
                     $rootScope.user = null;
                     $rootScope.refreshItems();
                 });
@@ -1134,9 +1134,8 @@
 
                 const setPlaybackSpeed = function (value) {
                     if (value) {
-                        NowPlaying.settings.playbackRate = value;
-                        audioPlayer.settings.set(NowPlaying.settings);
-                        audioPlayer.setPlaybackRate(value);
+                        NowPlaying.settings.playbackSpeed = value;
+                        NowPlaying.setSettings(NowPlaying.settings);
                         $scope.$digest();
                     }
                 };
@@ -1165,7 +1164,7 @@
                         autoJumpToLastPosition: false,
                         shufflePlaylist: false,
                         volume: 1,
-                        playbackRate: 1,
+                        playbackSpeed: 1,
                     };
                 
                     // Compare each key in the settings object with the initialSettings

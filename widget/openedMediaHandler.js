@@ -2,7 +2,7 @@
 
 const openedMediaHandler = {
     sync(localOpenedMediaItems, MediaMetaDataDB) {
-        MediaMetaDataDB.get()
+        return MediaMetaDataDB.get()
             .then((result) => {                
                 localOpenedMediaItems.save(result.openedItems);
                 return result.openedItems;
@@ -25,6 +25,7 @@ const openedMediaHandler = {
     },
 
     add(item, mediaType, localOpenedMediaItems, MediaMetaDataDB, userId) {
+        if (!userId) return;
         let key = '';
 
         if (mediaType === 'Article') {

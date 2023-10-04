@@ -603,6 +603,10 @@
                         }
                     });
                 },
+
+                reset: function () {
+                    this.save([]);
+                },
             };
         
             return openedMediaItems;

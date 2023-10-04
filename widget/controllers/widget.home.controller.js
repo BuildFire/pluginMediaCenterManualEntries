@@ -1433,7 +1433,12 @@
                     return $rootScope.currentlyDownloading.indexOf(item.id) > -1;
                 };
 
-                $rootScope.refreshItems = function () {
+                $rootScope.refreshItems = function (syncLocalStorage = false) {
+                    if(syncLocalStorage){
+                        openedMediaHandler.sync(openedMediaItems,MediaMetaData).then(()=>{
+                            localOpenedItems();
+                        });
+                    }
                     searchOptions.skip = 0;
                     WidgetHome.items = [];
                     WidgetHome.stopScroll = false;
@@ -1483,12 +1488,13 @@
                     bookmarks.sync($scope);
                     if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
                     $rootScope.user = user;
-                    $rootScope.refreshItems();
+                    $rootScope.refreshItems(true);
                 });
 
                 buildfire.auth.onLogout(function () {
                     buildfire.spinner.show();
                     bookmarks.sync($scope);
+                    openedMediaItems.reset();
                     if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
                     $rootScope.user = null;
                     $rootScope.refreshItems();
