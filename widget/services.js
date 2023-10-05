@@ -498,7 +498,7 @@
                 const deferred = $q.defer();
                 Buildfire.userData.get(that._tagName, (err, result) => {
                     if (err && err.code == CODES.NOT_FOUND) {
-                        return deferred.resolve();
+                        return deferred.reject();
                     }
                     else if (err) {
                         return deferred.reject(err);

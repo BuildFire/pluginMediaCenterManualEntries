@@ -1059,11 +1059,16 @@
 
                 // check if the item is opened
                 const isOpened = (item) => {
-                    return WidgetHome.openedItems.some(openedItem => {
+                    return WidgetHome.openedItems.find(openedItem => {
                         const itemId = item.id;
-                        const audioUrlItemId = `${item.data.audioUrl}_${itemId}`;
-                        const videoUrlItemId = `${item.data.videoUrl}_${itemId}`;
-                        return [itemId, audioUrlItemId, videoUrlItemId].includes(openedItem);
+                        const audioItemUrl = item.data.audioUrl;
+                        const videoItemUrl = item.data.videoUrl;
+                        
+                        return (
+                            (itemId && openedItem.includes(itemId)) ||
+                            (audioItemUrl && openedItem.includes(audioItemUrl)) ||
+                            (videoItemUrl && openedItem.includes(videoItemUrl))
+                        );
                     });
                 };
                 

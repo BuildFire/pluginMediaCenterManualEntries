@@ -245,6 +245,7 @@
 
                 $scope.onVideoStateChange = function (state) {
                     if (state === 'play') { // The video started playing
+                        openedMediaHandler.add(WidgetMedia.item, 'Video', openedMediaItems, MediaMetaData, $rootScope.user?.userId);
                         if (!WidgetMedia.isCounted && $rootScope.user) {
                             var userCheckViewFilter = {
                                 filter: getIndexedFilter(WidgetMedia.item.id, $rootScope.user._id, 'Video')
@@ -274,7 +275,6 @@
                                         WidgetMedia.isCounted = true;
                                         sendAnalytics(WidgetMedia);
                                     })
-                                    openedMediaHandler.add(WidgetMedia.item, 'Video', openedMediaItems, MediaMetaData, $rootScope.user.userId);
                                 }
                             })
                         } else if(!WidgetMedia.isCounted){
@@ -477,6 +477,9 @@
                     media.data.image = getImageUrl(media.data.image);
                     WidgetMedia.item = media;
                     WidgetMedia.mediaType = media.data.audioUrl ? 'AUDIO' : (media.data.videoUrl ? 'VIDEO' : null);
+                    if(!WidgetMedia.mediaType){
+                        openedMediaHandler.add(WidgetMedia.item, 'Article', openedMediaItems, MediaMetaData, $rootScope.user?.userId);
+                    }
                     Buildfire.auth.getCurrentUser((err, user) => {
                         if(WidgetMedia.mediaType == null) {
                             sendArticleContinuesAnalytics(WidgetMedia);
@@ -512,7 +515,6 @@
                                         WidgetMedia.isCounted = true;
                                         sendArticleAnalytics(WidgetMedia);
                                     })
-                                    openedMediaHandler.add(WidgetMedia.item, 'Article', openedMediaItems, MediaMetaData, $rootScope.user.userId);
                                 }
 
                             })

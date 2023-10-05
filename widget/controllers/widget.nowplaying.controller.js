@@ -15,7 +15,7 @@
                 media.data.audioUrl = convertDropbox(media.data.audioUrl);
                 media.data.topImage = convertDropbox(media.data.topImage);
                 media.data.image = convertDropbox(media.data.image);
-
+                NowPlaying.firstPlay = true;
                 NowPlaying.currentTime = 0;
 
                 $rootScope.deepLinkNavigate = null;
@@ -547,6 +547,10 @@
                  * Player related method and variables
                  */
                 NowPlaying.playTrack = function () {
+                    if(NowPlaying.firstPlay){
+                        openedMediaHandler.add(NowPlaying.item, 'Audio', openedMediaItems, MediaMetaData, $rootScope.user?.userId);
+                        NowPlaying.firstPlay = false;
+                    }
                     if(!NowPlaying.isOnline && (!NowPlaying.item.data.hasDownloadedAudio || !$rootScope.allowOfflineDownload)){
                         buildfire.dialog.show(
                             {
@@ -604,7 +608,6 @@
                                     NowPlaying.isCounted = true;
                                     sendAnalytics(NowPlaying);
                                 })
-                                openedMediaHandler.add(NowPlaying.item, 'Audio', openedMediaItems, MediaMetaData, $rootScope.user.userId);
                             } else {
                                 let lastTimeWatched = localStorage.getItem(`${NowPlaying.item.id}_audioPlayCount`);
                                 if (!lastTimeWatched) {

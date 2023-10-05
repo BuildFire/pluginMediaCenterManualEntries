@@ -3,12 +3,12 @@
 const openedMediaHandler = {
     sync(localOpenedMediaItems, MediaMetaDataDB) {
         return MediaMetaDataDB.get()
-            .then((result) => {                
+            .then((result) => {   
                 let uniqueMergedItems = [];
                 localOpenedMediaItems.get((error, response) => {
                     if(error) response = [];
                     const mergedItems = [...response, ...result.openedItems];
-                    uniqueMergedItems = [...new Set(mergedItems)];
+                    uniqueMergedItems = [...new Set(mergedItems)];   
                     localOpenedMediaItems.save(uniqueMergedItems);
                 });
                 return uniqueMergedItems;
@@ -32,7 +32,7 @@ const openedMediaHandler = {
 
     add(item, mediaType, localOpenedMediaItems, MediaMetaDataDB, userId) {
         let key = '';
-
+        
         if (mediaType === 'Article') {
             key = item.id;
         } else if (mediaType === 'Video') {
@@ -43,7 +43,7 @@ const openedMediaHandler = {
             console.warn('Unexpected media type');
             return;
         }
-
+        
         localOpenedMediaItems.get((error, response) => {
             if (error) return console.error(error);
 
