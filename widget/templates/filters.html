@@ -1,8 +1,7 @@
 <div id="emptyContainer" class="padded"
-    ng-init="showNavbar()"
     ng-if="!loadingData && (!WidgetFilters.allCategories || (WidgetFilters.allCategories && WidgetFilters.allCategories.length === 0))">
 </div>
-<div id="filterScreen" ng-init="showNavbar()">
+<div id="filterScreen">
     <div id="filtersContainer">
         <div infinite-scroll="WidgetFilters.getMore()" infinite-scroll-distance="1"
             data-infinite-container="#filtersContainer" infinite-scroll-disabled="WidgetFilters.stopScroll">

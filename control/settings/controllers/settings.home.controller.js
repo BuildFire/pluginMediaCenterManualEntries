@@ -44,10 +44,10 @@
                 if (typeof (Settings.data.content.showViewCount) == 'undefined') {
                     Settings.data.content.showViewCount = false;
                 }
-                if (typeof (Settings.data.content.indicatePlayedItems ) == 'undefined') {
+                if (typeof (Settings.data.content.indicatePlayedItems ) === 'undefined') {
                     Settings.data.content.indicatePlayedItems  = false;
                 }
-                if (typeof (Settings.data.content.startWithAutoJumpByDefault  ) == 'undefined') {
+                if (typeof (Settings.data.content.startWithAutoJumpByDefault  ) === 'undefined') {
                     Settings.data.content.startWithAutoJumpByDefault   = false;
                 }
             }, (err) => {
@@ -203,7 +203,7 @@
                 let value = e.target.checked;
                 if (value != Settings.data.content.indicatePlayedItems ) {
                     Settings.data.content.indicatePlayedItems  = value;
-                    MediaCenter.save(Settings.data).then(() => { });
+                    MediaCenter.save(Settings.data);
                 }
             }
 
@@ -211,7 +211,7 @@
                 let value = e.target.checked;
                 if (value != Settings.data.content.startWithAutoJumpByDefault  ) {
                     Settings.data.content.startWithAutoJumpByDefault   = value;
-                    MediaCenter.save(Settings.data).then(() => { });
+                    MediaCenter.save(Settings.data);
                 }
             }
 

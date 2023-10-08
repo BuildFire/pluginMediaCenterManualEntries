@@ -1,8 +1,8 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('NowPlayingCtrl', ['$scope', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', 'Location', 'EVENTS', 'PATHS', 'DB', 'AppDB', 'openedMediaItems', 'MediaMetaDataDB',
-            function ($scope, media, Buildfire, Modals, COLLECTIONS, $rootScope, Location, EVENTS, PATHS, DB, AppDB, openedMediaItems, MediaMetaDataDB) {
+        .controller('NowPlayingCtrl', ['$scope', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', 'Location', 'EVENTS', 'PATHS', 'DB', 'AppDB', 'openedMediaHandler',
+            function ($scope, media, Buildfire, Modals, COLLECTIONS, $rootScope, Location, EVENTS, PATHS, DB, AppDB, openedMediaHandler) {
                 $rootScope.blackBackground = true;
                 $rootScope.showFeed = false;
                 var audioPlayer = Buildfire.services.media.audioPlayer;
@@ -58,8 +58,6 @@
                     },
                 ];
                 bookmarks.sync($scope);
-
-                const MediaMetaData = new MediaMetaDataDB(COLLECTIONS.MediaMetaData);
 
                 if(!NowPlaying.isOnline) initAudio(0);
                 Buildfire.auth.getCurrentUser((err, user) => {
@@ -475,18 +473,17 @@
                     
                     buildfire.services.media.audioPlayer.isPaused((err, isPaused) => {
                         if (err) return console.err(err);
-                      
-                        if (isPaused) {
-                            NowPlaying.playing = false
-                        } else {
-                            NowPlaying.playing = true;
-                        }
-                      });                    
+                        
+                        NowPlaying.playing = !isPaused;
+                    });                    
                     audioPlayer.getCurrentTrack((track) => {
-                        if(track && (track.url.split("?")[0] === NowPlaying.currentTrack.url.split("?")[0])){
-                            NowPlaying.isAudioPlayerPlayingAnotherSong = false;
-                        }
-                        if (track && track.title == NowPlaying.currentTrack.title && track.url == NowPlaying.currentTrack.url) {
+                        if (
+                            track &&
+                            (
+                            track.title == NowPlaying.currentTrack.title &&
+                            track.url == NowPlaying.currentTrack.url) ||
+                            (track.url.split('?')[0] === NowPlaying.currentTrack.url.split('?')[0])
+                        ) {
                             NowPlaying.isAudioPlayerPlayingAnotherSong = false;
                         } else if (!track) {
                             NowPlaying.isAudioPlayerPlayingAnotherSong = false;
@@ -548,7 +545,7 @@
                  */
                 NowPlaying.playTrack = function () {
                     if(NowPlaying.firstPlay){
-                        openedMediaHandler.add(NowPlaying.item, 'Audio', openedMediaItems, MediaMetaData, $rootScope.user?.userId);
+                        openedMediaHandler.add(NowPlaying.item, 'Audio', $rootScope.user?.userId);
                         NowPlaying.firstPlay = false;
                     }
                     if(!NowPlaying.isOnline && (!NowPlaying.item.data.hasDownloadedAudio || !$rootScope.allowOfflineDownload)){
@@ -1046,7 +1043,7 @@
                 buildfire.auth.onLogout(function () {
                     buildfire.spinner.show();
                     bookmarks.sync($scope);
-                    openedMediaItems.reset();
+                    openedMediaHandler.reset();
                     $rootScope.user = null;
                     $rootScope.refreshItems();
                 });
@@ -1175,13 +1172,7 @@
                             isInitialSettings = true;
                         }
                     }
-
-                    if(isInitialSettings && !settings.enableUserPreferences){
-                        return true;
-                    }else{
-                        return false;
-                    }
-        
+                    return (isInitialSettings && !settings.enableUserPreferences);
                 }
             }
         ]);

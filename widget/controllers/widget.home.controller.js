@@ -1,8 +1,8 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetHomeCtrl', ['$scope', '$timeout', '$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location', 'MediaMetaDataDB','openedMediaItems',
-            function ($scope, $timeout, $window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location, MediaMetaDataDB, openedMediaItems) {
+        .controller('WidgetHomeCtrl', ['$scope', '$timeout', '$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location', 'openedMediaHandler', 'LocalStorageOpenedItemsHandler',
+            function ($scope, $timeout, $window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location, openedMediaHandler, LocalStorageOpenedItemsHandler) {
                 $rootScope.loadingGlobalPlaylist = true;
                 $rootScope.showFeed = true;
                 $rootScope.currentlyDownloading = [];
@@ -73,7 +73,6 @@
                 let MediaContent = new DB(COLLECTIONS.MediaContent),
                     MediaCenter = new DB(COLLECTIONS.MediaCenter),
                     GlobalPlaylist = new AppDB(),
-                    MediaMetaData = new MediaMetaDataDB(COLLECTIONS.MediaMetaData),
                     CachedMediaContent = new OFSTORAGE({
                         path: "/data/mediaCenterManual",
                         fileName: "cachedMediaContent"
@@ -990,7 +989,7 @@
                                 };
 
                                 item.data.opened = isOpened(item);
-                                
+
                                 buildfire.publicData.search(
                                     searchOptions,
                                     COLLECTIONS.MediaCount,
@@ -1441,7 +1440,7 @@
 
                 $rootScope.refreshItems = function (syncLocalStorage = false) {
                     if(syncLocalStorage){
-                        openedMediaHandler.sync(openedMediaItems,MediaMetaData).then(()=>{
+                        openedMediaHandler.sync().then(()=>{
                             localOpenedItems();
                         });
                     }
@@ -1500,7 +1499,7 @@
                 buildfire.auth.onLogout(function () {
                     buildfire.spinner.show();
                     bookmarks.sync($scope);
-                    openedMediaItems.reset();
+                    openedMediaHandler.reset();
                     if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
                     $rootScope.user = null;
                     $rootScope.refreshItems();
@@ -1654,7 +1653,7 @@
                 const localOpenedItems = () => {
                     getCurrentUser(() => {
                         if (!$rootScope.user) return (WidgetHome.openedItems = []);
-                        openedMediaItems.get((error, response) => {
+                        LocalStorageOpenedItemsHandler.getOpenedMediaItems((error, response) => {
                             if (error) WidgetHome.openedItems = [];
                             WidgetHome.openedItems = response;
                         });

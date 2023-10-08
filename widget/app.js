@@ -7,6 +7,7 @@
             'mediaCenterWidgetServices',
             'mediaCenterWidgetFilters',
             'mediaCenterWidgetModals',
+            'mediaCenterWidgetHandlers',
             'ngAnimate',
             'ngRoute',
             'ui.bootstrap',
@@ -320,9 +321,8 @@
             $httpProvider.interceptors.push(interceptor);
 
         }])
-        .run(['Location', '$location', '$rootScope', '$window', 'Messaging', 'EVENTS', 'PATHS', 'DB', 'COLLECTIONS','openedMediaItems', 'MediaMetaDataDB', function (Location, $location, $rootScope, $window, Messaging, EVENTS, PATHS, DB, COLLECTIONS, openedMediaItems, MediaMetaDataDB) {            
-            let MediaMetaData = new MediaMetaDataDB(COLLECTIONS.MediaMetaData);
-            openedMediaHandler.sync(openedMediaItems, MediaMetaData);
+        .run(['Location', '$location', '$rootScope', '$window', 'Messaging', 'EVENTS', 'PATHS', 'openedMediaHandler', function (Location, $location, $rootScope, $window, Messaging, EVENTS, PATHS, openedMediaHandler) {            
+            openedMediaHandler.sync();
             
             buildfire.navigation.onBackButtonClick = function () {
                 if ($rootScope.fullScreen) {
@@ -343,7 +343,6 @@
                             }
                         });
                         $("#showFeedBtn").click();
-                        $rootScope.showNavbar();
                         $rootScope.showGlobalPlaylistButtons = true;
                         if (!$rootScope.$$phase) $rootScope.$digest();
                     } else {
@@ -418,6 +417,18 @@
                     $rootScope.showGlobalPlaylistButtons = false;
                 } else $rootScope.showGlobalPlaylistButtons = true;
 
+                if (path.indexOf('/media') === 0 || path === '/') {
+                    buildfire.appearance.navbar.show(null, (err) => {
+                        if (err) return console.error(err);
+                        console.log('Navbar is visible');
+                    });
+                } else {
+                    buildfire.appearance.navbar.hide(null, (err) => {
+                        if (err) return console.error(err);
+                        console.log('Navbar is hidden');
+                    });
+                }
+
                 if (!$rootScope.$$phase) $rootScope.$digest();
             });
 
@@ -443,20 +454,6 @@
                 $rootScope.$emit('deviceLocked', {});
                 //callPlayer('ytPlayer', 'pauseVideo');
             });
-
-            $rootScope.hideNavbar = function () {
-                buildfire.appearance.navbar.hide(null, (err) => {
-                    if (err) return console.error(err);
-                    console.log("Navbar is hidden");
-                });
-            };
-
-            $rootScope.showNavbar= function () {
-                buildfire.appearance.navbar.show(null, (err) => {
-                if (err) return console.error(err);
-                console.log("Navbar is visible");
-                });
-            }
         }]);
 
 })(window.angular, window.buildfire);

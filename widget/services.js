@@ -488,12 +488,12 @@
 
             return AppDB;
         }])
-        .factory("MediaMetaDataDB", ['$rootScope', 'Buildfire', '$q', 'MESSAGES', 'CODES', function ($rootScope, Buildfire, $q, MESSAGES, CODES) {
-            function MediaMetaDataDB(tagName) {
+        .factory("UserDB", ['$rootScope', 'Buildfire', '$q', 'MESSAGES', 'CODES', function ($rootScope, Buildfire, $q, MESSAGES, CODES) {
+            function UserDB(tagName) {
                 this._tagName = tagName;
             }
             
-            MediaMetaDataDB.prototype.get = function () {
+            UserDB.prototype.get = function () {
                 const that = this;
                 const deferred = $q.defer();
                 Buildfire.userData.get(that._tagName, (err, result) => {
@@ -517,7 +517,7 @@
             };
 
 
-            MediaMetaDataDB.prototype.save = function (data) {
+            UserDB.prototype.save = function (data) {
                 const that = this;
                 const deferred = $q.defer();
                 if (typeof data == 'undefined') {
@@ -537,79 +537,45 @@
                 return deferred.promise;
             };
 
-            return MediaMetaDataDB;
+            return UserDB;
         }])
-        .factory("openedMediaItems", ['Buildfire', 'localStorageKeys', function (Buildfire, localStorageKeys) {
-            const openedMediaItems = {
-                get: function (callback) {
-                    const currentInstance = Buildfire.context.instanceId;
-                    Buildfire.localStorage.getItem(
-                        localStorageKeys.PLUGIN_MEDIA_CENTER_MANUAL_CONFIG,
-                        (error, value) => {
-                            if (error) return callback(error, null);
-                            if (!value) {
-                                this.save([]);
-                                callback(null, []);
-                            } else {
-                                try {
-                                    value = JSON.parse(value);
-                                    if (value && value.hasOwnProperty(currentInstance)) {
-                                        callback(null, value[currentInstance].openedMediaItems);
-                                    } else {
-                                        this.save([]);
-                                        callback(null, []);
-                                    }
-                                } catch (error) {
-                                    callback(error, null);
-                                }
-                            }
-                        }
-                    );
-                },
+        .factory("LocalStorageDB", ['Buildfire', function (Buildfire) {
+            
+            function LocalStorageDB (key){
+                this.key = key;
+            }
 
-                getAll: function (callback) {
-                    Buildfire.localStorage.getItem(
-                        localStorageKeys.PLUGIN_MEDIA_CENTER_MANUAL_CONFIG,
-                        (error, value) => {
-                            if (error) return callback(error, null);
-
-                            value = JSON.parse(value);
-                            callback(null, value);
-                        }
-                    );
-                },
-
-                save: function (data) {
-                    const currentInstance = Buildfire.context.instanceId;
-                    const formatObject = {
-                        [currentInstance]: {
-                            openedMediaItems: data,
-                        },
-                    };
-                    if (!data) return;
-
-                    this.getAll((error, response) => {
-                        if (error) return console.error(error);
-                        if (response) {
-                            Buildfire.localStorage.setItem(localStorageKeys.PLUGIN_MEDIA_CENTER_MANUAL_CONFIG, {
-                                ...response,
-                                ...formatObject,
-                            });
-                        } else {
-                            Buildfire.localStorage.setItem(
-                                localStorageKeys.PLUGIN_MEDIA_CENTER_MANUAL_CONFIG,
-                                formatObject
-                            );
-                        }
-                    });
-                },
-
-                reset: function () {
-                    this.save([]);
-                },
+            LocalStorageDB.prototype.get = function (callback){
+                Buildfire.localStorage.getItem(
+                    this.key,
+                    (error, value) => {
+                        if (error) return callback(error, null);
+                        callback(null, value);
+                    }
+                );
             };
-        
-            return openedMediaItems;
+
+            LocalStorageDB.prototype.getAll = function(callback){
+                Buildfire.localStorage.getItem(
+                    this.key,
+                    (error, value) => {
+                        if (error) return callback(error, null);
+
+                        value = JSON.parse(value);
+                        callback(null, value);
+                    }
+                );
+            };
+
+            LocalStorageDB.prototype.save = function (data) {
+                Buildfire.localStorage.setItem(this.key, data);
+            };
+
+            LocalStorageDB.prototype.reset = function (){
+                this.save([]);
+            };
+
+            return LocalStorageDB;
         }]);
         
         
