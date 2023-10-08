@@ -546,6 +546,9 @@
                 NowPlaying.playTrack = function () {
                     if(NowPlaying.firstPlay){
                         openedMediaHandler.add(NowPlaying.item, 'Audio', $rootScope.user?.userId);
+                        if(!NowPlaying.isOnline){
+                            $rootScope.markItemAsOpened(WidgetMedia.item.id)
+                        }
                         NowPlaying.firstPlay = false;
                     }
                     if(!NowPlaying.isOnline && (!NowPlaying.item.data.hasDownloadedAudio || !$rootScope.allowOfflineDownload)){

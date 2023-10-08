@@ -987,7 +987,6 @@
                                     limit: 1,
                                     recordCount: true,
                                 };
-
                                 item.data.opened = isOpened(item);
 
                                 buildfire.publicData.search(
@@ -1056,6 +1055,22 @@
                     }
                 }
 
+                $rootScope.markItemAsOpened = function (id) {
+                    const modifiedArray = WidgetHome.items.map((item) => {
+                        if (item.id === id) {
+                            return {
+                                ...item,
+                                data: {
+                                    ...item.data,
+                                    opened: true,
+                                },
+                            };
+                        }
+                        return item;
+                    });
+                    WidgetHome.items = modifiedArray;
+                };
+                
                 // check if the item is opened
                 const isOpened = (item) => {
                     return WidgetHome.openedItems.find(openedItem => {

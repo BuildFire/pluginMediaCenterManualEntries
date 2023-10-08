@@ -20,7 +20,6 @@
                 WidgetMedia.oldVideoStyle = { position: "", width: "", height: "", marginTop: "" };
                 WidgetMedia.oldiFrameStyle = { height: "" };
                 WidgetMedia.oldBackgroundStyle = { height: "", color: "" };
-                
                 var Android = /(android)/i.test(navigator.userAgent);
                 if (!buildfire.isWeb() && Android) {
                     document.onfullscreenchange = function (event) {
@@ -245,6 +244,9 @@
                 $scope.onVideoStateChange = function (state) {
                     if (state === 'play') { // The video started playing
                         openedMediaHandler.add(WidgetMedia.item, 'Video', $rootScope.user?.userId);
+                        if(!$rootScope.online){
+                            $rootScope.markItemAsOpened(WidgetMedia.item.id)
+                        }
                         if (!WidgetMedia.isCounted && $rootScope.user) {
                             var userCheckViewFilter = {
                                 filter: getIndexedFilter(WidgetMedia.item.id, $rootScope.user._id, 'Video')
@@ -478,6 +480,9 @@
                     WidgetMedia.mediaType = media.data.audioUrl ? 'AUDIO' : (media.data.videoUrl ? 'VIDEO' : null);
                     if(!WidgetMedia.mediaType){
                         openedMediaHandler.add(WidgetMedia.item, 'Article', $rootScope.user?.userId);
+                        if(!$rootScope.online){
+                            $rootScope.markItemAsOpened(WidgetMedia.item.id)
+                        }
                     }
                     Buildfire.auth.getCurrentUser((err, user) => {
                         if(WidgetMedia.mediaType == null) {
