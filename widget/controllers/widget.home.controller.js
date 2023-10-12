@@ -241,7 +241,11 @@
                         $window.deeplinkingDone = true;
                         $rootScope.showFeed = false;
                         window.setTimeout(() => {
-                            WidgetHome.goTo(deeplinkData.id);
+                            if( deeplinkData.id &&  deeplinkData.type === 'audio') {
+                                WidgetHome.goTo(deeplinkData.id, deeplinkData.type);
+                            }else{
+                                WidgetHome.goTo(deeplinkData.id);
+                            }
                         }, 0);
                     }
                 });
@@ -253,7 +257,7 @@
                       (document.hasFocus()));
                 }
 
-                WidgetHome.goTo = function (id) {
+                WidgetHome.goTo = function (id, type) {
                     var documentFocused = WidgetHome.isDocumentFocused();
                     // stop the autoplay if shared media via PWA to prevent video freeze
                     if(documentFocused) $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
@@ -267,9 +271,13 @@
                     $rootScope.showFeed = false;
                     var navigate = function (item) {
                         if (item && item.data) {
-                            if (!$rootScope.skipMediaPage || ($rootScope.skipMediaPage && item.data.videoUrl)
+                            if(type === 'audio'){
+                                Location.go('#/nowplaying/' + item.id, true);
+                                if (!$rootScope.$$phase) $rootScope.$digest();
+                            }
+                            else if (!$rootScope.skipMediaPage || ($rootScope.skipMediaPage && item.data.videoUrl)
                                 || ($rootScope.skipMediaPage && !item.data.videoUrl && !item.data.audioUrl)) {
-                                Location.go('#/media/' + item.id, true);
+                                    Location.go('#/media/' + item.id, true);
                             } else {
                                 Location.go('#/nowplaying/' + item.id, true);
                             }
@@ -741,12 +749,21 @@
                 WidgetHome.currentSkip = 0;
                 WidgetHome.currentlyLoading = false;
 
+                const unregisterDeeplink = function(deepLinkId){
+                    buildfire.deeplink.unregisterDeeplink(deepLinkId, (err, result) => {
+                        if (err) return console.log(err);
+                    });
+                }
+
                 WidgetHome.checkForDeeplink = () => {
                     if (!$window.deeplinkingDone) {
                         buildfire.deeplink.getData((data) => {
                             if (!data) return;
                             let itemId = null;
-                            if (data.id) itemId = data.id;
+                            if (data.id) {
+                                unregisterDeeplink(data.id);
+                                itemId = data.id;
+                            }
                             else if (data.mediaId) itemId = data.mediaId;
                             else if (data && data.deepLinkUrl) {
                                 var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
@@ -772,7 +789,11 @@
                             $rootScope.showFeed = false;
                             $rootScope.fromSearch = true;
                             $window.deeplinkingDone = true;
-                            WidgetHome.goTo(itemId);
+                            if(itemId && data.type === 'audio') {
+                                WidgetHome.goTo(itemId, data.type);
+                            }else{
+                                WidgetHome.goTo(itemId);
+                            }
                         });
                     }
 
@@ -780,7 +801,11 @@
                         if (deeplinkData && deeplinkData.id) {
                             $window.deeplinkingDone = true;
                             $rootScope.showFeed = false;
-                            WidgetHome.goTo(deeplinkData.id);
+                            if( deeplinkData.id &&  deeplinkData.type === 'audio') {
+                                WidgetHome.goTo(deeplinkData.id, deeplinkData.type);
+                            }else{
+                                WidgetHome.goTo(deeplinkData.id);
+                            }
 
                         }
                     });
@@ -1674,6 +1699,5 @@
                         });
                     });
                 };
-
             }]);
 })(window.angular);

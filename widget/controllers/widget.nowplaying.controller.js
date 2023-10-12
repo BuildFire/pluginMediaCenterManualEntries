@@ -31,6 +31,7 @@
                 NowPlaying.keepPosition = 0;
                 NowPlaying.finished = false;
                 NowPlaying.isAudioPlayerPlayingAnotherSong = true;
+                document.documentElement.style.setProperty('--played-tracker-percentage', '0%');
                 const playbackSpeedOptions = [
                     {
                         text: '<div class="bodyTextTheme">0.5x</div>',
@@ -289,7 +290,7 @@
                     // Prevent the repetition of events by clearing all previous occurrences, as repeated events tend to occur when the user plays multiple audio files.
                     $rootScope.activePlayerEvents.clear();
                 }
-                $rootScope.activePlayerEvents = audioPlayer.onEvent(function (e) {
+                $rootScope.activePlayerEvents = audioPlayer.onEvent(function (e) {                 
                     switch (e.event) {
                         case 'play':
                             NowPlaying.currentTrack = e.data.track;
@@ -922,7 +923,8 @@
                     this.deepLinkData = {
                         pluginInstanceId: Buildfire.context.instanceId,
                         payload:{
-                            id: track.id
+                            id: track.id,
+                            type: 'audio',
                         }
                     }
                 }
@@ -1150,8 +1152,8 @@
                  * @param {Number} value 
                  */
                 NowPlaying.progressBarStyle = function (value) {
-                    const percentage = ((value / NowPlaying.duration) * 100) ;
-                
+                    const percentage = NowPlaying.duration? Math.round(((value / NowPlaying.duration) * 100)) :value;
+                    
                     if (percentage) {
                         document.documentElement.style.setProperty('--played-tracker-percentage', `${percentage}%`);
                     }
@@ -1177,6 +1179,11 @@
                     }
                     return (isInitialSettings && !settings.enableUserPreferences);
                 }
+
+                buildfire.appearance.navbar.hide(null, (err) => {
+                    if (err) return console.error(err);
+                    console.log('Navbar is hidden');
+                });
             }
         ]);
 })(window.angular);

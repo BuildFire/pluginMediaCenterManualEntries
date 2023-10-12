@@ -315,7 +315,51 @@
 	}
 }
 
-*/
+.list-item-media{
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+}
+#listLayout2 .list-item-media .list-media-holder img{
+	width: 107px !important;
+	height: 66px !important;
+	max-width: 107px !important;
+	max-height: 66px !important;
+}
+#listLayout2 .list-item-copy{
+	overflow: hidden;
+}
+#listLayout2 .list-item-copy .date-row{
+	margin-top: 5px;
+	display: flex;
+	align-items: center;
+}
+#listLayout2 .list-item-copy .date-row p.title{
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 20px;
+}
+#listLayout2 .list-item-copy .date-row .icon-container{
+	display: flex;
+	align-items: center;
+	height: 14px;
+}
+#listLayout2 .list-item-copy p.summary{
+	font-size: 12px !important;
+}
+
+#listLayout2 .list-item-copy p.summary,
+#listLayout2 .list-item-copy p#views{
+	line-height: 16px;
+	padding-top: 0 !important;
+}
+#listLayout2 .list-item-copy .date-container{
+	margin: 0 !important;
+}
+#listLayout2 .list-item-copy .no-summary{
+	margin-top: 10px !important;
+}
 /* End Plugin CSS */
 
 
@@ -743,8 +787,7 @@ videogular,
 }
 
 .list-layout span.list-item-date {
-	font-size: 11px;
-	font-style: italic;
+	font-size: 12px;
 	margin: -4px 0 -4px;
 }
 
@@ -794,7 +837,7 @@ html[browser="Firefox"] .third-layout .list-layout .list-item-media .list-media-
 	max-width: 100%;
 	max-height: 100%;
 	vertical-align: middle;
-	border-radius: 2px;
+	border-radius: 4px;
 }
 
 .third-layout .list-layout .list-item-media .list-media-holder .main-icon {

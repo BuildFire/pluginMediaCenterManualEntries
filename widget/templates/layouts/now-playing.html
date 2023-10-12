@@ -1,4 +1,4 @@
-<div ng-init="hideNavbar()" class="holder now-playing text-center audio-player">
+<div class="holder now-playing text-center audio-player">
     <div id="playerBackgroundImage"
     ng-style="{'background-image': 'url(' + NowPlaying.currentTrack.backgroundImage + ')'}"
     class="now-playing-backgroundImage"></div>
@@ -26,7 +26,7 @@
         <div class="slider">
             <div>
                 <div ng-if="!NowPlaying.isAudioPlayerPlayingAnotherSong" >
-                    <div class="audio-plyer"><input style="height:45px !important" type="range" min="0.0" max="{{NowPlaying.duration}}"
+                    <div class="audio-plyer"><input type="range" min="0.0" max="{{NowPlaying.duration}}"
                         ng-model="NowPlaying.currentTime" ng-change="NowPlaying.changeTime(NowPlaying.currentTime)" />
                     </div>
                     <div ng-if="NowPlaying.currentTime!=0" class="time-indicator" style="float:left">
@@ -43,7 +43,7 @@
                     </div>
                 </div>
                 <div ng-if="NowPlaying.isAudioPlayerPlayingAnotherSong" >
-                    <div class="audio-plyer"><input style="height:45px !important" type="range" value="0" />
+                    <div class="audio-plyer"><input  type="range" value="0" />
                     </div>
                     <div  class="time-indicator" style="float:left">
                         <span>00:00</span>

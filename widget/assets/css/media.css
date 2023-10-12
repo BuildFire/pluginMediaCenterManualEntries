@@ -374,6 +374,8 @@ h5 {
     cursor: pointer;
     -webkit-appearance: none;
     background: var(--bf-theme-primary);
+    position: absolute;
+    left: calc(var(--played-tracker-percentage) - 7px);
 }
 
 .audio-plyer input[type='range']:focus::-webkit-slider-runnable-track {

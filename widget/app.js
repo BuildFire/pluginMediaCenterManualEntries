@@ -323,7 +323,10 @@
         }])
         .run(['Location', '$location', '$rootScope', '$window', 'Messaging', 'EVENTS', 'PATHS', 'openedMediaHandler', function (Location, $location, $rootScope, $window, Messaging, EVENTS, PATHS, openedMediaHandler) {            
             openedMediaHandler.sync();
-            
+            buildfire.appearance.navbar.show(null, (err) => {
+                if (err) return console.error(err);
+                console.log('Navbar is visible');
+            });
             buildfire.navigation.onBackButtonClick = function () {
                 if ($rootScope.fullScreen) {
                     $rootScope.goingBackFullScreen = true;
@@ -345,6 +348,10 @@
                         $("#showFeedBtn").click();
                         $rootScope.showGlobalPlaylistButtons = true;
                         if (!$rootScope.$$phase) $rootScope.$digest();
+                        buildfire.appearance.navbar.show(null, (err) => {
+                            if (err) return console.error(err);
+                            console.log('Navbar is visible');
+                        });
                     } else {
                         if ($rootScope.currentlyDownloading.length > 0) {
                             buildfire.dialog.confirm(
@@ -417,12 +424,13 @@
                     $rootScope.showGlobalPlaylistButtons = false;
                 } else $rootScope.showGlobalPlaylistButtons = true;
 
-                if (path.indexOf('/media') === 0 || path === '/') {
+                if (path.indexOf('/media') === 0 || $("#feedView").hasClass('showing')) {
                     buildfire.appearance.navbar.show(null, (err) => {
                         if (err) return console.error(err);
                         console.log('Navbar is visible');
                     });
-                } else {
+                } else if(path.indexOf('/nowplaying') === 0 && !$("#feedView").hasClass('showing')){
+                    console.log('nav',$("#feedView").hasClass('showing'));
                     buildfire.appearance.navbar.hide(null, (err) => {
                         if (err) return console.error(err);
                         console.log('Navbar is hidden');
