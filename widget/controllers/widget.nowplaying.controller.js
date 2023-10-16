@@ -450,11 +450,6 @@
                         $scope.$digest();
                     }
                     audioPlayer.settings.get(function (err, setting) {
-                        if(isSettingsChanged(setting)) {
-                            setting.autoJumpToLastPosition = NowPlaying.autoJumpToLastPosition;
-                        }else{
-                            NowPlaying.autoJumpToLastPosition = setting.autoJumpToLastPosition;
-                        }
 
                         if (!setting.autoJumpToLastPosition) {
                             NowPlaying.currentTrack.startAt = 0;
@@ -463,6 +458,12 @@
                         NowPlaying.settings = setting;
                         NowPlaying.volume = setting.volume;
                         NowPlaying.forceAutoPlayer();
+                        if(!isSettingsChanged(setting)) {
+                            NowPlaying.autoJumpToLastPosition  = setting.autoJumpToLastPosition;
+                        }else{
+                            NowPlaying.settings.autoJumpToLastPosition = NowPlaying.autoJumpToLastPosition;
+                        }
+                        $scope.$digest();
                         audioPlayer.settings.set(NowPlaying.settings);
                         setTimeout(() => {
                             if ($rootScope.autoPlay) {
@@ -483,7 +484,7 @@
                             (
                             track.title == NowPlaying.currentTrack.title &&
                             track.url == NowPlaying.currentTrack.url) ||
-                            (track.url.split('?')[0] === NowPlaying.currentTrack.url.split('?')[0])
+                            (track?.url.split('?')[0] === NowPlaying.currentTrack?.url.split('?')[0])
                         ) {
                             NowPlaying.isAudioPlayerPlayingAnotherSong = false;
                         } else if (!track) {
@@ -1168,12 +1169,11 @@
                         autoJumpToLastPosition: false,
                         shufflePlaylist: false,
                         volume: 1,
-                        playbackSpeed: 1,
                     };
                 
                     // Compare each key in the settings object with the initialSettings
                     for (const key in settings) {
-                        if ((settings.hasOwnProperty(key) && settings[key] !== initialSettings[key])) {
+                        if ((settings.hasOwnProperty(key) && settings[key] === initialSettings[key])) {
                             isInitialSettings = true;
                         }
                     }
