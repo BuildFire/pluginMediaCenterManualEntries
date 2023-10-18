@@ -103,7 +103,7 @@
                 AppConfig.setAppId(MediaCenterInfo.id);
 
                 var header = {
-                    topImage: 'Top image',
+                    topImage: 'Thumbnail Image',
                     title: 'Title',
                     artists: 'Album Artists',
                     summary: 'Summary',

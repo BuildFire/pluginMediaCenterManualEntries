@@ -10,6 +10,7 @@ let stringsKeys = {
     'playlist.removedFromPlaylist': '',
     'playlist.autoplayOff': '',
     'playlist.playNext': '',
+    'playlist.playbackSpeed': '',
     'globalPlaylist.itemAdded': '',
     'globalPlaylist.itemRemoved': '',
     'globalPlaylist.addedAllItemsToPlaylist': '',

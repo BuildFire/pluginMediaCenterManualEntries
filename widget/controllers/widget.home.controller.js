@@ -1,8 +1,8 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetHomeCtrl', ['$scope', '$timeout', '$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location',
-            function ($scope, $timeout, $window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location) {
+        .controller('WidgetHomeCtrl', ['$scope', '$timeout', '$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location', 'openedMediaHandler', 'LocalStorageOpenedItemsHandler',
+            function ($scope, $timeout, $window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location, openedMediaHandler, LocalStorageOpenedItemsHandler) {
                 $rootScope.loadingGlobalPlaylist = true;
                 $rootScope.showFeed = true;
                 $rootScope.currentlyDownloading = [];
@@ -11,6 +11,7 @@
                 WidgetHome.deepLink = false;
                 $rootScope.loadingData = true;
                 WidgetHome.isWeb = Buildfire.getContext().device.platform == 'web';
+                WidgetHome.openedItems = [];
                 // $rootScope.online = $window.navigator.onLine;
                 $rootScope.online = $window.navigator.onLine;
                 WidgetHome.online = $rootScope.online;
@@ -20,15 +21,6 @@
                 buildfire.spinner.hide();
                 $rootScope.resizeImg = (url) => buildfire.imageLib.resizeImage(url);
 
-
-                $rootScope.globalPlaylistStrings = {
-                    itemAdded: getString('globalPlaylist.itemAdded'),
-                    itemRemoved: getString('globalPlaylist.itemRemoved'),
-                    addedAllItemsToPlaylist: getString('globalPlaylist.addedAllItemsToPlaylist'),
-                    addedItemsToPlaylist: getString('globalPlaylist.addedItemsToPlaylist'),
-                    removedAllItemsFromPlaylist: getString('globalPlaylist.removedAllItemsFromPlaylist'),
-                    playlistLimitReached: getString('globalPlaylist.playlistLimitReached')
-                }
 
                 const isLauncher = window.location.href.includes('launcherPlugin');
                 const slideElement = document.querySelector(".slide");
@@ -61,7 +53,8 @@
                             dateIndexed: true,
                             dateCreatedIndexed: true,
                             enableFiltering: false,
-                            allowOfflineDownload: true
+                            allowOfflineDownload: true,
+                            indicatePlayedItems: false,
                         },
                         design: {
                             listLayout: "list-1",
@@ -92,7 +85,6 @@
                         path: "/data/mediaCenterManual",
                         fileName: "downloadedMedia"
                     });
-
                 const getCurrentUser = (callback) => {
                     Buildfire.auth.getCurrentUser((err, user) => {
                         $rootScope.user = user;
@@ -137,6 +129,8 @@
                         $rootScope.allowOfflineDownload = MediaCenterInfo.data.content.allowOfflineDownload;
                         $rootScope.enableFiltering = MediaCenterInfo.data.content.enableFiltering;
                         $rootScope.showViewCount = MediaCenterInfo.data.content.showViewCount;
+                        $rootScope.indicatePlayedItems = MediaCenterInfo.data.content.indicatePlayedItems;
+                        $rootScope.autoJumpToLastPosition = MediaCenterInfo.data.content.startWithAutoJumpByDefault;
 
                         if (isLauncher && MediaCenterInfo.data.content.enableFiltering) {
                             slideElement.classList.add("launcher-with-filter");
@@ -192,6 +186,7 @@
                             $rootScope.showGlobalAddAllToPlaylistButton = WidgetHome.media.data.content.showGlobalAddAllToPlaylistButton;
                             $rootScope.allowOfflineDownload = WidgetHome.media.data.content.allowOfflineDownload;
                             $rootScope.enableFiltering = WidgetHome.media.data.content.enableFiltering;
+                            $rootScope.indicatePlayedItems = WidgetHome.media.data.content.indicatePlayedItems;
 
                             if (isLauncher && WidgetHome.media.data.content.enableFiltering) {
                                 slideElement.classList.add("launcher-with-filter");
@@ -246,7 +241,11 @@
                         $window.deeplinkingDone = true;
                         $rootScope.showFeed = false;
                         window.setTimeout(() => {
-                            WidgetHome.goTo(deeplinkData.id);
+                            if( deeplinkData.id &&  deeplinkData.type === 'audio') {
+                                WidgetHome.goTo(deeplinkData.id, deeplinkData.type);
+                            }else{
+                                WidgetHome.goTo(deeplinkData.id);
+                            }
                         }, 0);
                     }
                 });
@@ -258,7 +257,7 @@
                       (document.hasFocus()));
                 }
 
-                WidgetHome.goTo = function (id) {
+                WidgetHome.goTo = function (id, type) {
                     var documentFocused = WidgetHome.isDocumentFocused();
                     // stop the autoplay if shared media via PWA to prevent video freeze
                     if(documentFocused) $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
@@ -272,9 +271,13 @@
                     $rootScope.showFeed = false;
                     var navigate = function (item) {
                         if (item && item.data) {
-                            if (!$rootScope.skipMediaPage || ($rootScope.skipMediaPage && item.data.videoUrl)
+                            if(type === 'audio'){
+                                Location.go('#/nowplaying/' + item.id, true);
+                                if (!$rootScope.$$phase) $rootScope.$digest();
+                            }
+                            else if (!$rootScope.skipMediaPage || ($rootScope.skipMediaPage && item.data.videoUrl)
                                 || ($rootScope.skipMediaPage && !item.data.videoUrl && !item.data.audioUrl)) {
-                                Location.go('#/media/' + item.id, true);
+                                    Location.go('#/media/' + item.id, true);
                             } else {
                                 Location.go('#/nowplaying/' + item.id, true);
                             }
@@ -346,6 +349,8 @@
                             $rootScope.showGlobalAddAllToPlaylistButton = WidgetHome.media.data.content.showGlobalAddAllToPlaylistButton;
                             $rootScope.allowOfflineDownload = WidgetHome.media.data.content.allowOfflineDownload;
                             $rootScope.enableFiltering = WidgetHome.media.data.content.enableFiltering;
+                            $rootScope.indicatePlayedItems = WidgetHome.media.data.content.indicatePlayedItems;
+                            $rootScope.autoJumpToLastPosition = WidgetHome.media.data.content.startWithAutoJumpByDefault ;
 
                             if (view && event.data.content && event.data.content.images) {
                                 view.loadItems(event.data.content.images);
@@ -602,7 +607,7 @@
                             $rootScope.globalPlaylistItems.playlist = {};
                             $rootScope.addAllToPlaylistLoading = false;
                             buildfire.dialog.toast({
-                                message: $rootScope.globalPlaylistStrings.removedAllItemsFromPlaylist,
+                                message: getString('globalPlaylist.removedAllItemsFromPlaylist'),
                                 type: 'success',
                                 duration: 2000
                             });
@@ -615,7 +620,7 @@
                         var freeSlots = $rootScope.globalPlaylistLimit - takenSlots;
                         if (typeof $rootScope.globalPlaylistLimit === 'number' && freeSlots < 1) {
                             buildfire.dialog.toast({
-                                message: $rootScope.globalPlaylistStrings.playlistLimitReached,
+                                message: getString('globalPlaylist.playlistLimitReached'),
                                 type: 'warning'
                             });
                             $rootScope.addAllToPlaylistLoading = false;
@@ -629,8 +634,8 @@
                                 }
 
                                 var message = (itemsToAdd.length == WidgetHome.items.length) ?
-                                    $rootScope.globalPlaylistStrings.addedAllItemsToPlaylist :
-                                    $rootScope.globalPlaylistStrings.addedItemsToPlaylist;
+                                    getString('globalPlaylist.addedAllItemsToPlaylist') :
+                                    getString('globalPlaylist.addedItemsToPlaylist');
                                 buildfire.dialog.toast({
                                     message: message,
                                     type: 'success',
@@ -648,7 +653,7 @@
                         GlobalPlaylist.delete(item.id).then(() => {
                             delete $rootScope.globalPlaylistItems.playlist[item.id];
                             buildfire.dialog.toast({
-                                message: $rootScope.globalPlaylistStrings.itemRemoved,
+                                message: getString('globalPlaylist.itemRemoved'),
                                 type: 'success',
                                 duration: 2000
                             });
@@ -656,7 +661,7 @@
                     } else {
                         if (typeof $rootScope.globalPlaylistLimit === 'number' && Object.keys($rootScope.globalPlaylistItems.playlist).length >= $rootScope.globalPlaylistLimit) {
                             buildfire.dialog.toast({
-                                message: $rootScope.globalPlaylistStrings.playlistLimitReached,
+                                message: getString('globalPlaylist.playlistLimitReached'),
                                 type: 'warning',
                                 duration: 3000
                             });
@@ -665,7 +670,7 @@
                             GlobalPlaylist.insertAndUpdate(item).then(() => {
                                 $rootScope.globalPlaylistItems.playlist[item.id] = item.data;
                                 buildfire.dialog.toast({
-                                    message: $rootScope.globalPlaylistStrings.itemAdded,
+                                    message: getString('globalPlaylist.itemAdded'),
                                     type: 'success',
                                     duration: 2000
                                 });
@@ -744,12 +749,21 @@
                 WidgetHome.currentSkip = 0;
                 WidgetHome.currentlyLoading = false;
 
+                const unregisterDeeplink = function(deepLinkId){
+                    buildfire.deeplink.unregisterDeeplink(deepLinkId, (err, result) => {
+                        if (err) return console.log(err);
+                    });
+                }
+
                 WidgetHome.checkForDeeplink = () => {
                     if (!$window.deeplinkingDone) {
                         buildfire.deeplink.getData((data) => {
                             if (!data) return;
                             let itemId = null;
-                            if (data.id) itemId = data.id;
+                            if (data.id) {
+                                unregisterDeeplink(data.id);
+                                itemId = data.id;
+                            }
                             else if (data.mediaId) itemId = data.mediaId;
                             else if (data && data.deepLinkUrl) {
                                 var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
@@ -775,7 +789,11 @@
                             $rootScope.showFeed = false;
                             $rootScope.fromSearch = true;
                             $window.deeplinkingDone = true;
-                            WidgetHome.goTo(itemId);
+                            if(itemId && data.type === 'audio') {
+                                WidgetHome.goTo(itemId, data.type);
+                            }else{
+                                WidgetHome.goTo(itemId);
+                            }
                         });
                     }
 
@@ -783,7 +801,11 @@
                         if (deeplinkData && deeplinkData.id) {
                             $window.deeplinkingDone = true;
                             $rootScope.showFeed = false;
-                            WidgetHome.goTo(deeplinkData.id);
+                            if( deeplinkData.id &&  deeplinkData.type === 'audio') {
+                                WidgetHome.goTo(deeplinkData.id, deeplinkData.type);
+                            }else{
+                                WidgetHome.goTo(deeplinkData.id);
+                            }
 
                         }
                     });
@@ -819,6 +841,7 @@
                                                     item.data.hasDownloadedAudio = true;
                                                 }
                                             }
+                                            item.data.opened = isOpened(item);
                                             return item;
                                         }) : null;
 
@@ -868,6 +891,7 @@
                         // });
                         if (!cachedItems) cachedItems = [];
                         WidgetHome.items = cachedItems;
+                        WidgetHome.items.forEach((item) => item.data.opened = isOpened(item));
                         DownloadedMedia.get((err, res) => {
                             let downloadedIDS = [];
                             if (err) {
@@ -919,10 +943,10 @@
 
                 const getGlobalPlaylistItems = () => {
                     return new Promise(resolve => {
-                        $rootScope.loadingGlobalPlaylist = true;
                         GlobalPlaylist.get()
-                            .then(result => {
-                                if (!result.data.playlist) {
+                        .then(result => {
+                            if (!result.data.playlist) {
+                                    $rootScope.loadingGlobalPlaylist = true;
                                     // If there is no object, then create the parent object
                                     GlobalPlaylist.save({ playlist: {} })
                                         .then(result => {
@@ -963,37 +987,44 @@
                 }
 
                 WidgetHome.loadMore = () => {
+
+                    localOpenedItems();
                     updateGetOptions();
                     const getRecords = () => {
-
                         if (WidgetHome.currentlyLoading || WidgetHome.noMore) return;
                         buildfire.spinner.show();
                         WidgetHome.stopScroll = true;
                         WidgetHome.currentlyLoading = true;
 
                         MediaContent.find(searchOptions).then((result) => {
-                            result = result.map(item=>{
+                            result = result.map((item) => {
                                 item.data.topImage = getImageUrl(item.data.topImage);
                                 item.data.image = getImageUrl(item.data.image);
-                                return item
-                            })
+                                return item;
+                            });
                             WidgetHome.items = WidgetHome.items.concat(result);
-                            WidgetHome.items.forEach(item => {
+                            WidgetHome.items.forEach((item) => {
                                 var searchOptions = {
                                     filter: {
-                                        "_buildfire.index.string1": item.id+"-true"
+                                        '_buildfire.index.string1': item.id + '-true',
                                     },
                                     skip: 0,
                                     limit: 1,
-                                    recordCount: true
+                                    recordCount: true,
                                 };
-                                buildfire.publicData.search(searchOptions,COLLECTIONS.MediaCount, function(err,res){
-                                    item.data.count = res.totalRecord
-                                    if (!$scope.$$phase && !$scope.$root.$$phase) {
-                                        $scope.$apply();
+                                item.data.opened = isOpened(item);
+
+                                buildfire.publicData.search(
+                                    searchOptions,
+                                    COLLECTIONS.MediaCount,
+                                    function (err, res) {
+                                        item.data.count = res.totalRecord;
+                                        if (!$scope.$$phase && !$scope.$root.$$phase) {
+                                            $scope.$apply();
+                                        }
                                     }
-                                })
-                            })
+                                );
+                            });
                             const finish = () => {
                                 $rootScope.myItems = WidgetHome.items;
                                 $rootScope.loadingData = false;
@@ -1004,7 +1035,7 @@
                                 if (!WidgetHome.items.length) {
                                     angular.element('#emptyContainer').css('display', 'block');
                                 }
-                            }
+                            };
 
                             if (result.length < searchOptions.limit) {
                                 WidgetHome.noMore = true;
@@ -1021,7 +1052,7 @@
                                 }
                             });
                         });
-                    }
+                    };
 
                     if ($rootScope.globalPlaylist && $rootScope.online) {
                         getCurrentUser(() => {
@@ -1030,23 +1061,56 @@
                             getGlobalPlaylistItems()
                                 .then(getRecords)
                                 .finally(() => {
-                                    $rootScope.loadingGlobalPlaylist = false
+                                    $rootScope.loadingGlobalPlaylist = false;
                                 });
                         });
                     } else if ($rootScope.online) {
-                        getGlobalPlaylistItems().then(getRecords).finally(() => {
-                            setTimeout(() => {
-                                WidgetHome.isBusy = false;
-                                $rootScope.loadingData = false;
-                                $rootScope.loadingGlobalPlaylist = false;
-                                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                            }, 0);
-                        });
-                    }
-                    else {
-                        getCachedItems((err, res) => { });
+                        getGlobalPlaylistItems()
+                            .then(getRecords)
+                            .finally(() => {
+                                setTimeout(() => {
+                                    WidgetHome.isBusy = false;
+                                    $rootScope.loadingData = false;
+                                    $rootScope.loadingGlobalPlaylist = false;
+                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                }, 0);
+                            });
+                    } else {
+                        getCachedItems((err, res) => {});
                     }
                 }
+
+                $rootScope.markItemAsOpened = function (id) {
+                    const modifiedArray = WidgetHome.items.map((item) => {
+                        if (item.id === id) {
+                            return {
+                                ...item,
+                                data: {
+                                    ...item.data,
+                                    opened: true,
+                                },
+                            };
+                        }
+                        return item;
+                    });
+                    WidgetHome.items = modifiedArray;
+                };
+                
+                // check if the item is opened
+                const isOpened = (item) => {
+                    return WidgetHome.openedItems.find(openedItem => {
+                        const itemId = item.id;
+                        const audioItemUrl = item.data.audioUrl;
+                        const videoItemUrl = item.data.videoUrl;
+                        
+                        return (
+                            (itemId && openedItem.includes(itemId)) ||
+                            (audioItemUrl && openedItem.includes(audioItemUrl)) ||
+                            (videoItemUrl && openedItem.includes(videoItemUrl))
+                        );
+                    });
+                };
+                
                 //==============================================================================================================
 
                 WidgetHome.openLinks = function (actionItems) {
@@ -1414,7 +1478,12 @@
                     return $rootScope.currentlyDownloading.indexOf(item.id) > -1;
                 };
 
-                $rootScope.refreshItems = function () {
+                $rootScope.refreshItems = function (syncLocalStorage = false) {
+                    if(syncLocalStorage){
+                        openedMediaHandler.sync().then(()=>{
+                            localOpenedItems();
+                        });
+                    }
                     searchOptions.skip = 0;
                     WidgetHome.items = [];
                     WidgetHome.stopScroll = false;
@@ -1464,12 +1533,13 @@
                     bookmarks.sync($scope);
                     if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
                     $rootScope.user = user;
-                    $rootScope.refreshItems();
+                    $rootScope.refreshItems(true);
                 });
 
                 buildfire.auth.onLogout(function () {
                     buildfire.spinner.show();
                     bookmarks.sync($scope);
+                    openedMediaHandler.reset();
                     if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
                     $rootScope.user = null;
                     $rootScope.refreshItems();
@@ -1619,5 +1689,15 @@
                     Location.goToHome();
                 });
 
+                // get opened items
+                const localOpenedItems = () => {
+                    getCurrentUser(() => {
+                        if (!$rootScope.user) return (WidgetHome.openedItems = []);
+                        LocalStorageOpenedItemsHandler.getOpenedMediaItems((error, response) => {
+                            if (error) WidgetHome.openedItems = [];
+                            WidgetHome.openedItems = response;
+                        });
+                    });
+                };
             }]);
 })(window.angular);

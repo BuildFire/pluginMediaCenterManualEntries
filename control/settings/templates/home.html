@@ -65,7 +65,7 @@
     </div>
 </div>
 
-<div class="setting-toggle margin-bottom-twenty" ng-show="Settings.data.content.autoPlay">
+<div class="setting-toggle margin-bottom-twenty" ng-show="Settings.data.content.autoPlay" style="margin-left: 20px;">
     <p class="setting-label">
         Auto Play Delay
         <span class="customTooltipBox btn-primary">
@@ -105,7 +105,7 @@
     </div>
 </div>
 
-<div class="setting-toggle margin-bottom-twenty" ng-if="Settings.data.content.globalPlaylist">
+<div class="setting-toggle margin-bottom-twenty" ng-if="Settings.data.content.globalPlaylist" style="margin-left: 20px;">
     <p class="setting-label">
         Global Playlist Feature
         <span class="customTooltipBox btn-primary">
@@ -190,5 +190,33 @@
     <div class="button-switch">
         <input id="enablePlayCountSwitch" type="checkbox" ng-click="Settings.setEnablePlayCount($event)" ng-checked="Settings.data.content.showViewCount">
         <label for="enablePlayCountSwitch" class="label-success"></label>
+    </div>
+</div>
+
+<div class="input-control side-label margin-bottom-twenty">
+    <label for="">Indicate Played Items
+        <span class="customTooltipBox btn-primary">
+            <span class="customTooltipText">
+                Visually mark a media item that the user has already opened.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch">
+        <input id="enableIndicatePlayedItems" type="checkbox" ng-click="Settings.setEnableIndicatePlayedItems($event)" ng-checked="Settings.data.content.indicatePlayedItems">
+        <label for="enableIndicatePlayedItems" class="label-success"></label>
+    </div>
+</div>
+
+<div class="input-control side-label margin-bottom-twenty">
+    <label for="">Auto Jump to Last Position
+        <span class="customTooltipBox btn-primary">
+            <span class="customTooltipText">
+                This setting allows users to resume media playback from where they left off upon returning to the app. You have the choice to set it as enabled or disabled by default. Note that changing this setting on one Media Center Manual instance will apply it to all installed instances.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch">
+        <input id="enableStartWithAutoJumpByDefault " type="checkbox" ng-click="Settings.setEnableStartWithAutoJumpByDefault ($event)" ng-checked="Settings.data.content.startWithAutoJumpByDefault ">
+        <label for="enableStartWithAutoJumpByDefault " class="label-success"></label>
     </div>
 </div>

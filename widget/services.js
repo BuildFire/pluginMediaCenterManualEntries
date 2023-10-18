@@ -487,5 +487,97 @@
             };
 
             return AppDB;
+        }])
+        .factory("UserDB", ['$rootScope', 'Buildfire', '$q', 'MESSAGES', 'CODES', function ($rootScope, Buildfire, $q, MESSAGES, CODES) {
+            function UserDB(tagName) {
+                this._tagName = tagName;
+            }
+            
+            UserDB.prototype.get = function () {
+                const that = this;
+                const deferred = $q.defer();
+                Buildfire.userData.get(that._tagName, (err, result) => {
+                    if (err && err.code == CODES.NOT_FOUND) {
+                        return deferred.reject();
+                    }
+                    else if (err) {
+                        return deferred.reject(err);
+                    }
+                    else if(result && !result.data.openedItems){
+                        const data = new MediaMetaData();
+                        that.save(data).then((res) => {
+                            deferred.resolve(new MediaMetaData(res.data));
+                        });
+                    }
+                    else {
+                        return deferred.resolve(new MediaMetaData({...result.data, id: result.id}));
+                    }
+                });
+                return deferred.promise;
+            };
+
+
+            UserDB.prototype.save = function (data) {
+                const that = this;
+                const deferred = $q.defer();
+                if (typeof data == 'undefined') {
+                    return deferred.reject(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
+                };
+
+                Buildfire.userData.save(data, that._tagName, (err, result) => {
+                    if (err) {
+                        return deferred.reject(err);
+                    }
+                    else if (result) {
+                        return deferred.resolve(result);
+                    } else {
+                        return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
+                    }
+                });
+                return deferred.promise;
+            };
+
+            return UserDB;
+        }])
+        .factory("LocalStorageDB", ['Buildfire', function (Buildfire) {
+            
+            function LocalStorageDB (key){
+                this.key = key;
+            }
+
+            LocalStorageDB.prototype.get = function (callback){
+                Buildfire.localStorage.getItem(
+                    this.key,
+                    (error, value) => {
+                        if (error) return callback(error, null);
+                        callback(null, value);
+                    }
+                );
+            };
+
+            LocalStorageDB.prototype.getAll = function(callback){
+                Buildfire.localStorage.getItem(
+                    this.key,
+                    (error, value) => {
+                        if (error) return callback(error, null);
+
+                        value = JSON.parse(value);
+                        callback(null, value);
+                    }
+                );
+            };
+
+            LocalStorageDB.prototype.save = function (data) {
+                Buildfire.localStorage.setItem(this.key, data);
+            };
+
+            LocalStorageDB.prototype.reset = function (){
+                this.save([]);
+            };
+
+            return LocalStorageDB;
         }]);
+        
+        
+        
 })(window.angular, window.buildfire, window.location);

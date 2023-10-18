@@ -1,8 +1,8 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope', 'Location', 'OFSTORAGE',
-            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope, Location, OFSTORAGE) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope', 'Location', 'OFSTORAGE', 'openedMediaHandler',
+            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope, Location, OFSTORAGE, openedMediaHandler) {
                 var WidgetMedia = this;
                 WidgetMedia.API = null;
                 $rootScope.online = $window.navigator.onLine;
@@ -20,7 +20,6 @@
                 WidgetMedia.oldVideoStyle = { position: "", width: "", height: "", marginTop: "" };
                 WidgetMedia.oldiFrameStyle = { height: "" };
                 WidgetMedia.oldBackgroundStyle = { height: "", color: "" };
-
                 var Android = /(android)/i.test(navigator.userAgent);
                 if (!buildfire.isWeb() && Android) {
                     document.onfullscreenchange = function (event) {
@@ -244,6 +243,10 @@
 
                 $scope.onVideoStateChange = function (state) {
                     if (state === 'play') { // The video started playing
+                        openedMediaHandler.add(WidgetMedia.item, 'Video', $rootScope.user?.userId);
+                        if(!$rootScope.online){
+                            $rootScope.markItemAsOpened(WidgetMedia.item.id)
+                        }
                         if (!WidgetMedia.isCounted && $rootScope.user) {
                             var userCheckViewFilter = {
                                 filter: getIndexedFilter(WidgetMedia.item.id, $rootScope.user._id, 'Video')
@@ -405,7 +408,8 @@
                                 globalPlaylist: false,
                                 dateIndexed: true,
                                 dateCreatedIndexed: true,
-                                showViewCount: false
+                                showViewCount: false,
+                                indicatePlayedItems: false,
                             },
                             design: {
                                 listLayout: "list-1",
@@ -474,6 +478,12 @@
                     media.data.image = getImageUrl(media.data.image);
                     WidgetMedia.item = media;
                     WidgetMedia.mediaType = media.data.audioUrl ? 'AUDIO' : (media.data.videoUrl ? 'VIDEO' : null);
+                    if(!WidgetMedia.mediaType){
+                        openedMediaHandler.add(WidgetMedia.item, 'Article', $rootScope.user?.userId);
+                        if(!$rootScope.online){
+                            $rootScope.markItemAsOpened(WidgetMedia.item.id)
+                        }
+                    }
                     Buildfire.auth.getCurrentUser((err, user) => {
                         if(WidgetMedia.mediaType == null) {
                             sendArticleContinuesAnalytics(WidgetMedia);
@@ -653,6 +663,7 @@
                             $rootScope.showGlobalAddAllToPlaylistButton = WidgetMedia.media.data.content.showGlobalAddAllToPlaylistButton;
                             $rootScope.allowOfflineDownload = WidgetMedia.media.data.content.allowOfflineDownload;
                             $rootScope.showViewCount = WidgetMedia.media.data.content.showViewCount;
+                            $rootScope.indicatePlayedItems = WidgetMedia.media.data.content.indicatePlayedItems;
                             // Update Data in media contoller
                             WidgetMedia.fixIOSAutoPlay();
                             $rootScope.refreshItems();
@@ -791,12 +802,13 @@
                     bookmarks.sync($scope);
                     if (!WidgetMedia.isWeb) downloads.sync($scope, DownloadedMedia);
                     $rootScope.user = user;
-                    $rootScope.refreshItems();
+                    $rootScope.refreshItems(true);
                 });
 
                 buildfire.auth.onLogout(function () {
                     buildfire.spinner.show();
                     bookmarks.sync($scope);
+                    openedMediaHandler.reset();
                     if (!WidgetMedia.isWeb) downloads.sync($scope, DownloadedMedia);
                     $rootScope.user = null;
                     $rootScope.refreshItems();

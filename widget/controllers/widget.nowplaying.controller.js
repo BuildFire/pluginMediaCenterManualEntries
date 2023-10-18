@@ -1,8 +1,8 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('NowPlayingCtrl', ['$scope', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', 'Location', 'EVENTS', 'PATHS', 'DB', 'AppDB',
-            function ($scope, media, Buildfire, Modals, COLLECTIONS, $rootScope, Location, EVENTS, PATHS, DB, AppDB) {
+        .controller('NowPlayingCtrl', ['$scope', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', 'Location', 'EVENTS', 'PATHS', 'DB', 'AppDB', 'openedMediaHandler',
+            function ($scope, media, Buildfire, Modals, COLLECTIONS, $rootScope, Location, EVENTS, PATHS, DB, AppDB, openedMediaHandler) {
                 $rootScope.blackBackground = true;
                 $rootScope.showFeed = false;
                 var audioPlayer = Buildfire.services.media.audioPlayer;
@@ -10,11 +10,12 @@
                 var NowPlaying = this;
                 NowPlaying.swiped = [];
                 NowPlaying.forceAutoPlay = $rootScope.forceAutoPlay;
+                NowPlaying.autoJumpToLastPosition = $rootScope.autoJumpToLastPosition;
                 NowPlaying.transferPlaylist = $rootScope.transferAudioContentToPlayList;
                 media.data.audioUrl = convertDropbox(media.data.audioUrl);
                 media.data.topImage = convertDropbox(media.data.topImage);
                 media.data.image = convertDropbox(media.data.image);
-
+                NowPlaying.firstPlay = true;
                 NowPlaying.currentTime = 0;
 
                 $rootScope.deepLinkNavigate = null;
@@ -30,6 +31,33 @@
                 NowPlaying.keepPosition = 0;
                 NowPlaying.finished = false;
                 NowPlaying.isAudioPlayerPlayingAnotherSong = true;
+                document.documentElement.style.setProperty('--played-tracker-percentage', '0%');
+                const playbackSpeedOptions = [
+                    {
+                        text: '<div class="bodyTextTheme">0.5x</div>',
+                        displayText: '0.5x',
+                        value: 0.5,
+                        default: false
+                    },
+                    {
+                        text: '<div class="bodyTextTheme">1.0x</div>',
+                        displayText: '1.0x',
+                        value: 1,
+                        default: true
+                    },
+                    {
+                        text: '<div class="bodyTextTheme">1.5x</div>',
+                        displayText: '1.5x',
+                        value: 1.5,
+                        default: false
+                    },
+                    {
+                        text: '<div class="bodyTextTheme">2.0x</div>',
+                        displayText: '2.0x',
+                        value: 2,
+                        default: false
+                    },
+                ];
                 bookmarks.sync($scope);
 
                 if(!NowPlaying.isOnline) initAudio(0);
@@ -262,7 +290,7 @@
                     // Prevent the repetition of events by clearing all previous occurrences, as repeated events tend to occur when the user plays multiple audio files.
                     $rootScope.activePlayerEvents.clear();
                 }
-                $rootScope.activePlayerEvents = audioPlayer.onEvent(function (e) {
+                $rootScope.activePlayerEvents = audioPlayer.onEvent(function (e) {                 
                     switch (e.event) {
                         case 'play':
                             NowPlaying.currentTrack = e.data.track;
@@ -324,6 +352,7 @@
                                 }
                             NowPlaying.currentTime = e.data.currentTime;
                             NowPlaying.duration = e.data.duration;
+                            NowPlaying.progressBarStyle(e.data.currentTime);
                             break;
                         case 'audioEnded':
                             ready = false;
@@ -408,7 +437,7 @@
                 function initAudio(lastPosition) {
                     isAudioEnded = false;
                     NowPlaying.currentTime = lastPosition;
-                    NowPlaying.currentTrack = new Track(media.data, lastPosition);
+                    NowPlaying.currentTrack = new Track({...media.data, id: media.id}, lastPosition);
                     NowPlaying.currentTrack.backgroundImage = media.data.image ? media.data.image : media.data.topImage;
 
                     NowPlaying.currentTrack.image = media.data.topImage;
@@ -421,6 +450,7 @@
                         $scope.$digest();
                     }
                     audioPlayer.settings.get(function (err, setting) {
+
                         if (!setting.autoJumpToLastPosition) {
                             NowPlaying.currentTrack.startAt = 0;
                         }
@@ -428,15 +458,34 @@
                         NowPlaying.settings = setting;
                         NowPlaying.volume = setting.volume;
                         NowPlaying.forceAutoPlayer();
+                        if(!isSettingsChanged(setting)) {
+                            NowPlaying.autoJumpToLastPosition  = setting.autoJumpToLastPosition;
+                        }else{
+                            NowPlaying.settings.autoJumpToLastPosition = NowPlaying.autoJumpToLastPosition;
+                        }
+                        $scope.$digest();
                         audioPlayer.settings.set(NowPlaying.settings);
                         setTimeout(() => {
                             if ($rootScope.autoPlay) {
                                 NowPlaying.playTrack();
                             }
                         }, 0);
+                        $scope.$apply();
                     });
+                    
+                    buildfire.services.media.audioPlayer.isPaused((err, isPaused) => {
+                        if (err) return console.err(err);
+                        
+                        NowPlaying.playing = !isPaused;
+                    });                    
                     audioPlayer.getCurrentTrack((track) => {
-                        if (track && track.title == NowPlaying.currentTrack.title && track.url == NowPlaying.currentTrack.url) {
+                        if (
+                            track &&
+                            (
+                            track.title == NowPlaying.currentTrack.title &&
+                            track.url == NowPlaying.currentTrack.url) ||
+                            (track?.url.split('?')[0] === NowPlaying.currentTrack?.url.split('?')[0])
+                        ) {
                             NowPlaying.isAudioPlayerPlayingAnotherSong = false;
                         } else if (!track) {
                             NowPlaying.isAudioPlayerPlayingAnotherSong = false;
@@ -497,6 +546,13 @@
                  * Player related method and variables
                  */
                 NowPlaying.playTrack = function () {
+                    if(NowPlaying.firstPlay){
+                        openedMediaHandler.add(NowPlaying.item, 'Audio', $rootScope.user?.userId);
+                        if(!NowPlaying.isOnline){
+                            $rootScope.markItemAsOpened(WidgetMedia.item.id)
+                        }
+                        NowPlaying.firstPlay = false;
+                    }
                     if(!NowPlaying.isOnline && (!NowPlaying.item.data.hasDownloadedAudio || !$rootScope.allowOfflineDownload)){
                         buildfire.dialog.show(
                             {
@@ -685,7 +741,7 @@
                     if (NowPlaying.currentTime + 5 >= NowPlaying.currentTrack.duration)
                         audioPlayer.setTime(NowPlaying.currentTrack.duration);
                     else
-                        audioPlayer.setTime(NowPlaying.currentTime + 5);
+                    audioPlayer.setTime(NowPlaying.currentTime + 5);
                 };
 
                 NowPlaying.backward = function () {
@@ -809,10 +865,13 @@
                         }
                     });
                 };
-                NowPlaying.setSettings = function (settings) {
+                NowPlaying.setSettings = function (settings, cpSync = false) {
                     if (!settings.autoPlayNext && NowPlaying.forceAutoPlay && !NowPlaying.isItLast) {
                         settings.autoJumpToLastPosition = true;
                         settings.autoPlayNext = true;
+                    }
+                    if(!cpSync){
+                        NowPlaying.settings.enableUserPreferences = true;
                     }
                     var newSettings = new AudioSettings(settings);
                     audioPlayer.settings.set(newSettings);
@@ -862,6 +921,13 @@
                     this.artist = track.artists;
                     this.startAt = 0; // where to begin playing
                     this.isAudioPlayed = track.isAudioPlayed ? track.isAudioPlayed : false;
+                    this.deepLinkData = {
+                        pluginInstanceId: Buildfire.context.instanceId,
+                        payload:{
+                            id: track.id,
+                            type: 'audio',
+                        }
+                    }
                 }
 
                 /**
@@ -871,6 +937,7 @@
                  * @param autoJumpToLastPosition
                  * @param shufflePlaylist
                  * @param isPlayingCurrentTrack
+                 * @param playbackSpeed
                  * @constructor
                  */
                 function AudioSettings(settings) {
@@ -879,6 +946,8 @@
                     this.autoJumpToLastPosition = settings.autoJumpToLastPosition; //If a track has [lastPosition] use it to start playing the audio from there
                     this.shufflePlaylist = settings.shufflePlaylist;// shuffle the playlist
                     this.isPlayingCurrentTrack = settings.isPlayingCurrentTrack;// tells whether current track is playing or not
+                    this.playbackSpeed = settings.playbackSpeed;// Track playback speed rate
+                    this.enableUserPreferences = settings.enableUserPreferences || false;
                 }
 
                 var GlobalPlaylist = new AppDB();
@@ -932,7 +1001,12 @@
                                 $rootScope.showGlobalPlaylistNavButton = event.data.content.showGlobalPlaylistNavButton;
                                 $rootScope.showGlobalAddAllToPlaylistButton = event.data.content.showGlobalAddAllToPlaylistButton;
                                 $rootScope.allowOfflineDownload = event.data.content.allowOfflineDownload;
-
+                                $rootScope.autoJumpToLastPosition = event.data.content.startWithAutoJumpByDefault;
+                                if(isSettingsChanged(NowPlaying.settings)){
+                                    NowPlaying.autoJumpToLastPosition = $rootScope.autoJumpToLastPosition;
+                                    NowPlaying.settings.autoJumpToLastPosition = $rootScope.autoJumpToLastPosition;
+                                }
+                                NowPlaying.setSettings(NowPlaying.settings, true)
                                 // Update Data in media contoller
                                 $rootScope.refreshItems();
                                 if (!$scope.$$phase) {
@@ -969,12 +1043,13 @@
                     buildfire.spinner.show();
                     bookmarks.sync($scope);
                     $rootScope.user = user;
-                    $rootScope.refreshItems();
+                    $rootScope.refreshItems(true);
                 });
 
                 buildfire.auth.onLogout(function () {
                     buildfire.spinner.show();
                     bookmarks.sync($scope);
+                    openedMediaHandler.reset();
                     $rootScope.user = null;
                     $rootScope.refreshItems();
                 });
@@ -1044,6 +1119,70 @@
                     Buildfire.datastore.onRefresh(function () {
                         Location.goToHome();
                     });
+                });
+
+                //! --------------------------- Playback options --------------------------------------
+                NowPlaying.openPlaybackDrawer = function () {
+                    buildfire.components.drawer.open(
+                        {
+                            content: `<b class="ellipsis" style="display:block;">${getString("playlist.playbackSpeed") }</b>`,
+                            enableFilter: false,
+                            listItems: playbackSpeedOptions,
+                        },
+                        (err, result) => {
+                            if (err) return console.error(err);
+                            setPlaybackSpeed(result.value);
+                            buildfire.components.drawer.closeDrawer();
+                        }
+                    );
+                };
+
+                const setPlaybackSpeed = function (value) {
+                    if (value) {
+                        NowPlaying.settings.playbackSpeed = value;
+                        NowPlaying.setSettings(NowPlaying.settings);
+                        $scope.$digest();
+                    }
+                };
+                
+                
+                //! --------------------------- End : Playback options --------------------------------------
+
+                /**
+                 * progress bar style
+                 * @param {Number} value 
+                 */
+                NowPlaying.progressBarStyle = function (value) {
+                    const percentage = NowPlaying.duration? Math.round(((value / NowPlaying.duration) * 100)) :value;
+                    
+                    if (percentage) {
+                        document.documentElement.style.setProperty('--played-tracker-percentage', `${percentage}%`);
+                    }
+                };
+
+                const isSettingsChanged = (settings) =>{
+                    let isInitialSettings = false;
+                    // Define the initial values
+                    const initialSettings = {
+                        autoPlayNext: false,
+                        loopPlaylist: false,
+                        autoJumpToLastPosition: false,
+                        shufflePlaylist: false,
+                        volume: 1,
+                    };
+                
+                    // Compare each key in the settings object with the initialSettings
+                    for (const key in settings) {
+                        if ((settings.hasOwnProperty(key) && settings[key] === initialSettings[key])) {
+                            isInitialSettings = true;
+                        }
+                    }
+                    return (isInitialSettings && !settings.enableUserPreferences);
+                }
+
+                buildfire.appearance.navbar.hide(null, (err) => {
+                    if (err) return console.error(err);
+                    console.log('Navbar is hidden');
                 });
             }
         ]);

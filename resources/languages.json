@@ -69,6 +69,12 @@
                     "placeholder": "Play Next",
                     "maxLength": 20,
                     "defaultValue": "Play Next"
+                },
+                "playbackSpeed": {
+                    "title": "Playback Speed",
+                    "placeholder": "Playback Speed",
+                    "maxLength": 50,
+                    "defaultValue": "Playback Speed"
                 }
             }
         },

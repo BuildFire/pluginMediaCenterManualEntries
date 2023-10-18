@@ -48,7 +48,7 @@
                 ng-click="WidgetHome.goToMedia($index)">
                 <div class="list-item-media text-left overflow-hidden">
                     <div class="list-media-holder pull-left text-overlay"
-                        play-btn="{{item.data.videoUrl.length > 0  || (skipMediaPage && (item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0)) }}">
+                        play-btn="{{item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0 }}">
                         <!-- <div class="li-actions-item">
                             <i class="share glyphicon glyphicon-share-alt" style="color: white !important;" ng-if="allowShare" ng-click="WidgetHome.share($event, item)" role="button"></i>
                         </div> -->
@@ -58,15 +58,17 @@
                     </div>
 
                     <div class="list-item-copy text-left padding-left-ten padding-right-ten text-overlay"
-                        style=" width:100%;padding-right: 30px !important;">
+                        style=" width:100%;">
                         <div class="date-row">
                             <p class="ellipsis margin-zero text-primary title"><a
                                     class="text-primary">{{item.data.title}}</a> </p>
-                            <div style="display: flex; flex-direction: row;">
-
-                                <i data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload "
-                                    style=" margin-right: 10px;" class="glyphicon glyphicon-ok-circle"
-                                    ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
+                            <div style="display: flex; flex-direction: row; align-items: center;" class="icon-container">
+                                <svg data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload "
+                                    ng-click="WidgetHome.showDrawer($event, item)"    
+                                    xmlns="http://www.w3.org/2000/svg" width="15" height="16" viewBox="0 0 15 16" fill="none">
+                                    <path d="M7.49996 0.916992C3.59704 0.916992 0.416626 4.09741 0.416626 8.00033C0.416626 11.9032 3.59704 15.0837 7.49996 15.0837C11.4029 15.0837 14.5833 11.9032 14.5833 8.00033C14.5833 4.09741 11.4029 0.916992 7.49996 0.916992ZM6.79163 6.58366V3.75033H8.20829V6.58366H10.3333L7.49996 9.41699L4.66663 6.58366H6.79163ZM11.0416 11.542H3.95829V10.1253H11.0416V11.542Z" 
+                                        fill="var(--bf-theme-success)"/>
+                                </svg>
                                 <div style="margin-right: 10px;" data-ng-if="currentlyDownloading.indexOf(item.id) > -1"
                                     class="lds-ring-small">
                                     <div></div>
@@ -83,14 +85,25 @@
 
 
                         <p data-ng-if="item.data.summary" id="summary" class="summary ellipsis margin-zero">{{item.data.summary}}</p>
-                        <p id="views" ng-if="WidgetHome.media.data.content.showViewCount" class="ellipsis margin-zero">{{item.data.count ? item.data.count : 0}}
+                        <p id="views" ng-if="WidgetHome.media.data.content.showViewCount" 
+                        ng-class="{'no-summary': !item.data.summary}"
+                        class="ellipsis margin-zero">{{item.data.count ? item.data.count : 0}}
                             <span id="iconView" style="float: left;margin-right: 5px;">
                                 <i class="glyphicon glyphicon-eye-open"></i>
                             </span>
                         </p>
-                        <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate | jsDate |
-                            date:"MMMM dd, yyyy"}}</span>
-                        </span>
+
+                        <div class="date-container">
+                            <span class="list-item-date" data-ng-if="item.data.mediaDate">{{item.data.mediaDate | jsDate |
+                                date:"MMMM dd, yyyy"}}</span>
+                            </span>
+                            <svg ng-if="item.data.opened && WidgetHome.media.data.content.indicatePlayedItems" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <g clip-path="url(#clip0_1115_4307)">
+                                    <path d="M0 0H18V18H0V0Z" fill="transparent" fill-opacity="0.6"/>
+                                    <path d="M6.75005 12.1502L3.60005 9.00019L2.55005 10.0502L6.75005 14.2502L15.75 5.2502L14.7 4.2002L6.75005 12.1502Z" fill="var(--bf-theme-success)"/>
+                                </g>
+                            </svg>
+                        </div>
                         <!-- <div class="li-actions-item" style="bottom:5%;">
                             <i class="glyphicon bookmark star" style="top:unset !important; bottom:10%;"
                                 ng-class="{ 'glyphicon-star-empty' : !item.data.bookmarked, 'glyphicon-star' : item.data.bookmarked}"
