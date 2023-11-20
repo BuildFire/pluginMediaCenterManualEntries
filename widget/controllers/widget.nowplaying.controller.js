@@ -77,7 +77,7 @@
                     }
                     if (user || Buildfire.context.deviceId) {
                         buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
-                            if (res.length > 0) {
+                            if (res && res.length > 0) {
                                 NowPlaying.isAudioPlayed = true;
                                 if (res[0].data.lastPosition) {
                                     initAudio(res[0].data.lastPosition)
@@ -147,7 +147,7 @@
                         NowPlaying.settings.autoJumpToLastPosition = true;
                     }
                     audioPlayer.getPlaylist(function (err, userPlayList) {
-                        var result = $rootScope.myItems;
+                        var result = $rootScope.myItems || [];
                         var filteredPlaylist = userPlayList.tracks.filter(el => { return el.plugin && el.plugin == buildfire.context.instanceId; });
                         var playlistSongs = filteredPlaylist.map(el => { return el.url; }).join('');
                         var playlistTitles = filteredPlaylist.map(el => { return el.title; }).join('');
@@ -549,7 +549,7 @@
                     if(NowPlaying.firstPlay){
                         openedMediaHandler.add(NowPlaying.item, 'Audio', $rootScope.user?.userId);
                         if(!NowPlaying.isOnline){
-                            $rootScope.markItemAsOpened(WidgetMedia.item.id)
+                            $rootScope.markItemAsOpened(NowPlaying.item.id)
                         }
                         NowPlaying.firstPlay = false;
                     }
