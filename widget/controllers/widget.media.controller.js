@@ -495,7 +495,7 @@
                             };
                             buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
                                 console.log(res)
-                                if (res.length > 0) {
+                                if (res && res.length > 0) {
                                     WidgetMedia.isCounted = true;
                                 } else if (WidgetMedia.mediaType == null) {
                                     let data = {
