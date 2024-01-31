@@ -628,17 +628,20 @@
           ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
           ContentMedia.item.data && ContentMedia.item.data.title ?
             ContentMedia.item.data.titleIndex = ContentMedia.item.data.title.toLowerCase() : '';
-          SearchEngineService.insert(ContentMedia.item.data).then(function (searchEngineData) {
-            ContentMedia.item.data.searchEngineId = searchEngineData.id;
-            MediaContent.insert(ContentMedia.item.data).then((data) => {
-              createNewDeeplink(data, (err, deeplink) => {
+         
+          MediaContent.insert(ContentMedia.item.data).then((item) => {
+            item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: item.id });
+            SearchEngineService.insert(item.data).then(function (searchEngineData) {
+              item.data.searchEngineId = searchEngineData.id;
+              MediaContent.update(item.id, item.data);
+              createNewDeeplink(item, (err, deeplink) => {
                 if (err) {
                   callback(err);
                 }
                 if (MediaCenterSettings.content.allowOfflineDownload) {
                   Analytics.registerEvent(
                     {
-                      title: ContentMedia.item.data.title + " Video Downloads",
+                      title: item.data.title + " Video Downloads",
                       key: data.id + "_downloads",
                       description: "Video Downloads",
                     },
@@ -646,41 +649,32 @@
                   );
                 }
 
-
-
-
-
-                MediaContent.getById(data.id).then((item) => {
-                  registerAnalytics(item);
-                  item.data.topImage = getImageUrl(item.data.topImage);
-                  item.data.image = getImageUrl(item.data.image);
-                  ContentMedia.item = item;
-                  ContentMedia.item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: item.id });
-                  updateMasterItem(item);
-                  ContentMedia.saving = false;
-                  if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                  MediaCenterSettings.content.rankOfLastItem = item.data.rank;
-                  if (appId && MediaCenterSettings) {
-                    MediaCenter.update(appId, MediaCenterSettings).then((data) => {
-                    }, (err) => {
-                      callback(err);
-                    });
-                  } else {
-                    MediaCenter.insert(MediaCenterSettings).then((data) => {
-                      console.info("Inserted MediaCenter rank");
-                    }, (err) => {
-                      callback(err);
-                    });
-                  }
-                  Messaging.sendMessageToWidget({
-                    name: EVENTS.ITEMS_CHANGE,
-                    message: {}
+                registerAnalytics(item);
+                item.data.topImage = getImageUrl(item.data.topImage);
+                item.data.image = getImageUrl(item.data.image);
+                ContentMedia.item = item;
+                updateMasterItem(item);
+                ContentMedia.saving = false;
+                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                MediaCenterSettings.content.rankOfLastItem = item.data.rank;
+                if (appId && MediaCenterSettings) {
+                  MediaCenter.update(appId, MediaCenterSettings).then((data) => {
+                  }, (err) => {
+                    callback(err);
                   });
-
-                  callback()
-                }, (err) => {
-                  resetItem(err);
+                } else {
+                  MediaCenter.insert(MediaCenterSettings).then((data) => {
+                    console.info("Inserted MediaCenter rank");
+                  }, (err) => {
+                    callback(err);
+                  });
+                }
+                Messaging.sendMessageToWidget({
+                  name: EVENTS.ITEMS_CHANGE,
+                  message: {}
                 });
+
+                callback()
               }, (err) => {
                 callback(err);
               });
