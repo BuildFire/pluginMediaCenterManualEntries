@@ -5,6 +5,7 @@
         .module('mediaCenterWidgetFilters', [])
         .filter('resizeImage', [function () {
             return function (url, width, height) {
+                if(!url) return '';
                 if (url.includes('cloudimg.io/v7')) {
                     return url;
                 } else {
