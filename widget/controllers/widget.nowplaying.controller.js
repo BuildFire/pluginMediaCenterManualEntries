@@ -426,7 +426,8 @@
                             $rootScope.playPrevItem();
                             break;
                         case 'removeFromPlaylist':
-                            $rootScope.playListItems = e.data && e.data.newPlaylist && e.data.newPlaylist.tracks;
+                        case 'addToPlaylist':
+                            $rootScope.playListItems = e.data.newPlaylist.tracks;
                             break;
 
                     }
@@ -675,7 +676,6 @@
                                     if (isAudioEnded) {
                                         NowPlaying.currentTrack.lastPosition = 0
                                     }
-                                    NowPlaying.currentTrack.url = validateURL(NowPlaying.currentTrack.url);
                                     audioPlayer.play(NowPlaying.currentTrack);
                                     audioPlayer.pause();
                                     setTimeout(() => {
@@ -836,11 +836,11 @@
                         });
 
                 };
-                NowPlaying.goToPlaylist = function () {
+                NowPlaying.showPlaylistPage = function () {
                     NowPlaying.openMoreInfo = false;
                     $rootScope.showPlaylist = true;
                 }
-                NowPlaying.getFromPlaylist = function (openPlaylist = false) {
+                NowPlaying.getPlaylistData = function (openPlaylist = false) {
                     audioPlayer.getPlaylist(function (err, data) {
                         if (data && data.tracks) {
                             $rootScope.playListItems = data.tracks;
@@ -852,11 +852,8 @@
                             }
                         }
                     });
-                    if (openPlaylist) {
-                        NowPlaying.goToPlaylist();
-                    }
                 };
-                NowPlaying.getFromPlaylist();
+                NowPlaying.getPlaylistData();
                 NowPlaying.changeTime = function (time) {
                     audioPlayer.setTime(time);
                 };
@@ -901,12 +898,6 @@
                 NowPlaying.addEvents = function (e, i, toggle, track) {
                     toggle ? track.swiped = true : track.swiped = false;
                 };
-
-                // this method to make the audio url replaying multi times
-                function validateURL(url) {
-                    if (url.includes('?')) return (url + '&' + Math.floor(Math.random() * 1000))
-                    return (url + '?' + Math.floor(Math.random() * 1000))
-                }
 
                 /**
                  * Track Smaple

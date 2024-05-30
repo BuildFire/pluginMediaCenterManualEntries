@@ -110,7 +110,7 @@
         <div class="media-player-action-btns">
             <span class="playback-speed whiteTheme" ng-click="NowPlaying.openPlaybackDrawer()">{{NowPlaying.settings.playbackSpeed || 1 | number:'1'}}x</span>
             <span  ng-style="{'visibility': allowAddingNotes !== false ? 'visible' : 'hidden'}"  class="glyphicon glyphicon-edit whiteTheme" ng-click="NowPlaying.addNote()"></span>
-            <span ng-if="!globalPlaylist" class="btn btn-icon" ng-click="NowPlaying.getFromPlaylist(true)">
+            <span ng-if="!globalPlaylist" class="btn btn-icon" ng-click="NowPlaying.showPlaylistPage()">
                 <img class="playList-icon" src="assets/css/icons/ic_playlist.svg" alt="playlist">
             </span>
             <span ng-if="!globalPlaylist" class="glyphicon glyphicon-option-horizontal whiteTheme"
@@ -180,7 +180,7 @@
                 <hr class="none">
                 <div class="more-info-list padded">
                     <div class="text-center item">
-                        <a ng-click="NowPlaying.getFromPlaylist(true)" class="whiteTheme">{{NowPlaying.playListStrings.goToPlaylist}}</a>
+                        <a ng-click="NowPlaying.showPlaylistPage()" class="whiteTheme">{{NowPlaying.playListStrings.goToPlaylist}}</a>
                     </div>
                     <div class="text-center item" ng-if="!NowPlaying.transferPlaylist">
                         <a ng-click="NowPlaying.addToPlaylist(NowPlaying.currentTrack)" class="whiteTheme">{{NowPlaying.playListStrings.addToPlaylist}}</a>
