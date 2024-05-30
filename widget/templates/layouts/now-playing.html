@@ -110,7 +110,7 @@
         <div class="media-player-action-btns">
             <span class="playback-speed whiteTheme" ng-click="NowPlaying.openPlaybackDrawer()">{{NowPlaying.settings.playbackSpeed || 1 | number:'1'}}x</span>
             <span  ng-style="{'visibility': allowAddingNotes !== false ? 'visible' : 'hidden'}"  class="glyphicon glyphicon-edit whiteTheme" ng-click="NowPlaying.addNote()"></span>
-            <span ng-if="!globalPlaylist" class="btn btn-icon" ng-click="NowPlaying.getFromPlaylist()">
+            <span ng-if="!globalPlaylist" class="btn btn-icon" ng-click="NowPlaying.getFromPlaylist(true)">
                 <img class="playList-icon" src="assets/css/icons/ic_playlist.svg" alt="playlist">
             </span>
             <span ng-if="!globalPlaylist" class="glyphicon glyphicon-option-horizontal whiteTheme"
@@ -121,7 +121,7 @@
     </div>
 
     <!-- Playlist Overlay -->
-    <div ng-if="playlist" class="overlay backgroundColorTheme slide"
+    <div ng-if="showPlaylist" class="overlay backgroundColorTheme slide"
         style="position:fixed; top:0; left:0; width:100%; height:100%;">
         <div class="overlay-content" style="position:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
             <div class="media-player-list-layout third-layout">
@@ -129,7 +129,7 @@
                     <div class="list-item overflow-hidden"
                         ng-swipe-right="NowPlaying.addEvents($event, $index, false,track)"
                         ng-swipe-left="NowPlaying.addEvents($event, $index, true,track)"
-                        ng-repeat="track in NowPlaying.playList">
+                        ng-repeat="track in playListItems">
                         <div class="list-item-media text-left" ng-class="{'edit' : track.swiped}">
                             <div class="list-media-holder square-icon pull-left">
                                 <img ng-if="track.image" load-image="2x1" crop-width="55" crop-height="22"
@@ -149,7 +149,7 @@
                             </div>
                         </div>
                     </div>
-                    <div ng-if="!NowPlaying.playList.length">
+                    <div ng-if="!playListItems.length">
                         <h3 class="ellipsis">{{NowPlaying.playListStrings.emptyPlaylist}}</h3>
                     </div>
                 </div>
@@ -180,7 +180,7 @@
                 <hr class="none">
                 <div class="more-info-list padded">
                     <div class="text-center item">
-                        <a ng-click="NowPlaying.getFromPlaylist()" class="whiteTheme">{{NowPlaying.playListStrings.goToPlaylist}}</a>
+                        <a ng-click="NowPlaying.getFromPlaylist(true)" class="whiteTheme">{{NowPlaying.playListStrings.goToPlaylist}}</a>
                     </div>
                     <div class="text-center item" ng-if="!NowPlaying.transferPlaylist">
                         <a ng-click="NowPlaying.addToPlaylist(NowPlaying.currentTrack)" class="whiteTheme">{{NowPlaying.playListStrings.addToPlaylist}}</a>
