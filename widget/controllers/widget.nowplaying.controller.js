@@ -128,7 +128,7 @@
                  */
 
                 function convertDropbox(obj) {
-                    if (obj.includes("www.dropbox") || obj.includes("dl.dropbox.com")) {
+                    if (obj && (obj.includes("www.dropbox") || obj.includes("dl.dropbox.com"))) {
                         obj = obj.replace("www.dropbox", "dl.dropbox").replace("dl.dropbox.com", "dl.dropboxusercontent.com");
                     }
                     return obj;
@@ -197,10 +197,10 @@
                                         plugin: buildfire.context.instanceId, myId: el.id
                                     };
                                 });
-                                NowPlaying.playList = [];
+                                $rootScope.playListItems = [];
                                 for (var i = 0; i < pluginSongs.length; i++) {
                                     audioPlayer.addToPlaylist(pluginSongs[i]);
-                                    NowPlaying.playList.push(pluginSongs[i]);
+                                    $rootScope.playListItems.push(pluginSongs[i]);
                                 }
                             }
                         } else {
@@ -358,7 +358,7 @@
                             ready = false;
                             updateAudioLastPosition(media.id, 0.1)
                             if(typeof $rootScope.audioFromPlayList === 'number'){
-                                NowPlaying.playlistPause(NowPlaying.playList[$rootScope.audioFromPlayList]);
+                                NowPlaying.playlistPause($rootScope.playListItems[$rootScope.audioFromPlayList]);
                                 return false;
                             }
                             if ($rootScope.autoPlay) {
@@ -366,11 +366,11 @@
                             } else {
                                 if (NowPlaying.isItLast && NowPlaying.settings.loopPlaylist) {
                                     audioPlayer.getCurrentTrack((track) => {
-                                        if (NowPlaying.playList && NowPlaying.playList.length > 0) {
-                                            NowPlaying.playList.forEach(element => {
+                                        if ($rootScope.playListItems && $rootScope.playListItems.length > 0) {
+                                            $rootScope.playListItems.forEach(element => {
                                                 element.playing = false
                                             });
-                                            let currentTrack = NowPlaying.playList.find(x => x.title == track.title && x.url == track.url && x.album == track.album && x.image == track.image && x.backgroundImage == track.backgroundImage)
+                                            let currentTrack = $rootScope.playListItems.find(x => x.title == track.title && x.url == track.url && x.album == track.album && x.image == track.image && x.backgroundImage == track.backgroundImage)
                                             if (currentTrack) {
                                                 currentTrack.playing = true
                                             }
@@ -409,7 +409,7 @@
                         case 'next':
                             if(typeof $rootScope.audioFromPlayList === 'number'){
                                 $rootScope.audioFromPlayList = e.data.index;
-                                NowPlaying.playList[$rootScope.audioFromPlayList].playing = true;
+                                $rootScope.playListItems[$rootScope.audioFromPlayList].playing = true;
                                 if(!NowPlaying.settings.autoJumpToLastPosition){
                                     audioPlayer.setTime(0);
                                 }
@@ -419,14 +419,15 @@
                         case 'previous':
                             if(typeof $rootScope.audioFromPlayList === 'number' && NowPlaying.settings.autoPlayNext){
                                 $rootScope.audioFromPlayList = e.data.index;
-                                NowPlaying.playList[$rootScope.audioFromPlayList].playing = true;
+                                $rootScope.playListItems[$rootScope.audioFromPlayList].playing = true;
                                 audioPlayer.setTime(0);
                                 return false;
                             }
                             $rootScope.playPrevItem();
                             break;
                         case 'removeFromPlaylist':
-                            NowPlaying.playList = e.data && e.data.newPlaylist && e.data.newPlaylist.tracks;
+                        case 'addToPlaylist':
+                            $rootScope.playListItems = e.data.newPlaylist.tracks;
                             break;
 
                     }
@@ -675,7 +676,6 @@
                                     if (isAudioEnded) {
                                         NowPlaying.currentTrack.lastPosition = 0
                                     }
-                                    NowPlaying.currentTrack.url = validateURL(NowPlaying.currentTrack.url);
                                     audioPlayer.play(NowPlaying.currentTrack);
                                     audioPlayer.pause();
                                     setTimeout(() => {
@@ -809,8 +809,8 @@
                         buildfire.dialog.toast({
                             message: NowPlaying.playListStrings.removedFromPlaylist
                         });
-                        if (NowPlaying.playList) {
-                            NowPlaying.playList.filter(function (val, index) {
+                        if ($rootScope.playListItems) {
+                            $rootScope.playListItems.filter(function (val, index) {
                                 if (val.url == track.url) {
                                     audioPlayer.removeFromPlaylist(index);
                                 }
@@ -836,21 +836,24 @@
                         });
 
                 };
-                NowPlaying.getFromPlaylist = function () {
+                NowPlaying.showPlaylistPage = function () {
+                    NowPlaying.openMoreInfo = false;
+                    $rootScope.showPlaylist = true;
+                }
+                NowPlaying.getPlaylistData = function (openPlaylist = false) {
                     audioPlayer.getPlaylist(function (err, data) {
                         if (data && data.tracks) {
-                            NowPlaying.playList = data.tracks;
+                            $rootScope.playListItems = data.tracks;
                             if (!$scope.$$phase) {
                                 $scope.$digest();
                                 if(typeof $rootScope.audioFromPlayList === 'number' ){
-                                    NowPlaying.playList[$rootScope.audioFromPlayList].playing = true;
+                                    $rootScope.playListItems[$rootScope.audioFromPlayList].playing = true;
                                 }
                             }
                         }
                     });
-                    NowPlaying.openMoreInfo = false;
-                    $rootScope.playlist = true;
                 };
+                NowPlaying.getPlaylistData();
                 NowPlaying.changeTime = function (time) {
                     audioPlayer.setTime(time);
                 };
@@ -886,7 +889,7 @@
                     NowPlaying.openSettings = false;
                 };
                 NowPlaying.closePlayListOverlay = function () {
-                    $rootScope.playlist = false;
+                    $rootScope.showPlaylist = false;
                 };
                 NowPlaying.closeMoreInfoOverlay = function () {
                     NowPlaying.openMoreInfo = false;
@@ -895,12 +898,6 @@
                 NowPlaying.addEvents = function (e, i, toggle, track) {
                     toggle ? track.swiped = true : track.swiped = false;
                 };
-
-                // this method to make the audio url replaying multi times
-                function validateURL(url) {
-                    if (url.includes('?')) return (url + '&' + Math.floor(Math.random() * 1000))
-                    return (url + '?' + Math.floor(Math.random() * 1000))
-                }
 
                 /**
                  * Track Smaple
@@ -1064,8 +1061,8 @@
                             NowPlaying.playlistPause(track);
                         }
                         else {
-                            if (NowPlaying.playList && NowPlaying.playList.length > 0) {
-                                NowPlaying.playList.forEach(element => {
+                            if ($rootScope.playListItems && $rootScope.playListItems.length > 0) {
+                                $rootScope.playListItems.forEach(element => {
                                     element.playing = false
                                 });
                             }
@@ -1073,7 +1070,7 @@
                         }
                     }
                     else if (NowPlaying.paused) {
-                        NowPlaying.playList.forEach(element => {
+                        $rootScope.playListItems.forEach(element => {
                             element.playing = false
                         });
                         if (track.url == NowPlaying.currentTrack.url) {

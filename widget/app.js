@@ -379,8 +379,8 @@
                 if (path.indexOf('/media') == 0 || path.indexOf('/filters') == 0) {
                     navigate();
                 } else if (path.indexOf('/nowplaying') == 0) {
-                    if ($rootScope.playlist) {
-                        $rootScope.playlist = false;
+                    if ($rootScope.showPlaylist) {
+                        $rootScope.showPlaylist = false;
                         $rootScope.$digest();
                     } else if ($rootScope.skipMediaPage) {
                         navigate();
