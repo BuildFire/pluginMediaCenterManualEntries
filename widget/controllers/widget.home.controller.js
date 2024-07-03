@@ -749,19 +749,12 @@
                 WidgetHome.currentSkip = 0;
                 WidgetHome.currentlyLoading = false;
 
-                const unregisterDeeplink = function(deepLinkId){
-                    buildfire.deeplink.unregisterDeeplink(deepLinkId, (err, result) => {
-                        if (err) return console.log(err);
-                    });
-                }
-
                 WidgetHome.checkForDeeplink = () => {
                     if (!$window.deeplinkingDone) {
                         buildfire.deeplink.getData((data) => {
                             if (!data) return;
                             let itemId = null;
                             if (data.id) {
-                                unregisterDeeplink(data.id);
                                 itemId = data.id;
                             }
                             else if (data.mediaId) itemId = data.mediaId;
