@@ -405,6 +405,7 @@
                             break;
                         case 'pause':
                             NowPlaying.playing = false;
+                            NowPlaying.paused = true;
                             break;
                         case 'next':
                             if(typeof $rootScope.audioFromPlayList === 'number'){
