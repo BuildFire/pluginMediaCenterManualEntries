@@ -62,14 +62,14 @@
 
                 if(!NowPlaying.isOnline) initAudio(0);
                 Buildfire.auth.getCurrentUser((err, user) => {
-                    var userCheckViewFilter = {};
+                    let userCheckViewFilter = {};
                     if (user) {
                         $rootScope.user = user
-                        var userCheckViewFilter = {
+                        userCheckViewFilter = {
                             filter: getIndexedFilter(media.id, $rootScope.user._id)
                         };
                     } else if (Buildfire.context.deviceId) {
-                        var userCheckViewFilter = {
+                        userCheckViewFilter = {
                             filter: getIndexedFilter(media.id, Buildfire.context.deviceId)
                         };
                     } else {
@@ -404,6 +404,7 @@
                             }
                             break;
                         case 'pause':
+                            NowPlaying.paused = true;
                             NowPlaying.playing = false;
                             break;
                         case 'next':
@@ -676,13 +677,15 @@
                                     if (isAudioEnded) {
                                         NowPlaying.currentTrack.lastPosition = 0
                                     }
-                                    audioPlayer.play(NowPlaying.currentTrack);
-                                    audioPlayer.pause();
-                                    setTimeout(() => {
-                                        audioPlayer.play();
+                                    audioPlayer.getCurrentTrack(_currentTrack => {
+                                        if (_currentTrack && _currentTrack.deepLinkData && _currentTrack.deepLinkData.payload
+                                            && _currentTrack.deepLinkData.payload.id === NowPlaying.currentTrack.deepLinkData.payload.id) {
+                                            NowPlaying.currentTrack.startAt = _currentTrack.lastPosition;
+                                        }
+                                        audioPlayer.play(NowPlaying.currentTrack);
                                         NowPlaying.paused = false;
                                         NowPlaying.playing = true;
-                                    }, 50);
+                                    });
                                 }
                                 NowPlaying.isAudioPlayerPlayingAnotherSong = false;
                             }
