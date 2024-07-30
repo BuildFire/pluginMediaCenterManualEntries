@@ -60,7 +60,7 @@
                 ];
                 bookmarks.sync($scope);
 
-                if(!NowPlaying.isOnline) initAudio(0);
+                if(!NowPlaying.isOnline) initAudio();
                 Buildfire.auth.getCurrentUser((err, user) => {
                     let userCheckViewFilter = {};
                     if (user) {
@@ -73,20 +73,21 @@
                             filter: getIndexedFilter(media.id, Buildfire.context.deviceId)
                         };
                     } else {
-                        initAudio(0)
+                        initAudio()
                     }
                     if (user || Buildfire.context.deviceId) {
                         buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
                             if (res && res.length > 0) {
                                 NowPlaying.isAudioPlayed = true;
                                 if (res[0].data.lastPosition) {
-                                    initAudio(res[0].data.lastPosition)
+                                    NowPlaying.lastSavedPosition = res[0].data.lastPosition;
+                                    initAudio()
                                 } else {
-                                    initAudio(0)
+                                    initAudio()
                                 }
                             } else {
                                 NowPlaying.isAudioPlayed = false;
-                                initAudio(0)
+                                initAudio()
                             }
                         })
                     }
@@ -284,8 +285,7 @@
                 /**
                  * audioPlayer.onEvent callback calls when audioPlayer event fires.
                  */
-                //var first = true;
-                var ready = false, setOder = false, first = false, open = true;
+                var ready = false, setOder = false, open = true;
                 if($rootScope.activePlayerEvents){
                     // Prevent the repetition of events by clearing all previous occurrences, as repeated events tend to occur when the user plays multiple audio files.
                     $rootScope.activePlayerEvents.clear();
@@ -293,11 +293,9 @@
                 $rootScope.activePlayerEvents = audioPlayer.onEvent(function (e) {                 
                     switch (e.event) {
                         case 'play':
-                            NowPlaying.currentTrack = e.data.track;
                             NowPlaying.playing = true;
                             NowPlaying.paused = false;
                             audioPlayer.getPlaylist(function (err, data) {
-                                first = false;
                                 NowPlaying.keepPosition = e.data.track.lastPosition;
 
                                 var filteredPlaylist = data.tracks.filter(el => { return el.plugin && el.plugin == buildfire.context.instanceId; });
@@ -326,81 +324,51 @@
                             break;
                         case 'timeUpdate':
                             ready = e.data.duration && e.data.duration != null && e.data.duration > 0;
-                            if (NowPlaying.forceAutoPlay)
-                                if (ready && e.data.currentTime >= e.data.duration && !first) {
-                                    first = true;
-                                    audioPlayer.pause();
-                                    audioPlayer.setTime(0.1);
-                                    if (NowPlaying.forceAutoPlay)
-                                        setTimeout(() => {
-                                            var myInterval = setInterval(() => {
-                                                if (setOder) {
-                                                    setOder = false;
-                                                    NowPlaying.playing = true;
-                                                    audioPlayer.play();
-                                                    clearInterval(myInterval);
-                                                    first = false;
-                                                }
-                                            }, 100);
-                                        }, 500);
-                                } else if (ready && (NowPlaying.settings.autoPlayNext || NowPlaying.forceAutoPlay)) {
-                                    first = true;
-                                    if (ready && open && NowPlaying.keepPosition > 0 && iOS) {
-                                        NowPlaying.changeTime(NowPlaying.keepPosition);
-                                        open = false;
-                                    }
-                                }
+
                             NowPlaying.currentTime = e.data.currentTime;
                             NowPlaying.duration = e.data.duration;
                             NowPlaying.progressBarStyle(e.data.currentTime);
                             break;
                         case 'audioEnded':
+                            NowPlaying.paused = true;
+                            NowPlaying.playing = false;
                             ready = false;
-                            updateAudioLastPosition(media.id, 0.1)
+                            updateAudioLastPosition(media.id, 0);
                             if(typeof $rootScope.audioFromPlayList === 'number'){
                                 NowPlaying.playlistPause($rootScope.playListItems[$rootScope.audioFromPlayList]);
-                                return false;
-                            }
-                            if ($rootScope.autoPlay) {
+                            } else if (NowPlaying.isItLast && NowPlaying.settings.loopPlaylist) {
+                                audioPlayer.getCurrentTrack((track) => {
+                                    if ($rootScope.playListItems && $rootScope.playListItems.length > 0) {
+                                        $rootScope.playListItems.forEach(element => {
+                                            element.playing = false
+                                        });
+                                        let currentTrack = $rootScope.playListItems.find(x => x.title == track.title && x.url == track.url && x.album == track.album && x.image == track.image && x.backgroundImage == track.backgroundImage)
+                                        if (currentTrack) {
+                                            currentTrack.playing = true
+                                        }
+                                    }
+
+                                    NowPlaying.currentTime = 0;
+                                    audioPlayer.setTime(0);
+                                    NowPlaying.finished = false;
+                                    audioPlayer.play();
+                                    NowPlaying.paused = false;
+                                    NowPlaying.playing = true;
+                                });
+                            } else if ($rootScope.autoPlay) {
                                 $rootScope.playNextItem();
                             } else {
-                                if (NowPlaying.isItLast && NowPlaying.settings.loopPlaylist) {
-                                    audioPlayer.getCurrentTrack((track) => {
-                                        if ($rootScope.playListItems && $rootScope.playListItems.length > 0) {
-                                            $rootScope.playListItems.forEach(element => {
-                                                element.playing = false
-                                            });
-                                            let currentTrack = $rootScope.playListItems.find(x => x.title == track.title && x.url == track.url && x.album == track.album && x.image == track.image && x.backgroundImage == track.backgroundImage)
-                                            if (currentTrack) {
-                                                currentTrack.playing = true
-                                            }
-                                        }
-                                    });
-
-                                    setTimeout(() => {
-                                        audioPlayer.setTime(0.1);
-                                        NowPlaying.finished = false;
-                                        audioPlayer.pause();
-                                        setTimeout(() => {
-                                            audioPlayer.play();
-                                            NowPlaying.paused = false;
-                                            NowPlaying.playing = true;
-                                        }, 50);
-                                    }, 50);
+                                isAudioEnded = true;
+                                if (!NowPlaying.settings.autoPlayNext) {
+                                    NowPlaying.playing = false;
+                                    NowPlaying.paused = true;
                                 }
-                                else {
-                                    isAudioEnded = true;
-                                    if (!NowPlaying.settings.autoPlayNext) {
-                                        NowPlaying.playing = false;
-                                        NowPlaying.paused = false;
-                                    }
-                                    if (NowPlaying.forceAutoPlay && NowPlaying.isItLast && !NowPlaying.settings.loopPlaylist) {
-                                        NowPlaying.playing = false;
-                                        NowPlaying.paused = true;
-                                        NowPlaying.finished = true;
-                                    }
-                                    else NowPlaying.finished = false;
+                                if (NowPlaying.forceAutoPlay && NowPlaying.isItLast && !NowPlaying.settings.loopPlaylist) {
+                                    NowPlaying.playing = false;
+                                    NowPlaying.paused = true;
+                                    NowPlaying.finished = true;
                                 }
+                                else NowPlaying.finished = false;
                             }
                             break;
                         case 'pause':
@@ -436,10 +404,9 @@
                         $scope.$digest();
                     }
                 });
-                function initAudio(lastPosition) {
+                function initAudio() {
                     isAudioEnded = false;
-                    NowPlaying.currentTime = lastPosition;
-                    NowPlaying.currentTrack = new Track({...media.data, id: media.id}, lastPosition);
+                    NowPlaying.currentTrack = new Track({...media.data, id: media.id}, 0);
                     NowPlaying.currentTrack.backgroundImage = media.data.image ? media.data.image : media.data.topImage;
 
                     NowPlaying.currentTrack.image = media.data.topImage;
@@ -452,10 +419,6 @@
                         $scope.$digest();
                     }
                     audioPlayer.settings.get(function (err, setting) {
-
-                        if (!setting.autoJumpToLastPosition) {
-                            NowPlaying.currentTrack.startAt = 0;
-                        }
                         NowPlaying.currentTime = 0;
                         NowPlaying.settings = setting;
                         NowPlaying.volume = setting.volume;
@@ -464,14 +427,12 @@
                             NowPlaying.autoJumpToLastPosition  = setting.autoJumpToLastPosition;
                         }else{
                             NowPlaying.settings.autoJumpToLastPosition = NowPlaying.autoJumpToLastPosition;
+                            audioPlayer.settings.set(NowPlaying.settings);
+                        }
+                        if ($rootScope.autoPlay) {
+                            NowPlaying.playTrack();
                         }
                         $scope.$digest();
-                        audioPlayer.settings.set(NowPlaying.settings);
-                        setTimeout(() => {
-                            if ($rootScope.autoPlay) {
-                                NowPlaying.playTrack();
-                            }
-                        }, 0);
                         $scope.$apply();
                     });
                     
@@ -655,44 +616,41 @@
                         }
                     });
                     if (NowPlaying.paused) {
-                        audioPlayer.play();
-                        if (NowPlaying.finished)
-                            setTimeout(() => {
-                                NowPlaying.finished = false;
-                                audioPlayer.pause();
-                                setTimeout(() => {
-                                    audioPlayer.play();
-                                    NowPlaying.paused = false;
-                                    NowPlaying.playing = true;
-                                }, 50);
-                            }, 50);
+                        if (NowPlaying.finished) {
+                            NowPlaying.currentTime = 0;
+                            audioPlayer.setTime(0);
+                            NowPlaying.finished = false;
+                            audioPlayer.play();
+                            NowPlaying.paused = false;
+                            NowPlaying.playing = true;
+                        } else {
+                            audioPlayer.play();
+                        }
                     } else {
-                        setTimeout(() => {
-                            try {
-                                if (index != -1) {
-                                    audioPlayer.play(index);
+                        if (index != -1) {
+                            audioPlayer.play(index);
+                        } else {
+                            audioPlayer.getCurrentTrack(_currentTrack => {
+                                if (_currentTrack && _currentTrack.deepLinkData && _currentTrack.deepLinkData.payload
+                                    && _currentTrack.deepLinkData.payload.id === NowPlaying.currentTrack.deepLinkData.payload.id) {
+                                    NowPlaying.currentTrack.startAt = _currentTrack.lastPosition;
+                                    NowPlaying.currentTime = _currentTrack.lastPosition;
+                                } else if (NowPlaying.autoJumpToLastPosition && NowPlaying.lastSavedPosition) {
+                                    NowPlaying.currentTrack.startAt = NowPlaying.lastSavedPosition;
                                 }
-                                else {
-                                    $rootScope.audioFromPlayList = null;
-                                    if (isAudioEnded) {
-                                        NowPlaying.currentTrack.lastPosition = 0
-                                    }
-                                    audioPlayer.getCurrentTrack(_currentTrack => {
-                                        if (_currentTrack && _currentTrack.deepLinkData && _currentTrack.deepLinkData.payload
-                                            && _currentTrack.deepLinkData.payload.id === NowPlaying.currentTrack.deepLinkData.payload.id) {
-                                            NowPlaying.currentTrack.startAt = _currentTrack.lastPosition;
-                                        }
-                                        audioPlayer.play(NowPlaying.currentTrack);
-                                        NowPlaying.paused = false;
-                                        NowPlaying.playing = true;
-                                    });
-                                }
-                                NowPlaying.isAudioPlayerPlayingAnotherSong = false;
-                            }
-                            catch (err) {
-                            }
-                        }, 500);
 
+                                $rootScope.audioFromPlayList = null;
+                                if (isAudioEnded) {
+                                    NowPlaying.currentTrack.startAt = 0;
+                                    NowPlaying.currentTrack.lastPosition = 0
+                                }
+
+                                audioPlayer.play(NowPlaying.currentTrack);
+                                NowPlaying.paused = false;
+                                NowPlaying.playing = true;
+                            });
+                        }
+                        NowPlaying.isAudioPlayerPlayingAnotherSong = false;
                     }
                 }
 
@@ -704,6 +662,7 @@
                     }
                     NowPlaying.playing = true;
                     if (typeof index==='number') {
+                        NowPlaying.currentTrack = track;
                         NowPlaying.isAudioPlayerPlayingAnotherSong = false;
                         audioPlayer.pause();
                         audioPlayer.play(index);
