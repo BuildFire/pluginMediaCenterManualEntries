@@ -298,10 +298,10 @@
                             audioPlayer.getPlaylist(function (err, data) {
                                 NowPlaying.keepPosition = e.data.track.lastPosition;
 
-                                var filteredPlaylist = data.tracks.filter(el => { return el.plugin && el.plugin == buildfire.context.instanceId; });
+                                var filteredPlaylist = data.tracks.filter(el => { return el.instanceId && el.instanceId == buildfire.context.instanceId });
                                 var index = NowPlaying.findTrackIndex({ tracks: filteredPlaylist }, { myId: (e.data.track.myId) ? e.data.track.myId : "none" });
 
-                                NowPlaying.isItLast = (index == (filteredPlaylist.length - 1));
+                                NowPlaying.isItLast = filteredPlaylist.length && (index == (filteredPlaylist.length - 1));
                                 if (index >= (filteredPlaylist.length - 1) && NowPlaying.forceAutoPlay && !NowPlaying.settings.loopPlaylist) {
                                     NowPlaying.settings.autoPlayNext = false;
                                 }
