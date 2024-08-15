@@ -445,7 +445,7 @@
                     NowPlaying.currentTrack.title = media.data.title;
                     if ($rootScope.seekTime) NowPlaying.currentTrack.startAt = $rootScope.seekTime;
 
-                    NowPlaying.currentTrack.backgroundImage = NowPlaying.currentTrack.backgroundImage ? NowPlaying.currentTrack.backgroundImage : './assets/images/now-playing.png';
+                    NowPlaying.currentTrack.backgroundImage = NowPlaying.currentTrack.backgroundImage ? NowPlaying.cropImage(NowPlaying.currentTrack.backgroundImage) : './assets/images/now-playing.png';
                     NowPlaying.currentTrack.backgroundImage = CSS.escape(NowPlaying.currentTrack.backgroundImage);
                     if (!$scope.$$phase) {
                         $scope.$digest();
@@ -895,8 +895,7 @@
                     NowPlaying.openMoreInfo = false;
                 };
                 NowPlaying.cropImage = function(url) {
-                    if (!url) return ;
-                    if (!url.includes('https')) return url;
+                    if (!url) return;
                     return buildfire.imageLib.resizeImage(url, { size: "1080", aspect:'16:9' })
                 }
                 NowPlaying.addEvents = function (e, i, toggle, track) {
