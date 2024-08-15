@@ -290,7 +290,7 @@
                     // Prevent the repetition of events by clearing all previous occurrences, as repeated events tend to occur when the user plays multiple audio files.
                     $rootScope.activePlayerEvents.clear();
                 }
-                $rootScope.activePlayerEvents = audioPlayer.onEvent(function (e) {                 
+                $rootScope.activePlayerEvents = audioPlayer.onEvent(function (e) {
                     switch (e.event) {
                         case 'play':
                             NowPlaying.currentTrack = e.data.track;
@@ -473,12 +473,12 @@
                         }, 0);
                         $scope.$apply();
                     });
-                    
+
                     buildfire.services.media.audioPlayer.isPaused((err, isPaused) => {
                         if (err) return console.err(err);
-                        
+
                         NowPlaying.playing = !isPaused;
-                    });                    
+                    });
                     audioPlayer.getCurrentTrack((track) => {
                         if (
                             track &&
@@ -894,7 +894,11 @@
                 NowPlaying.closeMoreInfoOverlay = function () {
                     NowPlaying.openMoreInfo = false;
                 };
-
+                NowPlaying.cropImage = function(url) {
+                    if (!url) return ;
+                    if (!url.includes('https')) return url;
+                    return buildfire.imageLib.resizeImage(url, { size: "1080", aspect:'16:9' })
+                }
                 NowPlaying.addEvents = function (e, i, toggle, track) {
                     toggle ? track.swiped = true : track.swiped = false;
                 };
@@ -1141,17 +1145,17 @@
                         $scope.$digest();
                     }
                 };
-                
-                
+
+
                 //! --------------------------- End : Playback options --------------------------------------
 
                 /**
                  * progress bar style
-                 * @param {Number} value 
+                 * @param {Number} value
                  */
                 NowPlaying.progressBarStyle = function (value) {
                     const percentage = NowPlaying.duration? Math.round(((value / NowPlaying.duration) * 100)) :value;
-                    
+
                     if (percentage) {
                         document.documentElement.style.setProperty('--played-tracker-percentage', `${percentage}%`);
                     }
@@ -1167,7 +1171,7 @@
                         shufflePlaylist: false,
                         volume: 1,
                     };
-                
+
                     // Compare each key in the settings object with the initialSettings
                     for (const key in settings) {
                         if ((settings.hasOwnProperty(key) && settings[key] === initialSettings[key])) {
