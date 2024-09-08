@@ -1,115 +1,58 @@
-<div class="loader-pan" ng-show="ContentHome.loading"></div>
+<!-- <div class="loader-pan" ng-show="ContentHome.loading"></div> -->
 <div class="content-home-container">
-    <div class="side-menu-container" data-ng-show="ContentHome.showFilters">
-        <div class="side-menu">
-            <a class="active" href="#/">
-                Media
-            </a>
-            <a style="margin-top: 10px;" href="#/categoryHome">
-                Categories
-            </a>
-        </div>
-    </div>
-    <div style="flex: 5;" ng-class="!ContentHome.showFilters ? 'full-width' : 'filter-home'">
-        <div class="margin-bottom-thirty" id="carousel"></div>
+    <div id="sidenav-container" class="sidenav-container">
+        <ul id="sidenav" class="sidenav disabled-links">
+            <li id="locations-tab">
+                <a ng-click="ContentHome.toggleHomeView('media')" ng-class="{ 'active': ContentHome.activeTab === 'content-media-tab' }">
+                    <p>Media</p>
+                </a>
+            </li>
+            <li id="categories-tab">
+                <a ng-click="ContentHome.toggleHomeView('category')" ng-class="{ 'active': ContentHome.activeTab === 'content-category-tab' }">
+                    <p>Categories</p>
+                </a>
+            </li>
+        </ul>
+        <div id="sidenav-content" class="sidenav-content">
+            <div ng-show="ContentHome.activeTab === 'content-media-tab'" class="media-home">
+                <div style="flex: 5;" ng-class="!ContentHome.showFilters ? 'full-width' : 'filter-home'">
+                    <div class="margin-bottom-thirty" id="carousel"></div>
 
-        <div class="margin-bottom-thirty">
-            <textarea class="form-control wysiwyg" placeholder="WYSIWYG" ui-tinymce="ContentHome.bodyWYSIWYGOptions"
-                ng-model="ContentHome.info.data.content.descriptionHTML"></textarea>
-        </div>
+                    <div class="margin-bottom-thirty">
+                        <textarea class="form-control wysiwyg" placeholder="WYSIWYG"
+                            ui-tinymce="ContentHome.bodyWYSIWYGOptions"
+                            ng-model="ContentHome.info.data.content.descriptionHTML"></textarea>
+                    </div>
 
-        <div class="item clearfix row margin-top-thirty" data-ng-show="ContentHome.csvDataInvalid">
-            <div class="labels col-md-12">
-                <div class="alert alert-warning">
-                    <a href="javascript:void(0)" class="close" data-ng-click="ContentHome.csvDataInvalid=false">×</a>
-                    <strong>Note!</strong>Uploaded CSV data is incomplete.Title/Summary is required.
+                    <!-- TODO: this modal should be updated to the standard one -->
+                    <div class="item clearfix row margin-top-thirty" data-ng-show="ContentHome.csvDataInvalid">
+                        <div class="labels col-md-12">
+                            <div class="alert alert-warning">
+                                <a href="javascript:void(0)" class="close"
+                                    data-ng-click="ContentHome.csvDataInvalid=false">×</a>
+                                <strong>Note!</strong>Uploaded CSV data is incomplete.Title/Summary is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="mediaItemsListView"></div>
+                    <div class="categoriesListContainer margin-top-thirty">
+                        <div ng-controller="ContentMediaHomeListCtrl">
+                            <div id="mediaList"></div>
+                            <div class="empty-state margin-bottom-fifteen hidden" id='mediaItemsEmptyState'>
+                                <h5>You haven't added anything yet</h5>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <h1>Add Media Content</h1>
-        <div class="search-bar-container margin-bottom-thirty">
-            <div class="search-bar">
-                <input type="text" class="form-control" placeholder="Search Item Name" ng-model="search"
-                    ng-keyup="ContentHome.onEnterKey($event)">
-                <a class="btn btn-info" ng-click="ContentHome.searchListItem(search)"><span
-                        class="search-icon"></span></a>
-            </div>
-        </div>
-
-        <div class="item clearfix flex margin-bottom-ten">
-            <div class="dropdown" dropdown is-open="status.isopen">
-                <button class="btn btn-default text-left dropdown-toggle sort-dropdown" dropdown-toggle
-                    ng-disabled="disabled" aria-expanded="true">
-                    <span class="pull-left">{{ContentHome.info.data.content.sortByValue || 'Newest'}}</span>
-                    <span class="chevron icon-chevron-down pull-right"></span>
-                </button>
-                <ul class="dropdown-menu extended" role="menu">
-                    <li ng-repeat="option in ContentHome.sortOptions"
-                        ng-click="ContentHome.toggleSortOrder(option.name)">
-                        <a tabindex="-1" class="transition-third">{{option.value}}</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="dropdown flex-left-auto margin-right-ten" dropdown>
-                <button class="btn btn-default text-left dropdown-toggle" data-toggle="dropdown" dropdown-toggle
-                    aria-expanded="true">
-                    <span class="pull-left">Bulk Actions</span>
-                    <span class="chevron icon-chevron-down pull-right"></span>
-                </button>
-                <ul class="dropdown-menu extended" role="menu">
-                    <li ng-click="ContentHome.exportCSV()"><a>Export CSV</a></li>
-                    <li ng-click="ContentHome.getTemplate()"><a>Get Template</a></li>
-                    <li class="margin-bottom-ten" ng-click="ContentHome.openImportCSVDialog()"><a>Import CSV</a></li>
-                    <li>
-                        <p class="info-note caption margin-bottom-zero">Safari users need to rename the file to .csv to
-                            open
-                            the file.</p>
-                    </li>
-                </ul>
-            </div>
-            <div class="col-md-3 padding-zero">
-                <a class="btn btn-success pull-right stretch btn-add" href="#/media" ng-click="scrollToTop()">Add Media
-                    Item</a>
-            </div>
-        </div>
-
-        <div class="item clearfix">
-            <div
-                class="tab-order draggable-list-view wide-list has-btn-link border-grey border-radius-four infinite-scroll-parent">
-                <div infinite-scroll="ContentHome.getMore()" infinite-scroll-distance="1"
-                    data-infinite-container=".infinite-scroll-parent" infinite-scroll-disabled="ContentHome.noMore">
-                    <div ui-sortable="ContentHome.itemSortableOptions" ng-model="ContentHome.items">
-                        <div class="well text-center margin-bottom-zero border-none empty-state"
-                            ng-if="ContentHome.items.length < 1 && !ContentHome.isBusy">
-                            <p class="margin-zero">No items</p>
-                        </div>
-                        <div class="d-item double-line square-icon clearfix" ng-if="ContentHome.items.length"
-                            ng-repeat="item in ContentHome.items">
-                            <span class="icon icon-menu pull-left cursor-grab"
-                                ng-class="{ 'disabled': ContentHome.itemSortableOptions.disabled }"></span>
-
-                            <div class="media-holder pull-left auto-flex">
-                                <img load-image="1x1" aspect="1:1" size="xs" crop-type="crop" data-final-src="{{item.data.topImage}}"
-                                    ng-if="item.data.topImage">
-                                <img  class="categoryIcon" src="../../../../styles/media/holder-1x1.png" ng-if="!item.data.topImage">
-                            </div>
-                            <div class="fit copy pull-right">
-                                <a class="text-primary" ng-click="ContentHome.goTo(item.id)"><span
-                                        class="title ellipsis pull-left">{{item.data.title}}</span></a>
-                                <span class="title ellipsis pull-left">{{item.data.summary}}</span>
-
-                                <div class="pull-right">
-                                    <span class="btn-icon icon-chart-growth btn-growth-icon transition-third"
-                                        ng-click="ContentHome.showReport(item)"></span>
-                                    <span class="btn-icon btn-delete-icon btn-danger transition-third"
-                                        ng-click="ContentHome.removeListItem($index,$event)" style="margin: 0 !important;"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="well text-center margin-bottom-zero border-none empty-state"
-                            ng-if="ContentHome.isBusy">
-                            <p class="margin-zero">Loading...</p>
+            
+            <div ng-show="ContentHome.activeTab === 'content-category-tab'" class="category-home">
+                <div class="categoriesListContainer margin-bottom-thirty">
+                    <div ng-controller="ContentCategoryHomeListCtrl">
+                        <div id="categoriesList"></div>
+                        <div class="empty-state margin-bottom-fifteen hidden" id='categoriesEmptyState'>
+                            <h5>You haven't added anything yet</h5>
                         </div>
                     </div>
                 </div>

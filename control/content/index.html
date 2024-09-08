@@ -20,10 +20,11 @@
     <script
        src="../../../../scripts/buildfire/components/images/thumbnail.js"></script>
     <script src="../../../../scripts/buildfire/services/searchEngine/searchEngine.js"></script>
-    
+    <script src="../../../../scripts/buildfire/components/control/listView/listView.js"></script>
+
     <!-- JS -->
     <script src="../../../../scripts/jquery/jquery-ui.min.js"></script>
-    <script src="assets/js/sortable.js"></script>
+    <script src="../../../../scripts/sortable.min.js"></script>
     <script src="../../../../scripts/angular/ng-infinite-scroll.custom.js"></script>
     <script src="../../widget/js/shared/Deeplink.js"></script>
     <script src="../../widget/js/shared/analytics.js"></script>
@@ -43,9 +44,10 @@
     <script src="directives.js"></script>
     <script src="modals.js"></script>
     <!-- Controllers -->
+    <script src="controllers/content.categories.home.list.controller.js"></script>
+    <script src="controllers/content.media.home.list.controller.js"></script>
     <script src="controllers/content.home.controller.js"></script>
     <script src="controllers/content.media.controller.js"></script>
-    <script src="controllers/content.categoryHome.controller.js"></script>
     <script src="controllers/content.category.controller.js"></script>
     <link rel="stylesheet" href="../../../../styles/transitionAnimation.css">
     <meta charset="UTF-8">
@@ -58,6 +60,7 @@
   />
     <link href="../../../../styles/helper.css" rel="stylesheet">
     <link href="../../../../styles/siteIcons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../../../styles/components/control/listView/listView.css"></link>
     <link href="assets/css/control.content.css" rel="stylesheet">
     <link rel="stylesheet" href="../content/assets/css/reset.css">
     <link rel="stylesheet" href="../content/assets/css/bf_base.css">
@@ -65,7 +68,7 @@
 </head>
 <body style="overflow:auto; overflow:initial;">
 <div class="main_view">
-    <div class="content infinite-scroll-parent padded-sm" ng-view=""></div>
+    <div class="content infinite-scroll-parent" ng-view=""></div>
 </div>
 </body>
 </html>

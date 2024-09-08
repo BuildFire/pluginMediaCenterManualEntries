@@ -11,16 +11,13 @@
                 'ngAnimate',
                 'ngRoute',
                 'ui.bootstrap',
-                'ui.sortable',
                 'ngClipboard',
                 'infinite-scroll',
                 'bngCsv',
-                'ui.tinymce'
-
+                'ui.tinymce',
             ])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component
-        //injected ui.sortable for manual ordering of list
         //ngClipboard to provide copytoclipboard feature
         .config(['$routeProvider', 'ngClipProvider', '$httpProvider', function ($routeProvider, ngClipProvider, $httpProvider) {
             ngClipProvider.setPath("//cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.1.6/ZeroClipboard.swf");
@@ -31,32 +28,6 @@
                     controller: 'ContentHomeCtrl',
                     resolve: {
                         MediaCenterInfo: ['$q', 'DB', 'COLLECTIONS', 'Orders', 'Location', function ($q, DB, COLLECTIONS, Orders, Location) {
-                            var deferred = $q.defer();
-                            var MediaCenter = new DB(COLLECTIONS.MediaCenter);
-                            mainDateIndexCheck(function (success) {
-                                MediaCenter.get().then(function success(result) {
-                                    if (result && result.id && result.data) {
-                                        deferred.resolve(result);
-                                    }
-                                    else {
-                                        deferred.resolve(null);
-                                    }
-                                },
-                                    function fail(err) {
-                                        deferred.resolve(null);
-                                    }
-                                );
-                            });
-                            return deferred.promise;
-                        }]
-                    }
-                })
-                .when('/categoryHome', {
-                    templateUrl: 'templates/categoryHome.html',
-                    controllerAs: 'ContentCategoryHome',
-                    controller: 'ContentCategoryHomeCtrl',
-                    resolve: {
-                        CategoryHomeInfo: ['$q', 'DB', 'COLLECTIONS', 'CategoryOrders', 'Orders', 'Location', function ($q, DB, COLLECTIONS, CategoryOrders, Orders, Location) {
                             var deferred = $q.defer();
                             var MediaCenter = new DB(COLLECTIONS.MediaCenter);
                             mainDateIndexCheck(function (success) {

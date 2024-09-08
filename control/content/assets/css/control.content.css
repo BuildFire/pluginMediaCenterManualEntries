@@ -39,11 +39,6 @@ Style for loader
     color: #8a6d3b;
 }
 
-.content-home-container {
-    display: flex;
-    flex-direction: row;
-}
-
 .side-menu-container {
     width: 20%;
 }
@@ -66,14 +61,65 @@ Style for loader
     color: #00a1f1;
 }
 
-/*
-.infinite-scroll-parent{
-    height:1400px !important;
+/* Sidenav Style */
+
+.sidenav-container {
+	display: flex;
+	overflow: hidden;
 }
 
-.no-max-height{
-    max-height: none !important;
-}*/
+.sidenav {
+	width: 170px;
+	flex-shrink: 0;
+	padding-right: 1rem;
+}
+
+.sidenav li a {
+	border-radius: 4px;
+	color: #000;
+	border: 1px solid #d3d2d2;
+	padding: 7px 10px;
+	display: flex;
+	align-items: center;
+	font-size: 13px;
+	margin-bottom: 8px;
+	cursor: pointer;
+	justify-content: space-between;
+}
+
+.sidenav li a.active,
+.sidenav li a.active:hover {
+	border: 1px solid #00a1f1;
+	color: #00a1f1;
+}
+
+.sidenav li a.active p {
+	color: #00a1f1;
+}
+
+.sidenav li p {
+	margin: 0;
+}
+
+.sidenav-content {
+	overflow-y: auto;
+	max-height: calc(100vh - 45px);
+	padding: 0 1rem;
+	flex: auto;
+}
+
+/* End Sidenav Style */
+
+.hide-list {
+    margin-bottom: 0;
+}
+.hide-list .sortable-list-container {
+    display: none;
+}
+
+.sortable-list-container {
+    min-height: 30vh;
+}
 
 .modal-header {
     border-bottom: 1px solid rgba(50, 50, 50, 0.5);
@@ -362,10 +408,6 @@ Style for loader
         .full-width {
 			width: 100%;
 		}
-
-        .filter-home {
-            width: 70%;
-        }
 
         .categoryIcon {
             object-fit: none;

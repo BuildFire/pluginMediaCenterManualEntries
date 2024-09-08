@@ -2,8 +2,8 @@
     'use strict';
     angular
         .module('mediaCenterContent')
-        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Location', 'Modals', 'SearchEngine', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv', 'PerfomanceIndexingService',
-            function ($scope, MediaCenterInfo, Location, Modals, SearchEngine, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv, PerfomanceIndexingService) {
+        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Location', 'Modals', 'SearchEngine', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv',
+            function ($scope, MediaCenterInfo, Location, Modals, SearchEngine, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv) {
                 /**
                  * Breadcrumbs  related implementation
                  */
@@ -13,6 +13,7 @@
                 Buildfire.navigation.scrollTop();
                 registerAnalyticsForOldData();
                 var ContentHome = this;
+                ContentHome.activeTab = 'content-media-tab';
                 var _infoData = {
                     data: {
                         content: {
@@ -190,6 +191,9 @@
                 else
                     editor.loadItems(ContentHome.info.data.content.images);
 
+
+
+                    // TODO: all under this line will be moved
                 var updateSearchOptions = function () {
                     var order;
                     if (ContentHome.info && ContentHome.info.data && ContentHome.info.data.content)
@@ -290,14 +294,6 @@
                     && !ContentHome.info.data.content.updatedRecords) {
                     ContentHome.updateRecords(ContentHome.info.data.content.sortBy);
                 }
-                // correct image src for dropbox to crop/resize and show it
-                function getImageUrl(imageSrc) {
-                    if (imageSrc && imageSrc.includes("dropbox.com")) {
-                        imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent");
-                        imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com");
-                      }
-                    return imageSrc;
-                }
 
                 /**
                  * ContentHome.getMore is used to load the items
@@ -333,81 +329,6 @@
                     }, function fail() {
                         ContentHome.isBusy = false;
                     });
-                };
-
-                /**
-                 * ContentHome.toggleSortOrder() to change the sort by
-                 */
-                ContentHome.toggleSortOrder = function (name) {
-                    if (!name) {
-                        console.info('There was a problem sorting your data');
-                    } else {
-                        var sortOrder = Orders.getOrder(name || Orders.ordersMap.Default);
-                        if ((name === "Media Title A-Z" || name === "Media Title Z-A")
-                            && !ContentHome.info.data.content.updatedRecords) {
-                            ContentHome.info.data.content.sortBy = name;
-                            ContentHome.info.data.content.sortByValue = sortOrder.value;
-                            ContentHome.isBusy = false;
-
-                            ContentHome.updateRecords(name);
-                        } else {
-                            ContentHome.items = [];
-                            /* reset Search options */
-                            ContentHome.noMore = false;
-                            searchOptions.skip = 0;
-                            /* Reset skip to ensure search begins from scratch*/
-
-                            ContentHome.isBusy = false;
-
-
-                            ContentHome.info.data.content.sortBy = name;
-                            ContentHome.info.data.content.sortByValue = sortOrder.value;
-                            ContentHome.getMore();
-                            ContentHome.itemSortableOptions.disabled = !(ContentHome.info.data.content.sortBy === Orders.ordersMap.Manually);
-                        }
-
-                    }
-                };
-                ContentHome.itemSortableOptions = {
-                    handle: '> .cursor-grab',
-                    disabled: !(ContentHome.info.data.content.sortBy === Orders.ordersMap.Manually),
-                    stop: function (e, ui) {
-                        var endIndex = ui.item.sortable.dropindex,
-                            maxRank = 0,
-                            draggedItem = ContentHome.items[endIndex];
-                        //console.log(ui.item.sortable.dropindex)
-                        if (draggedItem) {
-                            var prev = ContentHome.items[endIndex - 1],
-                                next = ContentHome.items[endIndex + 1];
-                            var isRankChanged = false;
-                            if (next) {
-                                if (prev) {
-                                    draggedItem.data.rank = ((prev.data.rank || 0) + (next.data.rank || 0)) / 2;
-                                    isRankChanged = true;
-                                } else {
-                                    draggedItem.data.rank = (next.data.rank || 0) / 2;
-                                    isRankChanged = true;
-                                }
-                            } else {
-                                if (prev) {
-                                    draggedItem.data.rank = (((prev.data.rank || 0) * 2) + 10) / 2;
-                                    maxRank = draggedItem.data.rank;
-                                    isRankChanged = true;
-                                }
-                            }
-                            if (isRankChanged) {
-                                MediaContent.update(draggedItem.id, draggedItem.data, function (err) {
-                                    if (err) {
-                                        console.error('Error during updating rank');
-                                    } else {
-                                        if (ContentHome.data.content.rankOfLastItem < maxRank) {
-                                            ContentHome.data.content.rankOfLastItem = maxRank;
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    }
                 };
 
                 /**
@@ -569,6 +490,7 @@
                 /**
                  * method to open the importCSV Dialog
                  */
+                // TODO: Need to add the validation for the CSV file
                 ContentHome.openImportCSVDialog = function () {
                     $csv.import(headerRow).then(function (rows) {
                         ContentHome.loading = true;
@@ -690,84 +612,6 @@
                     }
                 }
 
-                /**
-                 * ContentHome.searchListItem() used to search items list
-                 * @param value to be search.
-                 */
-                ContentHome.searchListItem = function (value) {
-                    searchOptions.skip = 0;
-                    /*reset the skip value*/
-
-                    ContentHome.isBusy = false;
-                    ContentHome.items = [];
-                    value = value.trim();
-                    if (!value) {
-                        value = '/*';
-                    }
-                    searchOptions.filter = { "$json.title": { "$regex": value, $options: "-i", } };
-                    ContentHome.getMore();
-                };
-
-                ContentHome.onEnterKey = (keyEvent) => {
-                    if (keyEvent.which === 13) ContentHome.searchListItem($scope.search);
-                }
-
-                /**
-                 * ContentHome.removeListItem() used to delete an item from item list
-                 * @param _index tells the index of item to be deleted.
-                 */
-                ContentHome.removeListItem = function (index, $event) {
-                    if ("undefined" == typeof index) {
-                        return;
-                    }
-                    var item = ContentHome.items[index];
-                    if ("undefined" !== typeof item) {
-                        Buildfire.dialog.confirm(
-                            {
-                                title: "Delete Item",
-                                message: 'Are you sure you want to delete this item?',
-                                confirmButton: {
-                                    type: "danger",
-                                    text: "Delete"
-                                }
-                            },
-                            (err, isConfirmed) => {
-                                if (isConfirmed) {
-                                    if(item.data.videoUrl){
-                                        Analytics.unregisterEvent(item.id + "_videoPlayCount");
-                                        Analytics.unregisterEvent(item.id + "_continuesVideoPlayCount");
-                                    } else if(item.data.audioUrl){
-                                        Analytics.unregisterEvent(item.id + "_audioPlayCount");
-                                        Analytics.unregisterEvent(item.id + "_continuesAudioPlayCount");
-                                    } else {
-                                        Analytics.unregisterEvent(item.id + "_articleOpenCount");
-                                        Analytics.unregisterEvent(item.id + "_continuesArticleOpenCount");
-                                    }
-
-                                    if (item.data.searchEngineId) {
-                                        SearchEngineService.delete(item.data.searchEngineId);
-                                    }
-                                    removeDeeplink(item);
-                                    MediaContent.delete(item.id).then(function (data) {
-                                        ContentHome.items.splice(index, 1);
-                                    }, function (err) {
-                                        console.error('Error while deleting an item-----', err);
-                                    });
-                                }
-                            }
-                        );
-                    }
-                };
-
-                ContentHome.showReport = function(item){
-                    if(item.data.videoUrl){
-                        Analytics.showReports({ eventKey: item.id + "_videoPlayCount" } );
-                    } else if(item.data.audioUrl){
-                        Analytics.showReports({ eventKey: item.id + "_audioPlayCount"});
-                    } else {
-                        Analytics.showReports({ eventKey: item.id + "_articleOpenCount" });
-                    }
-                }
                 ContentHome.goTo = function (id) {
                     console.log(id);
                     Location.go('#media/' + id);
@@ -782,16 +626,8 @@
 
                 updateSearchOptions();
 
-                function removeDeeplink(item) {
-                    Deeplink.deleteById(item.id);
-                }
-
                 function updateMasterInfo(info) {
                     ContentHome.masterInfo = angular.copy(info);
-                }
-
-                function resetInfo() {
-                    //ContentHome.info = angular.copy(ContentHome.masterInfo);
                 }
 
                 function isUnchanged(info) {
@@ -803,16 +639,12 @@
                     if (!_info.id) {
                         MediaCenter.save(_info.data).then(function (data) {
                             MediaCenter.get().then(function (getData) {
-                                /* ContentHome.masterInfo = angular.copy(_info);
-                                 _info.id = getData.id;
-                                 AppConfig.setSettings(_info.data);*/
                                 updateMasterInfo(data);
                                 AppConfig.setSettings(_info.data);
                             }, function (err) {
                                 console.error(err);
                             });
                         }, function (err) {
-                            resetInfo();
                             console.error('Error-------', err);
                         });
                     } else {
@@ -820,7 +652,6 @@
                             updateMasterInfo(data);
                             AppConfig.setSettings(_info.data);
                         }, function (err) {
-                            resetInfo();
                             console.error('Error-------', err);
                         });
                     }
@@ -840,20 +671,16 @@
                     }
                 }
 
-                ContentHome.goToCategories = function () {
-                    Location.go('#category/');
+                ContentHome.toggleHomeView = (view = 'media') => {
+                    if (view === 'media') {
+                        ContentHome.activeTab = 'content-media-tab';
+                    } else if (view === 'category') {
+                        ContentHome.activeTab = 'content-category-tab';
+                    }
                 }
-
-                //var initInfo = true;
+                
                 $scope.$watch(function () {
                     return ContentHome.info;
                 }, saveDataWithDelay, true);
-
-                // Messaging.sendMessageToWidget({
-                //     name: EVENTS.ROUTE_CHANGE,
-                //     message: {
-                //         path: PATHS.HOME
-                //     }
-                // });
             }]);
 })(window.angular);
