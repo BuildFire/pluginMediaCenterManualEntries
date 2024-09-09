@@ -5,10 +5,10 @@
     <div class="media-center-plugin" ng-if="!(NowPlaying.openMoreInfo || NowPlaying.openSettings)">
         <div class="media-holder">
             <div class="media-inner text-center">
-                <img ng-if="NowPlaying.currentTrack.image && NowPlaying.isOnline" load-image="1x1" crop-width="260" crop-height="260"
-                    crop-type="crop" data-final-src="{{NowPlaying.currentTrack.image | resizeImage : 260:260}}" alt="{{NowPlaying.currentTrack.title}} top image">
-                <img ng-if="NowPlaying.currentTrack.image && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.image}}" alt="{{NowPlaying.currentTrack.title}} top image">
-                <img ng-if="!NowPlaying.currentTrack.image" src="./assets/images/now-playing.png" alt="top image">
+                <img ng-if="NowPlaying.currentTrack.topImage && NowPlaying.isOnline" load-image="1x1" crop-width="260" crop-height="260"
+                    crop-type="crop" data-final-src="{{NowPlaying.currentTrack.topImage | resizeImage : 260:260}}" alt="{{NowPlaying.currentTrack.title}} top image">
+                <img ng-if="NowPlaying.currentTrack.topImage && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.topImage}}" alt="{{NowPlaying.currentTrack.title}} top image">
+                <img ng-if="!NowPlaying.currentTrack.topImage" src="./assets/images/now-playing.png" alt="top image">
             </div>
         </div>
         <div class="media-player-info ellipsis">
@@ -25,7 +25,8 @@
         </div>
         <div class="slider">
             <div>
-                <div ng-if="!NowPlaying.isAudioPlayerPlayingAnotherSong" >
+                <div>
+                    <!-- TODO: this needs to be disabled when the user is playing another audio -->
                     <div class="audio-plyer"><input type="range" min="0.0" max="{{NowPlaying.duration}}"
                         ng-model="NowPlaying.currentTime" ng-change="NowPlaying.changeTime(NowPlaying.currentTime)" />
                     </div>
@@ -42,22 +43,7 @@
                         <span>{{"--:--"}}</span>
                     </div>
                 </div>
-                <div ng-if="NowPlaying.isAudioPlayerPlayingAnotherSong" >
-                    <div class="audio-plyer"><input  type="range" value="0" />
-                    </div>
-                    <div  class="time-indicator" style="float:left">
-                        <span>00:00</span>
-                    </div>
-                </div>
                 
-                
-            </div>
-            <div class="volume">
-                &nbsp;<input class="volume-button rotate-270"
-                    ng-style="NowPlaying.showVolume? {'visibility':'visible'}:{'visibility':'hidden'}" type="range"
-                    min="0.0" max="100" ng-model="NowPlaying.volume"
-                    ng-change="NowPlaying.changeVolume(NowPlaying.volume)"
-                    style="width: 149px; border-radius:4px; background:#fff; margin-top: -93px;margin-left: -14px;z-index: 1000000" />
             </div>
         </div>
         <div class="media-player-btns">
@@ -132,8 +118,8 @@
                         ng-repeat="track in playListItems">
                         <div class="list-item-media text-left" ng-class="{'edit' : track.swiped}">
                             <div class="list-media-holder square-icon pull-left">
-                                <img ng-if="track.image" load-image="2x1" crop-width="55" crop-height="22"
-                                    crop-type="crop" data-ng-src="{{track.image | resizeImage : 55:22}}">
+                                <img ng-if="track.image || track.topImage" load-image="2x2" crop-width="55" crop-height="55"
+                                    crop-type="crop" data-ng-src="{{track.topImage ? track.topImage : track.image | resizeImage : 55:55}}">
                             </div>
                             <div class="list-item-copy text-left padding-left-ten padding-right-ten">
                                 <p class="margin-bottom-zero ellipsis margin-top-twenty bodyTextTheme">
@@ -167,7 +153,7 @@
             <div class="media-player-more-info">
                 <div class="media-holder margin-top-thirty">
                     <div class="media-inner text-center">
-                        <img ng-if="NowPlaying.currentTrack.image" ng-src="{{NowPlaying.currentTrack.image | resizeImage : 260:260}}">
+                        <img ng-if="NowPlaying.currentTrack.topImage" ng-src="{{NowPlaying.currentTrack.topImage | resizeImage : 260:260}}">
                     </div>
                 </div>
                 <hr class="none">

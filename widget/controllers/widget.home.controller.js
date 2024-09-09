@@ -689,12 +689,17 @@
 
                 let delayInterval;
                 $rootScope.playNextItem = (userInput) => {
-                    if (userInput) return WidgetHome.goToMedia($rootScope.currentIndex + 1);
+                    // TODO: this should based on user preferences
+                    let newIndex = Math.floor((Math.random() * WidgetHome.items.length));
+                    while (newIndex === $rootScope.currentIndex) {
+                        newIndex = Math.floor((Math.random() * WidgetHome.items.length));
+                    }
+                    if (userInput) return WidgetHome.goToMedia(newIndex);
 
                     if ($rootScope.autoPlay) {
                         let delay = $rootScope.autoPlayDelay.value;
                         if (!delay) {
-                            WidgetHome.goToMedia($rootScope.currentIndex + 1);
+                            WidgetHome.goToMedia(newIndex);
                         } else {
                             $rootScope.showCountdown = true;
 
@@ -709,7 +714,7 @@
                                 if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                                 if (delay === 0) {
                                     $rootScope.clearCountdown();
-                                    WidgetHome.goToMedia($rootScope.currentIndex + 1);
+                                    WidgetHome.goToMedia(newIndex);
                                 }
                             }, 1000);
                         }
