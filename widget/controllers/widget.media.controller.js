@@ -1,8 +1,8 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope', 'Location', 'OFSTORAGE', 'openedMediaHandler',
-            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope, Location, OFSTORAGE, openedMediaHandler) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope', 'Location', 'OFSTORAGE', 'openedMediaHandler', 'DropboxLinksManager',
+            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope, Location, OFSTORAGE, openedMediaHandler, DropboxLinksManager) {
                 var WidgetMedia = this;
                 WidgetMedia.API = null;
                 $rootScope.online = $window.navigator.onLine;
@@ -339,15 +339,6 @@
                         url: "./assets/css/videogular.css"
                     }
                 };
-                // correct image src for dropbox to crop/resize and show it
-                function getImageUrl(imageSrc) {
-                    if (imageSrc) {
-                      imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent");
-                      imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com");
-                      imageSrc = imageSrc.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
-                    }
-                    return imageSrc;
-                }
 
                 WidgetMedia.changeVideoSrc = function () {
                     if (WidgetMedia.item.data.videoUrl) {
@@ -401,7 +392,6 @@
                                 allowAddingNotes: true,
                                 allowSource: true,
                                 allowOfflineDownload: false,
-                                transferAudioContentToPlayList: false,
                                 forceAutoPlay: false,
                                 autoPlay: false,
                                 autoPlayDelay: { label: "Off", value: 0 },
@@ -474,8 +464,8 @@
                     //Check if item has newly downloaded media
                     WidgetMedia.loadingData = true;
 
-                    media.data.topImage = getImageUrl(media.data.topImage);
-                    media.data.image = getImageUrl(media.data.image);
+                    media.data.topImage = DropboxLinksManager.convertDropbox(media.data.topImage);
+                    media.data.image = DropboxLinksManager.convertDropbox(media.data.image);
                     WidgetMedia.item = media;
                     WidgetMedia.mediaType = media.data.audioUrl ? 'AUDIO' : (media.data.videoUrl ? 'VIDEO' : null);
                     if(!WidgetMedia.mediaType){
@@ -625,8 +615,8 @@
                     switch (event.tag) {
                         case COLLECTIONS.MediaContent:
                             if (event.data) {
-                                event.data.topImage = getImageUrl(event.data.topImage);
-                                event.data.image = getImageUrl(event.data.image);
+                                event.data.topImage = DropboxLinksManager.convertDropbox(event.data.topImage);
+                                event.data.image = DropboxLinksManager.convertDropbox(event.data.image);
                                 WidgetMedia.item = event;
                                 $scope.$digest();
                                 // Update item in globalPlaylist
@@ -651,7 +641,6 @@
                             $rootScope.allowShare = WidgetMedia.media.data.content.allowShare;
                             $rootScope.allowAddingNotes = WidgetMedia.media.data.content.allowAddingNotes;
                             $rootScope.allowSource = WidgetMedia.media.data.content.allowSource;
-                            $rootScope.transferAudioContentToPlayList = WidgetMedia.media.data.content.transferAudioContentToPlayList;
                             $rootScope.forceAutoPlay = WidgetMedia.media.data.content.forceAutoPlay;
                             $rootScope.skipMediaPage = WidgetMedia.media.data.design.skipMediaPage;
 
@@ -796,23 +785,6 @@
                     }
                     WidgetMedia.loadingVideo = false;
                 };
-
-                buildfire.auth.onLogin(function (user) {
-                    buildfire.spinner.show();
-                    bookmarks.sync($scope);
-                    if (!WidgetMedia.isWeb) downloads.sync($scope, DownloadedMedia);
-                    $rootScope.user = user;
-                    $rootScope.refreshItems(true);
-                });
-
-                buildfire.auth.onLogout(function () {
-                    buildfire.spinner.show();
-                    bookmarks.sync($scope);
-                    openedMediaHandler.reset();
-                    if (!WidgetMedia.isWeb) downloads.sync($scope, DownloadedMedia);
-                    $rootScope.user = null;
-                    $rootScope.refreshItems();
-                });
 
                 WidgetMedia.bookmark = function () {
                     var isBookmarked = WidgetMedia.item.data.bookmarked ? true : false;

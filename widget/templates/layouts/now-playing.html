@@ -130,7 +130,7 @@
                                     class="icon primaryTheme" ng-click="NowPlaying.playlistPlayPause(track, $index)"></a>
                             </div>
                             <div class="remove-btn text-center dangerBackgroundTheme" style="background:red;"
-                                ng-click="NowPlaying.removeTrackFromPlayList($index)">
+                                ng-click="NowPlaying.removeFromPlaylist(track)">
                                 <span class="whiteTheme">{{NowPlaying.playListStrings.removePlayListButton}}</span>
                             </div>
                         </div>
@@ -168,10 +168,10 @@
                     <div class="text-center item">
                         <a ng-click="NowPlaying.showPlaylistPage()" class="whiteTheme">{{NowPlaying.playListStrings.goToPlaylist}}</a>
                     </div>
-                    <div class="text-center item" ng-if="!NowPlaying.transferPlaylist">
+                    <div class="text-center item" ng-if="!NowPlaying.forceAutoPlay && !NowPlaying.isExistInPlaylist">
                         <a ng-click="NowPlaying.addToPlaylist(NowPlaying.currentTrack)" class="whiteTheme">{{NowPlaying.playListStrings.addToPlaylist}}</a>
                     </div>
-                    <div class="text-center item" ng-if="!NowPlaying.transferPlaylist">
+                    <div class="text-center item" ng-if="!NowPlaying.forceAutoPlay && NowPlaying.isExistInPlaylist">
                         <a ng-click="NowPlaying.removeFromPlaylist(NowPlaying.currentTrack)" class="whiteTheme">{{NowPlaying.playListStrings.removeFromPlaylist}}</a>
                     </div>
                     <div class="text-center item">
@@ -226,7 +226,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="item clearfix row" ng-if="!NowPlaying.transferPlaylist">
+                    <div class="item clearfix row" ng-if="!NowPlaying.forceAutoPlay">
                         <div class="col-md-10 pull-left text-left" >
                             <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.shufflePlaylist}}</span>
                         </div>

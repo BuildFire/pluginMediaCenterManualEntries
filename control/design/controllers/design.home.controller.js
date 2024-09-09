@@ -16,7 +16,6 @@
                         allowShare: true,
                         allowAddingNotes: true,
                         allowSource: true,
-                        transferAudioContentToPlayList:false,
                         forceAutoPlay:false,
                         dateIndexed: true,
                         dateCreatedIndexed: true

@@ -49,7 +49,6 @@
               allowSource: true,
               allowOfflineDownload: false,
               enableFiltering: false,
-              transferAudioContentToPlayList: false,
               forceAutoPlay: false,
               dateIndexed: true,
               dateCreatedIndexed: true

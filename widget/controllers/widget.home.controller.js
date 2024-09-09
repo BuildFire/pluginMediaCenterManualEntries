@@ -1,8 +1,8 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetHomeCtrl', ['$scope', '$timeout', '$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location', 'openedMediaHandler', 'LocalStorageOpenedItemsHandler',
-            function ($scope, $timeout, $window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location, openedMediaHandler, LocalStorageOpenedItemsHandler) {
+        .controller('WidgetHomeCtrl', ['$scope', '$timeout', '$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location', 'openedMediaHandler', 'LocalStorageOpenedItemsHandler', 'DropboxLinksManager',
+            function ($scope, $timeout, $window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location, openedMediaHandler, LocalStorageOpenedItemsHandler, DropboxLinksManager) {
                 $rootScope.loadingGlobalPlaylist = true;
                 $rootScope.showFeed = true;
                 $rootScope.currentlyDownloading = [];
@@ -45,7 +45,6 @@
                             allowShare: true,
                             allowAddingNotes: true,
                             allowSource: true,
-                            transferAudioContentToPlayList: false,
                             forceAutoPlay: false,
                             autoPlay: false,
                             autoPlayDelay: { label: "Off", value: 0 },
@@ -116,7 +115,6 @@
                         $rootScope.allowShare = MediaCenterInfo.data.content.allowShare;
                         $rootScope.allowAddingNotes = MediaCenterInfo.data.content.allowAddingNotes;
                         $rootScope.allowSource = MediaCenterInfo.data.content.allowSource;
-                        $rootScope.transferAudioContentToPlayList = MediaCenterInfo.data.content.transferAudioContentToPlayList;
                         $rootScope.forceAutoPlay = MediaCenterInfo.data.content.forceAutoPlay;
                         $rootScope.skipMediaPage = MediaCenterInfo.data.design.skipMediaPage
 
@@ -174,7 +172,6 @@
                             $rootScope.allowShare = WidgetHome.media.data.content.allowShare;
                             $rootScope.allowAddingNotes = WidgetHome.media.data.content.allowAddingNotes;
                             $rootScope.allowSource = WidgetHome.media.data.content.allowSource;
-                            $rootScope.transferAudioContentToPlayList = WidgetHome.media.data.content.transferAudioContentToPlayList;
                             $rootScope.forceAutoPlay = WidgetHome.media.data.content.forceAutoPlay;
                             $rootScope.skipMediaPage = WidgetHome.media.data.design.skipMediaPage
 
@@ -337,7 +334,6 @@
                             $rootScope.allowShare = WidgetHome.media.data.content.allowShare;
                             $rootScope.allowAddingNotes = WidgetHome.media.data.content.allowAddingNotes;
                             $rootScope.allowSource = WidgetHome.media.data.content.allowSource;
-                            $rootScope.transferAudioContentToPlayList = WidgetHome.media.data.content.transferAudioContentToPlayList;
                             $rootScope.forceAutoPlay = WidgetHome.media.data.content.forceAutoPlay;
                             $rootScope.skipMediaPage = WidgetHome.media.data.design.skipMediaPage;
 
@@ -974,15 +970,6 @@
                     });
                 };
 
-                // correct image src for dropbox to crop/resize and show it
-                function getImageUrl(imageSrc) {
-                   if (imageSrc) {
-                      imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent");
-                      imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com");
-                      imageSrc = imageSrc.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
-                    }
-                    return imageSrc;
-                }
 
                 WidgetHome.loadMore = () => {
 
@@ -996,8 +983,8 @@
 
                         MediaContent.find(searchOptions).then((result) => {
                             result = result.map((item) => {
-                                item.data.topImage = getImageUrl(item.data.topImage);
-                                item.data.image = getImageUrl(item.data.image);
+                                item.data.topImage = DropboxLinksManager.convertDropbox(item.data.topImage);
+                                item.data.image = DropboxLinksManager.convertDropbox(item.data.image);
                                 return item;
                             });
                             WidgetHome.items = WidgetHome.items.concat(result);

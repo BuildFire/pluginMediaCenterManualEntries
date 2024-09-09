@@ -16,8 +16,6 @@
                     Settings.data.content.allowAddingNotes = true;
                 if (typeof (Settings.data.content.allowSource) == 'undefined')
                     Settings.data.content.allowSource = true;
-                if (typeof (Settings.data.content.transferAudioContentToPlayList) == 'undefined')
-                    Settings.data.content.transferAudioContentToPlayList = false;
                 if (typeof (Settings.data.content.forceAutoPlay) == 'undefined')
                     Settings.data.content.forceAutoPlay = false;
                 if (typeof (Settings.data.design.skipMediaPage) == 'undefined')
@@ -65,7 +63,6 @@
                         Settings.data.content.autoPlay = false;
                     }
                     Settings.data.content.forceAutoPlay = value;
-                    Settings.data.content.transferAudioContentToPlayList = Settings.data.content.forceAutoPlay;
                     MediaCenter.save(Settings.data).then(() => { });
                 }
             }
@@ -110,7 +107,6 @@
                 if (value != Settings.data.content.autoPlay) {
                     if (value === true && Settings.data.content.forceAutoPlay) {
                         Settings.data.content.forceAutoPlay = false;
-                        Settings.data.content.transferAudioContentToPlayList = Settings.data.content.forceAutoPlay;
                     }
                     if (value === true) Settings.data.design.skipMediaPage = true;
                     Settings.data.content.autoPlay = value;

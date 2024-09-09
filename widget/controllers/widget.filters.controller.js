@@ -61,7 +61,6 @@
                                     allowAddingNotes: true,
                                     allowSource: true,
                                     allowOfflineDownload: false,
-                                    transferAudioContentToPlayList: false,
                                     forceAutoPlay: false,
                                     autoPlay: false,
                                     autoPlayDelay: { label: "Off", value: 0 },
@@ -292,7 +291,6 @@
                             $rootScope.allowShare = WidgetFilters.media.data.content.allowShare;
                             $rootScope.allowAddingNotes = WidgetFilters.media.data.content.allowAddingNotes;
                             $rootScope.allowSource = WidgetFilters.media.data.content.allowSource;
-                            $rootScope.transferAudioContentToPlayList = WidgetFilters.media.data.content.transferAudioContentToPlayList;
                             $rootScope.forceAutoPlay = WidgetFilters.media.data.content.forceAutoPlay;
                             $rootScope.skipMediaPage = WidgetFilters.media.data.design.skipMediaPage;
 

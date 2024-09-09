@@ -44,7 +44,6 @@
               allowShare: true,
               allowAddingNotes: true,
               allowSource: true,
-              transferAudioContentToPlayList: false,
               forceAutoPlay: false,
               dateIndexed: true,
               dateCreatedIndexed: true,
@@ -94,7 +93,6 @@
             allowShare: true,
             allowAddingNotes: true,
             allowSource: true,
-            transferAudioContentToPlayList: false,
             forceAutoPlay: false,
           };
           /**

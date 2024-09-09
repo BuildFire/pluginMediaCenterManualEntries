@@ -29,7 +29,6 @@
                             allowSource: true,
                             allowOfflineDownload: false,
                             enableFiltering: false,
-                            transferAudioContentToPlayList: false,
                             forceAutoPlay: false,
                             dateIndexed: true,
                             dateCreatedIndexed: true
@@ -63,8 +62,6 @@
                     ContentHome.info.data.content.allowAddingNotes = true;
                 if (typeof (ContentHome.info.data.content.allowSource) == 'undefined')
                     ContentHome.info.data.content.allowSource = true;
-                if (typeof (ContentHome.info.data.content.transferAudioContentToPlayList) == 'undefined')
-                    ContentHome.info.data.content.transferAudioContentToPlayList = false;
                 if (typeof (ContentHome.info.data.content.forceAutoPlay) == 'undefined')
                     ContentHome.info.data.content.forceAutoPlay = false;
                 if (typeof (ContentHome.info.data.content.updatedRecords) == 'undefined')
