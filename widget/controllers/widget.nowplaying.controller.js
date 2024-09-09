@@ -272,7 +272,7 @@
                     // Prevent the repetition of events by clearing all previous occurrences, as repeated events tend to occur when the user plays multiple audio files.
                     $rootScope.activePlayerEvents.clear();
                 }
-                $rootScope.activePlayerEvents = audioPlayer.onEvent(function (e) {                 
+                $rootScope.activePlayerEvents = audioPlayer.onEvent(function (e) {
                     switch (e.event) {
                         case 'play':
                         case 'resume':
@@ -319,7 +319,7 @@
 
                     if ($rootScope.seekTime) NowPlaying.currentTrack.startAt = $rootScope.seekTime;
 
-                    NowPlaying.currentTrack.backgroundImage = NowPlaying.currentTrack.backgroundImage ? NowPlaying.currentTrack.backgroundImage : './assets/images/now-playing.png';
+                    NowPlaying.currentTrack.backgroundImage = NowPlaying.currentTrack.backgroundImage ? NowPlaying.cropImage(NowPlaying.currentTrack.backgroundImage) : './assets/images/now-playing.png';
                     NowPlaying.currentTrack.backgroundImage = CSS.escape(NowPlaying.currentTrack.backgroundImage);
                     
                     audioPlayer.settings.get(function (err, setting) {
@@ -339,10 +339,10 @@
                         $scope.$digest();
                         $scope.$apply();
                     });
-                    
+
                     buildfire.services.media.audioPlayer.isPaused((err, isPaused) => {
                         if (err) return console.err(err);
-                        
+
                         NowPlaying.playing = !isPaused;
                     });
                 }
@@ -653,7 +653,10 @@
                 NowPlaying.closeMoreInfoOverlay = function () {
                     NowPlaying.openMoreInfo = false;
                 };
-
+                NowPlaying.cropImage = function(url) {
+                    if (!url) return;
+                    return buildfire.imageLib.resizeImage(url, { size: "1080", aspect:'16:9' })
+                }
                 NowPlaying.addEvents = function (e, i, toggle, track) {
                     toggle ? track.swiped = true : track.swiped = false;
                 };
@@ -885,17 +888,17 @@
                         $scope.$digest();
                     }
                 };
-                
-                
+
+
                 //! --------------------------- End : Playback options --------------------------------------
 
                 /**
                  * progress bar style
-                 * @param {Number} value 
+                 * @param {Number} value
                  */
                 NowPlaying.progressBarStyle = function (value) {
                     const percentage = NowPlaying.duration? Math.round(((value / NowPlaying.duration) * 100)) :value;
-                    
+
                     if (percentage) {
                         document.documentElement.style.setProperty('--played-tracker-percentage', `${percentage}%`);
                     }
@@ -910,7 +913,7 @@
                         autoJumpToLastPosition: false,
                         shufflePlaylist: false,
                     };
-                
+
                     // Compare each key in the settings object with the initialSettings
                     for (const key in settings) {
                         if ((settings.hasOwnProperty(key) && settings[key] === initialSettings[key])) {
