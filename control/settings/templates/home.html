@@ -132,17 +132,14 @@
         </span>
     </label>
     <div class='col-md-9 pull-left'>
-        <button ng-hide="Settings.data.content.globalPlaylistPlugin.title"
-            ng-class="{'disabled': !Settings.data.content.globalPlaylist}"
+        <button id="actionItemAddBtn" ng-class="{'disabled': !Settings.data.content.globalPlaylist}"
             class="btn btn-primary btn-outlined btn-primary-add pull-right" ng-click="Settings.showPluginsDialog()">Add Action Item</button>
-        <div ng-hide="!Settings.data.content.globalPlaylistPlugin.title"
-            ng-class="{'disabled': !Settings.data.content.globalPlaylist}"
-            class="flex-auto flex border-grey border-radius-four padding-bottom-five padding-top-five padding-left-ten padding-right-ten">
+        <div id="actionItemAddRow" ng-class="{'disabled': !Settings.data.content.globalPlaylist}" 
+            class="hidden flex-auto flex border-grey border-radius-four padding-bottom-five padding-top-five padding-left-ten padding-right-ten">
             <div class="flex flex-auto flex-align-center">
                 <img class="margin-right-five border-radius-four chat-instance-icon"
-                    ng-src="{{ Settings.data.content.globalPlaylistPlugin.iconUrl }}" />
-                <p class="blackTheme chat-instance-title margin-bottom-zero margin-top-zero">{{
-                    Settings.data.content.globalPlaylistPlugin.title }}</p>
+                    ng-src="{{Settings.data.content.globalPlaylistPlugin.iconUrl | cropImg}}" />
+                <p class="blackTheme chat-instance-title margin-bottom-zero margin-top-zero">{{ Settings.data.content.globalPlaylistPlugin.title }}</p>
             </div>
             <div class="flex action-item-actions">
                 <button ng-click="Settings.showPluginsDialog()"
@@ -158,10 +155,10 @@
     <label class="tooltip-container col-md-4">Enable Add All to Global Playlist Button</label>
     <div class="button-switch col-md-9 flex flex-justify-end">
         <input id="showGlobalAddAllToPlaylistButton" type="checkbox"
-            ng-class="{'disabled': !Settings.data.content.globalPlaylist || !Settings.data.content.globalPlaylistPlugin.title}"
+            ng-class="{'disabled': !Settings.data.content.globalPlaylist || !Settings.data.content.globalPlaylistPlugin.instanceId}"
             ng-model="Settings.data.content.showGlobalAddAllToPlaylistButton">
         <label for="showGlobalAddAllToPlaylistButton" class="label-success"
-            ng-class="{'disabled': !Settings.data.content.globalPlaylist || !Settings.data.content.globalPlaylistPlugin.title}"></label>
+            ng-class="{'disabled': !Settings.data.content.globalPlaylist || !Settings.data.content.globalPlaylistPlugin.instanceId}"></label>
     </div>
 </div>
 
@@ -169,10 +166,10 @@
     <label class="tooltip-container col-md-4">Enable Navigate to Global Playlist Button</label>
     <div class="button-switch col-md-9 flex flex-justify-end">
         <input id="globalPlaylistNavButtonSwitch" type="checkbox"
-            ng-class="{'disabled': !Settings.data.content.globalPlaylist || !Settings.data.content.globalPlaylistPlugin.title}"
+            ng-class="{'disabled': !Settings.data.content.globalPlaylist || !Settings.data.content.globalPlaylistPlugin.instanceId}"
             ng-model="Settings.data.content.showGlobalPlaylistNavButton">
         <label for="globalPlaylistNavButtonSwitch" class="label-success"
-            ng-class="{'disabled': !Settings.data.content.globalPlaylist || !Settings.data.content.globalPlaylistPlugin.title}"></label>
+            ng-class="{'disabled': !Settings.data.content.globalPlaylist || !Settings.data.content.globalPlaylistPlugin.instanceId}"></label>
     </div>
 </div>
 

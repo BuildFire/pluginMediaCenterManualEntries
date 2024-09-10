@@ -39,12 +39,26 @@ body, span, h1, h2, h3, h4, h5, h6, p, label, li, body, body * {
   color: var(--c-danger);
 }
 
+.action-item-actions .btn.primary:hover {
+  background-color: var(--c-gray1);
+  color: var(--c-primary);
+}
+
 .chat-instance-icon {
   width: 40px;
   height: 40px;
   overflow: hidden;
   background-color: #DDDDDD;
   margin-right: 10px;
+}
+
+.action-item-actions .btn.btn--icon {
+  font-size: 18px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  aspect-ratio: 1;
 }
 
 /* Start: Tooltip */

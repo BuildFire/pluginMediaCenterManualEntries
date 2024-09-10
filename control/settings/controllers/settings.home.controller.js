@@ -4,8 +4,9 @@
 	angular
 		.module('mediaCenterDesign')
 		.controller('SettingsCtrl', ['$scope', 'COLLECTIONS', 'PLAYLISTINSTANCES', 'DB', 'Messaging', function ($scope, COLLECTIONS, PLAYLISTINSTANCES, DB, Messaging) {
-			var Settings = this;
+			const Settings = this;
 			Settings.data = {};
+			Settings.lastSavedContent = {};
 			$scope.inputs = {};
 			Settings.autoPlayDelayOptions = [
 				{ label: 'Off', value: 0 },
@@ -14,10 +15,12 @@
 				{ label: '3s', value: 3 },
 				{ label: '5s', value: 5 },
 			];
-			var MediaCenter = new DB(COLLECTIONS.MediaCenter);
+			const MediaCenter = new DB(COLLECTIONS.MediaCenter);
 
 			MediaCenter.get().then((getData) => {
 				Settings.data = getData.data;
+				Settings.lastSavedContent = angular.copy(Settings.data.content);
+
 				if (typeof (Settings.data.content.allowShare) == 'undefined')
 					Settings.data.content.allowShare = true;
 				if (typeof (Settings.data.content.allowAddingNotes) == 'undefined')
@@ -57,20 +60,27 @@
 					Settings.data.content.startWithAutoJumpByDefault   = false;
 				}
 
+				if (!$scope.$$phase) {
+					$scope.$apply();
+					$scope.$digest();
+				}
+
 				$scope.setupSettingsWatch();
 			}, (err) => {
 				console.error(err);
 			});
 
 			Settings.setSettings = () => {
+				const isUnchanged = angular.equals(Settings.lastSavedContent, Settings.data.content);
+				if (isUnchanged) return;
+
 				MediaCenter.save(Settings.data).then(() => {
+					Settings.lastSavedContent = angular.copy(Settings.data.content);
 					Messaging.sendMessageToWidget({ cmd: 'settings', data: Settings.data });
 				}).catch((err) => {
-					// TODO: handle error
 					console.error(err);
 				});
 			};
-
 
 			Settings.showPluginsDialog = () => {
 				// MCM Playlist plugin unique Id
@@ -110,11 +120,20 @@
 					Settings.data.content.skipMediaPage = true;
 				}
 
-				if (!Settings.data.content.globalPlaylist || !Settings.data.content.globalPlaylistPlugin || !Settings.data.content.globalPlaylistPlugin.title) {
-					Settings.data.content.showGlobalAddAllToPlaylistButton = false;
-					Settings.data.content.showGlobalPlaylistNavButton = false;
-				}
+				const actionItemAddBtn = document.getElementById('actionItemAddBtn');
+				const actionItemAddRow = document.getElementById('actionItemAddRow');
 
+				if (Settings.data.content &&
+					Settings.data.content.globalPlaylistPlugin &&
+					Settings.data.content.globalPlaylistPlugin.title &&
+					Settings.data.content.globalPlaylistPlugin.instanceId) {
+					actionItemAddRow.classList.remove('hidden');
+					actionItemAddBtn.classList.add('hidden');
+				} else {
+					actionItemAddRow.classList.add('hidden');
+					actionItemAddBtn.classList.remove('hidden');
+				}
+				
 				if (Settings.data.content.enableFiltering && !Settings.data.content.filterPageDeeplink) {
 					const instanceId = buildfire.getContext().instanceId;
 					Settings.data.content.filterPageDeeplink = `${instanceId}_filterScreen`;
@@ -141,5 +160,11 @@
 					return Settings.data;
 				}, $scope.formatSettingsAndSave, true);
 			};
-		}]);
+		}])
+		.filter('cropImg', function () {
+			return function (url) {
+				if (!url) return;
+				return buildfire.imageLib.cropImage(url, { size: 'xs', aspect: '1:1' });
+			};
+		});
 })(window.angular, window);
