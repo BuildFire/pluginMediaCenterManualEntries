@@ -12,14 +12,10 @@
                 $rootScope.loadingData = true;
                 WidgetHome.isWeb = Buildfire.getContext().device.platform == 'web';
                 WidgetHome.openedItems = [];
-                // $rootScope.online = $window.navigator.onLine;
                 $rootScope.online = $window.navigator.onLine;
                 WidgetHome.online = $rootScope.online;
                 $rootScope.backgroundColor = buildfire.getContext().appTheme.colors.backgroundColor ? { "background-color": buildfire.getContext().appTheme.colors.backgroundColor } : { "background-color": '#ffffff' };
-                // $rootScope.online = false;
-                // WidgetHome.online = false;
                 buildfire.spinner.hide();
-                $rootScope.resizeImg = (url) => buildfire.imageLib.resizeImage(url);
 
 
                 const isLauncher = window.location.href.includes('launcherPlugin');

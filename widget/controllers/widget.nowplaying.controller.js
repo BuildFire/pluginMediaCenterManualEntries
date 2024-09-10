@@ -60,6 +60,7 @@
 					playbackSpeed: 1,
 					shufflePluginList: false,
 				};
+				NowPlaying.settings = new AudioSettings(initialSettings);
 
 				NowPlaying.forceAutoPlayer = function () {
 					const pluginItems = $rootScope.myItems || [];
@@ -164,11 +165,9 @@
 					case 'timeUpdate':
 						audioPlayer.getCurrentTrack((track) => {
 							if (track && NowPlaying.currentTrack && track.url === NowPlaying.currentTrack.url) {
-								NowPlaying.playing = true;
 								NowPlaying.currentTime = e.data.currentTime;
 								NowPlaying.duration = e.data.duration;
 							} else {
-								NowPlaying.currentTime = 0;
 								NowPlaying.playing = false;
 							}
 						});
@@ -208,8 +207,8 @@
 				}
 				function initAudio() {
 					NowPlaying.currentTrack = new Track({ ...media.data, id: media.id }, 0);
-					NowPlaying.currentTrack.backgroundImage = NowPlaying.currentTrack.backgroundImage ? NowPlaying.cropImage(NowPlaying.currentTrack.backgroundImage) : './assets/images/now-playing.png';
-					NowPlaying.currentTrack.backgroundImage = CSS.escape(NowPlaying.currentTrack.backgroundImage);
+					const backgroundImage = NowPlaying.currentTrack.backgroundImage ? NowPlaying.resizeImage(NowPlaying.currentTrack.backgroundImage) : './assets/images/now-playing.png';
+					NowPlaying.currentTrack.backgroundImage = CSS.escape(backgroundImage);
 					$rootScope.audioFromPlayList = null;
 
 					if ($rootScope.seekTime) {
@@ -380,17 +379,25 @@
 				};
 
 				NowPlaying.forward = function () {
-					if (NowPlaying.currentTime + 5 >= NowPlaying.currentTrack.duration)
-						audioPlayer.setTime(NowPlaying.currentTrack.duration);
-					else
-						audioPlayer.setTime(NowPlaying.currentTime + 5);
+					audioPlayer.getCurrentTrack((track) => {
+						NowPlaying.currentTime = NowPlaying.currentTime + 5 > NowPlaying.currentTrack.duration ? NowPlaying.currentTrack.duration : NowPlaying.currentTime + 5;
+						if (track && track.url === NowPlaying.currentTrack.url) {
+							audioPlayer.setTime(NowPlaying.currentTime);
+						} else {
+							NowPlaying.currentTrack.lastPosition = NowPlaying.currentTime;
+						}
+					});
 				};
 
 				NowPlaying.backward = function () {
-					if (NowPlaying.currentTime - 5 > 0)
-						audioPlayer.setTime(NowPlaying.currentTime - 5);
-					else
-						audioPlayer.setTime(0);
+					audioPlayer.getCurrentTrack((track) => {
+						NowPlaying.currentTime = NowPlaying.currentTime > 5 ? NowPlaying.currentTime - 5 : 0;
+						if (track && track.url === NowPlaying.currentTrack.url) {
+							audioPlayer.setTime(NowPlaying.currentTime);
+						} else {
+							NowPlaying.currentTrack.lastPosition = NowPlaying.currentTime;
+						}
+					});
 				};
 
 				NowPlaying.next = function () {
@@ -489,7 +496,7 @@
 					NowPlaying.openSettings = true;
 					audioPlayer.settings.get(function (err, data) {
 						if (data) {
-							NowPlaying.settings = data;
+							NowPlaying.settings = new AudioSettings(data);
 							if (!$scope.$$phase) {
 								$scope.$digest();
 							}
@@ -521,7 +528,7 @@
 				NowPlaying.closeMoreInfoOverlay = function () {
 					NowPlaying.openMoreInfo = false;
 				};
-				NowPlaying.cropImage = function (url) {
+				NowPlaying.resizeImage = function (url) {
 					if (!url) return;
 					return buildfire.imageLib.resizeImage(url, { size: '1080', aspect: '16:9' });
 				};
@@ -639,13 +646,10 @@
 					if (!NowPlaying.duration) return;
 					const percentage = Math.round(((value / NowPlaying.duration) * 100));
 
-					if (percentage) {
-						document.documentElement.style.setProperty('--played-tracker-percentage', `${percentage}%`);
-					}
+					document.documentElement.style.setProperty('--played-tracker-percentage', `${percentage}%`);
 				};
 
 				const initStrings = () => {
-					// TODO: Move this to the language tab
 					const playListArrayOfStrings = [
 						{ key: 'addedPlaylist', text: 'Added to playlist' },
 						{ key: 'removedFromPlaylist', text: 'Removed from playlist' },
