@@ -58,6 +58,7 @@
 					autoJumpToLastPosition: false,
 					shufflePlaylist: false,
 					playbackSpeed: 1,
+					shufflePluginList: false,
 				};
 
 				NowPlaying.forceAutoPlayer = function () {
@@ -161,15 +162,23 @@
 						}
 						break;
 					case 'timeUpdate':
-						NowPlaying.currentTime = e.data.currentTime;
-						NowPlaying.duration = e.data.duration;
+						audioPlayer.getCurrentTrack((track) => {
+							if (track && NowPlaying.currentTrack && track.url === NowPlaying.currentTrack.url) {
+								NowPlaying.playing = true;
+								NowPlaying.currentTime = e.data.currentTime;
+								NowPlaying.duration = e.data.duration;
+							} else {
+								NowPlaying.currentTime = 0;
+								NowPlaying.playing = false;
+							}
+						});
 						break;
 					case 'audioEnded':
 						NowPlaying.playing = false;
 						if (typeof $rootScope.audioFromPlayList === 'number') return updatePlaylistUI(true);
 						updateAudioLastPosition(media.id, 0);
 						if ($rootScope.autoPlay) {
-							$rootScope.playNextItem();
+							$rootScope.playNextItem(false, NowPlaying.settings.shufflePluginList);
 						}
 						break;
 					case 'pause':
@@ -388,7 +397,7 @@
 					if (typeof $rootScope.audioFromPlayList === 'number') {
 						audioPlayer.next();
 					} else {
-						$rootScope.playNextItem(true);
+						$rootScope.playNextItem(true, NowPlaying.settings.shufflePluginList);
 					}
 				};
 
@@ -401,10 +410,16 @@
 				};
 
 				NowPlaying.shufflePlaylist = function () {
-					if (NowPlaying.settings) {
-						NowPlaying.settings.shufflePlaylist = NowPlaying.settings.shufflePlaylist ? false : true;
+					if (typeof $rootScope.audioFromPlayList === 'number') {
+						NowPlaying.settings.shufflePlaylist = !NowPlaying.settings.shufflePlaylist;
+					} else {
+						NowPlaying.settings.shufflePluginList = !NowPlaying.settings.shufflePluginList;
 					}
 					audioPlayer.settings.set(NowPlaying.settings);
+
+					if (!$scope.$$phase) {
+						$scope.$digest();
+					}
 				};
 
 				NowPlaying.loopPlaylist = function () {
@@ -481,16 +496,17 @@
 						}
 					});
 				};
-				NowPlaying.setSettings = function (settings, cpSync = false) {
+				NowPlaying.setSettings = function (settings) {
 					if (!settings.autoPlayNext && NowPlaying.forceAutoPlay) {
 						settings.autoJumpToLastPosition = true;
 						settings.autoPlayNext = true;
 					}
-					if (!cpSync) {
-						NowPlaying.settings.enableUserPreferences = true;
+					
+					audioPlayer.settings.set(new AudioSettings(settings));
+
+					if (!$scope.$$phase) {
+						$scope.$digest();
 					}
-					var newSettings = new AudioSettings(settings);
-					audioPlayer.settings.set(newSettings);
 				};
 
 				NowPlaying.openMoreInfoOverlay = function () {
@@ -547,10 +563,11 @@
 				/**
                  * AudioSettings sample
                  * @param autoPlayNext
-                 * @param loop
+                 * @param loopPlaylist
                  * @param autoJumpToLastPosition
                  * @param shufflePlaylist
-                 * @param playbackSpeed
+                 * @param shufflePluginList
+				 * @param playbackSpeed
                  * @constructor
                  */
 				function AudioSettings(settings) {
@@ -558,8 +575,8 @@
 					this.loopPlaylist = settings.loopPlaylist || initialSettings.loopPlaylist; // once the end of the playlist has been reached start over again
 					this.autoJumpToLastPosition = settings.autoJumpToLastPosition || initialSettings.autoJumpToLastPosition; //If a track has [lastPosition] use it to start playing the audio from there
 					this.shufflePlaylist = settings.shufflePlaylist || initialSettings.shufflePlaylist;// shuffle the playlist
+					this.shufflePluginList = settings.shufflePluginList || false;
 					this.playbackSpeed = settings.playbackSpeed || initialSettings.playbackSpeed;// Track playback speed rate
-					this.enableUserPreferences = settings.enableUserPreferences || false;
 				}
 
 				/**
@@ -627,9 +644,8 @@
 					}
 				};
 
-				// init nowplaying
-
 				const initStrings = () => {
+					// TODO: Move this to the language tab
 					const playListArrayOfStrings = [
 						{ key: 'addedPlaylist', text: 'Added to playlist' },
 						{ key: 'removedFromPlaylist', text: 'Removed from playlist' },
@@ -677,7 +693,7 @@
 						});
 
 						const isInitialSettings = deepCompare.checkEquality(NowPlaying.settings, initialSettings);
-						if (!isInitialSettings || NowPlaying.settings.enableUserPreferences) {
+						if (!isInitialSettings) {
 							NowPlaying.autoJumpToLastPosition = setting.autoJumpToLastPosition;
 						} else {
 							NowPlaying.settings.autoJumpToLastPosition = NowPlaying.autoJumpToLastPosition;

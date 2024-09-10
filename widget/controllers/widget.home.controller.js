@@ -684,11 +684,12 @@
                 }
 
                 let delayInterval;
-                $rootScope.playNextItem = (userInput) => {
-                    // TODO: this should based on user preferences
-                    let newIndex = Math.floor((Math.random() * WidgetHome.items.length));
-                    while (newIndex === $rootScope.currentIndex) {
-                        newIndex = Math.floor((Math.random() * WidgetHome.items.length));
+                $rootScope.playNextItem = (userInput, shufflePluginList) => {
+                    let newIndex = $rootScope.currentIndex + 1;
+                    if (shufflePluginList) {
+                        do {
+                            newIndex = Math.floor((Math.random() * WidgetHome.items.length));
+                        } while (newIndex === $rootScope.currentIndex);
                     }
                     if (userInput) return WidgetHome.goToMedia(newIndex);
 

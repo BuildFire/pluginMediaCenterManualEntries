@@ -124,103 +124,6 @@
 	padding: 6px 0;
 }
 
-/* Media Player */
-/* .holder.now-playing{
-	margin-top:0;
-	height:100%;
-	padding:50px 0 0 !important;
-	color:#fff;
-}
-.holder.now-playing .blurred-image{
-	-o-filter:blur(10px) brightness(0.2);
-	-moz-filter:blur(10px) brightness(0.2);
-	-webkit-filter:blur(10px) brightness(0.2);
-	filter:blur(10px) brightness(0.2);
-	position:absolute;
-	top:-5%;
-	left:-5%;
-	background:url(http://4.bp.blogspot.com/-8bBgFCVGbpE/TvQU6q_f7qI/AAAAAAAAAEk/b2QtDIIbv4I/s1600/Tycho-Dive.png) no-repeat center center;
-	-o-background-size:cover;
-	-moz-background-size:cover;
-	-webkit-background-size:cover;
-	background-size:cover;
-	height:110%;
-	width:110%;
-	z-index:0;
-}
-.holder.now-playing .media-center-plugin{
-	position:absolute;
-	width:300px;
-	height:530px;
-	top:50%;
-	margin-top:-264px;
-	left:50%;
-	margin-left:-150px;
-}
-.holder.now-playing .media-holder,
-.more-info .media-holder{
-	display:table;
-	text-align:center;
-	width:240px;
-	height:240px;
-	max-width:240px;
-	max-height:240px;
-	margin:0 auto;
-}
-.holder.now-playing .media-holder .media-inner,
-.more-info .media-holder .media-inner{
-	max-width:240px;
-	max-height:240px;
-	display:table-cell;
-	vertical-align:middle;
-}
-.holder.now-playing .media-holder .media-inner img,
-.more-info .media-holder .media-inner img{
-	max-height:100%;
-	width:auto;
-}
-.media-player-more-info .media-holder,
-.media-player-more-info .media-holder .media-inner{
-	height:140px !important;
-	width:140px !important;
-	margin-left:auto;
-	margin-right:auto;
-}
-.holder.now-playing .media-holder .media-inner img{
-	max-width:100%;
-	max-height:100%;
-}
-.holder.now-playing .media-player-info h4,
-.holder.now-playing .media-player-info p{
-	margin:0;
-}
-.holder.now-playing .media-header-link a{
-	color:#fff;
-}
-.holder.now-playing .media-player-action-btns .icon{
-	font-size:25px;
-}
-.holder.now-playing .media-player-action-btns .icon + .icon{
-	margin-left:60px;
-}
-.holder.now-playing .media-player-btns .icon.icon-sm{
-	font-size:22px;
-	position:relative;
-	top:-7px;
-	color:#999;
-}
-.holder.now-playing .media-player-btns .icon{
-	font-size:42px;
-}
-.holder.now-playing .media-player-btns .icon + .icon{
-	margin-left:20px;
-}
-.holder.now-playing .media-player-btns .icon.icon-main{
-	font-size:58px;
-	position:relative;
-	top:6px;
-}
-
 /* Media Player Playlist Overlay */
 .media-player-list-layout.third-layout .list-layout .list-item {
 	border-bottom: 1px solid #333;
@@ -831,6 +734,7 @@ html[browser="Firefox"] .third-layout .list-layout .list-item-media .list-media-
 
 .third-layout .list-layout .list-item-media .list-media-holder.square-icon {
 	width: 60px;
+	flex: none;
 }
 
 .third-layout .list-layout .list-item-media .list-media-holder img {
@@ -904,7 +808,7 @@ html[browser="Firefox"] .third-layout .list-layout .list-item-media .list-media-
 
 .ecommerce-plugin .list-layout.has-cart .list-item-copy,
 .list-layout.has-btns .list-item-copy {
-	padding-right: 88px !important;
+	width: calc(100% - 125px);
 }
 
 .list-layout.has-cart .add-to-cart,
