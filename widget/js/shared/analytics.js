@@ -28,6 +28,31 @@ class Analytics {
         });
     }
 
+    static bulkRegisterEvents = (events = [], options = {}) => {
+        return new Promise((resolve, reject) => {
+            const _events = events.map(event => {
+                return {
+                    title: event.title || null,
+                    key: event.key || undefined,
+                    description: event.description || null,
+                };
+            });
+
+            const _options = {
+                silentNotification: options.silentNotification || true,
+            };
+
+            if (_events.some(event => !event.title || !event.key)) {
+                return reject("Missing Data");
+            }
+
+            buildfire.analytics.bulkRegisterEvents(_events, _options, (err, res) => {
+                if (err) return reject(err);
+                resolve(res);
+            });
+        });
+    }
+
     static unregisterEvent = (key) => {
         if (!key) {
             return console.error("Missing Data");

@@ -140,6 +140,7 @@
                     return deferred.reject(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
                 }
                 var data = {
+                    key: item.id,
                     tag: that._tagName,
                     title: item.title,
                     description: item.summary,
@@ -152,7 +153,7 @@
                     }
                 };
 
-                Buildfire.services.searchEngine.insert(data, function (err, result) {
+                Buildfire.services.searchEngine.save(data, function (err, result) {
                     if (err) {
                         return deferred.reject(err);
                     }
