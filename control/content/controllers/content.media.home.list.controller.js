@@ -5,13 +5,17 @@
 		.module('mediaCenterContent')
 		.controller('ContentMediaHomeListCtrl', [
 			'$scope',
+			'$rootScope',
 			'Orders',
 			'DB',
+			'SearchEngine',
 			'COLLECTIONS',
 			'AppConfig',
-			function ($scope, Orders, DB, COLLECTIONS, AppConfig) {
+			'$csv',
+			function ($scope, $rootScope, Orders, DB, SearchEngine, COLLECTIONS, AppConfig, $csv) {
 				const MediaContent = new DB(COLLECTIONS.MediaContent);
 				const MediaCenter = new DB(COLLECTIONS.MediaCenter);
+				const SearchEngineService = new SearchEngine(COLLECTIONS.MediaContent);
 
 				let _skip = 0,
 					_limit = 50,
@@ -19,7 +23,7 @@
 						filter: {},
 						sort: { createdOn: -1 },
 						skip: _skip,
-						limit: _limit + 1, // the plus one is to check if there are any more
+						limit: _limit, // the plus one is to check if there are any more
 					},
 					mediaCenterData = AppConfig.getSettings();
 
@@ -50,8 +54,8 @@
 				$scope.items = [];
 				$scope.isBusy = false;
 				/**
-         * $scope.noMore tells if all data has been loaded
-         */
+				 * $scope.noMore tells if all data has been loaded
+				 */
 				$scope.noMore = false;
 
 				$scope.initList = (listSelector) => {
@@ -90,14 +94,14 @@
 					if (loading) {
 						$scope.mediaList.selector.classList.add('hide-list');
 						itemsEmptyContainer.classList.remove('hidden');
-						itemsEmptyContainer.innerHTML = "<h5>Loading ...</h5>";
+						itemsEmptyContainer.innerHTML = '<h5>Loading ...</h5>';
 					} else if ($scope.items.length == 0) {
 						$scope.mediaList.selector.classList.add('hide-list');
 						itemsEmptyContainer.classList.remove('hidden');
 						if ($scope.searchValue) {
-							itemsEmptyContainer.innerHTML = "<h5>You haven't added anything else</h5>";
+							itemsEmptyContainer.innerHTML = '<h5>You haven\'t added anything else</h5>';
 						} else {
-							itemsEmptyContainer.innerHTML = "<h5>You haven't added anything yet</h5>";
+							itemsEmptyContainer.innerHTML = '<h5>You haven\'t added anything yet</h5>';
 						}
 					} else {
 						$scope.mediaList.selector.classList.remove('hide-list');
@@ -122,8 +126,8 @@
 				};
 
 				/**
-         * $scope.getMore is used to load the items
-         */
+				 * $scope.getMore is used to load the items
+				 */
 				$scope.getMore = function () {
 					if ($scope.isBusy || $scope.noMore) {
 						return;
@@ -134,10 +138,9 @@
 					MediaContent.find(searchOptions).then((result) => {
 						$scope.isBusy = false;
 
-						if (result.length <= _limit) {
+						if (result.length < _limit) {
 							$scope.noMore = true;
 						} else {
-							result.pop();
 							searchOptions.skip = searchOptions.skip + _limit;
 							$scope.noMore = false;
 						}
@@ -156,9 +159,9 @@
 
 				// correct image src for dropbox to crop/resize and show it
 				function getImageUrl(imageSrc) {
-					if (imageSrc && imageSrc.includes("dropbox.com")) {
-						imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent");
-						imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com");
+					if (imageSrc && imageSrc.includes('dropbox.com')) {
+						imageSrc = imageSrc.replace('www.dropbox', 'dl.dropboxusercontent');
+						imageSrc = imageSrc.replace('dropbox.com', 'dl.dropboxusercontent.com');
 					}
 					return imageSrc || '../../../../styles/media/holder-1x1.png';
 				}
@@ -178,9 +181,9 @@
 				};
 
 				/**
-         * $scope.searchListItem() used to search items list
-         * @param value to be search.
-         */
+				 * $scope.searchListItem() used to search items list
+				 * @param value to be search.
+				 */
 				$scope.searchListItem = function (value) {
 					searchOptions.skip = 0;
 					/*reset the skip value*/
@@ -266,11 +269,11 @@
 
 				$scope.showReport = function (item) {
 					if (item.videoUrl) {
-						Analytics.showReports({ eventKey: item.id + "_videoPlayCount" });
+						Analytics.showReports({ eventKey: item.id + '_videoPlayCount' });
 					} else if (item.audioUrl) {
-						Analytics.showReports({ eventKey: item.id + "_audioPlayCount" });
+						Analytics.showReports({ eventKey: item.id + '_audioPlayCount' });
 					} else {
-						Analytics.showReports({ eventKey: item.id + "_articleOpenCount" });
+						Analytics.showReports({ eventKey: item.id + '_articleOpenCount' });
 					}
 				};
 
@@ -307,15 +310,15 @@
           
 					dropdownBtn.onclick = () => dropdownMenu.classList.toggle('open');
 					exportBtn.onclick = () => {
-						// TODO: export csv
+						$scope.exportCSV();
 						dropdownMenu.classList.toggle('open');
 					};
 					importBtn.onclick = () => {
-						// TODO: import csv
+						$scope.openImportCSVDialog();
 						dropdownMenu.classList.toggle('open');
 					};
 					getTemplateBtn.onclick = () => {
-						// TODO: get csv template
+						$scope.getTemplate();
 						dropdownMenu.classList.toggle('open');
 					};
 
@@ -331,6 +334,199 @@
 				};
 
 				$scope.initList('#mediaList');
+
+				function isValidItem(item, index, array) {
+					return item.title || item.summary;
+				}
+
+				function validateCsv(items) {
+					if (!Array.isArray(items) || !items.length) {
+						return false;
+					}
+					return items.every(isValidItem);
+				}
+
+
+				$scope.setDeeplinks = function () {
+					const date = new Date();
+					date.setHours(date.getHours() - 1);
+
+					const searchOptions = {
+						filter: {"$json._buildfire.index.date1": { $gte: date }},
+						limit: 50, skip: 0, recordCount: true
+					};
+					getRecords(searchOptions, [], function (records) {
+						records.forEach(function (record) {
+							record.data.deepLinkUrl = buildfire.deeplink.createLink({ id: record.id });
+							SearchEngineService.insert({...record.data, id: record.id});
+
+							new Deeplink({
+								deeplinkId: record.id,
+								name: record.data.title,
+								deeplinkData: { id: record.id },
+								imageUrl: (record.data.topImage) ? record.data.topImage : null
+							}).save();
+						});
+					});
+				};
+
+				// CSV Handlers
+				const header = {
+					topImage: 'Thumbnail Image',
+					title: 'Title',
+					artists: 'Album Artists',
+					summary: 'Summary',
+					bodyHTML: 'Media Content',
+					srcUrl: 'Source URL',
+					audioTitle: 'Audio Title',
+					audioUrl: 'Audio URL',
+					videoUrl: 'Video URL',
+					image: 'Thumbnail Image URL'
+				};
+				const headerRow = ['topImage', 'title', 'artists', 'summary', 'bodyHTML', 'srcUrl', 'audioTitle', 'audioUrl', 'videoUrl', 'image'];
+				/**
+                 * $scope.getTemplate() used to download csv template
+                 */
+				$scope.getTemplate = function () {
+					const templateData = [{
+						topImage: '',
+						title: '',
+						summary: '',
+						bodyHTML: '',
+						srcUrl: '',
+						audioUrl: '',
+						videoUrl: '',
+						image: ''
+					}];
+					const csv = $csv.jsonToCsv(angular.toJson(templateData), { header });
+					$csv.download(csv, 'Template.csv');
+				};
+
+				/**
+                 * method to open the importCSV Dialog
+                 */
+				$scope.openImportCSVDialog = function () {
+					$csv.import(headerRow).then(function (rows) {
+						$rootScope.loading = true;
+						if (rows && rows.length > 1) {
+
+							var columns = rows.shift();
+
+							for (var _index = 0; _index < headerRow.length; _index++) {
+								if (header[headerRow[_index]] != columns[headerRow[_index]]) {
+									$rootScope.loading = false;
+									$rootScope.csvDataInvalid = true;
+									break;
+								}
+							}
+
+							if (!$rootScope.loading)
+								return;
+
+							// var rank = ContentHome.info.data.content.rankOfLastItem || 0;
+							let rank = 0;
+							for (var index = 0; index < rows.length; index++) {
+								rank += 10;
+								rows[index].dateCreated = new Date().getTime();
+								rows[index].links = [];
+								rows[index].rank = rank;
+								rows[index].body = rows[index].bodyHTML;
+								rows[index].titleIndex = rows[index].title ? rows[index].titleIndex = rows[index].title.toLowerCase() : '';
+								//MEDIA DATE INDEX
+								var setMediaDateIndex = new Date().getTime();
+								if (rows[index].mediaDateIndex) {
+									setMediaDateIndex = rows[index].mediaDateIndex;
+								} else if (rows[index].mediaDate) {
+									setMediaDateIndex = new Date(rows[index].mediaDate).getTime();
+								} else if (rows[index].dateCreated) {
+									setMediaDateIndex = new Date(rows[index].dateCreated).getTime();
+								}
+								rows[index].mediaDateIndex = setMediaDateIndex;
+								rows[index]._buildfire = {
+									index: {
+										date1: new Date(),
+									}
+								};
+							}
+							if (validateCsv(rows)) {
+								MediaContent.insert(rows).then(function (data) {
+									$rootScope.loading = false;
+									$scope.isBusy = false;
+									$scope.items = [];
+									$scope.getMore();
+									$scope.setDeeplinks();
+								}, function errorHandler(error) {
+									console.error(error);
+									$rootScope.loading = false;
+									$scope.$apply();
+								});
+							} else {
+								$rootScope.loading = false;
+								$rootScope.csvDataInvalid = true;
+								setTimeout(() => {
+									$rootScope.csvDataInvalid = false;
+								}, 2000);
+							}
+						} else {
+							$rootScope.loading = false;
+							$rootScope.csvDataInvalid = true;
+							$scope.$apply();
+						}
+					}, function (error) {
+						$rootScope.loading = false;
+						$scope.$apply();
+					});
+				};
+
+				/**
+                 * getRecords function get the  all items from DB
+                 * @param searchOption
+                 * @param records
+                 * @param callback
+                 */
+				function getRecords(searchOption, records, callback) {
+					MediaContent.find({...searchOption, recordCount: true}).then(function (res) {
+						const result = res.result;
+						records = result && result.length ? records.concat(result) : records;
+						if (!res.totalRecord || records.length === res.totalRecord) {// to indicate there are more
+							return callback(records);
+						} else {
+							searchOption.skip = searchOption.skip + searchOption.limit;
+							return getRecords(searchOption, records, callback);
+						}
+					}).catch(function (err) {
+						console.error('Error In Fetching Records:', err);
+						return callback(null);
+					});
+				}
+				/**
+                 * $scope.exportCSV() used to export people list data to CSV
+                 */
+				$scope.exportCSV = function () {
+					const search = angular.copy(searchOptions);
+					search.skip = 0;
+					search.limit = 50;
+					getRecords(search, [], function (data) {
+						if (data && data.length) {
+							const items = [];
+							angular.forEach(angular.copy(data), function (value) {
+								delete value.data.dateCreated;
+								delete value.data.links;
+								delete value.data.rank;
+								delete value.data.body;
+								delete value.data.mediaDateIndex;
+								items.push(value.data);
+							});
+							const csv = $csv.jsonToCsv(angular.toJson(items), {
+								header: header
+							});
+							$csv.download(csv, 'Export.csv');
+						}
+						else {
+							$scope.getTemplate();
+						}
+					});
+				};
 			},
 		])
 		.filter('cropImg', function () {

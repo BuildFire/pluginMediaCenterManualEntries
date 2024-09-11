@@ -2,8 +2,8 @@
     'use strict';
     angular
         .module('mediaCenterContent')
-        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Location', 'Modals', 'SearchEngine', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv',
-            function ($scope, MediaCenterInfo, Location, Modals, SearchEngine, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv) {
+        .controller('ContentHomeCtrl', ['$scope', 'MediaCenterInfo', 'Location', 'Modals', 'SearchEngine', 'DB', '$timeout', 'COLLECTIONS', 'Orders', 'AppConfig', 'Messaging', 'EVENTS', 'PATHS', 'Buildfire', '$csv', '$rootScope',
+            function ($scope, MediaCenterInfo, Location, Modals, SearchEngine, DB, $timeout, COLLECTIONS, Orders, AppConfig, Messaging, EVENTS, PATHS, Buildfire, $csv, $rootScope) {
                 /**
                  * Breadcrumbs  related implementation
                  */
@@ -11,9 +11,8 @@
 
                 //scroll current view to top when loaded.
                 Buildfire.navigation.scrollTop();
-                registerAnalyticsForOldData();
                 var ContentHome = this;
-                ContentHome.activeTab = 'content-media-tab';
+                $rootScope.activeTab = 'content-media-tab';
                 var _infoData = {
                     data: {
                         content: {
@@ -43,9 +42,7 @@
                         indexingUpdateDoneV2: true
                     }
                 };
-                var MediaContent = new DB(COLLECTIONS.MediaContent);
                 var MediaCenter = new DB(COLLECTIONS.MediaCenter);
-                var SearchEngineService = new SearchEngine(COLLECTIONS.MediaContent);
 
                 if (MediaCenterInfo) {
                     updateMasterInfo(MediaCenterInfo);
@@ -100,34 +97,8 @@
                 AppConfig.setSettings(MediaCenterInfo.data);
                 AppConfig.setAppId(MediaCenterInfo.id);
 
-                var header = {
-                    topImage: 'Thumbnail Image',
-                    title: 'Title',
-                    artists: 'Album Artists',
-                    summary: 'Summary',
-                    bodyHTML: 'Media Content',
-                    srcUrl: 'Source URL',
-                    audioTitle: 'Audio Title',
-                    audioUrl: 'Audio URL',
-                    videoUrl: 'Video URL',
-                    image: 'Thumbnail Image URL'
-                };
-                var headerRow = ["topImage", "title", "artists", "summary", "bodyHTML", "srcUrl", "audioTitle", "audioUrl", "videoUrl", "image"];
                 var tmrDelayForMedia = null;
 
-                /**
-                 * Create instance of MediaContent, MediaCenter db collection
-                 * @type {DB}
-                 */
-
-                var _skip = 0,
-                    _limit = 10,
-                    _maxLimit = 19,
-                    searchOptions = {
-                        filter: {},
-                        skip: _skip,
-                        limit: _limit + 1 // the plus one is to check if there are any more
-                    };
                 //option for wysiwyg
                 ContentHome.bodyWYSIWYGOptions = {
                     plugins: 'advlist autolink link image lists charmap print preview',
@@ -189,41 +160,6 @@
                     editor.loadItems(ContentHome.info.data.content.images);
 
 
-
-                    // TODO: all under this line will be moved
-                var updateSearchOptions = function () {
-                    var order;
-                    if (ContentHome.info && ContentHome.info.data && ContentHome.info.data.content)
-                        order = Orders.getOrder(ContentHome.info.data.content.sortBy || Orders.ordersMap.Default);
-                    if (order) {
-                        //Handles Indexing Changes mediaDate/mediaDateIndex
-                        if (ContentHome.info.data.content.dateIndexed && order.key == "mediaDate") {
-                            order.key = "mediaDateIndex";
-                        } else if (!ContentHome.info.data.content.dateIndexed && order.key == "mediaDateIndex") {//so it don't couse issues before data is updated
-                            order.key = "mediaDate";
-                        }
-                        //END Handles Indexing Changes mediaDate/mediaDateIndex
-                        var sort = {};
-                        sort[order.key] = order.order;
-                        if ((order.name == "Media Title A-Z" || order.name === "Media Title Z-A")) {
-                            if (order.name == "Media Title A-Z") {
-                                ContentHome.info.data.content.updatedRecords ? searchOptions.sort = { titleIndex: 1 }
-                                    : searchOptions.sort = { title: 1 }
-                            }
-                            if (order.name == "Media Title Z-A") {
-                                ContentHome.info.data.content.updatedRecords ? searchOptions.sort = { titleIndex: -1 }
-                                    : searchOptions.sort = { title: -1 }
-                            }
-                        } else {
-                            searchOptions.sort = sort;
-                        }
-
-                        return true;
-                    }
-                    else {
-                        return false;
-                    }
-                };
                 /**
                  * ContentHome.noMore tells if all data has been loaded
                  */
@@ -243,7 +179,7 @@
                     let pageSize = 50, page = 0, allItems = [];
                     var get = function () {
                         buildfire.datastore.search({ pageSize, page, recordCount: true }, "MediaContent", function (err, data) {
-                            if (data && data.result && data.result.length) {
+                            if (data && data.result && data.totalRecord) {
                                 allItems = allItems.concat(data.result);
                                 if (data.totalRecord > allItems.length) {
                                     data.result.map(item => {
@@ -253,8 +189,7 @@
                                     });
                                     page++;
                                     get();
-                                }
-                                else {
+                                } else {
                                     let count = allItems.length - data.result.length;
                                     data.result.map(item => {
                                         item.data.titleIndex = item.data.title.toLowerCase();
@@ -278,8 +213,6 @@
                                     ContentHome.info.data.content.updatedRecords = true;
                                     updateData(ContentHome.info)
                                 }
-                            } else {
-
                             }
                         })
                     }
@@ -291,324 +224,7 @@
                     && !ContentHome.info.data.content.updatedRecords) {
                     ContentHome.updateRecords(ContentHome.info.data.content.sortBy);
                 }
-
-                /**
-                 * ContentHome.getMore is used to load the items
-                 */
-                ContentHome.getMore = function () {
-                    if (ContentHome.isBusy && !ContentHome.noMore) {
-                        return;
-                    }
-                    updateSearchOptions();
-                    ContentHome.isBusy = true;
-                    MediaContent.find(searchOptions).then(function success(result) {
-                        if (!result.length) {
-                            ContentHome.info.data.content.updatedRecords = true;
-                        }
-
-                        if (result.length <= _limit) {// to indicate there are more
-                            ContentHome.noMore = true;
-                        }
-                        else {
-                            result.pop();
-                            searchOptions.skip = searchOptions.skip + _limit;
-                            ContentHome.noMore = false;
-                        }
-
-                        result = result.map(item=>{
-                            item.data.topImage = getImageUrl(item.data.topImage);
-                            item.data.image = getImageUrl(item.data.image);
-                            return item;
-                        })
-
-                        ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
-                        ContentHome.isBusy = false;
-                    }, function fail() {
-                        ContentHome.isBusy = false;
-                    });
-                };
-
-                /**
-                 * ContentHome.getTemplate() used to download csv template
-                 */
-                ContentHome.getTemplate = function () {
-                    var templateData = [{
-                        topImage: '',
-                        title: '',
-                        summary: '',
-                        bodyHTML: '',
-                        srcUrl: '',
-                        audioUrl: '',
-                        videoUrl: '',
-                        image: ''
-                    }];
-                    var csv = $csv.jsonToCsv(angular.toJson(templateData), {
-                        header: header
-                    });
-                    $csv.download(csv, "Template.csv");
-                };
-
-                /**
-                 * records holds the data to export the data.
-                 * @type {Array}
-                 */
-                var records = [];
-
-                /**
-                 * getRecords function get the  all items from DB
-                 * @param searchOption
-                 * @param records
-                 * @param callback
-                 */
-                function getRecords(searchOption, records, callback) {
-                    MediaContent.find(searchOption).then(function (result) {
-                        if (result.length <= _maxLimit) {// to indicate there are more
-                            records = records.concat(result);
-                            return callback(records);
-                        }
-                        else {
-                            result.pop();
-                            searchOption.skip = searchOption.skip + _maxLimit;
-                            records = records.concat(result);
-                            return getRecords(searchOption, records, callback);
-                        }
-                    }, function (error) {
-                        throw (error);
-                    });
-                }
-
-
-                function registerAnalyticsForOldData(){
-                    buildfire.getContext((err,context)=>{
-                        var pluginSearchOption = {
-                            filter: {
-                                   "$json.pluginId": {  $eq: context.pluginId},
-                              }
-                        };
-                        buildfire.publicData.search(pluginSearchOption,"MCMAnalytics", function(err,res){
-                            if(res && res.length == 0){
-                                MediaContent.find({}).then(function success(results) {
-                                    results.forEach(element => {
-                                        registerAnalytics(element)
-                                    });
-                                    buildfire.publicData.insert(
-                                        { pluginId: context.pluginId },
-                                        "MCMAnalytics",
-                                        false,
-                                        (err, result) => {
-                                          if (err) return console.error("Error while inserting your data", err);
-                                          console.log("Insert successful", result);
-                                        }
-                                      );
-                                })
-                            }
-                        })
-                    })
-
-                }
-
-                function registerAnalytics(item){
-                    if(item.data.videoUrl){
-                      Analytics.registerEvent(
-                        {
-                          title: item.data.title + " Video Play Count",
-                          key: item.id + "_videoPlayCount",
-                          description: "Video Play Count",
-                        },
-                        { silentNotification: true }
-                      );
-
-                    }
-                    if(item.data.audioUrl){
-                      Analytics.registerEvent(
-                        {
-                          title: item.data.title + " Audio Play Count",
-                          key: item.id + "_audioPlayCount",
-                          description: "Audio Play Count",
-                        },
-                        { silentNotification: true }
-                      );
-                    }
-                    if(!item.data.videoUrl && !item.data.audioUrl)
-                    {
-                      Analytics.registerEvent(
-                        {
-                          title: item.data.title + " Article Open Count",
-                          key: item.id + "_articleOpenCount",
-                          description: "Article Open Count",
-                        },
-                        { silentNotification: true }
-                      );
-                    }
-                  }
-
-                /**
-                 * ContentHome.exportCSV() used to export people list data to CSV
-                 */
-                ContentHome.exportCSV = function () {
-                    var search = angular.copy(searchOptions);
-                    search.skip = 0;
-                    search.limit = _maxLimit + 1;
-                    getRecords(search,
-                        []
-                        , function (data) {
-                            if (data && data.length) {
-                                var persons = [];
-                                angular.forEach(angular.copy(data), function (value) {
-                                    delete value.data.dateCreated;
-                                    delete value.data.links;
-                                    delete value.data.rank;
-                                    delete value.data.body;
-                                    delete value.data.mediaDateIndex;
-                                    persons.push(value.data);
-                                });
-                                var csv = $csv.jsonToCsv(angular.toJson(persons), {
-                                    header: header
-                                });
-                                $csv.download(csv, "Export.csv");
-                            }
-                            else {
-                                ContentHome.getTemplate();
-                            }
-                            records = [];
-                        });
-                };
-                function isValidItem(item, index, array) {
-                    return item.title || item.summary;
-                }
-
-                function validateCsv(items) {
-                    if (!Array.isArray(items) || !items.length) {
-                        return false;
-                    }
-                    return items.every(isValidItem);
-                }
-
-                /**
-                 * method to open the importCSV Dialog
-                 */
-                // TODO: Need to add the validation for the CSV file
-                ContentHome.openImportCSVDialog = function () {
-                    $csv.import(headerRow).then(function (rows) {
-                        ContentHome.loading = true;
-                        if (rows && rows.length > 1) {
-
-                            var columns = rows.shift();
-
-                            for (var _index = 0; _index < headerRow.length; _index++) {
-                                if (header[headerRow[_index]] != columns[headerRow[_index]]) {
-                                    ContentHome.loading = false;
-                                    ContentHome.csvDataInvalid = true;
-                                    /* $timeout(function hideCsvDataError() {
-                                     ContentHome.csvDataInvalid = false;
-                                     }, 2000);*/
-                                    break;
-                                }
-                            }
-
-                            if (!ContentHome.loading)
-                                return;
-
-                            var rank = ContentHome.info.data.content.rankOfLastItem || 0;
-                            for (var index = 0; index < rows.length; index++) {
-                                rank += 10;
-                                rows[index].dateCreated = new Date().getTime();
-                                rows[index].links = [];
-                                rows[index].rank = rank;
-                                rows[index].body = rows[index].bodyHTML;
-                                rows[index].titleIndex = rows[index].title ? rows[index].titleIndex = rows[index].title.toLowerCase() : '';
-                                //MEDIA DATE INDEX
-                                var setMediaDateIndex = new Date().getTime();
-                                if (rows[index].mediaDateIndex) {
-                                    setMediaDateIndex = rows[index].mediaDateIndex;
-                                } else if (rows[index].mediaDate) {
-                                    setMediaDateIndex = new Date(rows[index].mediaDate).getTime();
-                                } else if (rows[index].dateCreated) {
-                                    setMediaDateIndex = new Date(rows[index].dateCreated).getTime();
-                                }
-                                rows[index].mediaDateIndex = setMediaDateIndex;
-                                //MEDIA DATE INDEX
-                            }
-                            if (validateCsv(rows)) {
-                                MediaContent.insert(rows).then(function (data) {
-                                    ContentHome.loading = false;
-                                    ContentHome.isBusy = false;
-                                    ContentHome.items = [];
-                                    ContentHome.info.data.content.rankOfLastItem = rank;
-                                    ContentHome.getMore();
-                                    ContentHome.setDeeplinks();
-                                }, function errorHandler(error) {
-                                    console.error(error);
-                                    ContentHome.loading = false;
-                                    $scope.$apply();
-                                });
-                            } else {
-                                ContentHome.loading = false;
-                                ContentHome.csvDataInvalid = true;
-                                $timeout(function hideCsvDataError() {
-                                    ContentHome.csvDataInvalid = false;
-                                }, 2000);
-                            }
-                        }
-                        else {
-                            ContentHome.loading = false;
-                            ContentHome.csvDataInvalid = true;
-                            /*
-                             $timeout(function hideCsvDataError() {
-                             ContentHome.csvDataInvalid = false;
-                             }, 2000);*/
-                            $scope.$apply();
-                        }
-                    }, function (error) {
-                        ContentHome.loading = false;
-                        $scope.$apply();
-                        //do something on cancel
-                    });
-                };
-
-
-                ContentHome.setDeeplinks = function () {
-                    var records = [];
-                    var page = 0;
-
-                    var get = function () {
-                        MediaContent.find({ filter: {}, pageSize: 50, page: page, recordCount: true })
-                            .then(function (data) {
-                                records = records.concat(data.result);
-                                if (records.length < data.totalRecord) {
-                                    page++;
-                                    get();
-                                } else {
-                                    createNewDeeplink(records);
-                                    records.forEach(function (record) {
-                                        if (!record.data.searchEngineId) {
-                                            record.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: record.id });
-                                            SearchEngineService.insert(record.data).then(function (data) {
-                                                record.data.searchEngineId = data.id;
-                                                MediaContent.update(record.id, record.data);
-                                            });
-                                        }
-                                    });
-                                }
-
-                            });
-                    }
-                    get();
-                }
-
-                function createNewDeeplink(records) {
-                    for (var i = 0; i < records.length; i++) {
-                        if (records[i].id && records[i].data.title) {
-                            new Deeplink({
-                                deeplinkId: records[i].id,
-                                name: records[i].data.title,
-                                deeplinkData: { id: records[i].id },
-                                imageUrl: (records[i].data.topImage) ? records[i].data.topImage : null
-                            }).save();
-                        }
-                    }
-                }
-
+              
                 ContentHome.goTo = function (id) {
                     console.log(id);
                     Location.go('#media/' + id);
@@ -620,8 +236,6 @@
                         }
                     });
                 };
-
-                updateSearchOptions();
 
                 function updateMasterInfo(info) {
                     ContentHome.masterInfo = angular.copy(info);
@@ -670,9 +284,9 @@
 
                 ContentHome.toggleHomeView = (view = 'media') => {
                     if (view === 'media') {
-                        ContentHome.activeTab = 'content-media-tab';
+                        $rootScope.activeTab = 'content-media-tab';
                     } else if (view === 'category') {
-                        ContentHome.activeTab = 'content-category-tab';
+                        $rootScope.activeTab = 'content-category-tab';
                     }
                 }
                 
