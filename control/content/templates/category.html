@@ -1,4 +1,4 @@
-<div class="has-bottom-actions">
+<div class="has-bottom-actions margin-right-fifteen padding-bottom-thirty">
     <div id="subcategoryModal" class="modal fade" role="dialog" ng-show="ContentCategory.showSubModal">
         <div class="modal-dialog">
 
@@ -61,8 +61,7 @@
         </div>
     </div>
 
-    <hr class="none">
-    <div class="item clearfix row" id="titleInput">
+    <div class="item clearfix row margin-bottom-thirty" id="titleInput">
         <div class="labels col-md-3 padding-right-zero pull-left">
             <span>Category Name <span class="required">*</span></span>
         </div>
@@ -74,97 +73,17 @@
             </div>
         </div>
     </div>
-    <hr class="none">
-    <h3>Subcategories</h3>
-    <p class="info-note margin-bottom-ten">Use subcategories within your parent category to get even more specific about
-        the media.</p>
-    <div class="search-bar-container margin-bottom-thirty margin-top-thirty">
-        <div class="search-bar">
-            <input type="text" class="form-control" placeholder="Search" ng-model="ContentCategory.searchText"
-                ng-keyup="ContentCategory.onEnterKey($event)">
-            <a class="btn btn-info" ng-click="ContentCategory.searchSubcategories()"><span
-                    class="search-icon"></span></a>
+
+    <div class="margin-bottom-thirty">
+        <div id="subCategoriesList"></div>
+        <div class="empty-state margin-bottom-fifteen hidden" id='categoriesEmptyState'>
+            <h5>You haven't added anything yet</h5>
         </div>
     </div>
 
-    <div class="item clearfix flex margin-bottom-ten">
-        <div class="dropdown" dropdown is-open="status.isopen">
-            <button class="btn btn-default text-left dropdown-toggle sort-dropdown" dropdown-toggle
-                ng-disabled="disabled" aria-expanded="true">
-                <span class="pull-left">{{ContentCategory.item.data.sortByValue || 'Newest'}}</span>
-                <span class="chevron icon-chevron-down pull-right"></span>
-            </button>
-            <ul class="dropdown-menu extended" role="menu">
-                <li ng-repeat="option in ContentCategory.sortOptions"
-                    ng-click="ContentCategory.toggleSortOrder(option.name)">
-                    <a tabindex="-1" class="transition-third">{{option.value}}</a>
-                </li>
-            </ul>
-        </div>
-        <div class="dropdown flex-left-auto margin-right-ten" dropdown>
-            <button class="btn btn-default text-left dropdown-toggle" data-toggle="dropdown" dropdown-toggle
-                aria-expanded="true">
-                <span class="pull-left">Bulk Actions</span>
-                <span class="chevron icon-chevron-down pull-right"></span>
-            </button>
-            <ul class="dropdown-menu extended" role="menu">
-                <li ng-click="ContentCategory.exportCSV()"><a>Export CSV</a></li>
-                <li ng-click="ContentCategory.getTemplate()"><a>Get Template</a></li>
-                <li class="margin-bottom-ten" ng-click="ContentCategory.openImportCSVDialog()"><a>Import CSV</a></li>
-                <li>
-                    <p class="info-note caption margin-bottom-zero">Safari users need to rename the file to .csv to
-                        open
-                        the file.</p>
-                </li>
-            </ul>
-        </div>
-        <div class="col-md-3 padding-zero">
-            <a class="btn btn-success pull-right stretch btn-add"
-                ng-click="ContentCategory.showSubcategoryModal('Add')">Add Subcategory</a>
-        </div>
-    </div>
-
-    <div class="item clearfix">
-        <div
-            class="tab-order draggable-list-view wide-list has-btn-link border-grey border-radius-four infinite-scroll-parent">
-            <div infinite-scroll="ContentCategory.getMore()" infinite-scroll-distance="1"
-                data-infinite-container=".infinite-scroll-parent" infinite-scroll-disabled="ContentCategory.noMore">
-                <div ui-sortable="ContentCategory.itemSortableOptions"
-                    ng-model="ContentCategory.displayedSubactegories">
-                    <div class="well text-center margin-bottom-zero border-none empty-state"
-                        ng-if="ContentCategory.displayedSubactegories.length < 1 && !ContentCategory.isBusy">
-                        <p class="margin-zero">You haven't added anything else</p>
-                    </div>
-                    <div class="d-item double-line square-icon clearfix"
-                        ng-if="ContentCategory.displayedSubactegories.length"
-                        ng-repeat="item in ContentCategory.displayedSubactegories">
-                        <span class="icon icon-menu pull-left cursor-grab"
-                            ng-class="{ 'disabled': ContentCategory.itemSortableOptions.disabled }"></span>
-
-
-                        <div style="max-width: 100%; width: 100%;" class="copy pull-right">
-                            <a style="margin-left: 10px;" class="text-primary"
-                                ><span
-                                    class="title ellipsis pull-left">{{item.name}}</span></a>
-
-                            <div class="flex pull-right">
-                                <span ng-click="ContentCategory.showSubcategoryModal('Edit', item)" style="color: #000;" class="btn btn--icon icon icon-pencil3"></span>
-                                <span style="margin-left: 0px !important;" class="btn-icon btn-delete-icon btn-danger transition-third"
-                                    ng-click="ContentCategory.removeSubcategory(item)"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="well text-center margin-bottom-zero border-none empty-state"
-                        ng-if="ContentCategory.isBusy">
-                        <p class="margin-zero">Loading...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="bottom-actions">
         <a class="btn btn-default btn-outlined margin-right-ten" style="border: 1px solid #ddd;"
-            ng-disabled="ContentCategory.saving" ng-click="ContentCategory.cancelAdd()"
+            ng-disabled="ContentCategory.saving" ng-click="ContentCategory.done()"
             href="javaScript:void(0);">Cancel</a>
         <a class="btn btn-success margin-right-ten" ng-click="ContentCategory.updateItem()"
             ng-disabled="ContentCategory.saving" href="javaScript:void(0);">{{ContentCategory.saving ? 'Saving...' :

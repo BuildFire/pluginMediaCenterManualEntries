@@ -1,309 +1,342 @@
+/* eslint-disable linebreak-style */
 (function (angular) {
-  'use strict';
-  angular
-    .module('mediaCenterContent')
-    .controller('ContentMediaHomeListCtrl', [
-      '$scope',
-      'Orders',
-      'DB',
-      'COLLECTIONS',
-      'AppConfig',
-      function ($scope, Orders, DB, COLLECTIONS, AppConfig) {
-        const MediaContent = new DB(COLLECTIONS.MediaContent);
-        const MediaCenter = new DB(COLLECTIONS.MediaCenter);
+	'use strict';
+	angular
+		.module('mediaCenterContent')
+		.controller('ContentMediaHomeListCtrl', [
+			'$scope',
+			'Orders',
+			'DB',
+			'COLLECTIONS',
+			'AppConfig',
+			function ($scope, Orders, DB, COLLECTIONS, AppConfig) {
+				const MediaContent = new DB(COLLECTIONS.MediaContent);
+				const MediaCenter = new DB(COLLECTIONS.MediaCenter);
 
-        let _skip = 0,
-          _limit = 50,
-          searchOptions = {
-            filter: {},
-            sort: { createdOn: -1 },
-            skip: _skip,
-            limit: _limit + 1, // the plus one is to check if there are any more
-          },
-          mediaCenterData = AppConfig.getSettings();
+				let _skip = 0,
+					_limit = 50,
+					searchOptions = {
+						filter: {},
+						sort: { createdOn: -1 },
+						skip: _skip,
+						limit: _limit + 1, // the plus one is to check if there are any more
+					},
+					mediaCenterData = AppConfig.getSettings();
 
-        $scope.mediaItemsListOptions = {
-          appearance: {
-            title: 'Media Content',
-            addButtonText: 'Add Media Item',
-            addButtonStyle: 'filled',
-          },
-          settings: {
-            newBehavior: true,
-            allowDragAndDrop: true,
-            showSearchBar: true,
-            showSortOptions: true,
-            showAddButton: true,
-            showEditButton: true,
-            showDeleteButton: true,
-            allowDragAndDrop: true,
-            contentMapping: {
-              idKey: 'id',
-              columns: [
-                { imageKey: 'topImage' },
-                { titleKey: 'title' },
-              ],
-            },
-          },
-          sortOptions: Orders.options.map((option) => ({ ...option, title: option.name, sortKey: option.key, default: option.value === mediaCenterData.content.sortBy })),
-        };
-        $scope.items = [];
-        $scope.isBusy = false;
-        /**
+				$scope.mediaItemsListOptions = {
+					appearance: {
+						title: 'Media Content',
+						addButtonText: 'Add Media Item',
+						addButtonStyle: 'filled',
+					},
+					settings: {
+						newBehavior: true,
+						allowDragAndDrop: true,
+						showSearchBar: true,
+						showSortOptions: true,
+						showAddButton: true,
+						showEditButton: true,
+						showDeleteButton: true,
+						contentMapping: {
+							idKey: 'id',
+							columns: [
+								{ imageKey: 'topImage' },
+								{ titleKey: 'title' },
+							],
+						},
+					},
+					sortOptions: Orders.options.map((option) => ({ ...option, title: option.name, sortKey: option.key, default: option.value === mediaCenterData.content.sortBy })),
+				};
+				$scope.items = [];
+				$scope.isBusy = false;
+				/**
          * $scope.noMore tells if all data has been loaded
          */
-        $scope.noMore = false;
+				$scope.noMore = false;
 
-        $scope.initList = (listSelector) => {
+				$scope.initList = (listSelector) => {
 
-          $scope.mediaList = new buildfire.components.control.listView(listSelector, $scope.mediaItemsListOptions);
-          $scope.handleListScroll();
+					$scope.mediaList = new buildfire.components.control.listView(listSelector, $scope.mediaItemsListOptions);
+          
+					$scope.initBulkActions();
+					$scope.handleListScroll();
+					$scope.toggleLoadingState(true);
 
-          $scope.toggleLoadingState(true);
+					$scope.mediaList.onItemRender = $scope.onItemRender;
+					$scope.mediaList.onItemActionClick = (event) => $scope.onItemActionClick(event);
+					$scope.mediaList.onAddButtonClick = () => $scope.editMediaItem();
+					$scope.mediaList.onSearchInput = (searchValue) => $scope.searchListItem(searchValue);
+					$scope.mediaList.onOrderChange = (event) => $scope.onOrderChange(event);
+					$scope.mediaList.onSortOptionChange = (event) => $scope.toggleSortOrder(event);
 
-          $scope.mediaList.onItemRender = $scope.onItemRender;
-          $scope.mediaList.onItemActionClick = (event) => $scope.onItemActionClick(event);
-          $scope.mediaList.onAddButtonClick = () => $scope.editMediaItem();
-          $scope.mediaList.onSearchInput = (searchValue) => $scope.searchListItem(searchValue);
-          $scope.mediaList.onOrderChange = (event) => $scope.onOrderChange(event);
-          $scope.mediaList.onSortOptionChange = (event) => $scope.toggleSortOrder(event)
+					$scope.getMore();
+				};
 
-          $scope.getMore();
-        };
+				$scope.buildList = () => {
+					if ($scope.mediaList) {
+						$scope.toggleLoadingState();
+						$scope.mediaList.clear();
+						$scope.mediaList.append($scope.items);
 
-        $scope.buildList = () => {
-          if ($scope.mediaList) {
-            $scope.toggleLoadingState();
-            $scope.mediaList.clear();
-            $scope.mediaList.append($scope.items);
+						if (!$scope.$$phase) {
+							$scope.$apply();
+							$scope.$digest();
+						}
+					}
+				};
 
-            if (!$scope.$$phase) $scope.$digest();
-          }
-        };
+				$scope.toggleLoadingState = (loading) => {
+					const itemsEmptyContainer = document.getElementById('mediaItemsEmptyState');
+					if (loading) {
+						$scope.mediaList.selector.classList.add('hide-list');
+						itemsEmptyContainer.classList.remove('hidden');
+						itemsEmptyContainer.innerHTML = "<h5>Loading ...</h5>";
+					} else if ($scope.items.length == 0) {
+						$scope.mediaList.selector.classList.add('hide-list');
+						itemsEmptyContainer.classList.remove('hidden');
+						if ($scope.searchValue) {
+							itemsEmptyContainer.innerHTML = "<h5>You haven't added anything else</h5>";
+						} else {
+							itemsEmptyContainer.innerHTML = "<h5>You haven't added anything yet</h5>";
+						}
+					} else {
+						$scope.mediaList.selector.classList.remove('hide-list');
+						itemsEmptyContainer.classList.add('hidden');
+					}
+				};
 
-        $scope.toggleLoadingState = (loading) => {
-          const itemsEmptyContainer = document.getElementById('mediaItemsEmptyState');
-          if (loading) {
-            $scope.mediaList.selector.classList.add('hide-list');
-            itemsEmptyContainer.classList.remove('hidden');
-            itemsEmptyContainer.innerHTML = "<h5>Loading ...</h5>"
-          } else if ($scope.items.length == 0) {
-            $scope.mediaList.selector.classList.add('hide-list');
-            itemsEmptyContainer.classList.remove('hidden');
-            if ($scope.searchValue) {
-              itemsEmptyContainer.innerHTML = "<h5>You haven't added anything else</h5>"
-            } else {
-              itemsEmptyContainer.innerHTML = "<h5>You haven't added anything yet</h5>"
-            }
-          } else {
-            $scope.mediaList.selector.classList.remove('hide-list');
-            itemsEmptyContainer.classList.add('hidden');
-          }
-        }
-
-        $scope.toggleSortOrder = function (option) {
-          MediaCenter.save({ $set: { 'content.sortBy': option.value, 'content.sortByValue': option.value } }).then(() => {
-            AppConfig.setSettings({ ...mediaCenterData, content: { ...mediaCenterData.content, sortBy: option.value, sortByValue: option.value } });
-            $scope.sortOption = option;
-            searchOptions.skip = 0;
-            searchOptions.sort = { [option.key]: option.order };
+				$scope.toggleSortOrder = function (option) {
+					MediaCenter.save({ $set: { 'content.sortBy': option.value, 'content.sortByValue': option.value } }).then(() => {
+						AppConfig.setSettings({ ...mediaCenterData, content: { ...mediaCenterData.content, sortBy: option.value, sortByValue: option.value } });
+						$scope.sortOption = option;
+						searchOptions.skip = 0;
+						searchOptions.sort = { [option.key]: option.order };
            
-            $scope.noMore = false;
-            $scope.items = [];
-            $scope.toggleLoadingState(true);
-            $scope.getMore();
-          }).catch((err) => {
-            return console.error(err);
-          });
-        };
+						$scope.noMore = false;
+						$scope.items = [];
+						$scope.toggleLoadingState(true);
+						$scope.getMore();
+					}).catch((err) => {
+						return console.error(err);
+					});
+				};
 
-        /**
+				/**
          * $scope.getMore is used to load the items
          */
-        $scope.getMore = function () {
-          if ($scope.isBusy || $scope.noMore) {
-            return;
-          }
-          $scope.isBusy = true;
-          $scope.updateSearchOptions();
+				$scope.getMore = function () {
+					if ($scope.isBusy || $scope.noMore) {
+						return;
+					}
+					$scope.isBusy = true;
+					$scope.updateSearchOptions();
 
-          MediaContent.find(searchOptions).then((result) => {
-            $scope.isBusy = false;
+					MediaContent.find(searchOptions).then((result) => {
+						$scope.isBusy = false;
 
-            if (result.length <= _limit) {
-              $scope.noMore = true;
-            } else {
-              result.pop();
-              searchOptions.skip = searchOptions.skip + _limit;
-              $scope.noMore = false;
-            }
+						if (result.length <= _limit) {
+							$scope.noMore = true;
+						} else {
+							result.pop();
+							searchOptions.skip = searchOptions.skip + _limit;
+							$scope.noMore = false;
+						}
 
-            $scope.items = $scope.items.concat(result.map((item) => ({
-              ...item.data,
-              id: item.id,
-              topImage: getImageUrl(item.data.topImage),
-              image: getImageUrl(item.data.topImage),
-            })));
-            $scope.buildList();
-            $scope.$apply();
-          }).catch((err) => {
-            return console.error(err);
-          })
-        };
+						$scope.items = $scope.items.concat(result.map((item) => ({
+							...item.data,
+							id: item.id,
+							topImage: getImageUrl(item.data.topImage),
+							image: getImageUrl(item.data.topImage),
+						})));
+						$scope.buildList();
+					}).catch((err) => {
+						return console.error(err);
+					});
+				};
 
-        // correct image src for dropbox to crop/resize and show it
-        function getImageUrl(imageSrc) {
-          if (imageSrc && imageSrc.includes("dropbox.com")) {
-              imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent");
-              imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com");
-            }
-          return imageSrc || '../../../../styles/media/holder-1x1.png';
-        }
+				// correct image src for dropbox to crop/resize and show it
+				function getImageUrl(imageSrc) {
+					if (imageSrc && imageSrc.includes("dropbox.com")) {
+						imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent");
+						imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com");
+					}
+					return imageSrc || '../../../../styles/media/holder-1x1.png';
+				}
 
-        // handle getting more categories on scroll
-        $scope.handleListScroll = () => {
-          const sortableListContainer = $scope.mediaList.selector.querySelector('.sortable-list-container');
-          if (sortableListContainer) {
-            sortableListContainer.addEventListener('scroll', (e) => {
-              const { scrollTop, clientHeight, scrollHeight } = sortableListContainer;
+				// handle getting more categories on scroll
+				$scope.handleListScroll = () => {
+					const sortableListContainer = $scope.mediaList.selector.querySelector('.sortable-list-container');
+					if (sortableListContainer) {
+						sortableListContainer.addEventListener('scroll', (e) => {
+							const { scrollTop, clientHeight, scrollHeight } = sortableListContainer;
 
-              if (!$scope.noMore && scrollTop + clientHeight > scrollHeight * 0.8) {
-                $scope.getMore();
-              }
-            })
-          }
-        }
+							if (!$scope.noMore && scrollTop + clientHeight > scrollHeight * 0.8) {
+								$scope.getMore();
+							}
+						});
+					}
+				};
 
-        /**
+				/**
          * $scope.searchListItem() used to search items list
          * @param value to be search.
          */
-        $scope.searchListItem = function (value) {
-          searchOptions.skip = 0;
-          /*reset the skip value*/
+				$scope.searchListItem = function (value) {
+					searchOptions.skip = 0;
+					/*reset the skip value*/
 
-          $scope.searchValue = value;
-          $scope.noMore = false;
-          $scope.isBusy = false;
-          $scope.items = [];
-          if (!value) {
-            value = '/*';
-          }
-          value = value.trim();
-          searchOptions.filter = { '$json.title': { $regex: value, $options: '-i' } };
-          $scope.toggleLoadingState(true);
-          $scope.getMore();
-        };
+					$scope.searchValue = value;
+					$scope.noMore = false;
+					$scope.isBusy = false;
+					$scope.items = [];
+					if (!value) {
+						value = '/*';
+					}
+					value = value.trim();
+					searchOptions.filter = { '$json.title': { $regex: value, $options: '-i' } };
+					$scope.toggleLoadingState(true);
+					$scope.getMore();
+				};
 
-        $scope.updateSearchOptions = function () {
-          mediaCenterData = AppConfig.getSettings();
-          const sortOrder = Orders.options.find((option) => (mediaCenterData.content && option.value === mediaCenterData.content.sortByValue));
-          if (sortOrder && sortOrder.key) {
-            searchOptions.sort = { [sortOrder.key]: sortOrder.order };
-          } else {
-            // default sort by createdOn
-            searchOptions.sort = { createdOn: -1 };
-          }
-        };
+				$scope.updateSearchOptions = function () {
+					mediaCenterData = AppConfig.getSettings();
+					const sortOrder = Orders.options.find((option) => (mediaCenterData.content && option.value === mediaCenterData.content.sortByValue));
+					if (sortOrder && sortOrder.key) {
+						searchOptions.sort = { [sortOrder.key]: sortOrder.order };
+					} else {
+						// default sort by createdOn
+						searchOptions.sort = { createdOn: -1 };
+					}
+				};
 
-        $scope.onItemRender = (event) => {
-          const actions = [{ actionId: 'analytics', icon: 'chart', theme: 'primary' }];
+				$scope.onItemRender = (event) => {
+					const actions = [{ actionId: 'analytics', icon: 'chart', theme: 'primary' }];
 
-          return { actions };
-        };
+					return { actions };
+				};
 
-        $scope.deleteMediaItem = function (item) {
-          buildfire.dialog.confirm(
-            {
-              title: 'Delete Item',
-              message: `Are you sure you want to delete the ${item.title} item?`,
-              confirmButton: {
-                type: 'danger',
-                text: 'Delete',
-              },
-            },
-            (err, isConfirmed) => {
-              if (isConfirmed) {
-                $scope.isBusy = true;
-                Deeplink.deleteById(item.id, (err, res) => {
-                  if (err) {
-                    // TODO: add error handlers "toast" or "alert"
-                    $scope.isBusy = false;
-                    return console.error(err);
-                  }
+				$scope.deleteMediaItem = function (item) {
+					buildfire.dialog.confirm(
+						{
+							title: 'Delete Item',
+							message: `Are you sure you want to delete the ${item.title} item?`,
+							confirmButton: {
+								type: 'danger',
+								text: 'Delete',
+							},
+						},
+						(err, isConfirmed) => {
+							if (isConfirmed) {
+								$scope.isBusy = true;
+								Deeplink.deleteById(item.id, (err, res) => {
+									if (err) {
+										// TODO: add error handlers "toast" or "alert"
+										$scope.isBusy = false;
+										return console.error(err);
+									}
 
-                  MediaContent.delete(item.id).then(() => {
-                    $scope.isBusy = false;
-                    $scope.items = $scope.items.filter((_item) => _item.id !== item.id);
-                    $scope.buildList();
-                    $scope.$apply();
-                  }).catch((err) => {
-                    $scope.isBusy = false;
-                    return console.error(err);
-                  });
-                })
-              }
-            }
-          );
-        }
+									MediaContent.delete(item.id).then(() => {
+										$scope.isBusy = false;
+										$scope.items = $scope.items.filter((_item) => _item.id !== item.id);
+										$scope.buildList();
+									}).catch((err) => {
+										$scope.isBusy = false;
+										return console.error(err);
+									});
+								});
+							}
+						}
+					);
+				};
 
-        $scope.onItemActionClick = (event) => {
-          switch (event.actionId) {
-            case 'edit':
-              $scope.editMediaItem(event.item.id);
-              break;
-            case 'delete':
-              $scope.deleteMediaItem(event.item);
-              break;
-            case 'analytics':
-            default:
-              $scope.showReport(event.item);
-              break;
-          }
-        };
+				$scope.onItemActionClick = (event) => {
+					switch (event.actionId) {
+					case 'edit':
+						$scope.editMediaItem(event.item.id);
+						break;
+					case 'delete':
+						$scope.deleteMediaItem(event.item);
+						break;
+					case 'analytics':
+					default:
+						$scope.showReport(event.item);
+						break;
+					}
+				};
 
-        $scope.showReport = function (item) {
-          if (item.videoUrl) {
-            Analytics.showReports({ eventKey: item.id + "_videoPlayCount" });
-          } else if (item.audioUrl) {
-            Analytics.showReports({ eventKey: item.id + "_audioPlayCount" });
-          } else {
-            Analytics.showReports({ eventKey: item.id + "_articleOpenCount" });
-          }
-        }
+				$scope.showReport = function (item) {
+					if (item.videoUrl) {
+						Analytics.showReports({ eventKey: item.id + "_videoPlayCount" });
+					} else if (item.audioUrl) {
+						Analytics.showReports({ eventKey: item.id + "_audioPlayCount" });
+					} else {
+						Analytics.showReports({ eventKey: item.id + "_articleOpenCount" });
+					}
+				};
 
-        $scope.onOrderChange = (event) => {
-          clearTimeout($scope.saveTimeout);
-          $scope.saveTimeout = setTimeout(() => {
-            let mediaItemsToUpdate = event.items
-              .map((mediaItem, index) => ({ ...mediaItem, newRank: index + 1, id: mediaItem.id })) // Add new rank to each mediaItem
-              .filter(mediaItem => (mediaItem.rank !== mediaItem.newRank))	// Filter out categories that haven't changed
-              .map(mediaItem => ({ ...mediaItem, rank: mediaItem.newRank })); // override rank for each mediaItem
+				$scope.onOrderChange = (event) => {
+					clearTimeout($scope.saveTimeout);
+					$scope.saveTimeout = setTimeout(() => {
+						let mediaItemsToUpdate = event.items
+							.map((mediaItem, index) => ({ ...mediaItem, newRank: index + 1, id: mediaItem.id })) // Add new rank to each mediaItem
+							.filter(mediaItem => (mediaItem.rank !== mediaItem.newRank))	// Filter out categories that haven't changed
+							.map(mediaItem => ({ ...mediaItem, rank: mediaItem.newRank })); // override rank for each mediaItem
 
-            MediaContent.bulkUpdateItems(mediaItemsToUpdate, (err, result) => {
-              if (err) return console.error(err);
+						MediaContent.bulkUpdateItems(mediaItemsToUpdate, (err, result) => {
+							if (err) return console.error(err);
 
-              $scope.items = event.items.map((mediaItem, index) => ({ ...mediaItem, rank: index + 1 }));
-              $scope.buildList();
-            });
-          }, 300);
-        };
+							$scope.items = event.items.map((mediaItem, index) => ({ ...mediaItem, rank: index + 1 }));
+							$scope.buildList();
+						});
+					}, 300);
+				};
 
-        $scope.editMediaItem = function (itemId) {
-          let newPath = '#/media';
-          if (itemId) {
-            newPath += `/${itemId}`;
-          }
-          window.location.href = newPath;
-        };
+				$scope.initBulkActions = () => {
+					const addButton = $scope.mediaList.selector.querySelector('.sortable-list-add-button');
+					const parent = addButton.parentNode;
+          
+					const bulkActionTemplate = document.getElementById('bulkActionTemplate');
+					const bulkActionContainer = bulkActionTemplate.content.cloneNode(true);
 
-        $scope.initList('#mediaList');
-      },
-    ])
-    .filter('cropImg', function () {
-      return function (url) {
-        if (!url) return;
-        return buildfire.imageLib.cropImage(url, { size: 'xs', aspect: '1:1' });
-      };
-    });
+					const dropdownMenu = bulkActionContainer.querySelector('.dropdown');
+
+					const dropdownBtn = bulkActionContainer.querySelector('.dropdown-toggle');
+					const exportBtn = bulkActionContainer.querySelector('.export-csv');
+					const importBtn = bulkActionContainer.querySelector('.import-csv');
+					const getTemplateBtn = bulkActionContainer.querySelector('.get-csv-template');
+          
+					dropdownBtn.onclick = () => dropdownMenu.classList.toggle('open');
+					exportBtn.onclick = () => {
+						// TODO: export csv
+						dropdownMenu.classList.toggle('open');
+					};
+					importBtn.onclick = () => {
+						// TODO: import csv
+						dropdownMenu.classList.toggle('open');
+					};
+					getTemplateBtn.onclick = () => {
+						// TODO: get csv template
+						dropdownMenu.classList.toggle('open');
+					};
+
+					parent.insertBefore(bulkActionContainer, addButton);
+				};
+
+				$scope.editMediaItem = function (itemId) {
+					let newPath = '#/media';
+					if (itemId) {
+						newPath += `/${itemId}`;
+					}
+					window.location.href = newPath;
+				};
+
+				$scope.initList('#mediaList');
+			},
+		])
+		.filter('cropImg', function () {
+			return function (url) {
+				if (!url) return;
+				return buildfire.imageLib.cropImage(url, { size: 'xs', aspect: '1:1' });
+			};
+		});
 })(window.angular);

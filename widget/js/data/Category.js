@@ -5,8 +5,6 @@ class Category {
         this.subcategories = data.subcategories || [];
         this.sortBy = data.sortBy || Orders.ordersMap.Default;
         this.rank = data.rank || 0;
-        this.rankOfLastSubcategory = data.rankOfLastSubcategory || 0;
-        this.lastSubcategoryId = data.lastSubcategoryId || 0;
         this.createdOn = data.createdOn || new Date();
         this.createdBy = data.createdBy || '';
         this.lastUpdatedOn = data.lastUpdatedOn || new Date();

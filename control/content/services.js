@@ -110,7 +110,7 @@
                 Least: " Oldest"
             };
             var orders = [
-                {id: 1, name: "Manually", value: "Manually", key: "rank", order: 1},
+                {id: 1, name: "Manual", value: "Manually", key: "rank", order: 1},
                 {id: 1, name: "Subcategory Title A-Z", value: "Subcategory Title A-Z", key: "title", order: 1},
                 {id: 1, name: "Subcategory Title Z-A", value: "Subcategory Title Z-A", key: "title", order: -1},
                 {id: 1, name: "Subcategory Date Asc", value: "Subcategory Date Asc", key: "subcategoryDateIndex", order: 1},

@@ -60,15 +60,34 @@
   />
     <link href="../../../../styles/helper.css" rel="stylesheet">
     <link href="../../../../styles/siteIcons.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="../../../../styles/control/bf-base.css">
     <link rel="stylesheet" href="../../../../styles/components/control/listView/listView.css"></link>
     <link href="assets/css/control.content.css" rel="stylesheet">
     <link rel="stylesheet" href="../content/assets/css/reset.css">
-    <link rel="stylesheet" href="../content/assets/css/bf_base.css">
-    <link rel="stylesheet" href="../content/assets/css/sortable.css">
 </head>
 <body style="overflow:auto; overflow:initial;">
 <div class="main_view">
     <div class="content infinite-scroll-parent" ng-view=""></div>
+
+    <template id="bulkActionTemplate">
+      <div class="margin-left-auto">
+        <div class="dropdown flex-left-auto margin-right-ten" dropdown>
+          <button class="btn btn-default text-left dropdown-toggle" data-toggle="dropdown" dropdown-toggle
+            aria-expanded="true">
+            <span class="pull-left">Bulk Actions</span>
+            <span class="chevron icon-chevron-down pull-right"></span>
+          </button>
+          <ul class="dropdown-menu extended" role="menu">
+            <li class="export-csv"><a>Export CSV</a></li>
+            <li class="get-csv-template"><a>Get Template</a></li>
+            <li class="import-csv"><a>Import CSV</a></li>
+            <li class="margin-top-ten">
+              <p class="info-note caption margin-bottom-zero">Safari users need to rename the file to .csv to open the file.</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </template>
 </div>
 </body>
 </html>
