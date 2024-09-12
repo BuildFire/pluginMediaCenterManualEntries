@@ -9,8 +9,8 @@
 	/**
      * Inject dependency
      */
-		.controller('ContentCategoryCtrl', ['$scope', 'Buildfire', 'DB', 'COLLECTIONS', 'Location', 'category', 'Messaging', 'EVENTS', 'AppConfig', 'Orders', 'SubcategoryOrders', 'CategoryOrders', '$csv',
-			function ($scope, Buildfire, DB, COLLECTIONS, Location, category, Messaging, EVENTS, AppConfig, Orders, SubcategoryOrders, CategoryOrders, $csv) {
+		.controller('ContentCategoryCtrl', ['$scope', 'Buildfire', 'DB', 'COLLECTIONS', 'Location', 'category', 'Messaging', 'EVENTS', 'AppConfig', 'Orders', 'SubcategoryOrders', 'CategoryOrders', '$csv', 'nanoid',
+			function ($scope, Buildfire, DB, COLLECTIONS, Location, category, Messaging, EVENTS, AppConfig, Orders, SubcategoryOrders, CategoryOrders, $csv, nanoid) {
 				/**
          * Using Control as syntax this
          */
@@ -131,7 +131,7 @@
 					$scope.initBulkActions();
 
 					$scope.subcategoriesList.onItemActionClick = (event) => $scope.onItemActionClick(event);
-					$scope.subcategoriesList.onAddButtonClick = () => $scope.showSubcategoryModal('Add');
+					$scope.subcategoriesList.onAddButtonClick = () => $scope.showSubcategoryModal();
 					$scope.subcategoriesList.onSearchInput = (searchValue) => ContentCategory.searchSubcategories(searchValue);
 					$scope.subcategoriesList.onOrderChange = (event) => $scope.onOrderChange(event);
 					$scope.subcategoriesList.onSortOptionChange = (event) => $scope.toggleSortOrder(event.value);
@@ -155,7 +155,7 @@
 				$scope.onItemActionClick = (event) => {
 					switch (event.actionId) {
 					case 'edit':
-						$scope.showSubcategoryModal('Edit', event.item);
+						$scope.showSubcategoryModal(event.item);
 						break;
 					case 'delete':
 					default:
@@ -280,59 +280,48 @@
 					}, 0);
 				};
 
-				$scope.showSubcategoryModal = function (mode, editedSubcategory) {
-					if (mode == 'Add') {
-						ContentCategory.subcategoryModalMode = 'Add';
-						ContentCategory.addSubcategoryTitle = 'Add Subcategory';
-						ContentCategory.showSubModal = true;
-					} else if (mode == 'Edit' && editedSubcategory && editedSubcategory.name) {
-						// we are editing
-						ContentCategory.subcategoryModalMode = 'Edit';
-						ContentCategory.addSubcategoryTitle = 'Edit Subcategory';
-						ContentCategory.subcategoryTitle = editedSubcategory.name;
-						ContentCategory.showSubModal = true;
-						ContentCategory.editedSubcategory = editedSubcategory;
-					}
-					if (!$scope.$$phase) {
-						$scope.$apply();
-						$scope.$digest();
-					}
-				};
+				$scope.showSubcategoryModal = function (editedSubcategory) {
+					const subcategoryDialog = new DialogComponent('dialogComponent', 'subcategoryDialogTemplate');
 
-				ContentCategory.closeSubcategoryModal = function () {
-					ContentCategory.showSubModal = false;
-					ContentCategory.subcategoryTitle = '';
-					if (!$scope.$$phase) {
-						$scope.$apply();
-						$scope.$digest();
-					}
-				};
+					const dialogContainer = document.getElementById('dialogComponent');
+					const subcategoryNameInput = dialogContainer.querySelector('#subcategoryNameInput');
+					const subcategoryNameInputError = dialogContainer.querySelector('#subcategoryNameInputError');
 
-				ContentCategory.updateSubcategory = function () {
-					if (ContentCategory.subcategoryTitle) {
-						if (ContentCategory.subcategoryModalMode == 'Add') {
-							ContentCategory.item.data.subcategories.push(new Subcategory({
-								name: ContentCategory.subcategoryTitle,
-								id: ContentCategory.item.id + '_' + ContentCategory.item.data.subcategories.length,
-								rank: ContentCategory.item.data.subcategories.length + 1,
-								createdBy: ContentCategory.user || '',
-							}));
-						} else {
-							let itemIndex = ContentCategory.item.data.subcategories.indexOf(ContentCategory.editedSubcategory);
-							ContentCategory.item.data.subcategories[itemIndex] = new Subcategory({
-								...ContentCategory.item.data.subcategories[itemIndex],
-								id: ContentCategory.editedSubcategory.id,
-								name: ContentCategory.subcategoryTitle,
-								categoryId: ContentCategory.item.id,
-								rank: ContentCategory.editedSubcategory.rank || (ContentCategory.item.data.subcategories.length || 0) + 10,
-								lastUpdatedOn: new Date(),
-								lastUpdatedBy: ContentCategory.user || '',
-							});
-						}
+					if (editedSubcategory) {
+						subcategoryNameInput.value = editedSubcategory.name;
 					}
-					ContentCategory.closeSubcategoryModal();
-					ContentCategory.subcategoryTitle = '';
-					ContentCategory.searchSubcategories();
+
+					subcategoryDialog.showDialog(
+						{
+						  title: !editedSubcategory ? 'Add Subcategory' : 'Edit Subcategory',
+						  saveText: 'Save',
+						  hideDelete: false,
+						},
+						(e) => {
+							e.preventDefault();
+							if (!subcategoryNameInput.value) {
+								subcategoryNameInputError.classList.remove('hidden');
+								return;
+							}
+
+							if (editedSubcategory) {
+								const itemIndex = ContentCategory.item.data.subcategories.indexOf(editedSubcategory);
+								ContentCategory.item.data.subcategories[itemIndex].name = subcategoryNameInput.value;
+							} else {
+								ContentCategory.item.data.subcategories.push({
+									name: subcategoryNameInput.value,
+									id: nanoid(),
+									rank: ContentCategory.item.data.subcategories.length + 1,
+									createdBy: ContentCategory.user || '',
+								});
+							}
+
+							subcategoryNameInput.value = '';
+							subcategoryNameInputError.classList.add('hidden');
+							subcategoryDialog.close();
+
+							ContentCategory.searchSubcategories();
+						});
 				};
 
 				ContentCategory.removeSubcategory = function (subcategory) {
@@ -480,7 +469,7 @@
 								rows[index].deletedOn = '';
 								rows[index].deletedBy = '';
 								rows[index].rank = rank;
-								rows[index].id = ContentCategory.item.id ? ContentCategory.item.id + '_' + parseInt(ContentCategory.item.data.subcategories.length + index) : '';
+								rows[index].id = nanoid();
 							}
 							if (validateCsv(rows)) {
 								

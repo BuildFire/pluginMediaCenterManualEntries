@@ -24,17 +24,6 @@
                             ng-model="ContentHome.info.data.content.descriptionHTML"></textarea>
                     </div>
 
-                    <!-- TODO: this modal should be updated to the standard one -->
-                    <div class="item clearfix row margin-top-thirty" data-ng-show="csvDataInvalid">
-                        <div class="labels col-md-12">
-                            <div class="alert alert-warning">
-                                <a href="javascript:void(0)" class="close"
-                                    data-ng-click="csvDataInvalid=false">×</a>
-                                <strong>Note!</strong>Uploaded CSV data is incomplete.Title/Summary is required.
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="categoriesListContainer margin-top-thirty">
                         <div ng-controller="ContentMediaHomeListCtrl">
                             <div id="mediaList"></div>

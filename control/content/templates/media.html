@@ -1,116 +1,80 @@
-<div class="has-bottom-actions padding-bottom-thirty">
-    <div id="subcategoryModal" class="modal fade" role="dialog" ng-if="ContentMedia.showCatModal">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <div class="modal-content backgroundColorTheme">
-                <div class="modal-header">
-                    <button ng-click="ContentMedia.closeCategoryModal()" style="margin-top: 0;" type="button"
-                        class="close" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span></button>
-                    <h4 class="modal-title">Select Category</h4>
+<div class="has-bottom-actions margin-right-fifteen media-content-container">
+    <template id="subcategoryModal">
+        <div style="overflow-y: auto;" id="modalBody" class="infinite-scroll-parent">
+            <div class="search-bar-container margin-bottom-thirty margin-top-ten">
+                <div class="search-bar">
+                    <input type="text" class="form-control" placeholder="Search" ng-model="categorySearch"
+                        ng-keyup="ContentMedia.onEnterKey($event)">
+                    <a class="btn btn-info" ng-click="ContentMedia.searchListItem(categorySearch)"><span
+                            class="search-icon"></span></a>
                 </div>
-                <div style="overflow-y: auto;" id="modalBody" class="modal-body infinite-scroll-parent">
-                    <div class="search-bar-container margin-bottom-thirty margin-top-ten">
-                        <div class="search-bar">
-                            <input type="text" class="form-control" placeholder="Search" ng-model="categorySearch"
-                                ng-keyup="ContentMedia.onEnterKey($event)">
-                            <a class="btn btn-info" ng-click="ContentMedia.searchListItem(categorySearch)"><span
-                                    class="search-icon"></span></a>
-                        </div>
-                    </div>
-                    <div infinite-scroll="ContentMedia.getMore()" infinite-scroll-distance="0"
-                        data-infinite-container="#modalBody" infinite-scroll-disabled="ContentMedia.noMore">
-                        <div ng-if="ContentMedia.allCategories && ContentMedia.allCategories.length > 0"
-                            style="margin-bottom:50px;">
-                            <div class="category-container" ng-repeat="category in ContentMedia.allCategories">
-                                <div class="top-row">
-                                    <div class="screen logoicon pull-left">
-                                        <div class="border-grey border-radius-three default-background-hover"
-                                            style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-                                            <img  load-image="1x1" aspect="1:1"
-                                             crop-type="crop" size="xs"
-                                                ng-if="category.data.icon && !ContentMedia.isIcon(category.data.icon)"
-                                                data-final-src="{{category.data.icon }}">
-                                            <div style="color:#5f5f5f"
-                                                ng-if="category.data.icon && ContentMedia.isIcon(category.data.icon)"
-                                                ng-class="category.data.icon">
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <div style="margin-left: 15px; max-width: 70%;">
-                                        <h3 class="category-name">{{category.data.name}}</h3>
-                                        <p class="category-description">{{category.data.subcategories.length}}
-                                            Subcategories
-                                        </p>
-                                    </div>
-                                    <div class="toggle-wrapper">
-                                        <div class="button-switch">
-                                            <input id="{{category.id}}" type="checkbox"
-                                                ng-click="ContentMedia.pickCategory(category.id)"
-                                                ng-checked="ContentMedia.item.data.categories.indexOf(category.id) > -1">
-                                            <label for="{{category.id}}" class="label-success"></label>
-                                        </div>
+            </div>
+            <div infinite-scroll="ContentMedia.getMore()" infinite-scroll-distance="0"
+                data-infinite-container="#modalBody" infinite-scroll-disabled="ContentMedia.noMore">
+                <div class="empty-state dialog-empty-state" ng-if="!ContentMedia.allCategories || !ContentMedia.allCategories.length">
+                    <h5 ng-if="!ContentMedia.isBusy">You haven't added anything yet</h5>
+                    <h5 ng-if="ContentMedia.isBusy">Loading...</h5>
+                </div>
+                <div ng-if="ContentMedia.allCategories && ContentMedia.allCategories.length > 0"
+                    style="margin-bottom:50px;">
+                    <div class="category-container" ng-repeat="category in ContentMedia.allCategories">
+                        <div class="top-row">
+                            <div class="screen logoicon pull-left">
+                                <div class="border-grey border-radius-three default-background-hover"
+                                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                    <img load-image="1x1" aspect="1:1" crop-type="crop" size="xs"
+                                        ng-if="category.data.icon && !ContentMedia.isIcon(category.data.icon)"
+                                        data-final-src="{{category.data.icon }}">
+                                    <div style="color:#5f5f5f"
+                                        ng-if="category.data.icon && ContentMedia.isIcon(category.data.icon)"
+                                        ng-class="category.data.icon">
                                     </div>
                                 </div>
-                                <div ng-show="ContentMedia.item.data.categories.indexOf(category.id) > -1"
-                                    class="subcategories-container">
-                                    <div class="subcategory" ng-repeat="subcategory in category.data.subcategories">
-                                        <div class="checkbox checkbox-primary no-label" style="margin-top:3px;">
-                                            <input type="checkbox"
-                                                ng-checked="ContentMedia.item.data.subcategories ? ContentMedia.item.data.subcategories.indexOf(subcategory.id) > -1 : false"
-                                                class="ng-pristine ng-untouched ng-valid">
-                                        </div>
-                                        <!-- <input type="checkbox" id="subcategory.id" name="subcategory.name" ng-click="ContentMedia.pickSubcategory(category.id, subcategory.id)" value="subcategory.checked"> -->
-                                        <div class="checkbox checkbox-primary no-label" style="margin: 0;">
-                                            <input type="checkbox" id="requiresLogin" ng-disabled="config.requireLogin"
-                                                ng-click="ContentMedia.pickSubcategory(category.id, subcategory.id)"
-                                                ng-checked="ContentMedia.item.data.subcategories ? ContentMedia.item.data.subcategories.indexOf(subcategory.id) > -1 : false"
-                                                class="ng-pristine ng-untouched ng-valid" disabled="disabled">
-                                            <label for="requiresLogin"></label>
-                                        </div>
-                                        <label class="subcategory-name"
-                                            for="subcategory.id">{{subcategory.name}}</label><br>
-                                    </div>
+
+                            </div>
+                            <div style="margin-left: 15px; max-width: 70%;">
+                                <h3 class="category-name">{{category.data.name}}</h3>
+                                <p class="category-description">{{category.data.subcategories.length}}
+                                    Subcategories
+                                </p>
+                            </div>
+                            <div class="toggle-wrapper">
+                                <div class="button-switch">
+                                    <input id="{{category.id}}" type="checkbox"
+                                        ng-click="ContentMedia.pickCategory(category.id)"
+                                        ng-checked="ContentMedia.item.data.categories.indexOf(category.id) > -1">
+                                    <label for="{{category.id}}" class="label-success"></label>
                                 </div>
                             </div>
-
+                        </div>
+                        <div ng-show="ContentMedia.item.data.categories.indexOf(category.id) > -1 && category.data.subcategories.length > 0"
+                            class="subcategories-container">
+                            <div class="subcategory" ng-repeat="subcategory in category.data.subcategories">
+                                <div class="checkbox checkbox-primary no-label" style="margin-top:3px;">
+                                    <input type="checkbox"
+                                        ng-checked="ContentMedia.item.data.subcategories ? ContentMedia.item.data.subcategories.indexOf(subcategory.id) > -1 : false"
+                                        class="ng-pristine ng-untouched ng-valid">
+                                </div>
+                                <!-- <input type="checkbox" id="subcategory.id" name="subcategory.name" ng-click="ContentMedia.pickSubcategory(category.id, subcategory.id)" value="subcategory.checked"> -->
+                                <div class="checkbox checkbox-primary no-label" style="margin: 0;">
+                                    <input type="checkbox" id="{{subcategory.id}}" ng-disabled="config.requireLogin"
+                                        ng-click="ContentMedia.pickSubcategory(category.id, subcategory.id)"
+                                        ng-checked="ContentMedia.item.data.subcategories ? ContentMedia.item.data.subcategories.indexOf(subcategory.id) > -1 : false"
+                                        class="ng-pristine ng-untouched ng-valid" disabled="disabled">
+                                    <label for="{{subcategory.id}}"></label>
+                                </div>
+                                <label class="subcategory-name"
+                                    for="{{subcategory.id}}">{{subcategory.name}}</label><br>
+                            </div>
                         </div>
                     </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button ng-click="ContentMedia.closeCategoryModal()" type="button"
-                        class="btn btn-success">Save</button>
-                    <button type="button" style="margin-right: 10px;border:1px solid var(--c-gray3);" class="btn"
-                        ng-click="ContentMedia.closeCategoryModal()">Cancel</button>
                 </div>
             </div>
-
         </div>
-    </div>
+    </template>
     <h1>Item Content Details</h1>
-    <div class="row flex">
-        <div class="col-md-3">
-            <span>Thumbnail Image</span>
-        </div>
-        <div class="col-md-9 main ">
-            <div class="screens clearfix margin-bottom-five">
-                <div class="screen logoicon pull-left">
-                    <a class="border-grey border-radius-three default-background-hover"
-                        style="width: 122px; height: 90px; display: flex; align-items: center; justify-content: center;"
-                        ng-click="ContentMedia.addListImage()">
-                        <span ng-if="!ContentMedia.item.data.topImage" class="add-icon" style="height: 85%;">+</span>
-                        <img ng-if="ContentMedia.item.data.topImage" ng-src="{{ContentMedia.item.data.topImage | resizeImage : 122:90}}">
-                    </a>
-                    <span ng-if="ContentMedia.item.data.topImage"
-                        class="icon btn-delete-icon btn-danger transition-third"
-                        ng-click="ContentMedia.removeListImage()"></span>
-                </div>
-            </div>
-            <p class="caption"> Recommended: 1200x675</p>
-        </div>
-    </div>
+
+    <div id="thumbnailImage"></div>
 
     <hr class="none">
     <div class="item clearfix row" id="titleInput">
@@ -201,7 +165,8 @@
     </div>
     <hr class="none">
     <div id="audioImage"></div>
-    <hr>
+    <hr class="none">
+
     <div class="item clearfix row">
         <div class="labels col-md-3 padding-right-zero pull-left">
             <span>Media Date</span>
@@ -212,7 +177,16 @@
         </div>
     </div>
     <hr class="none">
-    <div id="actionItems" style="margin-bottom:50px;"></div>
+    <div id="actionItems"></div>
+    <div class="row" ng-if="!ContentMedia.item.data.links || ContentMedia.item.data.links.length == 0">
+        <div class="col-md-3"></div>
+        <div class="col-md-9">
+            <div class="empty-state small-empty-state">
+                <h5>No Actions Selected.</h5>
+            </div>
+        </div>
+    </div>
+
     <hr class="none">
     <div ng-if="ContentMedia.filtersEnabled">
         <div class="item clearfix row margin-bottom-fifteen">
@@ -221,12 +195,12 @@
             </div>
             <div class="main col-md-9 pull-right">
                 <div class="">
-                    <a style="width: 10rem; float: right !important;"
+                    <a style="float: right !important;"
                         ng-if="!ContentMedia.item || !ContentMedia.item.data || !ContentMedia.item.data.categories || ContentMedia.item.data.categories.length < 1"
                         ng-click="ContentMedia.showCategories()"
                         class="btn btn-success pull-left add-new-item btn-plus-icon-with-text">
                         Add Media Category</a>
-                    <a style="width: 10rem; float: right !important;"
+                    <a style="float: right !important;"
                         ng-if="ContentMedia.item && ContentMedia.item.data && ContentMedia.item.data.categories && ContentMedia.item.data.categories.length > 0"
                         ng-click="ContentMedia.showCategories()" class="btn btn-primary pull-left add-new-item">
                         Edit Media Category</a>
@@ -239,19 +213,25 @@
                 <span></span>
             </div>
             <div class="main col-md-9 pull-right">
-                <div id="categories" ng-if="ContentMedia.assignedCategories && ContentMedia.assignedCategories.length > 0"
+                <div id="categories"
+                    ng-if="ContentMedia.assignedCategories && ContentMedia.assignedCategories.length > 0"
                     style="margin-bottom:50px;">
-                    <p>{{ContentMedia.item.data.categories.length}} Categories, {{ContentMedia.item.data.subcategories.length}}
+                    <p>{{ContentMedia.item.data.categories.length}} Categories,
+                        {{ContentMedia.item.data.subcategories.length}}
                         Subcategories</p>
                     <div ng-repeat="category in ContentMedia.assignedCategories">
                         <h2>{{category.data.name}}</h4>
-                            <span ng-if="ContentMedia.item.data.subcategories.includes(subcategory.id)" ng-repeat="subcategory in category.data.subcategories"><span>{{subcategory.name}}</span>  <span ng-if="!$last">, </span></span>
+                            <span ng-if="ContentMedia.item.data.subcategories.includes(subcategory.id)"
+                                ng-repeat="subcategory in category.data.subcategories"><span>{{subcategory.name}}</span>
+                                <span ng-if="!$last">, </span></span>
                     </div>
-        
+                </div>
+                <div class="empty-state small-empty-state" ng-if="!ContentMedia.assignedCategories || ContentMedia.assignedCategories.length == 0">
+                    <h5>No Categories Selected.</h5>
                 </div>
             </div>
         </div>
-     
+
     </div>
 </div>
 <div class="bottom-actions">

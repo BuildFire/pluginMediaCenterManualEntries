@@ -233,7 +233,6 @@
 								$scope.isBusy = true;
 								Deeplink.deleteById(item.id, (err, res) => {
 									if (err) {
-										// TODO: add error handlers "toast" or "alert"
 										$scope.isBusy = false;
 										return console.error(err);
 									}
@@ -414,8 +413,8 @@
 
 							for (var _index = 0; _index < headerRow.length; _index++) {
 								if (header[headerRow[_index]] != columns[headerRow[_index]]) {
-									$rootScope.loading = false;
-									$rootScope.csvDataInvalid = true;
+									$rootScope.loading = false
+									$csv.showInvalidCSV();
 									break;
 								}
 							}
@@ -462,14 +461,11 @@
 								});
 							} else {
 								$rootScope.loading = false;
-								$rootScope.csvDataInvalid = true;
-								setTimeout(() => {
-									$rootScope.csvDataInvalid = false;
-								}, 2000);
+								$csv.showInvalidCSV();
 							}
 						} else {
 							$rootScope.loading = false;
-							$rootScope.csvDataInvalid = true;
+							$csv.showInvalidCSV();
 							$scope.$apply();
 						}
 					}, function (error) {

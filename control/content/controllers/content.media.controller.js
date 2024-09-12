@@ -8,8 +8,8 @@
     /**
      * Inject dependency
      */
-    .controller('ContentMediaCtrl', ['$scope', 'Buildfire', 'SearchEngine', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig', 'Orders', 'CategoryOrders',
-      function ($scope, Buildfire, SearchEngine, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig, Orders, CategoryOrders) {
+    .controller('ContentMediaCtrl', ['$scope', '$compile', 'Buildfire', 'SearchEngine', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig', 'Orders', 'CategoryOrders',
+      function ($scope, $compile, Buildfire, SearchEngine, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig, Orders, CategoryOrders) {
         window.scrollTo(0, 0);
         /**
          * Breadcrumbs  related implementation
@@ -26,7 +26,6 @@
          * @type {DB}
          */
         var MediaContent = new DB(COLLECTIONS.MediaContent);
-        var MediaCenter = new DB(COLLECTIONS.MediaCenter);
         var SearchEngineService = new SearchEngine(COLLECTIONS.MediaContent);
         var CategoryContent = new DB(COLLECTIONS.CategoryContent);
         /**
@@ -59,10 +58,7 @@
         }
         var MediaCenterSettings = AppConfig.getSettings();
         ContentMedia.filtersEnabled = MediaCenterSettings.content.enableFiltering;
-        /**
-         * Get the MediaCenter master collection data object id
-         */
-        var appId = AppConfig.getAppId();
+
         /**
          * Options for image library
          * @type {{showIcons: boolean, multiSelection: boolean}}
@@ -70,6 +66,25 @@
         var selectImageOptions = { showIcons: false, multiSelection: false };
 
         ContentMedia.saving = false;
+
+        $scope.selectCategoriesListOptions = {
+          settings: {
+            allowDragAndDrop: false,
+            showSearchBar: true,
+            showSortOptions: true,
+            showAddButton: false,
+            showEditButton: false,
+            showDeleteButton: false,
+            contentMapping: {
+              idKey: "id",
+              columns: [
+                { titleKey: "name" },
+                { toggleKey: "isIncluded" },
+              ],
+            },
+            sortOptions: []
+          },
+        };
 
         /**
          * Init bootstrapping data
@@ -134,7 +149,7 @@
               ContentMedia.item.data.mediaDateIndex = new Date(media.data.mediaDate).getTime();
             }
             if (ContentMedia.item.data.topImage) {
-              //topImage.loadbackground(ContentMedia.item.data.topImage);
+              thumbnailImage.loadbackground(ContentMedia.item.data.topImage);
             }
             if (ContentMedia.item.data.image) {
               audioImage.loadbackground(ContentMedia.item.data.image);
@@ -336,7 +351,7 @@
               if (ContentMedia.item.data.searchEngineId) {
                 promises.push(SearchEngineService.update(ContentMedia.item.data.searchEngineId, ContentMedia.item.data));
               } else {
-                promises.push(SearchEngineService.insert({...ContentMedia.item.data, id: ContentMedia.item.id}));
+                promises.push(SearchEngineService.insert({ ...ContentMedia.item.data, id: ContentMedia.item.id }));
               }
 
               Promise.all(promises).then(() => {
@@ -363,10 +378,10 @@
             }, (err) => {
               console.error(err);
               resetItem();
-                return buildfire.dialog.toast({
-                  message: "Error while updating",
-                  type: "danger",
-                });
+              return buildfire.dialog.toast({
+                message: "Error while updating",
+                type: "danger",
+              });
             });
           }
         }
@@ -557,11 +572,11 @@
           ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
           ContentMedia.item.data && ContentMedia.item.data.title ?
             ContentMedia.item.data.titleIndex = ContentMedia.item.data.title.toLowerCase() : '';
-         
+
           MediaContent.insert(ContentMedia.item.data).then((item) => {
             item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: item.id });
-            
-            Promise.all([registerAnalytics(item), SearchEngineService.insert({...item.data, id: item.id}), createNewDeeplink(item)])
+
+            Promise.all([registerAnalytics(item), SearchEngineService.insert({ ...item.data, id: item.id }), createNewDeeplink(item)])
               .then(() => {
                 ContentMedia.saving = false;
                 Messaging.sendMessageToWidget({
@@ -595,7 +610,7 @@
                 key: item.id + "_continuesVideoPlayCount",
                 description: "Continues Video Play Count",
               }]);
-  
+
               if (MediaCenterSettings.content.allowOfflineDownload) {
                 events.push({
                   title: item.data.title + " Video Downloads",
@@ -614,7 +629,7 @@
                 key: item.id + "_continuesAudioPlayCount",
                 description: "Continues Audio Play Count",
               }]);
-              
+
               if (MediaCenterSettings.content.allowOfflineDownload) {
                 events.push({
                   title: item.data.title + " Audio Downloads",
@@ -633,7 +648,7 @@
                 key: item.id + "_continuesArticleOpenCount",
                 description: "Continues Article Open Count",
               }]);
-  
+
             }
 
             Analytics.bulkRegisterEvents(events, { silentNotification: true }).then(() => {
@@ -689,41 +704,6 @@
           }
         }
 
-        ContentMedia.addListImage = function () {
-          var options = { showIcons: false, multiSelection: false },
-            listImgCB = function (error, result) {
-              if (error) {
-                console.error('Error:', error);
-              } else {
-                ContentMedia.item.data.topImage = result && result.selectedFiles && result.selectedFiles[0] || null;
-                if (!$scope.$$phase) $scope.$digest();
-              }
-            };
-          buildfire.imageLib.showDialog(options, listImgCB);
-        };
-        ContentMedia.removeListImage = function () {
-          ContentMedia.item.data.topImage = "";
-        };
-        /* Build fire thumbnail component to add thumbnail image*/
-        //var topImage = new Buildfire.components.images.thumbnail("#topImage", {
-        //  title: "Top Image",
-        //  dimensionsLabel: "1200x675"
-        //});
-        //
-        //topImage.onChange = function (url) {
-        //  ContentMedia.item.data.topImage = url;
-        //  if (!$scope.$$phase && !$scope.$root.$$phase) {
-        //    $scope.$apply();
-        //  }
-        //};
-        //
-        //topImage.onDelete = function (url) {
-        //  ContentMedia.item.data.topImage = "";
-        //  if (!$scope.$$phase && !$scope.$root.$$phase) {
-        //    $scope.$apply();
-        //  }
-        //};
-
         // correct image src for dropbox to crop/resize and show it
         function getImageUrl(imageSrc) {
           if (imageSrc && imageSrc.includes("dropbox.com")) {
@@ -731,12 +711,12 @@
             imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com");
           }
           return imageSrc;
-      }
+        }
 
         /* Build fire thumbnail component to add thumbnail image*/
         var audioImage = new Buildfire.components.images.thumbnail("#audioImage", {
           title: "Audio Image",
-          dimensionsLabel: "1024x1024"
+          dimensionsLabel: "Recommended: 1024x1024"
         });
 
         audioImage.onChange = function (url) {
@@ -748,6 +728,25 @@
 
         audioImage.onDelete = function (url) {
           ContentMedia.item.data.image = "";
+          if (!$scope.$$phase && !$scope.$root.$$phase) {
+            $scope.$apply();
+          }
+        };
+
+        const thumbnailImage = new Buildfire.components.images.thumbnail("#thumbnailImage", {
+          title: "Audio Image",
+          dimensionsLabel: "Recommended: 1200x675"
+        });
+
+        thumbnailImage.onChange = function (url) {
+          ContentMedia.item.data.topImage = url;
+          if (!$scope.$$phase && !$scope.$root.$$phase) {
+            $scope.$apply();
+          }
+        };
+
+        thumbnailImage.onDelete = function (url) {
+          ContentMedia.item.data.topImage = "";
           if (!$scope.$$phase && !$scope.$root.$$phase) {
             $scope.$apply();
           }
@@ -848,43 +847,50 @@
         };
 
         var _skip = 0,
-          _limit = 10,
-          _maxLimit = 19,
+          _limit = 50,
           searchOptions = {
             filter: {},
             skip: _skip,
-            limit: _limit + 1 // the plus one is to check if there are any more
+            limit: _limit // the plus one is to check if there are any more
           };
 
         ContentMedia.showCategories = function () {
-          if (ContentMedia.isBusy && !ContentMedia.noMore) {
-            return;
+          const subcategoryDialog = new DialogComponent('dialogComponent', 'subcategoryModal');
+
+          const container = document.querySelector('#dialogComponent');
+          $compile(container)($scope);
+
+          if (!$scope.$$phase) {
+            $scope.$apply();
+            $scope.$digest();
           }
 
+          subcategoryDialog.showDialog(
+            {
+              title: 'Select Categories',
+              saveText: 'Save',
+              hideDelete: false,
+            }, (e) => subcategoryDialog.close());
+
           ContentMedia.isBusy = true;
-          //Then we are editing an item that already has categories
-          //Grab the assigned categories first and then get the rest
-
-
           searchOptions.skip = 0;
-
           ContentMedia.updateSearchOptions();
 
           CategoryContent.find(searchOptions).then(function success(result) {
-            if (result.length <= _limit) {// to indicate there are more
+            if (result.length < _limit) {
               ContentMedia.noMore = true;
-            }
-            else {
-              result.pop();
+            } else {
               searchOptions.skip = searchOptions.skip + _limit;
               ContentMedia.noMore = false;
             }
 
             ContentMedia.allCategories = result;
-            document.body.classList.add('modal-open')
             ContentMedia.showCatModal = true;
-            if (!$scope.$$phase) $scope.$digest();
             ContentMedia.isBusy = false;
+            if (!$scope.$$phase) {
+              $scope.$apply();
+              $scope.$digest();
+            }
           }, function fail() {
             ContentMedia.isBusy = false;
           });
@@ -938,11 +944,6 @@
           });
         };
 
-        ContentMedia.closeCategoryModal = function () {
-          ContentMedia.showCatModal = false;
-          document.body.classList.remove('modal-open')
-        };
-
         ContentMedia.isIcon = function (icon) {
           if (icon) {
             return icon.indexOf("http") != 0;
@@ -994,19 +995,19 @@
         }
 
         /**
- * ContentMedia.searchListItem() used to search items list
- * @param value to be search.
- */
+       * ContentMedia.searchListItem() used to search items list
+       * @param value to be search.
+       */
         ContentMedia.searchListItem = function (value) {
           searchOptions.skip = 0;
           /*reset the skip value*/
 
           ContentMedia.isBusy = false;
           ContentMedia.items = [];
-          value = value.trim();
           if (!value) {
             value = '/*';
           }
+          value = value.trim();
           searchOptions.filter = { "$json.name": { "$regex": value, $options: "-i", } };
           ContentMedia.allCategories = [];
           ContentMedia.getMore();

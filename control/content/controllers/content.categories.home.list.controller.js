@@ -5,11 +5,14 @@
 		.module('mediaCenterContent')
 		.controller('ContentCategoryHomeListCtrl', [
 			'$scope',
+			'$rootScope',
 			'CategoryOrders',
+			'SubcategoryOrders',
 			'DB',
 			'COLLECTIONS',
 			'AppConfig',
-			function ($scope, CategoryOrders, DB, COLLECTIONS, AppConfig) {
+			'$csv',
+			function ($scope, $rootScope, CategoryOrders, SubcategoryOrders, DB, COLLECTIONS, AppConfig, $csv) {
 				const CategoryContent = new DB(COLLECTIONS.CategoryContent);
 				const MediaCenter = new DB(COLLECTIONS.MediaCenter);
 
@@ -19,7 +22,7 @@
 						filter: {},
 						sort: { createdOn: -1 },
 						skip: _skip,
-						limit: _limit + 1, // the plus one is to check if there are any more
+						limit: _limit, // the plus one is to check if there are any more
 					},
 					mediaCenterData = AppConfig.getSettings();
 
@@ -122,8 +125,8 @@
 				};
 
 				/**
-         * $scope.getMore is used to load the items
-         */
+				 * $scope.getMore is used to load the items
+				 */
 				$scope.getMore = function () {
 					if ($scope.isBusy || $scope.noMore) {
 						return;
@@ -134,10 +137,9 @@
 					CategoryContent.find(searchOptions).then((result) => {
 						$scope.isBusy = false;
 
-						if (result.length <= _limit) {
+						if (result.length < _limit) {
 							$scope.noMore = true;
 						} else {
-							result.pop();
 							searchOptions.skip = searchOptions.skip + _limit;
 							$scope.noMore = false;
 						}
@@ -190,9 +192,9 @@
 				};
 
 				/**
-         * $scope.searchListItem() used to search items list
-         * @param value to be search.
-         */
+				 * $scope.searchListItem() used to search items list
+				 * @param value to be search.
+				 */
 				$scope.searchListItem = function (value) {
 					searchOptions.skip = 0;
 					/*reset the skip value*/
@@ -234,21 +236,14 @@
 						(err, isConfirmed) => {
 							if (isConfirmed) {
 								$scope.isBusy = true;
-								Deeplink.deleteById(item.id, (err, res) => {
-									if (err) {
-										// TODO: add error handlers "toast" or "alert"
-										$scope.isBusy = false;
-										return console.error(err);
-									}
 
-									CategoryContent.delete(item.id).then(() => {
-										$scope.isBusy = false;
-										$scope.items = $scope.items.filter((_item) => _item.id !== item.id);
-										$scope.buildList();
-									}).catch((err) => {
-										$scope.isBusy = false;
-										return console.error(err);
-									});
+								CategoryContent.delete(item.id).then(() => {
+									$scope.isBusy = false;
+									$scope.items = $scope.items.filter((_item) => _item.id !== item.id);
+									$scope.buildList();
+								}).catch((err) => {
+									$scope.isBusy = false;
+									return console.error(err);
 								});
 							}
 						}
@@ -321,15 +316,15 @@
           
 					dropdownBtn.onclick = () => dropdownMenu.classList.toggle('open');
 					exportBtn.onclick = () => {
-						// TODO: export csv
+						$scope.exportCSV();
 						dropdownMenu.classList.toggle('open');
 					};
 					importBtn.onclick = () => {
-						// TODO: import csv
+						$scope.openImportCSVDialog();
 						dropdownMenu.classList.toggle('open');
 					};
 					getTemplateBtn.onclick = () => {
-						// TODO: get csv template
+						$scope.getTemplate();
 						dropdownMenu.classList.toggle('open');
 					};
 
@@ -337,6 +332,186 @@
 				};
 
 				$scope.initList('#categoriesList');
+
+				// CSV Handlers
+				const header = {
+					icon: 'Icon image',
+					name: 'Name',
+					subcategories: 'Subcategories',
+				};
+				const headerRow = ['icon', 'name', 'subcategories'];
+
+				/**
+                 * $scope.getTemplate() used to download csv template
+                 */
+				$scope.getTemplate = function () {
+					const templateData = [{
+						icon: '',
+						name: '',
+						subcategories: [],
+					}];
+					const csv = $csv.jsonToCsv(angular.toJson(templateData), { header });
+					$csv.download(csv, 'Template.csv');
+				};
+
+				/**
+                 * getRecords function get the  all items from DB
+                 * @param searchOption
+                 * @param records
+                 * @param callback
+                 */
+				function getRecords(searchOption, records, callback) {
+					CategoryContent.find({...searchOption, recordCount: true}).then(function (res) {
+						const result = res.result;
+						if (result && result.length) {
+							records = records.concat(result);
+						}
+
+						if (!res.totalRecord || records.length === res.totalRecord) {// to indicate there are more
+							return callback(records);
+						} else {
+							searchOption.skip = searchOption.skip + searchOption.limit;
+							return getRecords(searchOption, records, callback);
+						}
+					}, function (error) {
+						throw (error);
+					});
+				}
+
+				/**
+                 * $scope.exportCSV() used to export people list data to CSV
+                 */
+				$scope.exportCSV = function () {
+					var search = angular.copy(searchOptions);
+					search.skip = 0;
+					getRecords(search,
+						[]
+						, function (data) {
+							if (data && data.length) {
+								var persons = [];
+								angular.forEach(angular.copy(data), function (value) {
+									delete value.data.createdBy;
+									delete value.data.createdOn;
+									delete value.data.deletedBy;
+									delete value.data.deletedOn;
+									delete value.data.id;
+									delete value.data.lastUpdatedBy;
+									delete value.data.lastUpdatedOn;
+									delete value.data.sortBy;
+									delete value.data.rank;
+									delete value.data.sortByValue;
+									delete value.data.titleIndex;
+									if (value.data.subcategories && value.data.subcategories.length) {
+										value.data.subcategories = value.data.subcategories.map(function (subcategory) {
+											return subcategory.name;
+										});
+										value.data.subcategories = value.data.subcategories.join(',');
+									}
+									persons.push(value.data);
+								});
+								var csv = $csv.jsonToCsv(angular.toJson(persons), {
+									header: header
+								});
+								$csv.download(csv, 'Export.csv');
+							}
+							else {
+								$scope.getTemplate();
+							}
+						});
+				};
+				function isValidItem(item, index, array) {
+					return item.name;
+				}
+
+				function validateCsv(items) {
+					if (!Array.isArray(items) || !items.length) {
+						return false;
+					}
+					return items.every(isValidItem);
+				}
+
+				/**
+                 * method to open the importCSV Dialog
+                 */
+				$scope.openImportCSVDialog = function () {
+					$csv.import(headerRow).then(function (rows) {
+						$rootScope.loading = true;
+						if (rows && rows.length > 1) {
+
+							var columns = rows.shift();
+
+							for (var _index = 0; _index < headerRow.length; _index++) {
+								if (header[headerRow[_index]] != columns[headerRow[_index]]) {
+									$rootScope.loading = false;
+									$csv.showInvalidCSV();
+									break;
+								}
+							}
+
+							if (!$rootScope.loading)
+								return;
+
+							let rank = 10;
+							for (var index = 0; index < rows.length; index++) {
+								rank += 10;
+								rows[index].createdOn = new Date().getTime();
+								let subcategories = [];
+								if (rows[index].subcategories && rows[index].subcategories.length) {
+									rows[index].subcategories.split(',');
+									let subRank = 0;
+									subcategories = subcategories.map(function (subcategory, subcategoryIndex) {
+										subRank += 10;
+										return {
+											name: subcategory,
+											rank: subRank,
+											createdOn: new Date().getTime(),
+											lastUpdatedOn: '',
+											lastUpdatedBy: '',
+											deletedOn: '',
+											deletedBy: '',
+										};
+									});
+								}
+								rows[index].rank = rank;
+								rows[index].subcategories = subcategories;
+								rows[index].titleIndex = rows[index].name.toLowerCase();
+								rows[index].createdBy = '';
+								rows[index].lastUpdatedBy = '';
+								rows[index].deletedBy = '';
+								rows[index].deletedOn = '';
+								rows[index].lastUpdatedOn = '';
+								rows[index].sortBy = SubcategoryOrders.ordersMap.Newest;
+
+							}
+							if (validateCsv(rows)) {
+								CategoryContent.insert(rows).then(function (data) {
+									$rootScope.loading = false;
+									$scope.isBusy = false;
+									$scope.items = [];
+									searchOptions.skip = 0;
+									$scope.noMore = false;
+									$scope.getMore();
+								}, function errorHandler(error) {
+									console.error(error);
+									$rootScope.loading = false;
+									$scope.$apply();
+								});
+							} else {
+								$rootScope.loading = false;
+								$csv.showInvalidCSV();
+							}
+						}
+						else {
+							$rootScope.loading = false;
+							$csv.showInvalidCSV();
+							$scope.$apply();
+						}
+					}, function (error) {
+						$rootScope.loading = false;
+						$scope.$apply();
+					});
+				};
+
 			},
 		])
 		.filter('cropImg', function () {
