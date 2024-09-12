@@ -16,7 +16,7 @@
 				media.data.image = DropboxLinksManager.convertDropbox(media.data.image);
 				NowPlaying.currentTime = 0;
 
-				NowPlaying.getString = getString;
+				NowPlaying.getString = window.getString;
 
 				$rootScope.deepLinkNavigate = null;
 				NowPlaying.isOnline = window.navigator.onLine;
@@ -739,16 +739,6 @@
 						});
 					} else {
 						initAudio();
-					}
-
-					if (NowPlaying.item.data.audioUrl) {
-						buildfire.messaging.sendMessageToControl({
-							name: EVENTS.ROUTE_CHANGE,
-							message: {
-								path: PATHS.MEDIA,
-								id: NowPlaying.item.id || null
-							}
-						});
 					}
 				};
 

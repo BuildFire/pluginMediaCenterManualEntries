@@ -101,7 +101,7 @@
                         }
                     })
                     MediaCenter.get().then(function success(result) {
-                        if (result && result.data && result.id) {
+                        if (result && result.data && Object.keys(result.data).length && result.id) {
                             MediaCenterInfo = result;
                         } else {
                             MediaCenterInfo = _infoData;
@@ -1691,13 +1691,7 @@
                         WidgetHome.loadMore();
                     }
                 });
-                /**
-                 * Implementation of pull down to refresh
-                 */
-                var onRefresh = Buildfire.datastore.onRefresh(function () {
-                    Location.goToHome();
-                });
-
+                
                 // get opened items
                 const localOpenedItems = () => {
                     getCurrentUser(() => {

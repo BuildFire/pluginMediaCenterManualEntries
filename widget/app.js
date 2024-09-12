@@ -228,38 +228,20 @@
 
                             if (isOnline) {
                                 if ($route.current.params.mediaId) {
-                                    if ($route.current.params.mediaId === 'mockId') {
-                                        deferred.resolve({id: 'mockId', data: {
-                                            audioUrl: "https",
-                                            body: "",
-                                            bodyHTML: "",
-                                            image: "",
-                                            links: [],
-                                            mediaDate: "",
-                                            mediaDateIndex: "",
-                                            rank: "",
-                                            srcUrl: "",
-                                            summary: "",
-                                            title: "",
-                                            topImage: "",
-                                            videoUrl: "",
-    
-                                        }});
-                                    } else {
-                                        MediaContent.getById($route.current.params.mediaId).then(function success(result) {
-                                            if (result && result.data) {
-                                                deferred.resolve(result);
-                                            }
-                                            else {
-                                                Location.goToHome();
-                                            }
-                                        },
-                                            function fail() {
-                                                Location.goToHome();
-                                            }
-                                        );
-                                    }
-                                } else {
+                                    MediaContent.getById($route.current.params.mediaId).then(function success(result) {
+                                        if (result && result.data) {
+                                            deferred.resolve(result);
+                                        }
+                                        else {
+                                            Location.goToHome();
+                                        }
+                                    },
+                                        function fail() {
+                                            Location.goToHome();
+                                        }
+                                    );
+                                }
+                                else {
                                     Location.goToHome();
                                 }
                             } else {

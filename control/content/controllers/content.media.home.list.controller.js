@@ -464,7 +464,7 @@
 									$rootScope.loading = false;
 									$scope.isBusy = false;
 									$scope.items = [];
-									$scope.getMore();
+									$scope.searchListItem();
 									$scope.setDeeplinks();
 								}, function errorHandler(error) {
 									console.error(error);

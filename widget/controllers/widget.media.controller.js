@@ -693,19 +693,10 @@
                     }
                 });
 
-                Buildfire.publicData.onUpdate(event => {
-                    if (event.data && event.tag == COLLECTIONS.MediaCount) {
-                        WidgetMedia.count = WidgetMedia.count ? WidgetMedia.count + 1 : 1;
-                        if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                        $rootScope.refreshItems();
-
-                    }
-                });
-
                 WidgetMedia.playAudio = function () {
                     let mediaId = WidgetMedia.item.id;
                     if (!mediaId) return;
-                    Location.go('#/nowplaying/' + mediaId, false);
+                    Location.go('#/nowplaying/' + mediaId, true);
                 }
 
                 WidgetMedia.ApplayUpdates = function () {
@@ -928,7 +919,6 @@
                     if (WidgetMedia && WidgetMedia.clearCountdown) {
                         WidgetMedia.clearCountdown();
                     }
-                    Location.goToHome();
                 });
 
                 $rootScope.$watch('goingBackFullScreen', function () {
