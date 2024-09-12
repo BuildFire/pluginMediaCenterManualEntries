@@ -33,6 +33,12 @@
                     "placeholder": "Shuffle off",
                     "maxLength": 50,
                     "defaultValue": "Shuffle off"
+                },
+                "unknownTrack": {
+                    "title": "Unknown Track",
+                    "placeholder": "Unknown Track",
+                    "maxLength": 50,
+                    "defaultValue": "Unknown Track"
                 }
             }
         },

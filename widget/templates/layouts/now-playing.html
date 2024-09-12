@@ -15,7 +15,7 @@
             <span class="glyphicon glyphicon-share-alt whiteTheme btn btn-icon" ng-style="{'visibility': allowShare ? 'visible' : 'hidden'}" ng-click="NowPlaying.share($event)"
                 role="button"></span>
             <div class="media-title ellipsis">
-                <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title}}</h4>
+                <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title || NowPlaying.getString('mediaPlayer.unknownTrack')}}</h4>
                 <p class="margin-zero whiteTheme ellipsis">
                     {{NowPlaying.currentTrack.user.username}}{{NowPlaying.currentTrack.artist}}</p>
             </div>
@@ -59,8 +59,8 @@
                     </defs>
                 </svg>
                 <span class="shuffle-indicator" ng-if="(((audioFromPlayList===null || audioFromPlayList===undefined) && NowPlaying.settings.shufflePluginList) || (audioFromPlayList!==null && audioFromPlayList!==undefined && NowPlaying.settings.shufflePlaylist))">
-                    <span class="shuffle-indicator-text" ng-if="audioFromPlayList===null || audioFromPlayList===undefined" bfString="mediaPlayer.shuffleAllItemsIndicator">A</span>
-                    <span class="shuffle-indicator-text" ng-if="audioFromPlayList!==null && audioFromPlayList!==undefined" bfString="mediaPlayer.shufflePlaylistItemsIndicator">P</span>
+                    <span class="shuffle-indicator-text" ng-if="audioFromPlayList===null || audioFromPlayList===undefined">{{NowPlaying.getString("mediaPlayer.shuffleAllItemsIndicator")}}</span>
+                    <span class="shuffle-indicator-text" ng-if="audioFromPlayList!==null && audioFromPlayList!==undefined">{{NowPlaying.getString("mediaPlayer.shufflePlaylistItemsIndicator")}}</span>
                 </span>
             </span>
                 
@@ -123,10 +123,10 @@
                             <div class="list-media-holder square-icon pull-left">
                                 <img ng-if="track.image || track.topImage" load-image="2x2" crop-width="55" crop-height="55"
                                     crop-type="crop" data-ng-src="{{track.topImage ? track.topImage : track.image | resizeImage : 55:55}}">
+                                <img ng-if="!track.image && !track.topImage" src="../../../styles/media/holder-16x9.png" style="width:100%;">
                             </div>
                             <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-                                <p class="margin-bottom-zero ellipsis margin-top-twenty bodyTextTheme">
-                                    {{track.title}}</p>
+                                <p class="margin-bottom-zero ellipsis margin-top-twenty bodyTextTheme">{{track.title || NowPlaying.getString('mediaPlayer.unknownTrack')}}</p>
                             </div>
                             <div class="btns text-center">
                                 <a ng-class="track.playing ? 'icon-pause-circle' : 'icon-play-circle'"
@@ -162,7 +162,7 @@
                 <hr class="none">
                 <div class="media-player-info margin-top-twenty padding-left-ten padding-right-ten">
                     <div class="ellipsis">
-                        <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title}}</h4>
+                        <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title || NowPlaying.getString('mediaPlayer.unknownTrack')}}</h4>
                         <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.artist}}</p>
                     </div>
                 </div>

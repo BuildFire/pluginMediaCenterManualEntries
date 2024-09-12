@@ -16,6 +16,8 @@
 				media.data.image = DropboxLinksManager.convertDropbox(media.data.image);
 				NowPlaying.currentTime = 0;
 
+				NowPlaying.getString = getString;
+
 				$rootScope.deepLinkNavigate = null;
 				NowPlaying.isOnline = window.navigator.onLine;
 
