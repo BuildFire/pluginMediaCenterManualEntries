@@ -367,7 +367,7 @@
 							records = records.concat(result);
 						}
 
-						if (!res.totalRecord || records.length === res.totalRecord) {// to indicate there are more
+						if (!res || !res.totalRecord || records.length === res.totalRecord) {// to indicate there are more
 							return callback(records);
 						} else {
 							searchOption.skip = searchOption.skip + searchOption.limit;

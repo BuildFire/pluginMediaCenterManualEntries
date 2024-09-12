@@ -358,10 +358,6 @@
                 updateMasterItem(ContentMedia.item);
                 ContentMedia.saving = false;
                 if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                Messaging.sendMessageToWidget({
-                  name: EVENTS.ITEMS_CHANGE,
-                  message: {}
-                });
                 buildfire.dialog.toast({
                   message: "Item updated successfully",
                   type: "success",
@@ -579,11 +575,6 @@
             Promise.all([registerAnalytics(item), SearchEngineService.insert({ ...item.data, id: item.id }), createNewDeeplink(item)])
               .then(() => {
                 ContentMedia.saving = false;
-                Messaging.sendMessageToWidget({
-                  name: EVENTS.ITEMS_CHANGE,
-                  message: {}
-                });
-
                 callback();
                 if (!$scope.$$phase) {
                   $scope.$digest();
@@ -823,8 +814,6 @@
          * done will close the single item view
          */
         ContentMedia.done = function () {
-          //console.log('Done called------------------------------------------------------------------------');
-          //Buildfire.history.pop();
           setTimeout(() => {
             Messaging.sendMessageToWidget({
               name: EVENTS.ROUTE_CHANGE,
@@ -994,10 +983,21 @@
           }
         }
 
+        ContentMedia.sendUpdatedDataToWidget = function () {
+          if (ContentMedia.item) {
+            Messaging.sendMessageToWidget({
+              name: EVENTS.ITEMS_CHANGE,
+              message: {
+                itemUpdatedData: ContentMedia.item
+              }
+            });
+          }
+        }
+
         /**
-       * ContentMedia.searchListItem() used to search items list
-       * @param value to be search.
-       */
+         * ContentMedia.searchListItem() used to search items list
+         * @param value to be search.
+         */
         ContentMedia.searchListItem = function (value) {
           searchOptions.skip = 0;
           /*reset the skip value*/
@@ -1020,15 +1020,9 @@
          * Initialize bootstrap data
          */
         init();
-        /**
-         * On rout change update the widget layout
-         */
-        // Messaging.sendMessageToWidget({
-        //   name: EVENTS.ROUTE_CHANGE,
-        //   message: {
-        //     path: PATHS.MEDIA,
-        //     id: ContentMedia.item.id || null
-        //   }
-        // });
+        
+        $scope.$watch(function () {
+					return ContentMedia.item;
+				}, ContentMedia.sendUpdatedDataToWidget, true);
       }]);
 })(window.angular, window.tinymce);

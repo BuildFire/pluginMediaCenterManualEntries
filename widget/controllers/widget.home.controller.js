@@ -274,12 +274,16 @@
                             } else {
                                 Location.go('#/nowplaying/' + item.id, true);
                             }
+                        } else {
+                            Location.go('#/media/' + item.id, true);
                         }
                     }
 
                     if (index != -1) {
                         navigate(WidgetHome.items[index]);
                         $rootScope.showGlobalPlaylistButtons = false;
+                    } else if (id === 'mockId') {
+                        navigate({ id: 'mockId' });
                     } else {
                         MediaContent.getById(id).then(function success(result) {
 
@@ -1000,7 +1004,9 @@
                                     searchOptions,
                                     COLLECTIONS.MediaCount,
                                     function (err, res) {
-                                        item.data.count = res.totalRecord;
+                                        if (err) console.error(err);
+                                        else if (res && res.totalRecord) item.data.count = res.totalRecord;
+                                        
                                         if (!$scope.$$phase && !$scope.$root.$$phase) {
                                             $scope.$apply();
                                         }

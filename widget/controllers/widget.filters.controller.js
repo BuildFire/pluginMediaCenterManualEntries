@@ -28,9 +28,6 @@
 
                 function init() {
                     WidgetFilters.isBusy = true;
-                    // if (!MediaCenterSettings.content.enableFiltering) {
-                    //     Location.goToHome();
-                    // }
                     WidgetFilters.filtersApplyButtonString = getString('filtersScreen.applyButton');
                     if ($rootScope.online) {
                         MediaCenter.get().then(function (data) {

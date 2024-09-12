@@ -39,7 +39,9 @@
                 };
 
                 buildfire.publicData.search(allCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
-                    if (res && res.totalRecord) {
+                    if (err) console.error(err);
+                    
+                    if (res && res.totalRecord && WidgetMedia) {
                         WidgetMedia.count = res.totalRecord;
                         if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
                     }
@@ -414,12 +416,7 @@
                         if (err) WidgetMedia.media = _infoData;
                         else {
                             WidgetMedia.media = res
-                            // buildfire.dialog.toast({
-                            //     message: `Found Cached media center ${WidgetMedia.media.data.content.allowOfflineDownload}`,
-                            //     type: 'warning',
-                            // });
                         }
-                        // WidgetMedia.media = _infoData;
                         $rootScope.backgroundImage = WidgetMedia.media && WidgetMedia.media.data && WidgetMedia.media.data.design && WidgetMedia.media.data.design.backgroundImage;
                         setTimeout(() => {
                             if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
@@ -484,7 +481,7 @@
                                 filter: getIndexedFilter(WidgetMedia.item.id, user._id, "Article")
                             };
                             buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
-                                console.log(res)
+                                if (!WidgetMedia) return
                                 if (res && res.length > 0) {
                                     WidgetMedia.isCounted = true;
                                 } else if (WidgetMedia.mediaType == null) {
@@ -506,6 +503,7 @@
                                         data._buildfire.index.text= WidgetMedia.item.id + "-" + $rootScope.user._id + "-Article-true";
                                     }
                                     buildfire.publicData.insert(data, COLLECTIONS.MediaCount, false, function (err, res) {
+                                        if (!WidgetMedia) return;
                                         WidgetMedia.isCounted = true;
                                         sendArticleAnalytics(WidgetMedia);
                                     })
@@ -586,7 +584,7 @@
                     }
                 };
 
-                Messaging.onReceivedMessage(function (event) {
+                Messaging.onReceivedMessage = (event) => {
                     if (event) {
                         switch (event.name) {
                             case EVENTS.ROUTE_CHANGE:
@@ -606,9 +604,18 @@
                                 }
                                 Location.go(url);
                                 break;
+                            case EVENTS.ITEMS_CHANGE:
+                                WidgetMedia.item = event.message.itemUpdatedData;
+                                WidgetMedia.changeVideoSrc();
+                                break;
                         }
+
+                        if (!$scope.$$phase) {
+							$scope.$apply();
+							$scope.$digest();
+						}
                     }
-                });
+                };
 
                 WidgetMedia.onUpdateFn = Buildfire.datastore.onUpdate(function (event) {
                     buildfire.components.drawer.closeDrawer();
@@ -909,33 +916,11 @@
                     }
                 });
 
-                //Sync with Control section
-                Messaging.sendMessageToControl({
-                    name: EVENTS.ROUTE_CHANGE,
-                    message: {
-                        path: PATHS.MEDIA,
-                        id: WidgetMedia.item.id || null
-                    }
-                });
-
-                /**
-                 * Implementation of pull down to refresh
-                 */
-                var onRefresh = Buildfire.datastore.onRefresh(function () {
-                });
-
-                /**
-                 * Unbind the onRefresh
-                 */
                 $scope.$on('$destroy', function () {
-                    onRefresh.clear();
                     if (WidgetMedia && WidgetMedia.clearCountdown) {
                         WidgetMedia.clearCountdown();
                     }
-                    WidgetMedia = null;
-                    Buildfire.datastore.onRefresh(function () {
-                        Location.goToHome();
-                    });
+                    Location.goToHome();
                 });
 
                 $rootScope.$watch('goingBackFullScreen', function () {

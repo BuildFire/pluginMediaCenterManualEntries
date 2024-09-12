@@ -224,18 +224,6 @@
                     && !ContentHome.info.data.content.updatedRecords) {
                     ContentHome.updateRecords(ContentHome.info.data.content.sortBy);
                 }
-              
-                ContentHome.goTo = function (id) {
-                    console.log(id);
-                    Location.go('#media/' + id);
-                    Messaging.sendMessageToWidget({
-                        name: EVENTS.ROUTE_CHANGE,
-                        message: {
-                            path: PATHS.MEDIA,
-                            id: id || null
-                        }
-                    });
-                };
 
                 function updateMasterInfo(info) {
                     ContentHome.masterInfo = angular.copy(info);

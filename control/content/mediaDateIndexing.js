@@ -36,7 +36,6 @@ function indexOldMediaDate(callback) {
 
 function indexMediaContent(page,callback) {
     buildfire.datastore.search({pageSize:50,page:page,recordCount: true}, "MediaContent", function (err, data) {
-        //var totalRecords = data.totalRecord;
         if(err || !data){
             return callback(false);
         }

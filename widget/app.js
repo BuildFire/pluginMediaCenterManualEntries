@@ -60,7 +60,24 @@
                                 fileName: "downloadedMedia"
                             });
                             if (mediaId) {
-                                if (isOnline) {
+                                if (mediaId === 'mockId') {
+                                    deferred.resolve({id: 'mockId', data: {
+                                        audioUrl: "",
+                                        body: "",
+                                        bodyHTML: "",
+                                        image: "",
+                                        links: [],
+                                        mediaDate: "",
+                                        mediaDateIndex: "",
+                                        rank: "",
+                                        srcUrl: "",
+                                        summary: "",
+                                        title: "",
+                                        topImage: "",
+                                        videoUrl: "",
+
+                                    }});
+                                } else if (isOnline) {
                                     MediaContent.getById($route.current.params.mediaId).then(function success(result) {
                                         if (result && result.data) {
                                             if (!isWeb) {
@@ -120,11 +137,8 @@
                                                     }
                                                     deferred.resolve(result);
                                                 });
-                                            }
-                                            else
-                                                deferred.resolve(result);
-                                        }
-                                        else {
+                                            } else deferred.resolve(result);
+                                        } else {
                                             Location.goToHome();
                                         }
                                     },
@@ -132,9 +146,7 @@
                                             Location.goToHome();
                                         }
                                     );
-                                }
-
-                                else {
+                                } else {
                                     CachedMediaContent.getById(mediaId, (err, result) => {
                                         if (err) {
                                             buildfire.dialog.toast({
@@ -175,8 +187,7 @@
                                         }
                                     })
                                 }
-                            }
-                            else {
+                            } else {
                                 buildfire.dialog.toast({
                                     message: "Mediaid not in params",
                                 });

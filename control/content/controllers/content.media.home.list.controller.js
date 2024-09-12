@@ -8,11 +8,15 @@
 			'$rootScope',
 			'Orders',
 			'DB',
+			'Location',
+			'Messaging',
+			'EVENTS',
+			'PATHS',
 			'SearchEngine',
 			'COLLECTIONS',
 			'AppConfig',
 			'$csv',
-			function ($scope, $rootScope, Orders, DB, SearchEngine, COLLECTIONS, AppConfig, $csv) {
+			function ($scope, $rootScope, Orders, DB, Location, Messaging, EVENTS, PATHS, SearchEngine, COLLECTIONS, AppConfig, $csv) {
 				const MediaContent = new DB(COLLECTIONS.MediaContent);
 				const MediaCenter = new DB(COLLECTIONS.MediaCenter);
 				const SearchEngineService = new SearchEngine(COLLECTIONS.MediaContent);
@@ -329,7 +333,15 @@
 					if (itemId) {
 						newPath += `/${itemId}`;
 					}
-					window.location.href = newPath;
+					
+					Location.go(newPath);
+					Messaging.sendMessageToWidget({
+						name: EVENTS.ROUTE_CHANGE,
+						message: {
+							path: PATHS.MEDIA,
+							id: itemId || 'mockId',
+						}
+					});
 				};
 
 				$scope.initList('#mediaList');
@@ -484,7 +496,7 @@
 					MediaContent.find({...searchOption, recordCount: true}).then(function (res) {
 						const result = res.result;
 						records = result && result.length ? records.concat(result) : records;
-						if (!res.totalRecord || records.length === res.totalRecord) {// to indicate there are more
+						if (!res || !res.totalRecord || records.length === res.totalRecord) {// to indicate there are more
 							return callback(records);
 						} else {
 							searchOption.skip = searchOption.skip + searchOption.limit;
