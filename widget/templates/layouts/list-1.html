@@ -49,7 +49,7 @@
                                 <div class="li-actions-item">
                                     <i id="drawericon" style="right: 0;" class="glyphicon glyphicon-option-horizontal" ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
                                 </div>
-                                <img ng-if="item.data.topImage" load-image="16x9" crop-width="240" crop-height="135" crop-type="crop" data-final-src="{{item.data.topImage | resizeImage : 240:135}}">
+                                <img ng-if="item.data.topImage" load-image="16x9" crop-width="240" crop-height="135" crop-type="crop" data-final-src="{{item.data.topImage}}">
                                 <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png" style="max-width:100%">
                             </div>
                         </div>

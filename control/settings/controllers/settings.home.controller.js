@@ -3,7 +3,7 @@
 	'use strict';
 	angular
 		.module('mediaCenterDesign')
-		.controller('SettingsCtrl', ['$scope', 'COLLECTIONS', 'PLAYLISTINSTANCES', 'DB', 'Messaging', function ($scope, COLLECTIONS, PLAYLISTINSTANCES, DB, Messaging) {
+		.controller('SettingsCtrl', ['$scope', 'COLLECTIONS', 'EVENTS', 'PLAYLISTINSTANCES', 'DB', 'Messaging', function ($scope, COLLECTIONS, EVENTS, PLAYLISTINSTANCES, DB, Messaging) {
 			const Settings = this;
 			Settings.data = {};
 			Settings.lastSavedContent = {};
@@ -114,6 +114,7 @@
                 
 				if (Settings.data.content.forceAutoPlay) {
 					Settings.data.content.autoPlay = false;
+					Settings.data.content.globalPlaylist = false;
 				}
 
 				if (Settings.data.content.autoPlay) {
@@ -149,10 +150,21 @@
 					);
 				}
 
+				$scope.syncWithWidget();
+
 				if ($scope.saveTimer) clearTimeout($scope.saveTimer);
 				$scope.saveTimer = setTimeout(() => {
 					Settings.setSettings();
 				}, 500);
+			};
+
+			$scope.syncWithWidget = () => {
+				Messaging.sendMessageToWidget({
+					name: EVENTS.SETTINGS_CHANGE,
+					message: {
+						itemUpdatedData: Settings.data.content
+					}
+				});
 			};
 
 			$scope.setupSettingsWatch = () => {

@@ -971,6 +971,26 @@
                     });
                 };
 
+                function setupImages(records) {
+                    records.forEach((record) => {
+                        if (record.data.image) {
+                            const img = new Image();
+                            const img2 = new Image();
+                            img.src = buildfire.imageLib.resizeImage(record.data.image, { size: '1080', aspect: '16:9' });
+                            img2.src = buildfire.imageLib.resizeImage(record.data.image, { size: '260', aspect: '1:1' });
+                        }
+                        if (record.data.topImage) {
+                            const img = new Image();
+                            const img2 = new Image();
+                            const img3 = new Image();
+                            img.src = buildfire.imageLib.resizeImage(record.data.topImage, { size: '260', aspect: '1:1' });
+                            img2.src = buildfire.imageLib.resizeImage(record.data.topImage, { size: '55', aspect: '1:1' });
+                            img3.src = buildfire.imageLib.resizeImage(record.data.topImage, { size: '1080', aspect: '16:9' });
+                        }
+                    })
+                    
+                }
+
 
                 WidgetHome.loadMore = () => {
 
@@ -988,6 +1008,7 @@
                                 item.data.image = DropboxLinksManager.convertDropbox(item.data.image);
                                 return item;
                             });
+                            setupImages(result);
                             WidgetHome.items = WidgetHome.items.concat(result);
                             WidgetHome.items.forEach((item) => {
                                 var searchOptions = {

@@ -6,7 +6,7 @@
         <div class="media-holder">
             <div class="media-inner text-center">
                 <img ng-if="NowPlaying.currentTrack.topImage && NowPlaying.isOnline" load-image="1x1" crop-width="260" crop-height="260"
-                    crop-type="crop" data-final-src="{{NowPlaying.currentTrack.topImage | resizeImage : 260:260}}" alt="{{NowPlaying.currentTrack.title}} top image">
+                    crop-type="crop" data-final-src="{{NowPlaying.currentTrack.topImage}}" alt="{{NowPlaying.currentTrack.title}} top image">
                 <img ng-if="NowPlaying.currentTrack.topImage && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.topImage}}" alt="{{NowPlaying.currentTrack.title}} top image">
                 <img ng-if="!NowPlaying.currentTrack.topImage" src="./assets/images/now-playing.png" alt="top image">
             </div>
@@ -59,8 +59,8 @@
                     </defs>
                 </svg>
                 <span class="shuffle-indicator" ng-if="(((audioFromPlayList===null || audioFromPlayList===undefined) && NowPlaying.settings.shufflePluginList) || (audioFromPlayList!==null && audioFromPlayList!==undefined && NowPlaying.settings.shufflePlaylist))">
-                    <span class="shuffle-indicator-text" ng-if="audioFromPlayList===null || audioFromPlayList===undefined">A</span>
-                    <span class="shuffle-indicator-text" ng-if="audioFromPlayList!==null && audioFromPlayList!==undefined">P</span>
+                    <span class="shuffle-indicator-text" ng-if="audioFromPlayList===null || audioFromPlayList===undefined" bfString="mediaPlayer.shuffleAllItemsIndicator">A</span>
+                    <span class="shuffle-indicator-text" ng-if="audioFromPlayList!==null && audioFromPlayList!==undefined" bfString="mediaPlayer.shufflePlaylistItemsIndicator">P</span>
                 </span>
             </span>
                 
@@ -82,7 +82,7 @@
                         src="assets/css/icons/ic_fast_forward.svg" alt=""></span>
                 <span ng-if="autoPlay" class="btn btn-icon" ng-click="NowPlaying.next()"><i style="font-size: 18px; color: #D7D7D8;" class="glyphicon glyphicon-step-forward" role="button"></i></span>
             </div>
-            <span class="icon icon-sm" ng-click="NowPlaying.loopPlaylist()">
+            <span ng-class="globalPlaylist && 'disabled'" class="icon icon-sm" ng-click="NowPlaying.loopPlaylist()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <g opacity="0.9" clip-path="url(#clip0_1431_2881)">
                         <path d="M7 7H17V10L21 6L17 2V5H5V11H7V7ZM17 17H7V14L3 18L7 22V19H19V13H17V17Z" 
@@ -203,7 +203,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="item clearfix row">
+                    <div class="item clearfix row" ng-if="!globalPlaylist">
                         <div class="col-md-10 pull-left text-left">
                             <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.loopPlaylist}}</span>
                         </div>
@@ -215,7 +215,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="item clearfix row" ng-if="!NowPlaying.forceAutoPlay">
+                    <div class="item clearfix row" ng-if="!NowPlaying.forceAutoPlay && !NowPlaying.autoJumpToLastPosition">
                         <div class="col-md-10 pull-left text-left">
                             <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.autoJumpToLastPositon}}</span>
                         </div>

@@ -66,8 +66,8 @@
         </span>
     </label>
     <div class="button-switch col-md-9 flex flex-justify-end">
-        <input id="playAllAudioSwitch" type="checkbox" ng-model="Settings.data.content.forceAutoPlay" ng-class="{'disabled': Settings.data.content.autoPlay}">
-        <label for="playAllAudioSwitch" class="label-success" ng-class="{'disabled': Settings.data.content.autoPlay}"></label>
+        <input id="playAllAudioSwitch" type="checkbox" ng-model="Settings.data.content.forceAutoPlay" ng-class="{'disabled': Settings.data.content.autoPlay || Settings.data.content.globalPlaylist}">
+        <label for="playAllAudioSwitch" class="label-success" ng-class="{'disabled': Settings.data.content.autoPlay || Settings.data.content.globalPlaylist}"></label>
     </div>
 </div>
 
@@ -118,8 +118,8 @@
         </span>
     </label>
     <div class="button-switch col-md-9 flex flex-justify-end">
-        <input id="globalPlaylistSwitch" type="checkbox" ng-model="Settings.data.content.globalPlaylist">
-        <label for="globalPlaylistSwitch" class="label-success"></label>
+        <input id="globalPlaylistSwitch" type="checkbox" ng-model="Settings.data.content.globalPlaylist" ng-class="{'disabled': Settings.data.content.forceAutoPlay}">
+        <label for="globalPlaylistSwitch" class="label-success" ng-class="{'disabled': Settings.data.content.forceAutoPlay}"></label>
     </div>
 </div>
 

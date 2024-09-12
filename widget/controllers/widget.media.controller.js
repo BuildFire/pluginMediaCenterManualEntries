@@ -144,7 +144,7 @@
                         listItems.push({ id: "openLinks", text: getString("itemDrawer.openLinks") });
                     }
 
-                    if (WidgetMedia.media.data.content.globalPlaylist && $rootScope.online) {
+                    if (WidgetMedia.media.data.content.globalPlaylist && $rootScope.online && (WidgetMedia.item.data.videoUrl || WidgetMedia.item.data.audioUrl)) {
                         if ($rootScope.isInGlobalPlaylist(WidgetMedia.item.id)) {
                             listItems.push({ id: "removeFromPlaylist", text: getString("itemDrawer.removeFromPlaylist") });
                         }
@@ -889,6 +889,17 @@
                     Buildfire.navigation.openWindow(link, '_system');
                 };
 
+                //Sync with Control section
+                if (WidgetMedia.item.id !== 'mockId') {
+                    Messaging.sendMessageToControl({
+                        name: EVENTS.ROUTE_CHANGE,
+                        message: {
+                            path: PATHS.MEDIA,
+                            id: WidgetMedia.item.id || null
+                        }
+                    });
+                }
+
                 var initializing = true;
                 $scope.$watch(function () {
                     return WidgetMedia.item.data.videoUrl;
@@ -911,12 +922,6 @@
                 });
                 $scope.$on("$destroy", function () {
                     WidgetMedia.onUpdateFn.clear();
-                    if (WidgetMedia && WidgetMedia.clearCountdown) {
-                        WidgetMedia.clearCountdown();
-                    }
-                });
-
-                $scope.$on('$destroy', function () {
                     if (WidgetMedia && WidgetMedia.clearCountdown) {
                         WidgetMedia.clearCountdown();
                     }

@@ -51,6 +51,15 @@ class Analytics {
         });
     }
 
+    static bulkUnRegisterEvents(keys = []) {
+        return new  Promise((resolve, reject) => {
+            buildfire.analytics.bulkUnregisterEvents(keys, (err, res) => {
+                if (err) return reject(err);
+                resolve(res);
+            });
+        });
+    }
+
     static unregisterEvent(key) {
         if (!key) {
             return console.error("Missing Data");

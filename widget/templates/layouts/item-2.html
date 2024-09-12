@@ -12,7 +12,7 @@
                                          data-ng-hide="WidgetMedia.showVideo">
                                         <img ng-if="WidgetMedia.item.data.topImage" data-ng-hide="skipMediaPage && WidgetMedia.item.data.videoUrl" load-image="16x9" style="width: 161px;height: 91px;"
                                              crop-width="161" crop-height="91" crop-type="crop"
-                                             data-final-src="{{WidgetMedia.item.data.topImage | resizeImage : 161:91}}" alt="{{WidgetMedia.item.data.title}} top image">
+                                             data-final-src="{{WidgetMedia.item.data.topImage}}" alt="{{WidgetMedia.item.data.title}} top image">
                                         <img ng-if="!WidgetMedia.item.data.topImage" style="width: 161px;height: 91px;"
                                              crop-width="161" crop-height="91" crop-type="crop"
                                              src="../../../styles/media/holder-16x9.png" alt="top image">

@@ -53,7 +53,7 @@
                             <i class="share glyphicon glyphicon-share-alt" style="color: white !important;" ng-if="allowShare" ng-click="WidgetHome.share($event, item)" role="button"></i>
                         </div> -->
                         <img ng-if="item.data.topImage" load-image="16x9" crop-width="110" crop-height="60"
-                            crop-type="crop" data-final-src="{{item.data.topImage | resizeImage : 110:60}}">
+                            crop-type="crop" data-final-src="{{item.data.topImage}}">
                         <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png">
                     </div>
 

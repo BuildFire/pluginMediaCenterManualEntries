@@ -1589,3 +1589,8 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
 .playList-icon{
 	filter: unset !important;
 }
+
+.disabled {
+	pointer-events: none;
+	opacity: 0.5;
+}

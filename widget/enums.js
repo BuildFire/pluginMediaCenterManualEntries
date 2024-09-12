@@ -21,6 +21,7 @@
             DESIGN_BGIMAGE_CHANGE: "DESIGN_BGIMAGE_CHANGE",
             ITEMS_CHANGE: "ITEMS_CHANGE",
             CATEGORIES_CHANGE: "CATEGORIES_CHANGE",
+            SETTINGS_CHANGE: "SETTINGS_CHANGE",
         })
         .constant('COLLECTIONS', {
             MediaContent: "MediaContent",

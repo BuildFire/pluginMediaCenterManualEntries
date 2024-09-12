@@ -220,7 +220,6 @@
 					return ContentCategory.item.data.icon && ContentCategory.item.data.icon.indexOf('http') === -1;
 				};
 
-				// TODO: check update function below
 				ContentCategory.updateItem = function () {
 					if (!ContentCategory.item.data.name) return $scope.titleRequired = true;
 					ContentCategory.saving = true;
@@ -301,6 +300,7 @@
 							e.preventDefault();
 							if (!subcategoryNameInput.value) {
 								subcategoryNameInputError.classList.remove('hidden');
+								subcategoryNameInput.classList.add('border-danger');
 								return;
 							}
 
@@ -318,6 +318,7 @@
 
 							subcategoryNameInput.value = '';
 							subcategoryNameInputError.classList.add('hidden');
+							subcategoryNameInput.classList.remove('border-danger');
 							subcategoryDialog.close();
 
 							ContentCategory.searchSubcategories();

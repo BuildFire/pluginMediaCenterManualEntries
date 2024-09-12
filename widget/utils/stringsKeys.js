@@ -1,4 +1,7 @@
 let stringsKeys = {
+    'mediaPlayer.shuffleAllItemsConfirmation': '',
+    'mediaPlayer.shufflePlaylistItemsConfirmation': '',
+    'mediaPlayer.shuffleOffConfirmation': '',
     'playlist.goToPlaylist': '',
     'playlist.addToPlaylist': '',
     'playlist.removeFromPlaylist': '',

@@ -320,8 +320,7 @@
             isAnalyticDataChanged = true;
           }
 
-          // TODO: this should be reviewed
-          if (isAnalyticDataChanged) {
+          if (isAnalyticDataChanged && MediaCenterSettings.content.showViewCount) {
             Buildfire.dialog.confirm(
               {
                 title: "Data Changed",
@@ -332,46 +331,40 @@
                 }
               },
               (err, isConfirmed) => {
-                updateData();
                 if (isConfirmed) {
-                  registerEventAnalyticsIfAny(true)
+                  unregisterEventAnalyticsIfAny(true);
                 } else {
-                  registerEventAnalyticsIfAny(false)
+                  unregisterEventAnalyticsIfAny(false);
                 }
               }
             )
+          } else if (isAnalyticDataChanged) {
+            unregisterEventAnalyticsIfAny(true);
           } else {
             updateData();
           }
+        }
 
-          function updateData() {
-            MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then((data) => {
+        function updateData() {
+          MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then((data) => {
 
-              const promises = [registerAnalytics(ContentMedia.item, createNewDeeplink(ContentMedia.item))];
-              if (ContentMedia.item.data.searchEngineId) {
-                promises.push(SearchEngineService.update(ContentMedia.item.data.searchEngineId, ContentMedia.item.data));
-              } else {
-                promises.push(SearchEngineService.insert({ ...ContentMedia.item.data, id: ContentMedia.item.id }));
-              }
+            const promises = [registerAnalytics(ContentMedia.item, createNewDeeplink(ContentMedia.item))];
+            if (ContentMedia.item.data.searchEngineId) {
+              promises.push(SearchEngineService.update(ContentMedia.item.data.searchEngineId, ContentMedia.item.data));
+            } else {
+              promises.push(SearchEngineService.insert({ ...ContentMedia.item.data, id: ContentMedia.item.id }));
+            }
 
-              Promise.all(promises).then(() => {
-                updateMasterItem(ContentMedia.item);
-                ContentMedia.saving = false;
-                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                buildfire.dialog.toast({
-                  message: "Item updated successfully",
-                  type: "success",
-                });
-                ContentMedia.done();
-              }).catch((err) => {
-                console.error(err);
-                resetItem();
-                return buildfire.dialog.toast({
-                  message: "Error while updating",
-                  type: "danger",
-                });
+            Promise.all(promises).then(() => {
+              updateMasterItem(ContentMedia.item);
+              ContentMedia.saving = false;
+              if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+              buildfire.dialog.toast({
+                message: "Item updated successfully",
+                type: "success",
               });
-            }, (err) => {
+              ContentMedia.done();
+            }).catch((err) => {
               console.error(err);
               resetItem();
               return buildfire.dialog.toast({
@@ -379,144 +372,31 @@
                 type: "danger",
               });
             });
-          }
+          }, (err) => {
+            console.error(err);
+            resetItem();
+            return buildfire.dialog.toast({
+              message: "Error while updating",
+              type: "danger",
+            });
+          });
         }
 
-
-        function registerEventAnalyticsIfAny(isResetConfirmed) {
-          if (isResetConfirmed) {
+        function unregisterEventAnalyticsIfAny(deleteViews) {
+          if (deleteViews) {
             removeViews(media.id, "VIDEO");
             removeViews(media.id, "AUDIO");
             removeViews(media.id, "Article");
           }
-          //For Video
-          if (ContentMedia.dbItem.videoUrl != "" && ContentMedia.item.data.videoUrl == "") {
-            Analytics.unregisterEvent(ContentMedia.item.id + "_videoPlayCount");
-            Analytics.unregisterEvent(ContentMedia.item.id + "_continuesVideoPlayCount");
-          } // If There was a video and removed
-          else if ((ContentMedia.dbItem.videoUrl == "" && ContentMedia.item.data.videoUrl != "") ||
-            (ContentMedia.item.data.videoUrl != "" && ContentMedia.dbItem.title != ContentMedia.item.data.title)) {
-
-            if (isResetConfirmed) {
-              buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_videoPlayCount", (err, res) => {
-                if (err) return reject(err);
-                registerVideoEvent();
-              });
-              buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_continuesVideoPlayCount", (err, res) => {
-                if (err) return reject(err);
-                registerContinuesVideoEvent();
-              });
-            } else {
-              registerVideoEvent();
-              registerContinuesVideoEvent();
-            }
-
-          } // Video Was Empty and Added new one Or There is a video and title only changes
-
-          //Audio
-          if (ContentMedia.dbItem.audioUrl != "" && ContentMedia.item.data.audioUrl == "") { //here
-            Analytics.unregisterEvent(ContentMedia.item.id + "_audioPlayCount");
-            Analytics.unregisterEvent(ContentMedia.item.id + "_continuesAudioPlayCount");
-          }
-          else if ((ContentMedia.dbItem.audioUrl == "" && ContentMedia.item.data.audioUrl != "") ||
-            (ContentMedia.item.data.audioUrl != "" && ContentMedia.dbItem.title != ContentMedia.item.data.title)) {
-            if (isResetConfirmed) {
-              buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_audioPlayCount", (err, res) => {
-                if (err) return reject(err);
-                registerAudioEvent();
-              });
-              buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_continuesAudioPlayCount", (err, res) => {
-                if (err) return reject(err);
-                registerContinuesAudioEvent();
-              });
-            } else {
-              registerAudioEvent();
-              registerContinuesAudioEvent();
-            }
-          } // Audio was empty and added new one Or There is a video and title only changes
-
-
-          // For Article
-          if (ContentMedia.item.data.audioUrl != "" || ContentMedia.item.data.videoUrl != "") {
-            Analytics.unregisterEvent(ContentMedia.item.id + "_articleOpenCount");
-            Analytics.unregisterEvent(ContentMedia.item.id + "_continuesArticleOpenCount");
-          }
-          else if (ContentMedia.item.data.audioUrl == "" && ContentMedia.item.data.videoUrl == "") {
-            if (isResetConfirmed) {
-              buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_articleOpenCount", (err, res) => {
-                if (err) return reject(err);
-                registerArticleEvent();
-              });
-              buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_continuesArticleOpenCount", (err, res) => {
-                if (err) return reject(err);
-                registerContinuesArticleEvent();
-              });
-            } else {
-              registerArticleEvent();
-              registerContinuesArticleEvent();
-            }
-          }
-        }
-
-        function registerAudioEvent() {
-          Analytics.registerEvent(
-            {
-              title: ContentMedia.item.data.title + " Audio Play Count",
-              key: ContentMedia.item.id + "_audioPlayCount",
-              description: "Audio Play Count",
-            },
-            { silentNotification: true }
-          );
-        }
-        function registerContinuesAudioEvent() {
-          Analytics.registerEvent(
-            {
-              title: ContentMedia.item.data.title + " Continues Audio Play Count",
-              key: ContentMedia.item.id + "_continuesAudioPlayCount",
-              description: "Continues Audio Play Count",
-            },
-            { silentNotification: true }
-          );
-        }
-        function registerVideoEvent() {
-          Analytics.registerEvent(
-            {
-              title: ContentMedia.item.data.title + " Video Play Count",
-              key: ContentMedia.item.id + "_videoPlayCount",
-              description: "Video Play Count",
-            },
-            { silentNotification: true }
-          );
-        }
-        function registerContinuesVideoEvent() {
-          Analytics.registerEvent(
-            {
-              title: ContentMedia.item.data.title + " Continues Video Play Count",
-              key: ContentMedia.item.id + "_continuesVideoPlayCount",
-              description: "Continues Video Play Count",
-            },
-            { silentNotification: true }
-          );
-        }
-        function registerArticleEvent() {
-          Analytics.registerEvent(
-            {
-              title: ContentMedia.item.data.title + " Article Open Count",
-              key: ContentMedia.item.id + "_articleOpenCount",
-              description: "Article Open Count",
-            },
-            { silentNotification: true }
-          );
-        }
-        function registerContinuesArticleEvent() {
-          Analytics.registerEvent(
-            {
-              title: ContentMedia.item.data.title + " Continues Article Open Count",
-              key: ContentMedia.item.id + "_continuesArticleOpenCount",
-              description: "Continues Article Open Count",
-            },
-            { silentNotification: true }
-          );
+          unregisterAnalytics(ContentMedia.item).then(() => {
+            updateData();
+          }).catch((err) => {
+            console.error(err);
+            return buildfire.dialog.toast({
+              message: "Error while updating",
+              type: "danger",
+            });
+          });
         }
 
         function removeViews(mediaId, mediaType) {
@@ -643,6 +523,38 @@
             }
 
             Analytics.bulkRegisterEvents(events, { silentNotification: true }).then(() => {
+              resolve();
+            }).catch((err) => {
+              reject(err);
+            });
+          });
+        }
+
+        function unregisterAnalytics(item) {
+          return new Promise((resolve, reject) => {
+            let eventKeys = [];
+            if (item.data.videoUrl) {
+              eventKeys.push(item.id + "_videoPlayCount");
+              eventKeys.push(item.id + "_continuesVideoPlayCount");
+
+              if (MediaCenterSettings.content.allowOfflineDownload) {
+                eventKeys.push(item.id + "_downloads");
+              }
+            }
+            if (item.data.audioUrl) {
+              eventKeys.push(item.id + "_audioPlayCount");
+              eventKeys.push(item.id + "_continuesAudioPlayCount");
+
+              if (MediaCenterSettings.content.allowOfflineDownload) {
+                eventKeys.push(item.id + "_downloads");
+              }
+            }
+            if (!item.data.videoUrl && !item.data.audioUrl) {
+              eventKeys.push(item.id + "_articleOpenCount");
+              eventKeys.push(item.id + "_continuesArticleOpenCount");
+            }
+
+            Analytics.bulkUnRegisterEvents(eventKeys).then(() => {
               resolve();
             }).catch((err) => {
               reject(err);

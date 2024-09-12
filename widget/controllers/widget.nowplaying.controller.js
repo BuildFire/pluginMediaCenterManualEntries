@@ -417,12 +417,16 @@
 				};
 
 				NowPlaying.shufflePlaylist = function () {
+					let toastMessage;
 					if (typeof $rootScope.audioFromPlayList === 'number') {
 						NowPlaying.settings.shufflePlaylist = !NowPlaying.settings.shufflePlaylist;
+						toastMessage = NowPlaying.settings.shufflePlaylist ? getString('mediaPlayer.shufflePlaylistItemsConfirmation') : getString('mediaPlayer.shuffleOffConfirmation');
 					} else {
 						NowPlaying.settings.shufflePluginList = !NowPlaying.settings.shufflePluginList;
+						toastMessage = NowPlaying.settings.shufflePluginList ? getString('mediaPlayer.shuffleAllItemsConfirmation') : getString('mediaPlayer.shuffleOffConfirmation');
 					}
 					audioPlayer.settings.set(NowPlaying.settings);
+					buildfire.dialog.toast({ message: toastMessage, type: 'info' });
 
 					if (!$scope.$$phase) {
 						$scope.$digest();
