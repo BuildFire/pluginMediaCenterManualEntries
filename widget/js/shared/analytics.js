@@ -1,11 +1,9 @@
 class Analytics {
-  
-
-    static trackAction = (eventName, metaData) => {
+    static trackAction(eventName, metaData) {
         buildfire.analytics.trackAction(eventName, metaData);
     }
 
-    static registerEvent = (event = {}, options = {}) => {
+    static registerEvent(event = {}, options = {}) {
         var _event = {
             title: event.title || null,
             key: event.key || undefined,
@@ -28,7 +26,7 @@ class Analytics {
         });
     }
 
-    static bulkRegisterEvents = (events = [], options = {}) => {
+    static bulkRegisterEvents(events = [], options = {}) {
         return new Promise((resolve, reject) => {
             const _events = events.map(event => {
                 return {
@@ -53,7 +51,7 @@ class Analytics {
         });
     }
 
-    static unregisterEvent = (key) => {
+    static unregisterEvent(key) {
         if (!key) {
             return console.error("Missing Data");
         }
@@ -66,7 +64,7 @@ class Analytics {
         });
     }
 
-    static showReports = (options = {}) => {
+    static showReports(options = {}) {
         var _options = {
             eventKey: options.eventKey || undefined,
         };

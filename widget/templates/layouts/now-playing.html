@@ -229,18 +229,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="item clearfix row">
+                    <div class="item clearfix row" ng-if="!NowPlaying.forceAutoPlay">
                         <div class="col-md-10 pull-left text-left" >
                             <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.shufflePlaylist}}</span>
                         </div>
                         <div class="col-md-2 pull-right text-right">
-                            <div ng-if="audioFromPlayList!==null && audioFromPlayList!==undefined" class="checkbox checkbox-primary checked no-label margin-zero">
+                            <div class="checkbox checkbox-primary checked no-label margin-zero">
                                 <input type="checkbox" id="playfromLast" ng-model="NowPlaying.settings.shufflePlaylist"
-                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)">
-                                <label for="playfromLast"></label>
-                            </div>
-                            <div ng-if="audioFromPlayList===null || audioFromPlayList===undefined" class="checkbox checkbox-primary checked no-label margin-zero">
-                                <input type="checkbox" id="playfromLast" ng-model="NowPlaying.settings.shufflePluginList"
                                     ng-change="NowPlaying.setSettings(NowPlaying.settings)">
                                 <label for="playfromLast"></label>
                             </div>
