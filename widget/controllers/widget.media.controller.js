@@ -610,6 +610,7 @@
                                 break;
                         }
 
+                        WidgetMedia.ApplayUpdates();
                         if (!$scope.$$phase) {
 							$scope.$apply();
 							$scope.$digest();
@@ -702,20 +703,22 @@
                 });
 
                 WidgetMedia.playAudio = function () {
-                    Location.go('#/nowplaying/' + WidgetMedia.item.id, true);
+                    let mediaId = WidgetMedia.item.id;
+                    if (!mediaId) return;
+                    Location.go('#/nowplaying/' + mediaId, false);
                 }
 
                 WidgetMedia.ApplayUpdates = function () {
                     if ($rootScope.skipMediaPage && !WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl) {
                         if (WidgetMedia.showVideo) {
                             WidgetMedia.showVideo = false;
-                            WidgetMedia.API.pause();
+                            if(WidgetMedia.API) WidgetMedia.API.pause();
                         }
                         WidgetMedia.playAudio();
                     } else if ($rootScope.autoPlay && !WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl) {
                         if (WidgetMedia.showVideo) {
                             WidgetMedia.showVideo = false;
-                            WidgetMedia.API.pause();
+                            if(WidgetMedia.API) WidgetMedia.API.pause();
                         }
                         WidgetMedia.playAudio()
                     }
@@ -726,7 +729,7 @@
                         WidgetMedia.showVideo = true;
                     } else {
                         WidgetMedia.showVideo = false;
-                        WidgetMedia.API.pause();
+                        if(WidgetMedia.API) WidgetMedia.API.pause();
                     }
                 };
 
