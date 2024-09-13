@@ -19,7 +19,7 @@
 
 			MediaCenter.get().then((getData) => {
 				Settings.data = getData.data;
-				Settings.lastSavedContent = angular.copy(Settings.data.content);
+				Settings.lastSavedContent = angular.copy(Settings.data);
 
 				if (typeof (Settings.data.content.allowShare) == 'undefined')
 					Settings.data.content.allowShare = true;
@@ -71,11 +71,11 @@
 			});
 
 			Settings.setSettings = () => {
-				const isUnchanged = angular.equals(Settings.lastSavedContent, Settings.data.content);
+				const isUnchanged = angular.equals(Settings.lastSavedContent, Settings.data);
 				if (isUnchanged) return;
 
 				MediaCenter.save(Settings.data).then(() => {
-					Settings.lastSavedContent = angular.copy(Settings.data.content);
+					Settings.lastSavedContent = angular.copy(Settings.data);
 					Messaging.sendMessageToWidget({ cmd: 'settings', data: Settings.data });
 				}).catch((err) => {
 					console.error(err);
@@ -96,8 +96,8 @@
 							Settings.data.content.globalPlaylistPlugin = instances[0];
 						} else {
 							buildfire.dialog.toast({
-								message: 'Please select the correct paylist plugin',
-								type: 'warning',
+								message: 'Please select the correct playlist plugin',
+								type: 'danger',
 							});
 						}
 					}
@@ -118,7 +118,7 @@
 				}
 
 				if (Settings.data.content.autoPlay) {
-					Settings.data.content.skipMediaPage = true;
+					Settings.data.design.skipMediaPage = true;
 				}
 
 				const actionItemAddBtn = document.getElementById('actionItemAddBtn');

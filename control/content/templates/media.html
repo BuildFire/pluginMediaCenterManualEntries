@@ -74,7 +74,27 @@
     </template>
     <h1>Item Content Details</h1>
 
-    <div id="thumbnailImage"></div>
+    <div class="row flex thumbnail-image-selector">
+        <div class="col-md-3">
+            <span>Thumbnail Image</span>
+        </div>
+        <div class="col-md-9 main ">
+            <div class="screens clearfix margin-bottom-zero">
+                <div class="screen pull-left">
+                    <a class="border-grey border-radius-three default-background-hover"
+                        style="width: 122px; height: 90px; display: flex; align-items: center; justify-content: center;"
+                        ng-click="ContentMedia.addListImage()">
+                        <span ng-if="!ContentMedia.item.data.topImage" class="add-icon" style="height: 85%;">+</span>
+                        <img ng-if="ContentMedia.item.data.topImage" ng-src="{{ContentMedia.item.data.topImage | resizeImage : 122:90}}">
+                    </a>
+                    <span ng-if="ContentMedia.item.data.topImage"
+                        class="icon btn-delete-icon btn-danger transition-third"
+                        ng-click="ContentMedia.removeListImage()"></span>
+                </div>
+            </div>
+            <p class="caption text-small">Recommended: 1200x675</p>
+        </div>
+    </div>
 
     <hr class="none">
     <div class="item clearfix row" id="titleInput">
@@ -164,7 +184,29 @@
         </div>
     </div>
     <hr class="none">
-    <div id="audioImage"></div>
+    
+    <div class="row flex audio-image-selector">
+        <div class="col-md-3">
+            <span>Audio Image</span>
+        </div>
+        <div class="col-md-9 main ">
+            <div class="screens clearfix margin-bottom-zero">
+                <div class="screen pull-left">
+                    <a class="border-grey border-radius-three default-background-hover"
+                        style="width: 122px; height: 122px; display: flex; align-items: center; justify-content: center;"
+                        ng-click="ContentMedia.addAudioImage()">
+                        <span ng-if="!ContentMedia.item.data.image" class="add-icon" style="height: 65%;">+</span>
+                        <img ng-if="ContentMedia.item.data.image" ng-src="{{ContentMedia.item.data.image | resizeImage : 122:90}}">
+                    </a>
+                    <span ng-if="ContentMedia.item.data.image"
+                        class="icon btn-delete-icon btn-danger transition-third"
+                        ng-click="ContentMedia.removeAudioImage()"></span>
+                </div>
+            </div>
+            <p class="caption text-small">Recommended: 1024x1024</p>
+        </div>
+    </div>
+
     <hr class="none">
 
     <div class="item clearfix row">
