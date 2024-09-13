@@ -70,6 +70,12 @@
 				console.error(err);
 			});
 
+			Settings.setAutoPlayDelay = (option) => {
+				if (option.value != Settings.data.content.autoPlayDelay.value) {
+					Settings.data.content.autoPlayDelay = option;
+				}
+			};
+
 			Settings.setSettings = () => {
 				const isUnchanged = angular.equals(Settings.lastSavedContent, Settings.data);
 				if (isUnchanged) return;

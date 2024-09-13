@@ -78,6 +78,7 @@
 						} else if (index < 0 && NowPlaying.forceAutoPlay) {
 							const transferTrack = new Track({..._pluginItem.data, id: _pluginItem.id}, 0);
 							transferTrack.plugin = buildfire.context.instanceId;
+							transferTrack.isAudioFromPluginList = false;
 
 							audioPlayer.addToPlaylist(transferTrack);
 						}
@@ -147,17 +148,14 @@
 					switch (e.event) {
 					case 'play':
 					case 'resume':
+						if (NowPlaying.currentTrack && NowPlaying.currentTrack.url === e.data.track.url && parseInt(NowPlaying.currentTrack.lastPosition) !== parseInt(e.data.track.lastPosition)) {
+							audioPlayer.setTime(parseInt(NowPlaying.currentTrack.lastPosition));
+						}
 						NowPlaying.currentTrack = e.data.track;
 						NowPlaying.playing = true;
 						NowPlaying.isExistInPlaylist = $rootScope.playListItems.findIndex(item => item.url === NowPlaying.currentTrack.url) > -1;
-						if (typeof $rootScope.audioFromPlayList === 'number') {
-							audioPlayer.getPlaylist((err, res) => {
-								if (err) console.error(err);
-								if (res) {
-									$rootScope.audioFromPlayList = res.lastIndex;
-									return updatePlaylistUI();
-								}
-							});
+						if (!NowPlaying.currentTrack.isAudioFromPluginList) {
+							updatePlaylistUI();
 						}
 						break;
 					case 'timeUpdate':
@@ -175,55 +173,72 @@
 						});
 						break;
 					case 'audioEnded':
-						NowPlaying.playing = false;
-						if (typeof $rootScope.audioFromPlayList === 'number') return updatePlaylistUI(true);
 						updateAudioLastPosition(media.id, 0);
-						if ($rootScope.autoPlay) {
-							$rootScope.playNextItem(false, NowPlaying.settings.shufflePluginList);
-						}
+						NowPlaying.playing = false;
+						audioPlayer.getCurrentTrack((track) => {
+							if (track && !track.isAudioFromPluginList) {
+								return updatePlaylistUI();
+							} else {
+								audioPlayer.pause();
+								if ($rootScope.autoPlay) {
+									$rootScope.playNextItem(false, NowPlaying.settings.shufflePluginList);
+								}
+							}
+						});
 						break;
 					case 'pause':
 						NowPlaying.playing = false;
 						if (NowPlaying.currentTrack && NowPlaying.currentTrack.id) {
 							updateAudioLastPosition(NowPlaying.currentTrack.id, NowPlaying.currentTrack.lastPosition);
 						}
-						if (typeof $rootScope.audioFromPlayList === 'number') return updatePlaylistUI(true);
+						updatePlaylistUI();
 						break;
 					case 'removeFromPlaylist':
 					case 'addToPlaylist':
 						$rootScope.playListItems = e.data.newPlaylist.tracks.map((el) => ({ ...el, title: el.title || getString('mediaPlayer.unknownTrack') }));
-						if (typeof $rootScope.audioFromPlayList === 'number') return updatePlaylistUI();
+						updatePlaylistUI();
 						break;
 					}
 					if (!$scope.$$phase) {
 						$scope.$digest();
 					}
 				});
-				function updatePlaylistUI(isPaused = false) {
-					if (typeof $rootScope.audioFromPlayList !== 'number') isPaused = true;
-					$rootScope.playListItems.forEach((element, index) => {
-						element.playing = $rootScope.audioFromPlayList === index && !isPaused;
+				function updatePlaylistUI() {
+					audioPlayer.isPaused((err, isPaused) => {
+						if (err) console.error(err);
+						
+						NowPlaying.getPlaylistData().then(() => {
+							audioPlayer.getCurrentTrack((track) => {
+								$rootScope.playListItems.forEach((element, index) => {
+									const isAudioPlaying = (track && track.url === element.url && !isPaused && !track.isAudioFromPluginList && $rootScope.playlistTrackIndex === index);
+									element.playing = isAudioPlaying;
+								});
+								if (!$scope.$$phase) {
+									$scope.$digest();
+								}
+							});
+						});
 					});
-					if (!$scope.$$phase) {
-						$scope.$digest();
-					}
 				}
 				function initAudio() {
 					NowPlaying.currentTrack = new Track({ ...media.data, id: media.id }, 0);
 					const backgroundImage = NowPlaying.currentTrack.backgroundImage ? NowPlaying.resizeImage(NowPlaying.currentTrack.backgroundImage) : './assets/images/now-playing.png';
 					NowPlaying.currentTrack.backgroundImage = CSS.escape(backgroundImage);
 
-					if (NowPlaying.currentTrack && typeof $rootScope.audioFromPlayList == 'number' && $rootScope.playListItems[$rootScope.audioFromPlayList] && $rootScope.playListItems[$rootScope.audioFromPlayList].url === NowPlaying.currentTrack.url) {
-						NowPlaying.currentTime = $rootScope.playListItems[$rootScope.audioFromPlayList].lastPosition;
-					} else {
-						$rootScope.audioFromPlayList = null;
+					audioPlayer.getCurrentTrack((track) => {
+						NowPlaying.currentTrack.isAudioFromPluginList = true;
 						if ($rootScope.seekTime) {
 							NowPlaying.currentTime = $rootScope.seekTime;
+						} else if (track && !track.isAudioFromPluginList && track.url === NowPlaying.currentTrack.url && $rootScope.playListItems[$rootScope.playlistTrackIndex].url === track.url) {
+							NowPlaying.currentTime = $rootScope.playListItems[$rootScope.playlistTrackIndex].lastPosition;
+							NowPlaying.currentTrack.isAudioFromPluginList = false;
 						} else if (NowPlaying.forceAutoPlay) {
-							$rootScope.audioFromPlayList = $rootScope.playListItems.findIndex((el) => el.url === NowPlaying.currentTrack.url);
-							if ($rootScope.audioFromPlayList > -1) {
-								NowPlaying.currentTime = $rootScope.playListItems[$rootScope.audioFromPlayList].lastPosition;
+							NowPlaying.currentTrack.isAudioFromPluginList = false;
+							NowPlaying.audioFromPlayList = $rootScope.playListItems.findIndex((el) => el.url === NowPlaying.currentTrack.url);
+							if (NowPlaying.audioFromPlayList > -1) {
+								NowPlaying.currentTime = $rootScope.playListItems[NowPlaying.audioFromPlayList].lastPosition;
 							} else {
+								NowPlaying.audioFromPlayList = 0;
 								NowPlaying.currentTime = 0;
 							}
 						} else if ((NowPlaying.autoJumpToLastPosition || NowPlaying.settings.autoJumpToLastPosition) && NowPlaying.lastSavedPosition) {
@@ -231,19 +246,20 @@
 						} else {
 							NowPlaying.currentTime = 0;
 						}
-					}
-					NowPlaying.currentTrack.lastPosition = NowPlaying.currentTime;
+						NowPlaying.currentTrack.lastPosition = NowPlaying.currentTime;
+	
+						updatePlaylistUI();
+	
+						if ($rootScope.autoPlay) {
+							NowPlaying.playTrack();
+						}
+	
+						if (!$scope.$$phase) {
+							$scope.$digest();
+							$scope.$apply();
+						}
+					});
 
-					updatePlaylistUI();
-
-					if ($rootScope.autoPlay) {
-						NowPlaying.playTrack();
-					}
-
-					if (!$scope.$$phase) {
-						$scope.$digest();
-						$scope.$apply();
-					}
 				}
 
 				function updateAudioLastPosition(mediaId, trackLastPosition) {
@@ -319,21 +335,18 @@
 					if (!NowPlaying.isAudioPlayed) {
 						NowPlaying.markAudioAsPlayed();
 					}
-					if (typeof $rootScope.audioFromPlayList === 'number') {
-						audioPlayer.getPlaylist((err, res) => {
-							if (err) console.error(err);
-							if (res && res.lastIndex === $rootScope.audioFromPlayList) {
-								audioPlayer.play();
-							} else {
-								audioPlayer.play($rootScope.audioFromPlayList);
-							}
-						});
+					if (!NowPlaying.currentTrack.isAudioFromPluginList) {
+						if (NowPlaying.audioFromPlayList !== $rootScope.playlistTrackIndex) {
+							audioPlayer.play(NowPlaying.audioFromPlayList);
+						} else {
+							audioPlayer.play();
+						}
 					} else {
 						audioPlayer.getCurrentTrack((track) => {
 							if (track && track.url === NowPlaying.currentTrack.url) {
 								audioPlayer.play();
 							} else {
-								audioPlayer.play(NowPlaying.currentTrack);
+								audioPlayer.play({...NowPlaying.currentTrack, isAudioFromPluginList: true});
 							}
 						});
 					}
@@ -412,7 +425,7 @@
 				};
 
 				NowPlaying.next = function () {
-					if (typeof $rootScope.audioFromPlayList === 'number') {
+					if (!NowPlaying.currentTrack.isAudioFromPluginList) {
 						audioPlayer.next();
 					} else {
 						$rootScope.playNextItem(true, NowPlaying.settings.shufflePluginList);
@@ -420,7 +433,7 @@
 				};
 
 				NowPlaying.prev = function () {
-					if (typeof $rootScope.audioFromPlayList === 'number') {
+					if (!NowPlaying.currentTrack.isAudioFromPluginList) {
 						audioPlayer.previous();
 					} else {
 						$rootScope.playPrevItem();
@@ -429,7 +442,7 @@
 
 				NowPlaying.shufflePlaylist = function () {
 					let toastMessage;
-					if (typeof $rootScope.audioFromPlayList === 'number') {
+					if (!NowPlaying.currentTrack.isAudioFromPluginList) {
 						NowPlaying.settings.shufflePlaylist = !NowPlaying.settings.shufflePlaylist;
 						toastMessage = NowPlaying.settings.shufflePlaylist ? getString('mediaPlayer.shufflePlaylistItemsConfirmation') : getString('mediaPlayer.shuffleOffConfirmation');
 					} else {
@@ -455,7 +468,7 @@
 						message: NowPlaying.playListStrings.addedPlaylist
 					});
 					NowPlaying.isExistInPlaylist = true;
-					audioPlayer.addToPlaylist(track);
+					audioPlayer.addToPlaylist({...track, isAudioFromPluginList: false});
 					if (!$scope.$$phase) {
 						$scope.$digest();
 					}
@@ -487,12 +500,12 @@
 					return new Promise((resolve, reject) => {
 						audioPlayer.getPlaylist(function (err, data) {
 							if (err) return reject(err);
+							$rootScope.playlistTrackIndex =  data.lastIndex;
 							if (data && data.tracks) {
 								$rootScope.playListItems = data.tracks.map((el) => ({ ...el, title: el.title || getString('mediaPlayer.unknownTrack') }));
 								if (NowPlaying.currentTrack) {
 									NowPlaying.isExistInPlaylist = $rootScope.playListItems.some((el) => el.url === NowPlaying.currentTrack.url);
 								}
-								updatePlaylistUI();
 							}
 							resolve();
 						});
@@ -616,16 +629,14 @@
 
 					if (track.playing) {
 						NowPlaying.playing = false;
-						updatePlaylistUI(true);
 						audioPlayer.pause();
 					} else {
 						NowPlaying.playing = true;
-						$rootScope.audioFromPlayList = index;
 
 						NowPlaying.currentTrack = track;
-						updatePlaylistUI();
 						audioPlayer.play(index);
 					}
+					updatePlaylistUI();
 
 					if (!$scope.$$phase) {
 						$scope.$digest();
