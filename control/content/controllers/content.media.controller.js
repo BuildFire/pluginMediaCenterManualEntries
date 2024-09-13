@@ -148,12 +148,6 @@
               ContentMedia.item.data.mediaDate = new Date(media.data.mediaDate);
               ContentMedia.item.data.mediaDateIndex = new Date(media.data.mediaDate).getTime();
             }
-            if (ContentMedia.item.data.topImage) {
-              thumbnailImage.loadbackground(ContentMedia.item.data.topImage);
-            }
-            if (ContentMedia.item.data.image) {
-              audioImage.loadbackground(ContentMedia.item.data.image);
-            }
             if (ContentMedia.item && ContentMedia.item.data && ((ContentMedia.item.data.categories && ContentMedia.item.data.categories.length) || (ContentMedia.item.data.subcategories && ContentMedia.item.data.subcategories.length))) {
               fetchAssignedCategories();
             }
@@ -616,43 +610,35 @@
           return imageSrc;
         }
 
-        /* Build fire thumbnail component to add thumbnail image*/
-        var audioImage = new Buildfire.components.images.thumbnail("#audioImage", {
-          title: "Audio Image",
-          dimensionsLabel: "Recommended: 1024x1024"
-        });
-
-        audioImage.onChange = function (url) {
-          ContentMedia.item.data.image = url;
-          if (!$scope.$$phase && !$scope.$root.$$phase) {
-            $scope.$apply();
-          }
+        ContentMedia.addListImage = function () {
+          var options = { showIcons: false, multiSelection: false },
+            listImgCB = function (error, result) {
+              if (error) {
+                console.error('Error:', error);
+              } else {
+                ContentMedia.item.data.topImage = result && result.selectedFiles && result.selectedFiles[0] || null;
+                if (!$scope.$$phase) $scope.$digest();
+              }
+            };
+          buildfire.imageLib.showDialog(options, listImgCB);
         };
-
-        audioImage.onDelete = function (url) {
-          ContentMedia.item.data.image = "";
-          if (!$scope.$$phase && !$scope.$root.$$phase) {
-            $scope.$apply();
-          }
-        };
-
-        const thumbnailImage = new Buildfire.components.images.thumbnail("#thumbnailImage", {
-          title: "Audio Image",
-          dimensionsLabel: "Recommended: 1200x675"
-        });
-
-        thumbnailImage.onChange = function (url) {
-          ContentMedia.item.data.topImage = url;
-          if (!$scope.$$phase && !$scope.$root.$$phase) {
-            $scope.$apply();
-          }
-        };
-
-        thumbnailImage.onDelete = function (url) {
+        ContentMedia.removeListImage = function () {
           ContentMedia.item.data.topImage = "";
-          if (!$scope.$$phase && !$scope.$root.$$phase) {
-            $scope.$apply();
-          }
+        };
+        ContentMedia.addAudioImage = function () {
+          var options = { showIcons: false, multiSelection: false },
+            listImgCB = function (error, result) {
+              if (error) {
+                console.error('Error:', error);
+              } else {
+                ContentMedia.item.data.image = result && result.selectedFiles && result.selectedFiles[0] || null;
+                if (!$scope.$$phase) $scope.$digest();
+              }
+            };
+          buildfire.imageLib.showDialog(options, listImgCB);
+        };
+        ContentMedia.removeAudioImage = function () {
+          ContentMedia.item.data.image = "";
         };
 
         /**

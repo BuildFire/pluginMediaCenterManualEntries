@@ -574,12 +574,9 @@ Style for loader
     justify-content: space-between;
 }
 
-#audioImage .screen {
-    width: auto;
-    max-width: unset;
-}
-
-#audioImage .screen .default-background-hover {
+.thumbnail-image-selector .screen,
+.audio-image-selector .screen {
+    width: fit-content;
     max-width: unset;
 }
 

@@ -12,7 +12,7 @@
                 //scroll current view to top when loaded.
                 Buildfire.navigation.scrollTop();
                 var ContentHome = this;
-                $rootScope.activeTab = 'content-media-tab';
+                if (!$rootScope.activeTab) $rootScope.activeTab = 'content-media-tab';
                 var _infoData = {
                     data: {
                         content: {
@@ -254,8 +254,66 @@
                             console.error('Error-------', err);
                         });
                     }
+                }
 
-
+                if (!ContentHome.info.data.content.isAnalyticsRegistered) {
+                    registerDefaultAnalytics().then(() => {
+                        ContentHome.info.data.content.isAnalyticsRegistered = true;
+                        updateData(ContentHome.info);
+                    }).catch((err) => {
+                        console.error(err);
+                    });
+                }
+                function registerDefaultAnalytics() {
+                    return new Promise((resolve, reject) => {
+                        const events = [
+                            {
+                                title: "All Media Types Count",
+                                key: "allMediaTypes_count",
+                                description: "All Media Types Count",
+                            },
+                            {
+                                title: "All Media Types Continues Count",
+                                key: "allMediaTypes_continuesCount",
+                                description: "All Media Types Continues Count",
+                            },
+                            {
+                                title: "All Articles Open Count",
+                                key: "allArticles_count",
+                                description: "All Articles Open Count",
+                            },
+                            {
+                                title: "All Articles Continues Open Count",
+                                key: "allArticles_continuesCount",
+                                description: "All Articles Continues Open Count",
+                            },
+                            {
+                                title: "All Audio Play Count",
+                                key: "allAudios_count",
+                                description: "All Audio Play Count",
+                            },
+                            {
+                                title: "All Audio Continues Play Count",
+                                key: "allAudios_continuesCount",
+                                description: "All Audio Continues Play Count",
+                            },
+                            {
+                                title: "All Video Play Count",
+                                key: "allVideos_count",
+                                description: "All Video Play Count",
+                            },
+                            {
+                                title: "All Video Continues Play Count",
+                                key: "allVideos_continuesCount",
+                                description: "All Video Continues Play Count",
+                            },
+                        ]
+                        Analytics.bulkRegisterEvents(events, { silentNotification: true }).then(() => {
+                            resolve();
+                        }).catch((err) => {
+                            reject(err);
+                        });
+                    });
                 }
 
                 function saveDataWithDelay(_info) {

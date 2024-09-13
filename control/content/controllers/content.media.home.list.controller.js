@@ -65,7 +65,7 @@
 				$scope.initList = (listSelector) => {
 
 					$scope.mediaList = new buildfire.components.control.listView(listSelector, $scope.mediaItemsListOptions);
-          
+					
 					$scope.initBulkActions();
 					$scope.handleListScroll();
 					$scope.toggleLoadingState(true);
@@ -119,7 +119,7 @@
 						$scope.sortOption = option;
 						searchOptions.skip = 0;
 						searchOptions.sort = { [option.key]: option.order };
-           
+
 						$scope.noMore = false;
 						$scope.items = [];
 						$scope.toggleLoadingState(true);
@@ -300,7 +300,7 @@
 				$scope.initBulkActions = () => {
 					const addButton = $scope.mediaList.selector.querySelector('.sortable-list-add-button');
 					const parent = addButton.parentNode;
-          
+
 					const bulkActionTemplate = document.getElementById('bulkActionTemplate');
 					const bulkActionContainer = bulkActionTemplate.content.cloneNode(true);
 
@@ -310,7 +310,7 @@
 					const exportBtn = bulkActionContainer.querySelector('.export-csv');
 					const importBtn = bulkActionContainer.querySelector('.import-csv');
 					const getTemplateBtn = bulkActionContainer.querySelector('.get-csv-template');
-          
+
 					dropdownBtn.onclick = () => dropdownMenu.classList.toggle('open');
 					exportBtn.onclick = () => {
 						$scope.exportCSV();
@@ -333,7 +333,7 @@
 					if (itemId) {
 						newPath += `/${itemId}`;
 					}
-					
+
 					Location.go(newPath);
 					Messaging.sendMessageToWidget({
 						name: EVENTS.ROUTE_CHANGE,
@@ -357,19 +357,80 @@
 					return items.every(isValidItem);
 				}
 
+				$scope.registerAnalyticsEvent = function (records) {
+					mediaCenterData = AppConfig.getSettings();
+					let analyticsEvents = [];
+					records.forEach((record) => {
+						if (record.data.videoUrl) {
+							analyticsEvents = analyticsEvents.concat([{
+								title: record.data.title + ' Video Play Count',
+								key: record.id + '_videoPlayCount',
+								description: 'Video Play Count',
+							}, {
+								title: record.data.title + ' Continues Video Play Count',
+								key: record.id + '_continuesVideoPlayCount',
+								description: 'Continues Video Play Count',
+							}]);
+
+							if (mediaCenterData && mediaCenterData.content.allowOfflineDownload) {
+								analyticsEvents.push({
+									title: record.data.title + ' Video Downloads',
+									key: record.id + '_downloads',
+									description: 'Video Downloads',
+								});
+							}
+						}
+						if (record.data.audioUrl) {
+							analyticsEvents = analyticsEvents.concat([{
+								title: record.data.title + ' Audio Play Count',
+								key: record.id + '_audioPlayCount',
+								description: 'Audio Play Count',
+							}, {
+								title: record.data.title + ' Continues Audio Play Count',
+								key: record.id + '_continuesAudioPlayCount',
+								description: 'Continues Audio Play Count',
+							}]);
+
+							if (mediaCenterData && mediaCenterData.content.allowOfflineDownload) {
+								analyticsEvents.push({
+									title: record.data.title + ' Audio Downloads',
+									key: record.id + '_downloads',
+									description: 'Audio Downloads',
+								});
+							}
+						}
+						if (!record.data.videoUrl && !record.data.audioUrl) {
+							analyticsEvents = analyticsEvents.concat([{
+								title: record.data.title + ' Article Open Count',
+								key: record.id + '_articleOpenCount',
+								description: 'Article Open Count',
+							}, {
+								title: record.data.title + ' Continues Article Open Count',
+								key: record.id + '_continuesArticleOpenCount',
+								description: 'Continues Article Open Count',
+							}]);
+						}
+					});
+					Analytics.bulkRegisterEvents(analyticsEvents, { silentNotification: true }).then(() => {
+						resolve();
+					}).catch((err) => {
+						reject(err);
+					});
+				};
 
 				$scope.setDeeplinks = function () {
 					const date = new Date();
 					date.setHours(date.getHours() - 1);
 
 					const searchOptions = {
-						filter: {"$json._buildfire.index.date1": { $gte: date }},
+						filter: { '$json._buildfire.index.date1': { $gte: date } },
 						limit: 50, skip: 0, recordCount: true
 					};
 					getRecords(searchOptions, [], function (records) {
+						$scope.registerAnalyticsEvent(records);
 						records.forEach(function (record) {
 							record.data.deepLinkUrl = buildfire.deeplink.createLink({ id: record.id });
-							SearchEngineService.insert({...record.data, id: record.id});
+							SearchEngineService.insert({ ...record.data, id: record.id });
 
 							new Deeplink({
 								deeplinkId: record.id,
@@ -396,8 +457,8 @@
 				};
 				const headerRow = ['topImage', 'title', 'artists', 'summary', 'bodyHTML', 'srcUrl', 'audioTitle', 'audioUrl', 'videoUrl', 'image'];
 				/**
-                 * $scope.getTemplate() used to download csv template
-                 */
+				 * $scope.getTemplate() used to download csv template
+				 */
 				$scope.getTemplate = function () {
 					const templateData = [{
 						topImage: '',
@@ -414,8 +475,8 @@
 				};
 
 				/**
-                 * method to open the importCSV Dialog
-                 */
+				 * method to open the importCSV Dialog
+				 */
 				$scope.openImportCSVDialog = function () {
 					$csv.import(headerRow).then(function (rows) {
 						$rootScope.loading = true;
@@ -487,13 +548,13 @@
 				};
 
 				/**
-                 * getRecords function get the  all items from DB
-                 * @param searchOption
-                 * @param records
-                 * @param callback
-                 */
+				 * getRecords function get the  all items from DB
+				 * @param searchOption
+				 * @param records
+				 * @param callback
+				 */
 				function getRecords(searchOption, records, callback) {
-					MediaContent.find({...searchOption, recordCount: true}).then(function (res) {
+					MediaContent.find({ ...searchOption, recordCount: true }).then(function (res) {
 						const result = res.result;
 						records = result && result.length ? records.concat(result) : records;
 						if (!res || !res.totalRecord || records.length === res.totalRecord) {// to indicate there are more
@@ -508,8 +569,8 @@
 					});
 				}
 				/**
-                 * $scope.exportCSV() used to export people list data to CSV
-                 */
+				 * $scope.exportCSV() used to export people list data to CSV
+				 */
 				$scope.exportCSV = function () {
 					const search = angular.copy(searchOptions);
 					search.skip = 0;
