@@ -59,7 +59,8 @@
                         }
                     }
                 };
-                var view = null;
+                let view = null;
+                WidgetHome.media = _infoData;
 
                 /**
                  * Create instance of MediaContent, MediaCenter db collection
@@ -222,7 +223,7 @@
                             }, 500);
                         } else {
                             callback();
-                            if (!$scope.$$phase && !$scope.$root.$$phase) {
+                            if (!$scope.$$phase) {
                                 $scope.$apply();
                             }
                         }
@@ -251,7 +252,7 @@
                 }
 
                 WidgetHome.goTo = function (id, type) {
-                    var documentFocused = WidgetHome.isDocumentFocused();
+                    const documentFocused = WidgetHome.isDocumentFocused();
                     // stop the autoplay if shared media via PWA to prevent video freeze
                     if(documentFocused) $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                     else $rootScope.autoPlay = false;
@@ -265,18 +266,18 @@
                     var navigate = function (item) {
                         if (item && item.data) {
                             if(type === 'audio'){
+                                $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                                 Location.go('#/nowplaying/' + item.id, true);
-                                if (!$rootScope.$$phase) $rootScope.$digest();
-                            }
-                            else if (!$rootScope.skipMediaPage || ($rootScope.skipMediaPage && item.data.videoUrl)
-                                || ($rootScope.skipMediaPage && !item.data.videoUrl && !item.data.audioUrl)) {
-                                    Location.go('#/media/' + item.id, true);
+                            } else if ($rootScope.skipMediaPage && item.data.audioUrl) {
+                                $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
+                                Location.go('#/nowplaying/' + item.id, true);
                             } else {
-                                Location.go('#/nowplaying/' + item.id, true);
+                                Location.go('#/media/' + item.id, true);
                             }
                         } else {
                             Location.go('#/media/' + item.id, true);
                         }
+                        if (!$rootScope.$$phase) $rootScope.$digest();
                     }
 
                     if (index != -1) {
@@ -348,10 +349,6 @@
                             $rootScope.indicatePlayedItems = WidgetHome.media.data.content.indicatePlayedItems;
                             $rootScope.autoJumpToLastPosition = WidgetHome.media.data.content.startWithAutoJumpByDefault ;
 
-                            if (view && event.data.content && event.data.content.images) {
-                                view.loadItems(event.data.content.images);
-                            }
-
                             if (isLauncher && WidgetHome.media.data.content.enableFiltering) {
                                 slideElement.classList.add("launcher-with-filter");
                             } else {
@@ -359,10 +356,10 @@
                             }
                             $rootScope.refreshItems();
                             buildfire.spinner.hide();
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            if (!$scope.$$phase) $scope.$apply();
                         } else {
                             buildfire.spinner.hide();
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            if (!$scope.$$phase) $scope.$apply();
                         }
                     } else if (event.tag === "MediaContent") {
                         // Make sure to delete from globalPlaylist if exists
@@ -372,7 +369,7 @@
                                     $rootScope.globalPlaylistItems.playlist[event.id] = event.data;
                                     $rootScope.refreshItems();
                                     buildfire.spinner.hide();
-                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                    if (!$scope.$$phase) $scope.$apply();
                                 });
                             } else {
                                 // If there is no data, it means the the item has been deleted
@@ -381,7 +378,7 @@
                                     delete $rootScope.globalPlaylistItems.playlist[event.id];
                                     $rootScope.refreshItems();
                                     buildfire.spinner.hide();
-                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                    if (!$scope.$$phase) $scope.$apply();
                                 });
                             }
                         } else {
@@ -411,7 +408,7 @@
                         }
                     }
                     buildfire.spinner.hide();
-                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                    if (!$scope.$$phase) $scope.$apply();
                 });
 
                 /**
@@ -458,6 +455,9 @@
                             console.log(finalFilter);
                         }
                         searchOptions.filter = finalFilter;
+                    }
+                    if (!WidgetHome.media || !WidgetHome.media.data || !WidgetHome.media.data.content) {
+                        WidgetHome.media = _infoData;
                     }
                     var order = Orders.getOrder(WidgetHome.media.data.content.sortBy || Orders.ordersMap.Default);
                     if (order) {
@@ -608,7 +608,7 @@
                                 duration: 2000
                             });
 
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            if (!$scope.$$phase) $scope.$apply();
                         });
                     } else {
 
@@ -620,7 +620,7 @@
                                 type: 'warning'
                             });
                             $rootScope.addAllToPlaylistLoading = false;
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            if (!$scope.$$phase) $scope.$apply();
                         } else {
                             var filteredItems = WidgetHome.items.filter(el => !$rootScope.isInGlobalPlaylist(el.id));
                             var itemsToAdd = [...filteredItems].splice(0, freeSlots);
@@ -638,7 +638,7 @@
                                     duration: 2000
                                 });
                                 $rootScope.addAllToPlaylistLoading = false;
-                                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                if (!$scope.$$phase) $scope.$apply();
                             });
                         }
                     }
@@ -700,15 +700,15 @@
                         } else {
                             $rootScope.showCountdown = true;
 
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            if (!$scope.$$phase) $scope.$apply();
 
                             $rootScope.delayCountdownText = `Next will play in ${delay}`;
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            if (!$scope.$$phase) $scope.$apply();
                             if (delayInterval) clearInterval(delayInterval);
                             delayInterval = setInterval(() => {
                                 --delay
                                 $rootScope.delayCountdownText = delay !== 0 ? `Next will play in ${delay}` : 'Loading next item...';
-                                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                if (!$scope.$$phase) $scope.$apply();
                                 if (delay === 0) {
                                     $rootScope.clearCountdown();
                                     WidgetHome.goToMedia(newIndex);
@@ -721,7 +721,7 @@
                 $rootScope.clearCountdown = () => {
                     $rootScope.showCountdown = false;
                     $rootScope.delayCountdownText = '';
-                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                    if (!$scope.$$phase) $scope.$apply();
                     if (delayInterval) clearInterval(delayInterval);
                 }
 
@@ -863,7 +863,7 @@
                             WidgetHome.isBusy = false;
                             $rootScope.loadingData = false;
                             $rootScope.loadingGlobalPlaylist = false;
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            if (!$scope.$$phase) $scope.$apply();
                             return callback(null, true);
                         }, 0);
                     }
@@ -929,7 +929,7 @@
                                 WidgetHome.isBusy = false;
                                 $rootScope.loadingData = false;
                                 $rootScope.loadingGlobalPlaylist = false;
-                                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                if (!$scope.$$phase) $scope.$apply();
                                 callback(null, true);
                             }, 0);
                         });
@@ -972,28 +972,34 @@
                 };
 
                 function setupImages(records) {
+                    if (!window.loadedImages) window.loadedImages = [];
                     records.forEach((record) => {
                         if (record.data.image) {
                             const img = new Image();
-                            const img2 = new Image();
-                            img.src = buildfire.imageLib.resizeImage(record.data.image, { size: '1080', aspect: '16:9' });
-                            img2.src = buildfire.imageLib.resizeImage(record.data.image, { size: '260', aspect: '1:1' });
+                            img.src = buildfire.imageLib.resizeImage(record.data.image, { size: '1080', aspect: '16:9' })
+                            img.onload = () => {
+                                window.loadedImages.push(img.src);
+                            }
+                        } else if (record.data.topImage) {
+                            const img = new Image();
+                            img.src = buildfire.imageLib.resizeImage(record.data.topImage, { size: '1080', aspect: '16:9' })
+                            img.onload = () => {
+                                window.loadedImages.push(img.src);
+                            }
                         }
+
                         if (record.data.topImage) {
                             const img = new Image();
-                            const img2 = new Image();
-                            const img3 = new Image();
-                            img.src = buildfire.imageLib.resizeImage(record.data.topImage, { size: '260', aspect: '1:1' });
-                            img2.src = buildfire.imageLib.resizeImage(record.data.topImage, { size: '55', aspect: '1:1' });
-                            img3.src = buildfire.imageLib.resizeImage(record.data.topImage, { size: '1080', aspect: '16:9' });
+                            img.src = buildfire.imageLib.resizeImage(record.data.topImage, { width: '300', height: '300' });
+                            img.onload = () => {
+                                window.loadedImages.push(img.src);
+                            }
                         }
                     })
-                    
                 }
 
 
                 WidgetHome.loadMore = () => {
-
                     localOpenedItems();
                     updateGetOptions();
                     const getRecords = () => {
@@ -1028,7 +1034,7 @@
                                         if (err) console.error(err);
                                         else if (res && res.totalRecord) item.data.count = res.totalRecord;
                                         
-                                        if (!$scope.$$phase && !$scope.$root.$$phase) {
+                                        if (!$scope.$$phase) {
                                             $scope.$apply();
                                         }
                                     }
@@ -1081,7 +1087,7 @@
                                     WidgetHome.isBusy = false;
                                     $rootScope.loadingData = false;
                                     $rootScope.loadingGlobalPlaylist = false;
-                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                    if (!$scope.$$phase) $scope.$apply();
                                 }, 0);
                             });
                     } else {
@@ -1501,12 +1507,12 @@
                     WidgetHome.noMore = false;
                     WidgetHome.globalPlaylistLoaded = false;
                     if ($rootScope.globalPlaylist) $rootScope.globalPlaylistItems = { playlist: {} };
-                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                    if (!$scope.$$phase) $scope.$apply();
                     WidgetHome.loadMore();
                 };
 
                 WidgetHome.goToMedia = function (ind) {
-                    var documentFocused = WidgetHome.isDocumentFocused();
+                    const documentFocused = WidgetHome.isDocumentFocused();
                     // stop the autoplay if shared via PWA to prevent video freeze
                     if(documentFocused) $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                     else $rootScope.autoPlay = false;
@@ -1527,11 +1533,11 @@
 
                         $rootScope.currentIndex = ind;
 
-                        if (!$rootScope.skipMediaPage || ($rootScope.skipMediaPage && WidgetHome.items[ind].data.videoUrl)
-                            || ($rootScope.skipMediaPage && !WidgetHome.items[ind].data.videoUrl && !WidgetHome.items[ind].data.audioUrl)) {
-                            Location.go('#/media/' + WidgetHome.items[ind].id, true);
-                        } else {
+                        if ($rootScope.skipMediaPage && WidgetHome.items[ind].data.audioUrl) {
+                            $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                             Location.go('#/nowplaying/' + WidgetHome.items[ind].id, true);
+                        } else {
+                            Location.go('#/media/' + WidgetHome.items[ind].id, true);
                         }
                         $rootScope.showGlobalPlaylistButtons = false;
                     }
@@ -1599,15 +1605,6 @@
                     $rootScope.showOfflineBox = false;
                 };
 
-                $rootScope.$on("Carousel:LOADED", function () {
-                    if (WidgetHome.media.data.content && WidgetHome.media.data.content.images) {
-                        view = new Buildfire.components.carousel.view("#carousel", WidgetHome.media.data.content.images);
-                        //view.loadItems(WidgetHome.media.data.content.images, false);
-                    } else {
-                        view.loadItems([]);
-                    }
-                });
-
                 $rootScope.$on('online', function () {
                     WidgetHome.online = $rootScope.online;
                     Location.goToHome();
@@ -1633,7 +1630,7 @@
 
                                 WidgetHome.loadMore();
                                 setTimeout(() => {
-                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                    if (!$scope.$$phase) $scope.$apply();
                                 }, 0);
                             });
                         }
@@ -1646,7 +1643,7 @@
                                         if (err) {
                                         }
                                         setTimeout(() => {
-                                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                            if (!$scope.$$phase) $scope.$apply();
                                         }, 0);
                                     });
                                 }
@@ -1655,12 +1652,33 @@
                                 function fail() {
                                     WidgetHome.media = _infoData;
                                     setTimeout(() => {
-                                        if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                        if (!$scope.$$phase) $scope.$apply();
                                     }, 0);
                                 }
 
                             );
                         }
+                    }
+                });
+
+                WidgetHome.loadCarousel = function () {
+                    const carouselContainer = document.getElementById('carousel');
+                    if (carouselContainer) {
+                        if (!view) view = new Buildfire.components.carousel.view("#carousel", WidgetHome.media.data.content.images);
+                        else view.loadItems(WidgetHome.media.data.content.images);
+    
+                        if (!$scope.$$phase) {
+                            $scope.$digest();
+                            $scope.$apply();
+                        }
+                    }
+                }
+
+                $scope.$watch(function () {
+                    return WidgetHome.media;
+                }, function () {
+                    if (WidgetHome.media && WidgetHome.media.data.content && WidgetHome.media.data.content.images) {
+                        WidgetHome.loadCarousel();
                     }
                 });
 

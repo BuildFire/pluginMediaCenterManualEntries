@@ -1,4 +1,4 @@
-<div ng-style="WidgetMedia.fullScreen == false && {height: (WidgetMedia.deviceWidth*9)/16}" ng-show="WidgetMedia.showVideo" class="videogular-container">
+<div ng-style="WidgetMedia.fullScreen == false && {height: (WidgetMedia.deviceWidth*9)/16}" ng-if="WidgetMedia.item.data.videoUrl" ng-show="WidgetMedia.showVideo" class="videogular-container">
     <img src="../../../styles/media/holder-16x9.gif"
         ng-if="WidgetMedia.loadingVideo">
     <videogular id="videogularElement"

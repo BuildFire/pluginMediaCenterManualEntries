@@ -48,7 +48,7 @@
                         <a class="media-action" ng-click="WidgetMedia.playAudio();" ng-if="WidgetMedia.item.data.audioUrl && !skipMediaPage">
                             <i class="btn btn-success glyphicon glyphicon-volume-up"></i>
                         </a>
-                        <a ng-if="WidgetMedia.item.srcUrl && allowSource && online" ng-click="WidgetMedia.openLink(WidgetMedia.item.srcUrl)"
+                        <a ng-if="(WidgetMedia.item.data.srcUrl || WidgetMedia.item.data.audioUrl || WidgetMedia.item.data.videoUrl) && allowSource && online" ng-click="WidgetMedia.openLink(WidgetMedia.item)"
                             target="_blank">
                             <i class="glyphicon share glyphicon-screenshot"></i>
                         </a>

@@ -78,16 +78,11 @@
                             if (err) WidgetMedia.media = _infoData;
                             else {
                                 WidgetMedia.media = res
-                                // buildfire.dialog.toast({
-                                //     message: `Found Cached media center ${WidgetMedia.media.data.content.allowOfflineDownload}`,
-                                //     type: 'warning',
-                                // });
                             }
-                            // WidgetMedia.media = _infoData;
                             WidgetFilters.isBusy = false;
                             WidgetFilters.getMore();
                             setTimeout(() => {
-                                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                if (!$scope.$$phase) $scope.$apply();
                             }, 0);
                         });
 
@@ -125,7 +120,12 @@
                         }
 
                         WidgetFilters.allCategories = WidgetFilters.allCategories ? WidgetFilters.allCategories.concat(result) : result;
-                        if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                        if (!WidgetFilters.allCategories.length) {
+                            angular.element('#filterEmptyContainer').css('display', 'block');
+                        } else {
+                            angular.element('#filterEmptyContainer').css('display', 'none');
+                        }
+                        if (!$scope.$$phase) $scope.$apply();
                         WidgetFilters.isBusy = false;
                     }, function fail() {
                         WidgetFilters.isBusy = false;

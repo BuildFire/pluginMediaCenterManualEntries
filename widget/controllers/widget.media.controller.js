@@ -43,7 +43,7 @@
                     
                     if (res && res.totalRecord && WidgetMedia) {
                         WidgetMedia.count = res.totalRecord;
-                        if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                        if (!$scope.$$phase) $scope.$apply();
                     }
                 })
 
@@ -419,7 +419,7 @@
                         }
                         $rootScope.backgroundImage = WidgetMedia.media && WidgetMedia.media.data && WidgetMedia.media.data.design && WidgetMedia.media.data.design.backgroundImage;
                         setTimeout(() => {
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            if (!$scope.$$phase) $scope.$apply();
                         }, 0);
                     });
 
@@ -533,8 +533,6 @@
                         Analytics.trackAction("allMediaTypes_continuesCount");
                     }
 
-                    WidgetMedia.item.srcUrl = media.data.srcUrl ? media.data.srcUrl
-                        : (media.data.audioUrl ? media.data.audioUrl : media.data.videoUrl);
                     bookmarks.sync($scope);
                     WidgetMedia.changeVideoSrc();
 
@@ -577,7 +575,7 @@
                             }, 500);
                         } else {
                             callback();
-                            if (!$scope.$$phase && !$scope.$root.$$phase) {
+                            if (!$scope.$$phase) {
                                 $scope.$apply();
                             }
                         }
@@ -587,29 +585,16 @@
                 Messaging.onReceivedMessage = (event) => {
                     if (event) {
                         switch (event.name) {
-                            case EVENTS.ROUTE_CHANGE:
-                                var path = event.message.path,
-                                    id = event.message.id;
-                                var url = "#/";
-                                switch (path) {
-                                    case PATHS.MEDIA:
-                                        url = url + "media";
-                                        if (id) {
-                                            url = url + "/" + id;
-                                        }
-                                        break;
-                                    default:
-
-                                        break
-                                }
-                                Location.go(url);
-                                break;
                             case EVENTS.ITEMS_CHANGE:
                                 WidgetMedia.item = event.message.itemUpdatedData;
                                 WidgetMedia.changeVideoSrc();
                                 break;
+                            case EVENTS.ROUTE_CHANGE:
+                                Location.goToHome();
+                                break;
                         }
 
+                        WidgetMedia.showVideo = true;
                         WidgetMedia.ApplayUpdates();
                         if (!$scope.$$phase) {
 							$scope.$apply();
@@ -622,25 +607,7 @@
                     buildfire.components.drawer.closeDrawer();
                     switch (event.tag) {
                         case COLLECTIONS.MediaContent:
-                            if (event.data) {
-                                event.data.topImage = DropboxLinksManager.convertDropbox(event.data.topImage);
-                                event.data.image = DropboxLinksManager.convertDropbox(event.data.image);
-                                WidgetMedia.item = event;
-                                $scope.$digest();
-                                // Update item in globalPlaylist
-                                if ($rootScope.isInGlobalPlaylist(event.id)) {
-                                    if (event.data) {
-                                        GlobalPlaylist.insertAndUpdate(event).then(() => {
-                                            $rootScope.globalPlaylistItems.playlist[event.id] = event.data;
-                                        });
-                                    } else {
-                                        // If there is no data, it means the the item has been deleted
-                                        GlobalPlaylist.delete(event.id).then(() => {
-                                            delete $rootScope.globalPlaylistItems.playlist[event.id];
-                                        });
-                                    }
-                                }
-                            }
+                            Location.goToHome();
                             break;
                         case COLLECTIONS.MediaCenter:
                             var old = WidgetMedia.media.data.design.itemLayout;
@@ -690,6 +657,15 @@
                                 $rootScope.globalPlaylistItems.playlist = event.data.playlist;
                             }
                         }
+                    }
+                });
+
+                Buildfire.publicData.onUpdate(event => {
+                    if (event.data && event.tag == COLLECTIONS.MediaCount) {
+                        WidgetMedia.count = WidgetMedia.count ? WidgetMedia.count + 1 : 1;
+                        if ($scope && !$scope.$$phase) $scope.$apply();
+                        $rootScope.refreshItems();
+
                     }
                 });
 
@@ -751,7 +727,7 @@
                         return;
                     }
                     WidgetMedia.showVideo = forceShow ? true : !WidgetMedia.showVideo;
-                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                    if (!$scope.$$phase) $scope.$apply();
                 };
 
                 WidgetMedia.showSourceIframe = function () {
@@ -879,7 +855,13 @@
                     buildfire.notes.openDialog(options, callback);
                 };
 
-                WidgetMedia.openLink = function (link) {
+                WidgetMedia.openLink = function (item) {
+                    let link = item.data.srcUrl;
+                    if (!link && item.data.audioUrl) {
+                        link = item.data.audioUrl;
+                    } else if (!link && item.data.videoUrl) {
+                        link = item.data.videoUrl;
+                    }
                     Buildfire.navigation.openWindow(link, '_system');
                 };
 

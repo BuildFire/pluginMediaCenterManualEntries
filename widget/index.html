@@ -95,7 +95,7 @@
             class="btn btn-standard add-button"
             ng-disabled="addAllToPlaylistLoading"
             ng-click="addAllToGlobalPlaylist($event)"
-            ng-class="{'add-button-only': (!showGlobalPlaylistNavButton || !globalPlaylistPlugin), 'hidden': showGlobalAddAllToPlaylistButton || !globalPlaylistPlugin}"
+            ng-class="{'add-button-only': (!showGlobalPlaylistNavButton || !globalPlaylistPlugin), 'hidden': !showGlobalAddAllToPlaylistButton || !globalPlaylistPlugin}"
         >
             <div ng-if="!areAllInGlobalPlaylist()" class="play-list-icon add-button-icon" style="background-color: #FFF;"></div>
             <div ng-if="areAllInGlobalPlaylist()" class="play-list-icon remove-button-icon" style="background-color: #FFF;"></div>
@@ -106,7 +106,7 @@
             ng-click="goToPlaylistPlugin()"
             ng-class="{'hidden': (!showGlobalPlaylistNavButton || !globalPlaylistPlugin)}"
         >
-            <div class="play-list-icon go-to-button-icon"></div>
+            <div class="play-list-icon go-to-button-icon" style="background-color: #FFF;"></div>
         </button>
     </div>
     

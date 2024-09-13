@@ -1062,12 +1062,14 @@ img.done-icon {
 	padding-bottom: 75px !important;
 }
 
-#emptyContainer {
+#emptyContainer,
+#filterEmptyContainer {
 	display: none;
 	background-image: url('../images/empty_page.svg');
 	background-repeat: no-repeat;
 	background-position: center;
 	height: 100vh;
+	position: relative;
 }
 
 
@@ -1348,7 +1350,6 @@ img.done-icon {
 .category-container .top-row .category-image-container {
 	height: 3em;
 	width: 3em;
-	/* background: lightgray; */
 	background-color: rgba(150, 150, 150, 0.2);
 	text-align: center;
 	border-radius: 50%;
@@ -1531,6 +1532,12 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
 .categoryScreenIcon {
 	height: 30px !important;
 	width: 30px !important;
+	border-radius: 50%;
+}
+
+.disabled-category-arrow {
+	pointer-events: none;
+	opacity: 0.6;
 }
 
 #activeFilterIndicator {

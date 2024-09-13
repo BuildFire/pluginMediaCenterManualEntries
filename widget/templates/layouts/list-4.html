@@ -23,7 +23,7 @@
 <div class="holder padding-zero list-layout-4" ng-class="{'pb30': globalPlaylist}">
     <div class="media-center-plugin list-layout fourth-layout text-overlay">
         <div class="media-center-banner clearfix text-overlay">
-            <div id="carousel" build-fire-carousel=""></div>
+            <div id="carousel" build-fire-carousel="" ng-init="WidgetHome.loadCarousel()"></div>
         </div>
         <div class="text-left padded padding-bottom-zero clearfix text-overlay wysiwyg">
             <p ng-if="WidgetHome.showDescription()"

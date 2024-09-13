@@ -5,8 +5,8 @@
     <div class="media-center-plugin" ng-if="!(NowPlaying.openMoreInfo || NowPlaying.openSettings)">
         <div class="media-holder">
             <div class="media-inner text-center">
-                <img ng-if="NowPlaying.currentTrack.topImage && NowPlaying.isOnline" load-image="1x1" crop-width="260" crop-height="260"
-                    crop-type="crop" data-final-src="{{NowPlaying.currentTrack.topImage}}" alt="{{NowPlaying.currentTrack.title}} top image">
+                <img ng-if="NowPlaying.currentTrack.topImage && NowPlaying.isOnline" load-image="1x1" crop-width="300" crop-height="300"
+                    crop-type="crop" ng-src="{{NowPlaying.currentTrack.topImage | resizeImage : 300:300 }}" alt="{{NowPlaying.currentTrack.title}} top image">
                 <img ng-if="NowPlaying.currentTrack.topImage && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.topImage}}" alt="{{NowPlaying.currentTrack.title}} top image">
                 <img ng-if="!NowPlaying.currentTrack.topImage" src="./assets/images/now-playing.png" alt="top image">
             </div>
@@ -15,7 +15,7 @@
             <span class="glyphicon glyphicon-share-alt whiteTheme btn btn-icon" ng-style="{'visibility': allowShare ? 'visible' : 'hidden'}" ng-click="NowPlaying.share($event)"
                 role="button"></span>
             <div class="media-title ellipsis">
-                <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title || NowPlaying.getString('mediaPlayer.unknownTrack')}}</h4>
+                <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title}}</h4>
                 <p class="margin-zero whiteTheme ellipsis">
                     {{NowPlaying.currentTrack.user.username}}{{NowPlaying.currentTrack.artist}}</p>
             </div>
@@ -59,8 +59,8 @@
                     </defs>
                 </svg>
                 <span class="shuffle-indicator" ng-if="(((audioFromPlayList===null || audioFromPlayList===undefined) && NowPlaying.settings.shufflePluginList) || (audioFromPlayList!==null && audioFromPlayList!==undefined && NowPlaying.settings.shufflePlaylist))">
-                    <span class="shuffle-indicator-text" ng-if="audioFromPlayList===null || audioFromPlayList===undefined">{{NowPlaying.getString("mediaPlayer.shuffleAllItemsIndicator")}}</span>
-                    <span class="shuffle-indicator-text" ng-if="audioFromPlayList!==null && audioFromPlayList!==undefined">{{NowPlaying.getString("mediaPlayer.shufflePlaylistItemsIndicator")}}</span>
+                    <span class="shuffle-indicator-text" ng-if="audioFromPlayList===null || audioFromPlayList===undefined">{{NowPlaying.shuffleAllItemsIndicator}}</span>
+                    <span class="shuffle-indicator-text" ng-if="audioFromPlayList!==null && audioFromPlayList!==undefined">{{NowPlaying.shufflePlaylistItemsIndicator}}</span>
                 </span>
             </span>
                 
@@ -126,7 +126,7 @@
                                 <img ng-if="!track.image && !track.topImage" src="../../../styles/media/holder-16x9.png" style="width:100%;">
                             </div>
                             <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-                                <p class="margin-bottom-zero ellipsis margin-top-twenty bodyTextTheme">{{track.title || NowPlaying.getString('mediaPlayer.unknownTrack')}}</p>
+                                <p class="margin-bottom-zero ellipsis margin-top-twenty bodyTextTheme">{{track.title}}</p>
                             </div>
                             <div class="btns text-center">
                                 <a ng-class="track.playing ? 'icon-pause-circle' : 'icon-play-circle'"
@@ -162,7 +162,7 @@
                 <hr class="none">
                 <div class="media-player-info margin-top-twenty padding-left-ten padding-right-ten">
                     <div class="ellipsis">
-                        <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title || NowPlaying.getString('mediaPlayer.unknownTrack')}}</h4>
+                        <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title}}</h4>
                         <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.artist}}</p>
                     </div>
                 </div>
@@ -222,9 +222,7 @@
                         <div class="col-md-2 pull-right text-right">
                             <div class="checkbox checkbox-primary no-label margin-zero">
                                 <input type="checkbox" id="repeat" ng-model="NowPlaying.settings.autoJumpToLastPosition"
-                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)"
-                                    ng-checked="NowPlaying.autoJumpToLastPosition"
-                                    >
+                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)">
                                 <label for="repeat"></label>
                             </div>
                         </div>
