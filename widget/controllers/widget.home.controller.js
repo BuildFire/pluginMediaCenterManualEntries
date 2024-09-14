@@ -403,7 +403,11 @@
                             }
                         } else if (event.tag === globalPlaylistTag) {
                             if (event.data.playlist) {
-                                $rootScope.globalPlaylistItems.playlist = event.data.playlist;
+                                if ($rootScope.globalPlaylistItems && typeof $rootScope.globalPlaylistItems === 'object') {
+                                    $rootScope.globalPlaylistItems.playlist = event.data.playlist;
+                                } else {
+                                    $rootScope.globalPlaylistItems = { playlist: event.data.playlist };
+                                }
                             }
                         }
                     }

@@ -18,6 +18,7 @@
 
 				$rootScope.deepLinkNavigate = null;
 				NowPlaying.isOnline = window.navigator.onLine;
+				NowPlaying.isAudioInitialized = false;
 
 				NowPlaying.item = media;
 				NowPlaying.track = media.data.audioUrl;
@@ -148,9 +149,8 @@
 					switch (e.event) {
 					case 'play':
 					case 'resume':
-						if (NowPlaying.currentTrack && NowPlaying.currentTrack.url === e.data.track.url && parseInt(NowPlaying.currentTrack.lastPosition) !== parseInt(e.data.track.lastPosition)) {
-							audioPlayer.setTime(parseInt(NowPlaying.currentTrack.lastPosition));
-						}
+						buildfire.spinner.show();
+						$rootScope.isPlayerReady = true;
 						NowPlaying.currentTrack = e.data.track;
 						NowPlaying.playing = true;
 						NowPlaying.isExistInPlaylist = $rootScope.playListItems.findIndex(item => item.url === NowPlaying.currentTrack.url) > -1;
@@ -159,10 +159,16 @@
 						}
 						break;
 					case 'timeUpdate':
+						buildfire.spinner.hide();
 						audioPlayer.getCurrentTrack((track) => {
+							if (track && track.isAudioFromPluginList && Math.abs(e.data.currentTime - $rootScope.lastUpdatedPosition) > 5) {
+								updateAudioLastPosition(track.id, e.data.currentTime);
+							}
 							if (track && NowPlaying.currentTrack && track.url === NowPlaying.currentTrack.url) {
-								NowPlaying.currentTime = e.data.currentTime;
-								NowPlaying.duration = e.data.duration;
+								if (e.data.duration) {
+									NowPlaying.currentTime = e.data.currentTime;
+									NowPlaying.duration = e.data.duration;
+								}
 								audioPlayer.isPaused((err, isPaused) => {
 									if (err) console.error(err);
 									NowPlaying.playing = !isPaused;
@@ -173,24 +179,24 @@
 						});
 						break;
 					case 'audioEnded':
-						updateAudioLastPosition(media.id, 0);
+						if (e.data.id && e.data.isAudioFromPluginList) {
+							updateAudioLastPosition(e.data.id, 0);
+						}
 						NowPlaying.playing = false;
-						audioPlayer.getCurrentTrack((track) => {
-							if (track && !track.isAudioFromPluginList) {
-								return updatePlaylistUI();
-							} else {
-								audioPlayer.pause();
-								if ($rootScope.autoPlay) {
-									$rootScope.playNextItem(false, NowPlaying.settings.shufflePluginList);
-								}
-							}
-						});
+						if (!e.data.isAudioFromPluginList) {
+							return updatePlaylistUI();
+						} else if ($rootScope.autoPlay) {
+							audioPlayer.pause();
+							$rootScope.playNextItem(false, NowPlaying.settings.shufflePluginList);
+						}
 						break;
 					case 'pause':
 						NowPlaying.playing = false;
-						if (NowPlaying.currentTrack && NowPlaying.currentTrack.id) {
-							updateAudioLastPosition(NowPlaying.currentTrack.id, NowPlaying.currentTrack.lastPosition);
-						}
+						audioPlayer.getCurrentTrack((track) => {
+							if (track && track.isAudioFromPluginList && track.lastPosition) {
+								updateAudioLastPosition(track.id, track.lastPosition);
+							}
+						});
 						updatePlaylistUI();
 						break;
 					case 'removeFromPlaylist':
@@ -231,6 +237,7 @@
 							NowPlaying.currentTime = $rootScope.seekTime;
 						} else if (track && !track.isAudioFromPluginList && track.url === NowPlaying.currentTrack.url && $rootScope.playListItems[$rootScope.playlistTrackIndex].url === track.url) {
 							NowPlaying.currentTime = $rootScope.playListItems[$rootScope.playlistTrackIndex].lastPosition;
+							NowPlaying.audioFromPlayList = $rootScope.playlistTrackIndex;
 							NowPlaying.currentTrack.isAudioFromPluginList = false;
 						} else if (NowPlaying.forceAutoPlay) {
 							NowPlaying.currentTrack.isAudioFromPluginList = false;
@@ -246,8 +253,10 @@
 						} else {
 							NowPlaying.currentTime = 0;
 						}
-						NowPlaying.currentTrack.lastPosition = NowPlaying.currentTime;
-	
+						NowPlaying.currentTrack.startAt = NowPlaying.currentTime;
+						$rootScope.lastUpdatedPosition = NowPlaying.currentTime;
+						NowPlaying.isAudioInitialized = true;
+
 						updatePlaylistUI();
 	
 						if ($rootScope.autoPlay) {
@@ -263,6 +272,7 @@
 				}
 
 				function updateAudioLastPosition(mediaId, trackLastPosition) {
+					$rootScope.lastUpdatedPosition = trackLastPosition;
 					let searchFilter = null;
 					if ($rootScope && $rootScope.user) {
 						searchFilter = getIndexedFilter(mediaId, $rootScope.user._id);
@@ -336,17 +346,19 @@
 						NowPlaying.markAudioAsPlayed();
 					}
 					if (!NowPlaying.currentTrack.isAudioFromPluginList) {
-						if (NowPlaying.audioFromPlayList !== $rootScope.playlistTrackIndex) {
-							audioPlayer.play(NowPlaying.audioFromPlayList);
-						} else {
+						if (NowPlaying.audioFromPlayList === $rootScope.playlistTrackIndex && $rootScope.isPlayerReady) {
 							audioPlayer.play();
+						} else {
+							audioPlayer.play(NowPlaying.audioFromPlayList);
 						}
 					} else {
 						audioPlayer.getCurrentTrack((track) => {
-							if (track && track.url === NowPlaying.currentTrack.url) {
+							if (track && track.url === NowPlaying.currentTrack.url && $rootScope.isPlayerReady) {
 								audioPlayer.play();
 							} else {
-								audioPlayer.play({...NowPlaying.currentTrack, isAudioFromPluginList: true});
+								const _track = {...NowPlaying.currentTrack, isAudioFromPluginList: true};
+								delete _track.lastPosition;
+								audioPlayer.play(_track);
 							}
 						});
 					}
@@ -404,22 +416,40 @@
 
 				NowPlaying.forward = function () {
 					audioPlayer.getCurrentTrack((track) => {
-						NowPlaying.currentTime = NowPlaying.currentTime + 5 > NowPlaying.currentTrack.duration ? NowPlaying.currentTrack.duration : NowPlaying.currentTime + 5;
-						if (track && track.url === NowPlaying.currentTrack.url) {
+						const _currentTime = parseInt(NowPlaying.currentTime);
+						if (_currentTime + 5 > NowPlaying.currentTrack.duration) {
+							NowPlaying.currentTime = NowPlaying.currentTrack.duration;
+						} else {
+							NowPlaying.currentTime = _currentTime + 5;
+						}
+						if (track && track.url === NowPlaying.currentTrack.url && $rootScope.isPlayerReady) {
 							audioPlayer.setTime(NowPlaying.currentTime);
 						} else {
-							NowPlaying.currentTrack.lastPosition = NowPlaying.currentTime;
+							NowPlaying.currentTrack.startAt = NowPlaying.currentTime;
+						}
+						if (!$scope.$$phase) {
+							$scope.$apply();
+							$scope.$digest();
 						}
 					});
 				};
 
 				NowPlaying.backward = function () {
 					audioPlayer.getCurrentTrack((track) => {
-						NowPlaying.currentTime = NowPlaying.currentTime > 5 ? NowPlaying.currentTime - 5 : 0;
-						if (track && track.url === NowPlaying.currentTrack.url) {
+						const _currentTime = parseInt(NowPlaying.currentTime);
+						if (_currentTime > 5) {
+							NowPlaying.currentTime = _currentTime - 5;
+						} else {
+							NowPlaying.currentTime = 0;
+						}
+						if (track && track.url === NowPlaying.currentTrack.url && $rootScope.isPlayerReady) {
 							audioPlayer.setTime(NowPlaying.currentTime);
 						} else {
-							NowPlaying.currentTrack.lastPosition = NowPlaying.currentTime;
+							NowPlaying.currentTrack.startAt = NowPlaying.currentTime;
+						}
+						if (!$scope.$$phase) {
+							$scope.$apply();
+							$scope.$digest();
 						}
 					});
 				};
@@ -514,11 +544,11 @@
 				NowPlaying.changeTime = function (time) {
 					if (typeof time !== 'number') time = parseInt(time);
 					audioPlayer.getCurrentTrack((track) => {
-						if (track && track.url === NowPlaying.currentTrack.url) {
+						if (track && track.url === NowPlaying.currentTrack.url && $rootScope.isPlayerReady) {
 							audioPlayer.setTime(time);
 						} else {
-							NowPlaying.currentTrack.currentTime = time;
-							NowPlaying.currentTrack.lastPosition = time;
+							NowPlaying.currentTime = time;
+							NowPlaying.currentTrack.startAt = time;
 						}
 						if (!$scope.$$phase) {
 							$scope.$digest();
@@ -633,8 +663,14 @@
 					} else {
 						NowPlaying.playing = true;
 
-						NowPlaying.currentTrack = track;
-						audioPlayer.play(index);
+						audioPlayer.getCurrentTrack((currentTrack) => {
+							NowPlaying.currentTrack = track;
+							if (currentTrack.url === track.url && $rootScope.isPlayerReady) {
+								audioPlayer.play();
+							} else {
+								audioPlayer.play(index);
+							}
+						});
 					}
 					updatePlaylistUI();
 

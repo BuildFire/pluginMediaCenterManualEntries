@@ -280,11 +280,16 @@ h5 {
     height: 64px;
 }
 
-.holder.now-playing .media-player-btns .active {
+.holder.now-playing .media-player-btns .icon:not(.disabled) .active {
     fill: var(--bf-theme-primary);
 }
-.holder.now-playing .media-player-btns .not-active {
+.holder.now-playing .media-player-btns .icon.disabled path,
+.holder.now-playing .media-player-btns .icon .not-active {
     fill: #fff;
+}
+
+.holder.now-playing .media-player-btns .icon.disabled .shuffle-indicator {
+    display: none;
 }
 
 .btn.btn-icon {
