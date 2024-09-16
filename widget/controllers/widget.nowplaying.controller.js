@@ -154,7 +154,7 @@
 						setTrackImages();
 
 						NowPlaying.playing = true;
-						NowPlaying.isExistInPlaylist = $rootScope.playListItems.findIndex(item => item.url === NowPlaying.currentTrack.url) > -1;
+						NowPlaying.isExistInPlaylist = $rootScope.playListItems.findIndex(item => (item.url === NowPlaying.currentTrack.url && (!item.id || item.id === NowPlaying.currentTrack.id))) > -1;
 						if (!NowPlaying.currentTrack.isAudioFromPluginList) {
 							updatePlaylistUI();
 						}
@@ -639,6 +639,7 @@
 					this.isAudioPlayed = !!NowPlaying.isAudioPlayed;
 					this.id = track.id;
 					this.backgroundImage = track.image ? track.image : track.topImage;
+					this.instanceId = Buildfire.context.instanceId;
 					this.deepLinkData = {
 						pluginInstanceId: Buildfire.context.instanceId,
 						payload: {
@@ -873,8 +874,8 @@
 					if (event.message && event.message.path == 'MEDIA') {
 						Location.go('#/media/' + event.message.id, true);
 					} else if (event.name === EVENTS.ITEMS_CHANGE) {
-						if (!event.message.itemUpdatedData.data.audioUrl) {
-							Location.go('#/media/' + event.message.id, true);
+						if (event.message.itemUpdatedData.id !== NowPlaying.currentTrack.id || !event.message.itemUpdatedData.data.audioUrl) {
+							Location.go('#/media/' + event.message.itemUpdatedData.id, true);
 						} else {
 							NowPlaying.currentTrack = {...NowPlaying.currentTrack, ...event.message.itemUpdatedData.data};
 							if (event.message.itemUpdatedData.data.title) {
@@ -908,7 +909,7 @@
 				$scope.$watch(function () {
 					return NowPlaying.currentTrack;
 				}, () => {
-					if (NowPlaying.currentTrack.id && NowPlaying.currentTrack.id !== 'mockId') {
+					if (NowPlaying.currentTrack.id && NowPlaying.currentTrack.id !== 'mockId' && NowPlaying.currentTrack.instanceId === Buildfire.context.instanceId) {
 						Messaging.sendMessageToControl({
 							name: EVENTS.ROUTE_CHANGE,
 							message: {
