@@ -895,15 +895,6 @@
 						$scope.$digest();
 					}
 				};
-				if (media.id !== 'mockId') {
-					Messaging.sendMessageToControl({
-						name: EVENTS.ROUTE_CHANGE,
-						message: {
-							path: PATHS.MEDIA,
-							id: media.id || null
-						}
-					});
-				}
 
 				$scope.$on('$destroy', function () {
 					buildfire.appearance.navbar.show();
@@ -913,6 +904,20 @@
 				$scope.$watch(function () {
 					return NowPlaying.currentTime;
 				}, NowPlaying.progressBarStyle, true);
+
+				$scope.$watch(function () {
+					return NowPlaying.currentTrack;
+				}, () => {
+					if (NowPlaying.currentTrack.id && NowPlaying.currentTrack.id !== 'mockId') {
+						Messaging.sendMessageToControl({
+							name: EVENTS.ROUTE_CHANGE,
+							message: {
+								path: PATHS.MEDIA,
+								id: NowPlaying.currentTrack.id || null
+							}
+						});
+					}
+				}, true);
 			}
 		]);
 })(window.angular);
