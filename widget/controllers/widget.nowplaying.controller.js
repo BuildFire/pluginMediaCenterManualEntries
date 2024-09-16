@@ -148,7 +148,7 @@
 						NowPlaying.shouldPlayTrackAgain = false;
 						buildfire.spinner.show();
 						$rootScope.isPlayerReady = true;
-						if (e.data.track.backgroundImage && !e.data.track.backgroundImage.indexOf('func') && !e.data.track.backgroundImage.indexOf('now-playing.png')) {
+						if (e.data.track.backgroundImage && !e.data.track.backgroundImage.indexOf('func') && !e.data.track.backgroundImage.indexOf('now-playing.png') && NowPlaying.isOnline) {
 							e.data.track.backgroundImage = NowPlaying.resizeImage(e.data.track.backgroundImage);
 						}
 						NowPlaying.currentTrack = e.data.track;
@@ -201,7 +201,7 @@
 						break;
 					case 'removeFromPlaylist':
 					case 'addToPlaylist':
-						$rootScope.playListItems = e.data.newPlaylist.tracks.map((el) => ({ ...el, title: el.title || getString('mediaPlayer.unknownTrack') }));
+						$rootScope.playListItems = e.data.newPlaylist.tracks.map((el) => ({ ...el, title: el.title || getString('mediaPlayer.unknownTrack') })) || [];
 						updatePlaylistUI();
 						break;
 					}
@@ -239,26 +239,33 @@
 
 					audioPlayer.getCurrentTrack((track) => {
 						NowPlaying.currentTrack.isAudioFromPluginList = true;
-						if ($rootScope.seekTime) {
-							NowPlaying.currentTime = $rootScope.seekTime;
-						} else if (track && !track.isAudioFromPluginList && track.url === NowPlaying.currentTrack.url && $rootScope.playlistTrackIndex > -1 && $rootScope.playListItems[$rootScope.playlistTrackIndex] && $rootScope.playListItems[$rootScope.playlistTrackIndex].url === track.url) {
-							NowPlaying.currentTime = $rootScope.playListItems[$rootScope.playlistTrackIndex].lastPosition;
-							NowPlaying.audioFromPlayList = $rootScope.playlistTrackIndex;
-							NowPlaying.currentTrack.isAudioFromPluginList = false;
-						} else if ($rootScope.forceAutoPlay) {
-							NowPlaying.currentTrack.isAudioFromPluginList = false;
-							NowPlaying.audioFromPlayList = $rootScope.playListItems.findIndex((el) => el.url === NowPlaying.currentTrack.url);
-							if (NowPlaying.audioFromPlayList > -1) {
-								NowPlaying.currentTime = $rootScope.playListItems[NowPlaying.audioFromPlayList].lastPosition;
+						if (NowPlaying.isOnline) {
+							if ($rootScope.seekTime) {
+								NowPlaying.currentTime = $rootScope.seekTime;
+							} else if (track && !track.isAudioFromPluginList && track.url === NowPlaying.currentTrack.url && $rootScope.playlistTrackIndex > -1 && $rootScope.playListItems[$rootScope.playlistTrackIndex] && $rootScope.playListItems[$rootScope.playlistTrackIndex].url === track.url) {
+								NowPlaying.currentTime = $rootScope.playListItems[$rootScope.playlistTrackIndex].lastPosition;
+								NowPlaying.audioFromPlayList = $rootScope.playlistTrackIndex;
+								NowPlaying.currentTrack.isAudioFromPluginList = false;
+							} else if ($rootScope.forceAutoPlay) {
+								NowPlaying.currentTrack.isAudioFromPluginList = false;
+								if ($rootScope.playListItems.length) NowPlaying.audioFromPlayList = $rootScope.playListItems.findIndex((el) => el.url === NowPlaying.currentTrack.url);
+								else NowPlaying.audioFromPlayList = -1;
+	
+								if (NowPlaying.audioFromPlayList > -1) {
+									NowPlaying.currentTime = $rootScope.playListItems[NowPlaying.audioFromPlayList].lastPosition;
+								} else {
+									NowPlaying.audioFromPlayList = 0;
+									NowPlaying.currentTime = 0;
+								}
+							} else if (($rootScope.autoJumpToLastPosition || NowPlaying.settings.autoJumpToLastPosition) && NowPlaying.lastSavedPosition) {
+								NowPlaying.currentTime = NowPlaying.lastSavedPosition;
 							} else {
-								NowPlaying.audioFromPlayList = 0;
 								NowPlaying.currentTime = 0;
 							}
-						} else if (($rootScope.autoJumpToLastPosition || NowPlaying.settings.autoJumpToLastPosition) && NowPlaying.lastSavedPosition) {
-							NowPlaying.currentTime = NowPlaying.lastSavedPosition;
 						} else {
 							NowPlaying.currentTime = 0;
 						}
+
 						NowPlaying.currentTrack.startAt = NowPlaying.currentTime;
 						$rootScope.lastUpdatedPosition = NowPlaying.currentTime;
 						NowPlaying.isAudioInitialized = true;
@@ -274,10 +281,10 @@
 							$scope.$apply();
 						}
 					});
-
 				}
 
 				function updateAudioLastPosition(mediaId, trackLastPosition) {
+					if (!NowPlaying.isOnline) return;
 					$rootScope.lastUpdatedPosition = trackLastPosition;
 					let searchFilter = null;
 					if ($rootScope && $rootScope.user) {
@@ -348,9 +355,10 @@
 						);
 					}
 
-					if (!NowPlaying.isAudioPlayed) {
+					if (!NowPlaying.isAudioPlayed && NowPlaying.isOnline) {
 						NowPlaying.markAudioAsPlayed();
 					}
+
 					if (!NowPlaying.currentTrack.isAudioFromPluginList) {
 						if (NowPlaying.audioFromPlayList === $rootScope.playlistTrackIndex && $rootScope.isPlayerReady && !NowPlaying.shouldPlayTrackAgain) {
 							audioPlayer.play();
@@ -538,7 +546,7 @@
 							if (err) return reject(err);
 							$rootScope.playlistTrackIndex = data.lastIndex;
 							if (data && data.tracks) {
-								$rootScope.playListItems = data.tracks.map((el) => ({ ...el, title: el.title || getString('mediaPlayer.unknownTrack') }));
+								$rootScope.playListItems = data.tracks.map((el) => ({ ...el, title: el.title || getString('mediaPlayer.unknownTrack') })) || [];
 								if (NowPlaying.currentTrack) {
 									NowPlaying.isExistInPlaylist = $rootScope.playListItems.some((el) => el.url === NowPlaying.currentTrack.url);
 								}
@@ -778,6 +786,8 @@
 						NowPlaying.playing = !isPaused;
 					});
 					audioPlayer.settings.get(function (err, setting) {
+						if (err) console.error(err);
+
 						NowPlaying.settings = new AudioSettings(setting);
 						NowPlaying.getPlaylistData().then(() => {
 							NowPlaying.forceAutoPlayer();
@@ -790,36 +800,31 @@
 							audioPlayer.settings.set(NowPlaying.settings);
 						}
 
-						$scope.$digest();
-						$scope.$apply();
-					});
-
-					if (!NowPlaying.isOnline) {
-						initAudio(cpSync);
-					} else if ($rootScope.user || Buildfire.context.deviceId) {
-						const userCheckViewFilter = {
-							filter: getIndexedFilter(media.id, $rootScope.user ? $rootScope.user.userId : Buildfire.context.deviceId)
-						};
-						buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
-							if (res && res.length > 0) {
-								NowPlaying.isAudioPlayed = true;
-								if (res[0].data.duration) NowPlaying.duration = res[0].data.duration;
-
-								if (res[0].data.lastPosition) {
-									NowPlaying.lastSavedPosition = res[0].data.lastPosition;
-									NowPlaying.currentTime = res[0].data.lastPosition;
-									initAudio(cpSync);
+						if (!NowPlaying.isOnline || (!$rootScope.user && !Buildfire.context.deviceId)) {
+							initAudio(cpSync);
+						} else if ($rootScope.user || Buildfire.context.deviceId) {
+							const userCheckViewFilter = {
+								filter: getIndexedFilter(media.id, $rootScope.user ? $rootScope.user.userId : Buildfire.context.deviceId)
+							};
+							buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
+								if (res && res.length > 0) {
+									NowPlaying.isAudioPlayed = true;
+									if (res[0].data.duration) NowPlaying.duration = res[0].data.duration;
+	
+									if (res[0].data.lastPosition) {
+										NowPlaying.lastSavedPosition = res[0].data.lastPosition;
+										NowPlaying.currentTime = res[0].data.lastPosition;
+										initAudio(cpSync);
+									} else {
+										initAudio(cpSync);
+									}
 								} else {
+									NowPlaying.isAudioPlayed = false;
 									initAudio(cpSync);
 								}
-							} else {
-								NowPlaying.isAudioPlayed = false;
-								initAudio(cpSync);
-							}
-						});
-					} else {
-						initAudio(cpSync);
-					}
+							});
+						}
+					});
 				};
 
 				initNowPlaying();
