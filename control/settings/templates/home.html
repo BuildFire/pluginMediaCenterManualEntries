@@ -60,7 +60,7 @@
     <label class="tooltip-container col-md-4">Auto-Add All Audio to Playlist
         <span class="btn-info-icon btn-primary">
             <span class="cp-tooltip">
-                Automatically add all audio files to the playlist, disabling individual playlist management. Hides
+                Automatically add all audio files to the playlist, disabling individual playlist management. Disable
                 settings like Autoplay, Add to Playlist, and Remove from Playlist.
             </span>
         </span>
@@ -74,6 +74,22 @@
     <label class="tooltip-container col-md-4"></label>
     <div class="button-switch col-md-9 flex flex-justify-end">
         <p class="info-note w-100">Enabling this setting will automatically add all available audio files to the playlist, overriding manual playlist controls.</p>
+    </div>
+</div>
+
+<div class="row margin-bottom-twenty flex flex-align-center">
+    <label class="tooltip-container col-md-4">Resume Playback from Last Position
+        <span class="btn-info-icon btn-primary">
+            <span class="cp-tooltip bottom-cp-tooltip">
+                Automatically resume media playback from where the user left off upon returning to the app. Applies
+                across all Media Center Manual instances.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch col-md-9 flex flex-justify-end">
+        <input id="enableStartWithAutoJumpByDefault" type="checkbox"
+            ng-model="Settings.data.content.startWithAutoJumpByDefault">
+        <label for="enableStartWithAutoJumpByDefault" class="label-success" ng-class="{'disabled': !Settings.data.content.forceAutoPlay}"></label>
     </div>
 </div>
 
@@ -239,21 +255,5 @@
     <div class="button-switch col-md-9 flex flex-justify-end">
         <input id="enableIndicatePlayedItems" type="checkbox" ng-model="Settings.data.content.indicatePlayedItems">
         <label for="enableIndicatePlayedItems" class="label-success"></label>
-    </div>
-</div>
-
-<div class="row margin-bottom-twenty flex flex-align-center">
-    <label class="tooltip-container col-md-4">Resume Playback from Last Position
-        <span class="btn-info-icon btn-primary">
-            <span class="cp-tooltip bottom-cp-tooltip">
-                Automatically resume media playback from where the user left off upon returning to the app. Applies
-                across all Media Center Manual instances.
-            </span>
-        </span>
-    </label>
-    <div class="button-switch col-md-9 flex flex-justify-end">
-        <input id="enableStartWithAutoJumpByDefault" type="checkbox"
-            ng-model="Settings.data.content.startWithAutoJumpByDefault">
-        <label for="enableStartWithAutoJumpByDefault" class="label-success" ng-class="{'disabled': !Settings.data.content.forceAutoPlay}"></label>
     </div>
 </div>
