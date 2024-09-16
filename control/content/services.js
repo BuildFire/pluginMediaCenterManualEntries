@@ -84,8 +84,8 @@
             };
             var orders = [
                 {id: 1, name: "Manual", value: "Manually", key: "rank", order: 1},
-                {id: 1, name: "Category Title A-Z", value: "Category Title A-Z", key: "title", order: 1},
-                {id: 1, name: "Category Title Z-A", value: "Category Title Z-A", key: "title", order: -1},
+                {id: 1, name: "Category Title A-Z", value: "Category Title A-Z", key: "name", order: 1},
+                {id: 1, name: "Category Title Z-A", value: "Category Title Z-A", key: "name", order: -1},
                 {id: 1, name: "Newest", value: "Newest", key: "createdOn", order: -1},
                 {id: 1, name: "Oldest", value: "Oldest", key: "createdOn", order: 1},
             ];

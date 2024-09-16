@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 /* eslint-disable linebreak-style */
 (function (angular) {
 	angular
@@ -148,10 +149,10 @@
 						NowPlaying.shouldPlayTrackAgain = false;
 						buildfire.spinner.show();
 						$rootScope.isPlayerReady = true;
-						if (e.data.track.backgroundImage && !e.data.track.backgroundImage.indexOf('func') && !e.data.track.backgroundImage.indexOf('now-playing.png') && NowPlaying.isOnline) {
-							e.data.track.backgroundImage = NowPlaying.resizeImage(e.data.track.backgroundImage);
-						}
+
 						NowPlaying.currentTrack = e.data.track;
+						setTrackImages();
+
 						NowPlaying.playing = true;
 						NowPlaying.isExistInPlaylist = $rootScope.playListItems.findIndex(item => item.url === NowPlaying.currentTrack.url) > -1;
 						if (!NowPlaying.currentTrack.isAudioFromPluginList) {
@@ -161,7 +162,7 @@
 					case 'timeUpdate':
 						buildfire.spinner.hide();
 						audioPlayer.getCurrentTrack((track) => {
-							if (track && track.isAudioFromPluginList && Math.abs(e.data.currentTime - $rootScope.lastUpdatedPosition) > 5) {
+							if (track && Math.abs(e.data.currentTime - $rootScope.lastUpdatedPosition) > 5) {
 								updateAudioLastPosition(track.id, e.data.currentTime);
 							}
 							if (track && NowPlaying.currentTrack && track.url === NowPlaying.currentTrack.url) {
@@ -234,8 +235,7 @@
 					NowPlaying.currentTrack.topImage = DropboxLinksManager.convertDropbox(NowPlaying.currentTrack.topImage);
 					NowPlaying.currentTrack.image = DropboxLinksManager.convertDropbox(NowPlaying.currentTrack.image);
 
-					const backgroundImage = NowPlaying.currentTrack.backgroundImage ? NowPlaying.resizeImage(NowPlaying.currentTrack.backgroundImage) : './assets/images/now-playing.png';
-					NowPlaying.currentTrack.backgroundImage = CSS.escape(backgroundImage);
+					setTrackImages();
 
 					audioPlayer.getCurrentTrack((track) => {
 						NowPlaying.currentTrack.isAudioFromPluginList = true;
@@ -251,13 +251,12 @@
 								if ($rootScope.playListItems.length) NowPlaying.audioFromPlayList = $rootScope.playListItems.findIndex((el) => el.url === NowPlaying.currentTrack.url);
 								else NowPlaying.audioFromPlayList = -1;
 	
-								if (NowPlaying.audioFromPlayList > -1) {
+								if (NowPlaying.audioFromPlayList > -1 && NowPlaying.settings.autoJumpToLastPosition) {
 									NowPlaying.currentTime = $rootScope.playListItems[NowPlaying.audioFromPlayList].lastPosition;
 								} else {
-									NowPlaying.audioFromPlayList = 0;
 									NowPlaying.currentTime = 0;
 								}
-							} else if (($rootScope.autoJumpToLastPosition || NowPlaying.settings.autoJumpToLastPosition) && NowPlaying.lastSavedPosition) {
+							} else if (NowPlaying.lastSavedPosition && (NowPlaying.settings.autoJumpToLastPosition || (track && track.url === NowPlaying.currentTrack.url))) {
 								NowPlaying.currentTime = NowPlaying.lastSavedPosition;
 							} else {
 								NowPlaying.currentTime = 0;
@@ -338,6 +337,7 @@
 					NowPlaying.playing = true;
 					audioPlayer.settings.set(NowPlaying.settings);
 					if (!NowPlaying.isOnline && (!NowPlaying.item.data.hasDownloadedAudio || !$rootScope.allowOfflineDownload)) {
+						NowPlaying.playing = false;
 						return buildfire.dialog.show(
 							{
 								title: 'Audio not available offline',
@@ -631,8 +631,8 @@
 					this.lastPosition = lastPosition;
 					this.title = track.title || getString('mediaPlayer.unknownTrack');
 					this.url = track.audioUrl || track.url;
-					this.image = track.image ? track.image : track.topImage;
-					this.topImage = track.topImage ? track.topImage : track.image;
+					this.image = track.image;
+					this.topImage = track.topImage;
 					this.album = track.title;
 					this.artists = track.artists;
 					this.startAt = 0; // where to begin playing
@@ -705,6 +705,7 @@
 							if (currentTrack.url === track.url && $rootScope.isPlayerReady && !NowPlaying.shouldPlayTrackAgain) {
 								audioPlayer.play();
 							} else {
+								NowPlaying.audioFromPlayList = index;
 								audioPlayer.play(index);
 							}
 						});
@@ -784,14 +785,35 @@
 					});
 				};
 
-				const setDefaultImages = () => {
-					NowPlaying.currentTrack = new Track({ ...media.data, id: media.id }, 0);
-					const backgroundImage = NowPlaying.currentTrack.backgroundImage ? NowPlaying.resizeImage(NowPlaying.currentTrack.backgroundImage) : './assets/images/now-playing.png';
+				function unescapeCssString(str) {
+					return str.replace(/\\([0-9a-fA-F]{1,6})\s?/g, (match, hex) => {
+						return String.fromCharCode(parseInt(hex, 16));
+					}).replace(/\\(.)/g, '$1');
+				}
+
+				const setTrackImages = () => {
+					let backgroundImage;
+					if (NowPlaying.currentTrack && NowPlaying.currentTrack.backgroundImage) {
+						backgroundImage = unescapeCssString(NowPlaying.currentTrack.backgroundImage);
+						if (backgroundImage.indexOf('/https://') === -1) {
+							backgroundImage = NowPlaying.resizeImage(backgroundImage);
+						}
+					} else if (NowPlaying.currentTrack && NowPlaying.currentTrack.image) {
+						backgroundImage = NowPlaying.resizeImage(NowPlaying.currentTrack.image);
+					} else if (NowPlaying.currentTrack && NowPlaying.currentTrack.topImage) {
+						backgroundImage = NowPlaying.resizeImage(NowPlaying.currentTrack.topImage);
+					} else {
+						backgroundImage = './assets/images/now-playing.png';
+					}
+
 					NowPlaying.currentTrack.backgroundImage = CSS.escape(backgroundImage);
 				};
 
 				const initNowPlaying = (cpSync = false) => {
-					if (!cpSync) setDefaultImages();
+					if (!cpSync) {
+						NowPlaying.currentTrack = new Track({ ...media.data, id: media.id }, 0);
+						setTrackImages();
+					}
 					NowPlaying.shuffleAllItemsIndicator = getString('mediaPlayer.shuffleAllItemsIndicator') ? getString('mediaPlayer.shuffleAllItemsIndicator') : 'A';
 					NowPlaying.shufflePlaylistItemsIndicator = getString('mediaPlayer.shufflePlaylistItemsIndicator') ? getString('mediaPlayer.shufflePlaylistItemsIndicator') : 'P';
 

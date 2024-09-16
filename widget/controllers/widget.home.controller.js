@@ -1017,6 +1017,9 @@
                         WidgetHome.stopScroll = true;
                         WidgetHome.currentlyLoading = true;
 
+                        if (!searchOptions.sort.rank) {
+                            searchOptions.sort.rank = 1;
+                        }
                         MediaContent.find(searchOptions).then((result) => {
                             result = result.map((item) => {
                                 item.data.topImage = DropboxLinksManager.convertDropbox(item.data.topImage);
@@ -1026,7 +1029,11 @@
                             setupImages(result);
                             WidgetHome.items = WidgetHome.items.concat(result);
                             WidgetHome.items.forEach((item) => {
-                                var searchOptions = {
+                                item.data.opened = isOpened(item);
+                                // no need to get the view count if the feature is disabled
+                                if (!WidgetHome.media.data.content.showViewCount) return;
+
+                                let searchOptions = {
                                     filter: {
                                         '_buildfire.index.string1': item.id + '-true',
                                     },
@@ -1034,7 +1041,6 @@
                                     limit: 1,
                                     recordCount: true,
                                 };
-                                item.data.opened = isOpened(item);
 
                                 buildfire.publicData.search(
                                     searchOptions,

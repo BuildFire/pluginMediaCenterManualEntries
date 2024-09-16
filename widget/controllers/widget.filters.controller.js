@@ -109,6 +109,9 @@
                     }
                     WidgetFilters.isBusy = true;
                     WidgetFilters.updateSearchOptions();
+                    if (!searchOptions.sort.rank) {
+                        searchOptions.sort.rank = 1;
+                    }
                     CategoryContent.find(searchOptions).then(function success(result) {
                         if (result.length <= _limit) {// to indicate there are more
                             WidgetFilters.noMore = true;

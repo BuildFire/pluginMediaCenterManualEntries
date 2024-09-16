@@ -5,8 +5,8 @@
     <div class="media-center-plugin" ng-if="!(NowPlaying.openMoreInfo || NowPlaying.openSettings)">
         <div class="media-holder">
             <div class="media-inner text-center">
-                <img ng-if="NowPlaying.currentTrack.topImage && NowPlaying.isOnline" load-image="1x1" crop-width="300" crop-height="300"
-                    crop-type="crop" ng-src="{{NowPlaying.currentTrack.topImage | resizeImage : 400:400 }}" alt="{{NowPlaying.currentTrack.title}} top image">
+                <img ng-if="NowPlaying.currentTrack.topImage && NowPlaying.isOnline" 
+                    ng-src="{{NowPlaying.currentTrack.topImage | resizeImage : 400:400 }}" alt="{{NowPlaying.currentTrack.title}} top image">
                 <img ng-if="NowPlaying.currentTrack.topImage && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.topImage}}" alt="{{NowPlaying.currentTrack.title}} top image">
                 <img ng-if="!NowPlaying.currentTrack.topImage" src="./assets/images/now-playing.png" alt="top image">
             </div>
@@ -157,7 +157,10 @@
             <div class="media-player-more-info">
                 <div class="media-holder margin-top-thirty">
                     <div class="media-inner text-center">
-                        <img ng-if="NowPlaying.currentTrack.topImage" ng-src="{{NowPlaying.currentTrack.topImage | resizeImage : 400:400}}">
+                        <img ng-if="NowPlaying.currentTrack.topImage && NowPlaying.isOnline" 
+                            ng-src="{{NowPlaying.currentTrack.topImage | resizeImage : 400:400 }}" alt="{{NowPlaying.currentTrack.title}} top image">
+                        <img ng-if="NowPlaying.currentTrack.topImage && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.topImage}}" alt="{{NowPlaying.currentTrack.title}} top image">
+                        <img ng-if="!NowPlaying.currentTrack.topImage" src="./assets/images/now-playing.png" alt="top image">
                     </div>
                 </div>
                 <hr class="none">

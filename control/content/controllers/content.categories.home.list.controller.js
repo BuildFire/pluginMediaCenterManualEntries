@@ -135,6 +135,9 @@
 					$scope.isBusy = true;
 					$scope.updateSearchOptions();
 
+					if (!searchOptions.sort.rank) {
+						searchOptions.sort.rank = 1;
+					}
 					CategoryContent.find(searchOptions).then((result) => {
 						$scope.isBusy = false;
 
@@ -215,7 +218,7 @@
 
 				$scope.updateSearchOptions = function () {
 					mediaCenterData = AppConfig.getSettings();
-					const sortOrder = CategoryOrders.options.find((option) => (mediaCenterData.content && option.value === mediaCenterData.content.sortByValue));
+					const sortOrder = CategoryOrders.options.find((option) => (mediaCenterData.content && option.value === mediaCenterData.content.sortCategoriesBy));
 					if (sortOrder && sortOrder.key) {
 						searchOptions.sort = { [sortOrder.key]: sortOrder.order };
 					} else {

@@ -147,6 +147,9 @@
 					$scope.isBusy = true;
 					$scope.updateSearchOptions();
 
+					if (!searchOptions.sort.rank) {
+						searchOptions.sort.rank = 1;
+					}
 					MediaContent.find(searchOptions).then((result) => {
 						$scope.isBusy = false;
 
