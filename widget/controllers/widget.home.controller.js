@@ -999,7 +999,7 @@
 
                         if (record.data.topImage) {
                             const img = new Image();
-                            img.src = buildfire.imageLib.resizeImage(record.data.topImage, { width: '300', height: '300' });
+                            img.src = buildfire.imageLib.resizeImage(record.data.topImage, { width: '400', height: '400' });
                             img.onload = () => {
                                 window.loadedImages.push(img.src);
                             }

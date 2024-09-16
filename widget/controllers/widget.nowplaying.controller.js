@@ -631,8 +631,8 @@
 					this.lastPosition = lastPosition;
 					this.title = track.title || getString('mediaPlayer.unknownTrack');
 					this.url = track.audioUrl || track.url;
-					this.image = track.image;
-					this.topImage = track.topImage;
+					this.image = track.image ? track.image : track.topImage;
+					this.topImage = track.topImage ? track.topImage : track.image;
 					this.album = track.title;
 					this.artists = track.artists;
 					this.startAt = 0; // where to begin playing
@@ -672,6 +672,24 @@
 				 */
 
 				NowPlaying.playlistPlayPause = function (track, index) {
+					if (!NowPlaying.isOnline && track.url.indexOf('http') === 0) {
+						return buildfire.dialog.show(
+							{
+								title: 'Audio not available offline',
+								message: 'The Audio you are trying to play has not been downloaded.',
+								isMessageHTML: true,
+								actionButtons: [
+									{
+										text: 'Ok',
+										type: 'primary',
+										action: () => {
+										},
+									},
+								],
+							}, (err, actionButton) => { }
+						);
+					}
+
 					if (NowPlaying.settings) {
 						audioPlayer.settings.set(NowPlaying.settings);
 					}
