@@ -77,7 +77,7 @@ Style for loader
 }
 
 .sidenav {
-    width: 170px;
+    width: 150px;
     flex-shrink: 0;
     padding-right: 1rem;
 }
@@ -112,8 +112,9 @@ Style for loader
 .sidenav-content {
     overflow-y: auto;
     max-height: calc(100vh - 45px);
-    padding: 0 1rem;
+    padding: 0 0.5rem;
     flex: auto;
+    overflow-x: hidden;
 }
 
 .required {
@@ -159,8 +160,16 @@ Style for loader
     min-height: 30vh;
 }
 
+.sortable-list-actions-container {
+    flex-wrap: wrap;
+}
+
 .sortable-list-actions-container>.sortable-list-add-button {
     margin: 0 !important;
+}
+
+.modal-dialog {
+    min-width: 600px !important;
 }
 
 .modal-header {

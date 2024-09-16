@@ -312,24 +312,28 @@
                  * Messaging.onReceivedMessage is called when any event is fire from Content/design section.
                  * @param event
                  */
-                Messaging.onReceivedMessage = function (event) {
-                    if (event.message && event.message.path == 'MEDIA') {
-                        WidgetHome.goTo(event.message.id);
+                $rootScope.setupHomeCPSync = function () {
+                    if ($rootScope.showFeed) {
+                        Messaging.onReceivedMessage = function (event) {
+                            if (event.message && event.message.path == 'MEDIA') {
+                                WidgetHome.goTo(event.message.id);
+                            }
+                            if (event.message && event.message.path == 'HOME') {
+                                buildfire.history.get({ pluginBreadCrumbsOnly: true }, function (err, result) {
+                                    result.map(item => buildfire.history.pop());
+                                    Location.goToHome();
+                                });
+                            }
+                            if (event.cmd == "refresh") /// message comes from the strings page on the control side
+                                location.reload();
+                        };
                     }
-                    if (event.message && event.message.path == 'HOME') {
-                        buildfire.history.get({ pluginBreadCrumbsOnly: true }, function (err, result) {
-                            result.map(item => buildfire.history.pop());
-                            Location.goToHome();
-                        });
-                    }
-                    if (event.cmd == "refresh") /// message comes from the strings page on the control side
-                        location.reload();
-                };
+                }
 
                 var onUpdateCallback = function (event) {
                     buildfire.spinner.show();
                     if (event.tag == "MediaCenter") {
-                        if (event.data) {
+                        if (event.data && event.data.content && event.data.design) {
                             WidgetHome.media.data = event.data;
                             $rootScope.backgroundImage = WidgetHome.media.data.design && WidgetHome.media.data.design.backgroundImage;
                             $rootScope.allowShare = WidgetHome.media.data.content.allowShare;
@@ -356,6 +360,7 @@
                             }
                             $rootScope.refreshItems();
                             buildfire.spinner.hide();
+                            WidgetHome.loadCarousel();
                             if (!$scope.$$phase) $scope.$apply();
                         } else {
                             buildfire.spinner.hide();
@@ -626,7 +631,7 @@
                             $rootScope.addAllToPlaylistLoading = false;
                             if (!$scope.$$phase) $scope.$apply();
                         } else {
-                            var filteredItems = WidgetHome.items.filter(el => !$rootScope.isInGlobalPlaylist(el.id));
+                            var filteredItems = WidgetHome.items.filter(el => !$rootScope.isInGlobalPlaylist(el.id)).filter(item => item.data.audioUrl || item.data.videoUrl);
                             var itemsToAdd = [...filteredItems].splice(0, freeSlots);
                             GlobalPlaylist.insertAndUpdateAll(itemsToAdd).then(() => {
                                 for (let item of itemsToAdd) {
@@ -1698,6 +1703,9 @@
                         WidgetHome.deepLink = true;
                     }
                 });
+                $rootScope.$watch(function () {
+					return $rootScope.showFeed;
+				}, $rootScope.setupHomeCPSync, true);
                 $rootScope.$on('activeFiltersChanged', function () {
                     if ($rootScope.activeFilters) {
                         if (Object.keys($rootScope.activeFilters) && Object.keys($rootScope.activeFilters).length) {

@@ -90,6 +90,7 @@
 
 				$scope.toggleLoadingState = (loading) => {
 					const itemsEmptyContainer = document.getElementById('categoriesEmptyState');
+					if (!itemsEmptyContainer) return;
 					if (loading) {
 						$scope.mediaList.selector.classList.add('hide-list');
 						itemsEmptyContainer.classList.remove('hidden');

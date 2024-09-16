@@ -70,12 +70,6 @@
 				console.error(err);
 			});
 
-			Settings.setAutoPlayDelay = (option) => {
-				if (option.value != Settings.data.content.autoPlayDelay.value) {
-					Settings.data.content.autoPlayDelay = option;
-				}
-			};
-
 			Settings.setSettings = () => {
 				const isUnchanged = angular.equals(Settings.lastSavedContent, Settings.data);
 				if (isUnchanged) return;
@@ -86,6 +80,17 @@
 				}).catch((err) => {
 					console.error(err);
 				});
+			};
+
+			Settings.setAutoPlayDelay = (option) => {
+				if (option.value != Settings.data.content.autoPlayDelay.value) {
+					Settings.data.content.autoPlayDelay = option;
+
+					if (!$scope.$$phase) {
+						$scope.$apply();
+						$scope.$digest();
+					}
+				}
 			};
 
 			Settings.showPluginsDialog = () => {
@@ -100,6 +105,11 @@
 					if (instances && instances.length > 0) {
 						if (instances[0].pluginTypeId === PLAYLISTINSTANCES.DEV || instances[0].pluginTypeId === PLAYLISTINSTANCES.QA || instances[0].pluginTypeId === PLAYLISTINSTANCES.PROD) {
 							Settings.data.content.globalPlaylistPlugin = instances[0];
+
+							if (!$scope.$$phase) {
+								$scope.$apply();
+								$scope.$digest();
+							}
 						} else {
 							buildfire.dialog.toast({
 								message: 'Please select the correct playlist plugin',
@@ -112,6 +122,11 @@
 
 			Settings.deleteActionItem = () => {
 				Settings.data.content.globalPlaylistPlugin = null;
+				
+				if (!$scope.$$phase) {
+					$scope.$apply();
+					$scope.$digest();
+				}
 			};
 
 			$scope.saveTimer = null;
@@ -121,6 +136,8 @@
 				if (Settings.data.content.forceAutoPlay) {
 					Settings.data.content.autoPlay = false;
 					Settings.data.content.globalPlaylist = false;
+				} else {
+					Settings.data.content.startWithAutoJumpByDefault = false;
 				}
 
 				if (Settings.data.content.autoPlay) {
@@ -156,12 +173,17 @@
 					);
 				}
 
+				if (!$scope.$$phase) {
+					$scope.$apply();
+					$scope.$digest();
+				}
+
 				$scope.syncWithWidget();
 
 				if ($scope.saveTimer) clearTimeout($scope.saveTimer);
 				$scope.saveTimer = setTimeout(() => {
 					Settings.setSettings();
-				}, 500);
+				}, 300);
 			};
 
 			$scope.syncWithWidget = () => {

@@ -2,18 +2,14 @@
 (function (angular) {
 	angular
 		.module('mediaCenterWidget')
-		.controller('NowPlayingCtrl', ['$scope', 'media', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', 'openedMediaHandler', 'DropboxLinksManager',
-			function ($scope, media, Buildfire, Modals, COLLECTIONS, $rootScope, openedMediaHandler, DropboxLinksManager) {
+		.controller('NowPlayingCtrl', ['$scope', 'Messaging', 'EVENTS', 'PATHS', 'media', 'Location', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', 'openedMediaHandler', 'DropboxLinksManager',
+			function ($scope, Messaging, EVENTS, PATHS, media, Location, Buildfire, Modals, COLLECTIONS, $rootScope, openedMediaHandler, DropboxLinksManager) {
+
 				$rootScope.blackBackground = true;
 				$rootScope.showFeed = false;
 				var audioPlayer = Buildfire.services.media.audioPlayer;
 				var NowPlaying = this;
 				NowPlaying.swiped = [];
-				NowPlaying.forceAutoPlay = $rootScope.forceAutoPlay;
-				NowPlaying.autoJumpToLastPosition = $rootScope.autoJumpToLastPosition;
-				media.data.audioUrl = DropboxLinksManager.convertDropbox(media.data.audioUrl);
-				media.data.topImage = DropboxLinksManager.convertDropbox(media.data.topImage);
-				media.data.image = DropboxLinksManager.convertDropbox(media.data.image);
 				NowPlaying.currentTime = 0;
 
 				$rootScope.deepLinkNavigate = null;
@@ -73,11 +69,11 @@
 						_pluginItem.data.image = DropboxLinksManager.convertDropbox(_pluginItem.data.image || '');
 
 						const index = $rootScope.playListItems.findIndex((el) => (el.url === _pluginItem.data.audioUrl && el.plugin === buildfire.context.instanceId));
-						if (index >= 0 && !NowPlaying.forceAutoPlay) {
+						if (index >= 0 && !$rootScope.forceAutoPlay) {
 							audioPlayer.removeFromPlaylist(index);
 							$rootScope.playListItems.splice(index, 1);
-						} else if (index < 0 && NowPlaying.forceAutoPlay) {
-							const transferTrack = new Track({..._pluginItem.data, id: _pluginItem.id}, 0);
+						} else if (index < 0 && $rootScope.forceAutoPlay) {
+							const transferTrack = new Track({ ..._pluginItem.data, id: _pluginItem.id }, 0);
 							transferTrack.plugin = buildfire.context.instanceId;
 							transferTrack.isAudioFromPluginList = false;
 
@@ -139,8 +135,8 @@
 				};
 
 				/**
-                 * audioPlayer.onEvent callback calls when audioPlayer event fires.
-                 */
+				 * audioPlayer.onEvent callback calls when audioPlayer event fires.
+				 */
 				if ($rootScope.activePlayerEvents) {
 					// Prevent the repetition of events by clearing all previous occurrences, as repeated events tend to occur when the user plays multiple audio files.
 					$rootScope.activePlayerEvents.clear();
@@ -149,8 +145,12 @@
 					switch (e.event) {
 					case 'play':
 					case 'resume':
+						NowPlaying.shouldPlayTrackAgain = false;
 						buildfire.spinner.show();
 						$rootScope.isPlayerReady = true;
+						if (e.data.track.backgroundImage && !e.data.track.backgroundImage.indexOf('func') && !e.data.track.backgroundImage.indexOf('now-playing.png')) {
+							e.data.track.backgroundImage = NowPlaying.resizeImage(e.data.track.backgroundImage);
+						}
 						NowPlaying.currentTrack = e.data.track;
 						NowPlaying.playing = true;
 						NowPlaying.isExistInPlaylist = $rootScope.playListItems.findIndex(item => item.url === NowPlaying.currentTrack.url) > -1;
@@ -212,7 +212,7 @@
 				function updatePlaylistUI() {
 					audioPlayer.isPaused((err, isPaused) => {
 						if (err) console.error(err);
-						
+
 						NowPlaying.getPlaylistData().then(() => {
 							audioPlayer.getCurrentTrack((track) => {
 								$rootScope.playListItems.forEach((element, index) => {
@@ -226,8 +226,14 @@
 						});
 					});
 				}
-				function initAudio() {
-					NowPlaying.currentTrack = new Track({ ...media.data, id: media.id }, 0);
+				function initAudio(cpSync = false) {
+					if (!cpSync) NowPlaying.currentTrack = new Track({ ...media.data, id: media.id }, 0);
+					else NowPlaying.currentTrack = new Track(NowPlaying.currentTrack, 0);
+					
+					NowPlaying.currentTrack.url = DropboxLinksManager.convertDropbox(NowPlaying.currentTrack.url);
+					NowPlaying.currentTrack.topImage = DropboxLinksManager.convertDropbox(NowPlaying.currentTrack.topImage);
+					NowPlaying.currentTrack.image = DropboxLinksManager.convertDropbox(NowPlaying.currentTrack.image);
+
 					const backgroundImage = NowPlaying.currentTrack.backgroundImage ? NowPlaying.resizeImage(NowPlaying.currentTrack.backgroundImage) : './assets/images/now-playing.png';
 					NowPlaying.currentTrack.backgroundImage = CSS.escape(backgroundImage);
 
@@ -235,11 +241,11 @@
 						NowPlaying.currentTrack.isAudioFromPluginList = true;
 						if ($rootScope.seekTime) {
 							NowPlaying.currentTime = $rootScope.seekTime;
-						} else if (track && !track.isAudioFromPluginList && track.url === NowPlaying.currentTrack.url && $rootScope.playListItems[$rootScope.playlistTrackIndex].url === track.url) {
+						} else if (track && !track.isAudioFromPluginList && track.url === NowPlaying.currentTrack.url && $rootScope.playlistTrackIndex > -1 && $rootScope.playListItems[$rootScope.playlistTrackIndex] && $rootScope.playListItems[$rootScope.playlistTrackIndex].url === track.url) {
 							NowPlaying.currentTime = $rootScope.playListItems[$rootScope.playlistTrackIndex].lastPosition;
 							NowPlaying.audioFromPlayList = $rootScope.playlistTrackIndex;
 							NowPlaying.currentTrack.isAudioFromPluginList = false;
-						} else if (NowPlaying.forceAutoPlay) {
+						} else if ($rootScope.forceAutoPlay) {
 							NowPlaying.currentTrack.isAudioFromPluginList = false;
 							NowPlaying.audioFromPlayList = $rootScope.playListItems.findIndex((el) => el.url === NowPlaying.currentTrack.url);
 							if (NowPlaying.audioFromPlayList > -1) {
@@ -248,7 +254,7 @@
 								NowPlaying.audioFromPlayList = 0;
 								NowPlaying.currentTime = 0;
 							}
-						} else if ((NowPlaying.autoJumpToLastPosition || NowPlaying.settings.autoJumpToLastPosition) && NowPlaying.lastSavedPosition) {
+						} else if (($rootScope.autoJumpToLastPosition || NowPlaying.settings.autoJumpToLastPosition) && NowPlaying.lastSavedPosition) {
 							NowPlaying.currentTime = NowPlaying.lastSavedPosition;
 						} else {
 							NowPlaying.currentTime = 0;
@@ -258,11 +264,11 @@
 						NowPlaying.isAudioInitialized = true;
 
 						updatePlaylistUI();
-	
+
 						if ($rootScope.autoPlay) {
 							NowPlaying.playTrack();
 						}
-	
+
 						if (!$scope.$$phase) {
 							$scope.$digest();
 							$scope.$apply();
@@ -319,8 +325,8 @@
 					return filter;
 				}
 				/**
-                 * Player related method and variables
-                 */
+				 * Player related method and variables
+				 */
 				NowPlaying.playTrack = function () {
 					NowPlaying.playing = true;
 					audioPlayer.settings.set(NowPlaying.settings);
@@ -346,17 +352,17 @@
 						NowPlaying.markAudioAsPlayed();
 					}
 					if (!NowPlaying.currentTrack.isAudioFromPluginList) {
-						if (NowPlaying.audioFromPlayList === $rootScope.playlistTrackIndex && $rootScope.isPlayerReady) {
+						if (NowPlaying.audioFromPlayList === $rootScope.playlistTrackIndex && $rootScope.isPlayerReady && !NowPlaying.shouldPlayTrackAgain) {
 							audioPlayer.play();
 						} else {
 							audioPlayer.play(NowPlaying.audioFromPlayList);
 						}
 					} else {
 						audioPlayer.getCurrentTrack((track) => {
-							if (track && track.url === NowPlaying.currentTrack.url && $rootScope.isPlayerReady) {
+							if (track && track.url === NowPlaying.currentTrack.url && $rootScope.isPlayerReady && !NowPlaying.shouldPlayTrackAgain) {
 								audioPlayer.play();
 							} else {
-								const _track = {...NowPlaying.currentTrack, isAudioFromPluginList: true};
+								const _track = { ...NowPlaying.currentTrack, isAudioFromPluginList: true };
 								delete _track.lastPosition;
 								audioPlayer.play(_track);
 							}
@@ -371,7 +377,7 @@
 					NowPlaying.isAudioPlayed = true;
 					sendContinuesAnalytics(NowPlaying);
 
-                    
+					
 					const userId = $rootScope.user ? $rootScope.user._id : Buildfire.context.deviceId;
 					if (userId) {
 						const data = {
@@ -490,7 +496,7 @@
 				NowPlaying.loopPlaylist = function () {
 					NowPlaying.settings.loopPlaylist = !NowPlaying.settings.loopPlaylist;
 					if (NowPlaying.settings.loopPlaylist) NowPlaying.settings.autoPlayNext = true;
-                    
+
 					audioPlayer.settings.set(NowPlaying.settings);
 				};
 				NowPlaying.addToPlaylist = function (track) {
@@ -498,7 +504,7 @@
 						message: NowPlaying.playListStrings.addedPlaylist
 					});
 					NowPlaying.isExistInPlaylist = true;
-					audioPlayer.addToPlaylist({...track, isAudioFromPluginList: false});
+					audioPlayer.addToPlaylist({ ...track, isAudioFromPluginList: false });
 					if (!$scope.$$phase) {
 						$scope.$digest();
 					}
@@ -530,7 +536,7 @@
 					return new Promise((resolve, reject) => {
 						audioPlayer.getPlaylist(function (err, data) {
 							if (err) return reject(err);
-							$rootScope.playlistTrackIndex =  data.lastIndex;
+							$rootScope.playlistTrackIndex = data.lastIndex;
 							if (data && data.tracks) {
 								$rootScope.playListItems = data.tracks.map((el) => ({ ...el, title: el.title || getString('mediaPlayer.unknownTrack') }));
 								if (NowPlaying.currentTrack) {
@@ -567,10 +573,15 @@
 					});
 				};
 				NowPlaying.setSettings = function (settings) {
-					if (!settings.autoPlayNext && NowPlaying.forceAutoPlay) {
+					if (settings.shufflePlaylist && !NowPlaying.settings.shufflePlaylist) {
+						buildfire.dialog.toast({ message: getString('mediaPlayer.shufflePlaylistItemsConfirmation'), type: 'info' });
+					} else if (!settings.shufflePlaylist && NowPlaying.settings.shufflePlaylist) {
+						buildfire.dialog.toast({ message: getString('mediaPlayer.shuffleOffConfirmation'), type: 'info' });
+					}
+					if (!settings.autoPlayNext && $rootScope.forceAutoPlay) {
 						settings.autoPlayNext = true;
 					}
-					
+
 					audioPlayer.settings.set(new AudioSettings(settings));
 
 					if (!$scope.$$phase) {
@@ -599,23 +610,23 @@
 				};
 
 				/**
-                 * Track Smaple
-                 * @param title
-                 * @param url
-                 * @param image
-                 * @param album
-                 * @param artist
-                 * @constructor
-                 */
+				 * Track Smaple
+				 * @param title
+				 * @param url
+				 * @param image
+				 * @param album
+				 * @param artists
+				 * @constructor
+				 */
 
 				function Track(track, lastPosition) {
 					this.lastPosition = lastPosition;
-					this.title = track.audioTitle || getString('mediaPlayer.unknownTrack');
-					this.url = track.audioUrl;
+					this.title = track.title || getString('mediaPlayer.unknownTrack');
+					this.url = track.audioUrl || track.url;
 					this.image = track.image;
 					this.topImage = track.topImage;
 					this.album = track.title;
-					this.artist = track.artists;
+					this.artists = track.artists;
 					this.startAt = 0; // where to begin playing
 					this.isAudioPlayed = !!NowPlaying.isAudioPlayed;
 					this.id = track.id;
@@ -630,15 +641,15 @@
 				}
 
 				/**
-                 * AudioSettings sample
-                 * @param autoPlayNext
-                 * @param loopPlaylist
-                 * @param autoJumpToLastPosition
-                 * @param shufflePlaylist
-                 * @param shufflePluginList
+				 * AudioSettings sample
+				 * @param autoPlayNext
+				 * @param loopPlaylist
+				 * @param autoJumpToLastPosition
+				 * @param shufflePlaylist
+				 * @param shufflePluginList
 				 * @param playbackSpeed
-                 * @constructor
-                 */
+				 * @constructor
+				 */
 				function AudioSettings(settings) {
 					this.autoPlayNext = settings.autoPlayNext || initialSettings.autoPlayNext; // once a track is finished playing go to the next track in the play list and play it
 					this.loopPlaylist = settings.loopPlaylist || initialSettings.loopPlaylist; // once the end of the playlist has been reached start over again
@@ -649,8 +660,8 @@
 				}
 
 				/**
-                 * track play pause from playlist
-                 */
+				 * track play pause from playlist
+				 */
 
 				NowPlaying.playlistPlayPause = function (track, index) {
 					if (NowPlaying.settings) {
@@ -665,7 +676,7 @@
 
 						audioPlayer.getCurrentTrack((currentTrack) => {
 							NowPlaying.currentTrack = track;
-							if (currentTrack.url === track.url && $rootScope.isPlayerReady) {
+							if (currentTrack.url === track.url && $rootScope.isPlayerReady && !NowPlaying.shouldPlayTrackAgain) {
 								audioPlayer.play();
 							} else {
 								audioPlayer.play(index);
@@ -705,9 +716,9 @@
 				//! --------------------------- End : Playback options --------------------------------------
 
 				/**
-                 * progress bar style
-                 * @param {Number} value
-                 */
+				 * progress bar style
+				 * @param {Number} value
+				 */
 				NowPlaying.progressBarStyle = function (value = NowPlaying.currentTime) {
 					if (!NowPlaying.duration) return;
 					const percentage = Math.round(((value / NowPlaying.duration) * 100));
@@ -753,8 +764,8 @@
 					NowPlaying.currentTrack.backgroundImage = CSS.escape(backgroundImage);
 				};
 
-				const initNowPlaying = () => {
-					setDefaultImages();
+				const initNowPlaying = (cpSync = false) => {
+					if (!cpSync) setDefaultImages();
 					NowPlaying.shuffleAllItemsIndicator = getString('mediaPlayer.shuffleAllItemsIndicator') ? getString('mediaPlayer.shuffleAllItemsIndicator') : 'A';
 					NowPlaying.shufflePlaylistItemsIndicator = getString('mediaPlayer.shufflePlaylistItemsIndicator') ? getString('mediaPlayer.shufflePlaylistItemsIndicator') : 'P';
 
@@ -772,8 +783,10 @@
 							NowPlaying.forceAutoPlayer();
 						});
 
-						if (NowPlaying.autoJumpToLastPosition && !NowPlaying.settings.autoJumpToLastPosition) {
-							NowPlaying.settings.autoJumpToLastPosition = NowPlaying.autoJumpToLastPosition;
+						if ($rootScope.forceAutoPlay) {
+							NowPlaying.settings.autoPlayNext = true;
+							NowPlaying.settings.autoJumpToLastPosition = $rootScope.autoJumpToLastPosition;
+
 							audioPlayer.settings.set(NowPlaying.settings);
 						}
 
@@ -782,7 +795,7 @@
 					});
 
 					if (!NowPlaying.isOnline) {
-						initAudio();
+						initAudio(cpSync);
 					} else if ($rootScope.user || Buildfire.context.deviceId) {
 						const userCheckViewFilter = {
 							filter: getIndexedFilter(media.id, $rootScope.user ? $rootScope.user.userId : Buildfire.context.deviceId)
@@ -795,21 +808,57 @@
 								if (res[0].data.lastPosition) {
 									NowPlaying.lastSavedPosition = res[0].data.lastPosition;
 									NowPlaying.currentTime = res[0].data.lastPosition;
-									initAudio();
+									initAudio(cpSync);
 								} else {
-									initAudio();
+									initAudio(cpSync);
 								}
 							} else {
 								NowPlaying.isAudioPlayed = false;
-								initAudio();
+								initAudio(cpSync);
 							}
 						});
 					} else {
-						initAudio();
+						initAudio(cpSync);
 					}
 				};
 
 				initNowPlaying();
+
+				Messaging.onReceivedMessage = (event) => {
+					if (event.message && event.message.path == 'MEDIA') {
+						Location.go('#/media/' + event.message.id, true);
+					} else if (event.name === EVENTS.ITEMS_CHANGE) {
+						if (!event.message.itemUpdatedData.data.audioUrl) {
+							Location.go('#/media/' + event.message.id, true);
+						} else {
+							NowPlaying.currentTrack = {...NowPlaying.currentTrack, ...event.message.itemUpdatedData.data};
+							if (event.message.itemUpdatedData.data.title) {
+								NowPlaying.currentTrack.audioTitle = event.message.itemUpdatedData.data.title;
+							}
+
+							NowPlaying.shouldPlayTrackAgain = true;
+							initNowPlaying(true);
+						}
+					} else if (event.name === EVENTS.ROUTE_CHANGE) {
+						Location.goToHome();
+					} else {
+						initNowPlaying(true);
+					}
+
+					if (!$scope.$$phase) {
+						$scope.$apply();
+						$scope.$digest();
+					}
+				};
+				if (media.id !== 'mockId') {
+					Messaging.sendMessageToControl({
+						name: EVENTS.ROUTE_CHANGE,
+						message: {
+							path: PATHS.MEDIA,
+							id: media.id || null
+						}
+					});
+				}
 
 				$scope.$on('$destroy', function () {
 					buildfire.appearance.navbar.show();

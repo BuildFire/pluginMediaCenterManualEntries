@@ -17,7 +17,7 @@
             <div class="media-title ellipsis">
                 <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title}}</h4>
                 <p class="margin-zero whiteTheme ellipsis">
-                    {{NowPlaying.currentTrack.user.username}}{{NowPlaying.currentTrack.artist}}</p>
+                    {{NowPlaying.currentTrack.user.username}}{{NowPlaying.currentTrack.artists}}</p>
             </div>
             <span class="glyphicon whiteTheme btn btn-icon"
                 ng-class="{ 'glyphicon-star-empty' : !NowPlaying.item.data.bookmarked, 'glyphicon-star' : NowPlaying.item.data.bookmarked }"
@@ -70,7 +70,7 @@
                 <span ng-if="autoPlay" class="btn btn-icon" ng-click="NowPlaying.prev()"><i style="font-size: 18px; color: #D7D7D8;" class="glyphicon glyphicon-step-backward" role="button"></i></span>
                 <button class="btn btn-icon btn-lg btn-primary">
                     <span ng-if="!NowPlaying.playing" class="icon icon-main whiteTheme play-pause-icon"
-                        ng-click="NowPlaying.playTrack()" ng-class="NowPlaying.isAudioInitialized && 'disabled">
+                        ng-click="NowPlaying.playTrack()" ng-class="!NowPlaying.isAudioInitialized && 'disabled'">
                         <img src="assets/css/icons/ic_play2.svg" alt="">
                     </span>
                     <span ng-if="NowPlaying.playing" class="icon icon-main whiteTheme play-pause-icon"
@@ -105,7 +105,7 @@
             <span ng-if="!globalPlaylist" class="glyphicon glyphicon-option-horizontal whiteTheme"
                 ng-click="NowPlaying.openMoreInfoOverlay()"></span>
                 <i ng-if="globalPlaylist" class="btn btn-icon glyphicon whiteTheme" style="font-size: 17px; opacity: .5;" ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(NowPlaying.item.id), 'glyphicon-minus' : isInGlobalPlaylist(NowPlaying.item.id) }" ng-click="toggleGlobalPlaylistItem(NowPlaying.item)" role="button"></i>
-            <span ng-class="(NowPlaying.forceAutoPlay || globalPlaylist) && NowPlaying.autoJumpToLastPosition && 'hidden'" class="glyphicon glyphicon-cog whiteTheme" ng-click="NowPlaying.getSettings()"></span>
+            <span class="glyphicon glyphicon-cog whiteTheme" ng-click="NowPlaying.getSettings()"></span>
         </div>
     </div>
 
@@ -157,14 +157,14 @@
             <div class="media-player-more-info">
                 <div class="media-holder margin-top-thirty">
                     <div class="media-inner text-center">
-                        <img ng-if="NowPlaying.currentTrack.topImage" ng-src="{{NowPlaying.currentTrack.topImage | resizeImage : 260:260}}">
+                        <img ng-if="NowPlaying.currentTrack.topImage" ng-src="{{NowPlaying.currentTrack.topImage | resizeImage : 300:300}}">
                     </div>
                 </div>
                 <hr class="none">
                 <div class="media-player-info margin-top-twenty padding-left-ten padding-right-ten">
                     <div class="ellipsis">
                         <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title}}</h4>
-                        <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.artist}}</p>
+                        <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.artists}}</p>
                     </div>
                 </div>
                 <hr class="none">
@@ -172,10 +172,10 @@
                     <div class="text-center item">
                         <a ng-click="NowPlaying.showPlaylistPage()" class="whiteTheme">{{NowPlaying.playListStrings.goToPlaylist}}</a>
                     </div>
-                    <div class="text-center item" ng-if="!NowPlaying.forceAutoPlay && !NowPlaying.isExistInPlaylist">
+                    <div class="text-center item" ng-if="!forceAutoPlay && !NowPlaying.isExistInPlaylist">
                         <a ng-click="NowPlaying.addToPlaylist(NowPlaying.currentTrack)" class="whiteTheme">{{NowPlaying.playListStrings.addToPlaylist}}</a>
                     </div>
-                    <div class="text-center item" ng-if="!NowPlaying.forceAutoPlay && NowPlaying.isExistInPlaylist">
+                    <div class="text-center item" ng-if="!forceAutoPlay && NowPlaying.isExistInPlaylist">
                         <a ng-click="NowPlaying.removeFromPlaylist(NowPlaying.currentTrack)" class="whiteTheme">{{NowPlaying.playListStrings.removeFromPlaylist}}</a>
                     </div>
                     <div class="text-center item">
@@ -191,7 +191,7 @@
         <div class="overlay-content" style="position:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
             <div class="media-player-settings">
                 <div class="settings-list padded padding-top-zero">
-                    <div class="item clearfix row" ng-if="!NowPlaying.forceAutoPlay && !globalPlaylist">
+                    <div class="item clearfix row" ng-if="!forceAutoPlay && !globalPlaylist">
                         <div class="col-md-10 pull-left text-left">
                             <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.automaticallyPlayNextTrack}}</span>
                         </div>
@@ -215,7 +215,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="item clearfix row" ng-if="!NowPlaying.autoJumpToLastPosition">
+                    <div class="item clearfix row" ng-if="!forceAutoPlay">
                         <div class="col-md-10 pull-left text-left">
                             <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.autoJumpToLastPositon}}</span>
                         </div>

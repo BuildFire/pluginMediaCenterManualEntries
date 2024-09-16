@@ -70,6 +70,12 @@
         <label for="playAllAudioSwitch" class="label-success" ng-class="{'disabled': Settings.data.content.autoPlay || Settings.data.content.globalPlaylist}"></label>
     </div>
 </div>
+<div class="row margin-bottom-twenty flex flex-align-center">
+    <label class="tooltip-container col-md-4"></label>
+    <div class="button-switch col-md-9 flex flex-justify-end">
+        <p class="info-note w-100">Enabling this setting will automatically add all available audio files to the playlist, overriding manual playlist controls.</p>
+    </div>
+</div>
 
 <div class="row margin-bottom-twenty flex flex-align-center">
     <label class="tooltip-container col-md-4">Continuous Playback
@@ -83,6 +89,12 @@
     <div class="button-switch col-md-9 flex flex-justify-end">
         <input id="autoPlaySwitch" type="checkbox" ng-model="Settings.data.content.autoPlay" ng-class="{'disabled': Settings.data.content.forceAutoPlay}">
         <label for="autoPlaySwitch" class="label-success" ng-class="{'disabled': Settings.data.content.forceAutoPlay}"></label>
+    </div>
+</div>
+<div class="row margin-bottom-twenty flex flex-align-center">
+    <label class="tooltip-container col-md-4"></label>
+    <div class="button-switch col-md-9 flex flex-justify-end">
+        <p class="info-note w-100">Enabling this will disable 'Auto-Add All Audio to Playlist' and force 'Bypass Info Page' on.</p>
     </div>
 </div>
 
@@ -242,6 +254,6 @@
     <div class="button-switch col-md-9 flex flex-justify-end">
         <input id="enableStartWithAutoJumpByDefault" type="checkbox"
             ng-model="Settings.data.content.startWithAutoJumpByDefault">
-        <label for="enableStartWithAutoJumpByDefault" class="label-success"></label>
+        <label for="enableStartWithAutoJumpByDefault" class="label-success" ng-class="{'disabled': !Settings.data.content.forceAutoPlay}"></label>
     </div>
 </div>

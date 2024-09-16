@@ -582,84 +582,6 @@
                     }
                 };
 
-                Messaging.onReceivedMessage = (event) => {
-                    if (event) {
-                        switch (event.name) {
-                            case EVENTS.ITEMS_CHANGE:
-                                WidgetMedia.item = event.message.itemUpdatedData;
-                                WidgetMedia.changeVideoSrc();
-                                break;
-                            case EVENTS.ROUTE_CHANGE:
-                                Location.goToHome();
-                                break;
-                        }
-
-                        WidgetMedia.showVideo = true;
-                        WidgetMedia.ApplayUpdates();
-                        if (!$scope.$$phase) {
-							$scope.$apply();
-							$scope.$digest();
-						}
-                    }
-                };
-
-                WidgetMedia.onUpdateFn = Buildfire.datastore.onUpdate(function (event) {
-                    buildfire.components.drawer.closeDrawer();
-                    switch (event.tag) {
-                        case COLLECTIONS.MediaContent:
-                            Location.goToHome();
-                            break;
-                        case COLLECTIONS.MediaCenter:
-                            var old = WidgetMedia.media.data.design.itemLayout;
-                            WidgetMedia.media = event;
-                            $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
-                            $rootScope.allowShare = WidgetMedia.media.data.content.allowShare;
-                            $rootScope.allowAddingNotes = WidgetMedia.media.data.content.allowAddingNotes;
-                            $rootScope.allowSource = WidgetMedia.media.data.content.allowSource;
-                            $rootScope.forceAutoPlay = WidgetMedia.media.data.content.forceAutoPlay;
-                            $rootScope.skipMediaPage = WidgetMedia.media.data.design.skipMediaPage;
-
-                            $rootScope.autoPlay = WidgetMedia.media.data.content.autoPlay;
-                            $rootScope.autoPlayDelay = WidgetMedia.media.data.content.autoPlayDelay;
-                            $rootScope.globalPlaylist = WidgetMedia.media.data.content.globalPlaylist;
-                            $rootScope.globalPlaylistPlugin = WidgetMedia.media.data.content.globalPlaylistPlugin;
-                            $rootScope.showGlobalPlaylistNavButton = WidgetMedia.media.data.content.showGlobalPlaylistNavButton;
-                            $rootScope.showGlobalAddAllToPlaylistButton = WidgetMedia.media.data.content.showGlobalAddAllToPlaylistButton;
-                            $rootScope.allowOfflineDownload = WidgetMedia.media.data.content.allowOfflineDownload;
-                            $rootScope.showViewCount = WidgetMedia.media.data.content.showViewCount;
-                            $rootScope.indicatePlayedItems = WidgetMedia.media.data.content.indicatePlayedItems;
-                            // Update Data in media contoller
-                            WidgetMedia.fixIOSAutoPlay();
-                            $rootScope.refreshItems();
-                            WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
-                            if (old == WidgetMedia.media.data.design.itemLayout) WidgetMedia.ApplayUpdates();
-                            $scope.$apply();
-                            if (old != WidgetMedia.media.data.design.itemLayout)
-                                $scope.$$postDigest(function () {
-                                    WidgetMedia.ApplayUpdates();
-                                })
-                            break;
-                        default:
-                            return;
-                    }
-                });
-
-                Buildfire.appData.onUpdate(event => {
-                    // Tag name for global playlist
-                    const globalPlaylistTag = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : 'globalPlaylist');
-                    if (event) {
-                        if (event.tag === "GlobalPlayListSettings") {
-                            if (event.data) {
-                                $rootScope.globalPlaylistLimit = event.data.globalPlaylistLimit;
-                            }
-                        } else if (event.tag === globalPlaylistTag) {
-                            if (event.data.playlist && event.data.playlist) {
-                                $rootScope.globalPlaylistItems.playlist = event.data.playlist;
-                            }
-                        }
-                    }
-                });
-
                 Buildfire.publicData.onUpdate(event => {
                     if (event.data && event.tag == COLLECTIONS.MediaCount) {
                         WidgetMedia.count = WidgetMedia.count ? WidgetMedia.count + 1 : 1;
@@ -866,6 +788,23 @@
                 };
 
                 //Sync with Control section
+                Messaging.onReceivedMessage = (event) => {
+                    if (event.message && event.message.path == 'MEDIA') {
+                        Location.go('#/media/' + event.message.id, true);
+                    } else if (event.name === EVENTS.ITEMS_CHANGE) {
+                        WidgetMedia.item = event.message.itemUpdatedData;
+                        WidgetMedia.changeVideoSrc();
+                    } else if (event.name === EVENTS.ROUTE_CHANGE) {
+                        Location.goToHome();
+                    }
+
+                    WidgetMedia.showVideo = true;
+                    WidgetMedia.ApplayUpdates();
+                    if (!$scope.$$phase) {
+                        $scope.$apply();
+                        $scope.$digest();
+                    }
+                };
                 if (WidgetMedia.item.id !== 'mockId') {
                     Messaging.sendMessageToControl({
                         name: EVENTS.ROUTE_CHANGE,
@@ -874,6 +813,9 @@
                             id: WidgetMedia.item.id || null
                         }
                     });
+                }
+                if (media.data.audioUrl && $rootScope.skipMediaPage && WidgetMedia) {
+                    WidgetMedia.playAudio();
                 }
 
                 var initializing = true;
@@ -897,7 +839,6 @@
                     }
                 });
                 $scope.$on("$destroy", function () {
-                    WidgetMedia.onUpdateFn.clear();
                     if (WidgetMedia && WidgetMedia.clearCountdown) {
                         WidgetMedia.clearCountdown();
                     }

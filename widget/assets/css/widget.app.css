@@ -1543,9 +1543,9 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
 	border-radius: 50%;
 }
 
-.disabled-category-arrow {
+.hidden-category-arrow {
 	pointer-events: none;
-	opacity: 0.6;
+	opacity: 0;
 }
 
 #activeFilterIndicator {

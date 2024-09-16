@@ -95,6 +95,7 @@
 
 				$scope.toggleLoadingState = (loading) => {
 					const itemsEmptyContainer = document.getElementById('mediaItemsEmptyState');
+					if (!itemsEmptyContainer) return;
 					if (loading) {
 						$scope.mediaList.selector.classList.add('hide-list');
 						itemsEmptyContainer.classList.remove('hidden');
@@ -124,6 +125,13 @@
 						$scope.items = [];
 						$scope.toggleLoadingState(true);
 						$scope.getMore();
+
+						Messaging.sendMessageToWidget({
+							name: EVENTS.ROUTE_CHANGE,
+							message: {
+								path: PATHS.HOME,
+							}
+						});
 					}).catch((err) => {
 						return console.error(err);
 					});
@@ -293,6 +301,13 @@
 
 							$scope.items = event.items.map((mediaItem, index) => ({ ...mediaItem, rank: index + 1 }));
 							$scope.buildList();
+
+							Messaging.sendMessageToWidget({
+								name: EVENTS.ROUTE_CHANGE,
+								message: {
+									path: PATHS.HOME,
+								}
+							});
 						});
 					}, 300);
 				};
@@ -358,63 +373,65 @@
 				}
 
 				$scope.registerAnalyticsEvent = function (records) {
-					mediaCenterData = AppConfig.getSettings();
-					let analyticsEvents = [];
-					records.forEach((record) => {
-						if (record.data.videoUrl) {
-							analyticsEvents = analyticsEvents.concat([{
-								title: record.data.title + ' Video Play Count',
-								key: record.id + '_videoPlayCount',
-								description: 'Video Play Count',
-							}, {
-								title: record.data.title + ' Continues Video Play Count',
-								key: record.id + '_continuesVideoPlayCount',
-								description: 'Continues Video Play Count',
-							}]);
-
-							if (mediaCenterData && mediaCenterData.content.allowOfflineDownload) {
-								analyticsEvents.push({
-									title: record.data.title + ' Video Downloads',
-									key: record.id + '_downloads',
-									description: 'Video Downloads',
-								});
+					return new Promise((resolve, reject) => {
+						mediaCenterData = AppConfig.getSettings();
+						let analyticsEvents = [];
+						records.forEach((record) => {
+							if (record.data.videoUrl) {
+								analyticsEvents = analyticsEvents.concat([{
+									title: record.data.title + ' Video Play Count',
+									key: record.id + '_videoPlayCount',
+									description: 'Video Play Count',
+								}, {
+									title: record.data.title + ' Continues Video Play Count',
+									key: record.id + '_continuesVideoPlayCount',
+									description: 'Continues Video Play Count',
+								}]);
+	
+								if (mediaCenterData && mediaCenterData.content.allowOfflineDownload) {
+									analyticsEvents.push({
+										title: record.data.title + ' Video Downloads',
+										key: record.id + '_downloads',
+										description: 'Video Downloads',
+									});
+								}
 							}
-						}
-						if (record.data.audioUrl) {
-							analyticsEvents = analyticsEvents.concat([{
-								title: record.data.title + ' Audio Play Count',
-								key: record.id + '_audioPlayCount',
-								description: 'Audio Play Count',
-							}, {
-								title: record.data.title + ' Continues Audio Play Count',
-								key: record.id + '_continuesAudioPlayCount',
-								description: 'Continues Audio Play Count',
-							}]);
-
-							if (mediaCenterData && mediaCenterData.content.allowOfflineDownload) {
-								analyticsEvents.push({
-									title: record.data.title + ' Audio Downloads',
-									key: record.id + '_downloads',
-									description: 'Audio Downloads',
-								});
+							if (record.data.audioUrl) {
+								analyticsEvents = analyticsEvents.concat([{
+									title: record.data.title + ' Audio Play Count',
+									key: record.id + '_audioPlayCount',
+									description: 'Audio Play Count',
+								}, {
+									title: record.data.title + ' Continues Audio Play Count',
+									key: record.id + '_continuesAudioPlayCount',
+									description: 'Continues Audio Play Count',
+								}]);
+	
+								if (mediaCenterData && mediaCenterData.content.allowOfflineDownload) {
+									analyticsEvents.push({
+										title: record.data.title + ' Audio Downloads',
+										key: record.id + '_downloads',
+										description: 'Audio Downloads',
+									});
+								}
 							}
-						}
-						if (!record.data.videoUrl && !record.data.audioUrl) {
-							analyticsEvents = analyticsEvents.concat([{
-								title: record.data.title + ' Article Open Count',
-								key: record.id + '_articleOpenCount',
-								description: 'Article Open Count',
-							}, {
-								title: record.data.title + ' Continues Article Open Count',
-								key: record.id + '_continuesArticleOpenCount',
-								description: 'Continues Article Open Count',
-							}]);
-						}
-					});
-					Analytics.bulkRegisterEvents(analyticsEvents, { silentNotification: true }).then(() => {
-						resolve();
-					}).catch((err) => {
-						reject(err);
+							if (!record.data.videoUrl && !record.data.audioUrl) {
+								analyticsEvents = analyticsEvents.concat([{
+									title: record.data.title + ' Article Open Count',
+									key: record.id + '_articleOpenCount',
+									description: 'Article Open Count',
+								}, {
+									title: record.data.title + ' Continues Article Open Count',
+									key: record.id + '_continuesArticleOpenCount',
+									description: 'Continues Article Open Count',
+								}]);
+							}
+						});
+						Analytics.bulkRegisterEvents(analyticsEvents, { silentNotification: true }).then(() => {
+							resolve();
+						}).catch((err) => {
+							reject(err);
+						});
 					});
 				};
 
