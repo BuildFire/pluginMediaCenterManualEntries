@@ -631,7 +631,7 @@
                             $rootScope.addAllToPlaylistLoading = false;
                             if (!$scope.$$phase) $scope.$apply();
                         } else {
-                            var filteredItems = WidgetHome.items.filter(el => !$rootScope.isInGlobalPlaylist(el.id)).filter(item => item.data.audioUrl || item.data.videoUrl);
+                            var filteredItems = WidgetHome.items.filter(el => !$rootScope.isInGlobalPlaylist(el.id)).filter(item => item.data.audioUrl);
                             var itemsToAdd = [...filteredItems].splice(0, freeSlots);
                             GlobalPlaylist.insertAndUpdateAll(itemsToAdd).then(() => {
                                 for (let item of itemsToAdd) {
@@ -981,30 +981,23 @@
                 };
 
                 function setupImages(records) {
-                    if (!window.loadedImages) window.loadedImages = [];
+                    // this function is used to preload audio player images
                     records.forEach((record) => {
-                        if (record.data.image) {
-                            const img = new Image();
-                            img.src = buildfire.imageLib.resizeImage(record.data.image, { size: '1080', aspect: '16:9' })
-                            img.onload = () => {
-                                window.loadedImages.push(img.src);
+                        if (record.data.audioUrl) {
+                            if (record.data.image) {
+                                const img = new Image();
+                                img.src = buildfire.imageLib.resizeImage(record.data.image, { size: '1080', aspect: '16:9' })
+                            } else if (record.data.topImage) {
+                                const img = new Image();
+                                img.src = buildfire.imageLib.resizeImage(record.data.topImage, { size: '1080', aspect: '16:9' })
                             }
-                        } else if (record.data.topImage) {
-                            const img = new Image();
-                            img.src = buildfire.imageLib.resizeImage(record.data.topImage, { size: '1080', aspect: '16:9' })
-                            img.onload = () => {
-                                window.loadedImages.push(img.src);
-                            }
-                        }
-
-                        if (record.data.topImage) {
-                            const img = new Image();
-                            img.src = buildfire.imageLib.resizeImage(record.data.topImage, { width: '400', height: '400' });
-                            img.onload = () => {
-                                window.loadedImages.push(img.src);
+    
+                            if (record.data.topImage) {
+                                const img = new Image();
+                                img.src = buildfire.imageLib.resizeImage(record.data.topImage, { width: '400', height: '400' });
                             }
                         }
-                    })
+                    });
                 }
 
 
@@ -1212,7 +1205,7 @@
                         listItems.push({ id: "openLinks", text: getString("homeDrawer.openLinks") });
                     }
 
-                    if (WidgetHome.media.data.content.globalPlaylist && $rootScope.online) {
+                    if (WidgetHome.media.data.content.globalPlaylist && $rootScope.online && item.data.audioUrl) {
                         if ($rootScope.isInGlobalPlaylist(item.id)) {
                             listItems.push({ id: "removeFromPlaylist", text: getString("homeDrawer.removeFromPlaylist") });
                         }

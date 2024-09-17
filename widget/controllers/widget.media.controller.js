@@ -144,7 +144,7 @@
                         listItems.push({ id: "openLinks", text: getString("itemDrawer.openLinks") });
                     }
 
-                    if (WidgetMedia.media.data.content.globalPlaylist && $rootScope.online && (WidgetMedia.item.data.videoUrl || WidgetMedia.item.data.audioUrl)) {
+                    if (WidgetMedia.media.data.content.globalPlaylist && $rootScope.online && WidgetMedia.item.data.audioUrl) {
                         if ($rootScope.isInGlobalPlaylist(WidgetMedia.item.id)) {
                             listItems.push({ id: "removeFromPlaylist", text: getString("itemDrawer.removeFromPlaylist") });
                         }

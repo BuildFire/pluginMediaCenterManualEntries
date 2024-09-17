@@ -154,7 +154,6 @@
 						setTrackImages();
 
 						NowPlaying.playing = true;
-						NowPlaying.isExistInPlaylist = $rootScope.playListItems.findIndex(item => (item.url === NowPlaying.currentTrack.url && (!item.id || item.id === NowPlaying.currentTrack.id))) > -1;
 						if (!NowPlaying.currentTrack.isAudioFromPluginList) {
 							updatePlaylistUI();
 						}
@@ -547,9 +546,6 @@
 							$rootScope.playlistTrackIndex = data.lastIndex;
 							if (data && data.tracks) {
 								$rootScope.playListItems = data.tracks.map((el) => ({ ...el, title: el.title || getString('mediaPlayer.unknownTrack') })) || [];
-								if (NowPlaying.currentTrack) {
-									NowPlaying.isExistInPlaylist = $rootScope.playListItems.some((el) => el.url === NowPlaying.currentTrack.url);
-								}
 							}
 							resolve();
 						});
@@ -638,7 +634,13 @@
 					this.startAt = 0; // where to begin playing
 					this.isAudioPlayed = !!NowPlaying.isAudioPlayed;
 					this.id = track.id;
-					this.backgroundImage = track.image ? track.image : track.topImage;
+					if (track.backgroundImage) {
+						this.backgroundImage = track.backgroundImage;
+					} else if (track.image) {
+						this.backgroundImage = track.image;
+					} else if (track.topImage) {
+						this.backgroundImage = track.topImage;
+					}
 					this.instanceId = Buildfire.context.instanceId;
 					this.deepLinkData = {
 						pluginInstanceId: Buildfire.context.instanceId,
@@ -700,13 +702,12 @@
 						audioPlayer.pause();
 					} else {
 						NowPlaying.playing = true;
-
+						NowPlaying.audioFromPlayList = index;
+						
 						audioPlayer.getCurrentTrack((currentTrack) => {
-							NowPlaying.currentTrack = track;
-							if (currentTrack.url === track.url && $rootScope.isPlayerReady && !NowPlaying.shouldPlayTrackAgain) {
+							if (currentTrack.url === track.url && $rootScope.isPlayerReady && !NowPlaying.shouldPlayTrackAgain && !NowPlaying.currentTrack.isAudioFromPluginList) {
 								audioPlayer.play();
 							} else {
-								NowPlaying.audioFromPlayList = index;
 								audioPlayer.play(index);
 							}
 						});
@@ -793,6 +794,12 @@
 				}
 
 				const setTrackImages = () => {
+					if (!NowPlaying.isOnline) {
+						NowPlaying.currentTrack.image = './assets/images/now-playing.png';
+						NowPlaying.currentTrack.topImage = './assets/images/now-playing.png';
+						NowPlaying.currentTrack.backgroundImage = './assets/images/now-playing.png';
+						return;
+					}
 					let backgroundImage;
 					if (NowPlaying.currentTrack && NowPlaying.currentTrack.backgroundImage) {
 						backgroundImage = unescapeCssString(NowPlaying.currentTrack.backgroundImage);
@@ -909,6 +916,13 @@
 				$scope.$watch(function () {
 					return NowPlaying.currentTrack;
 				}, () => {
+					if (!NowPlaying.currentTrack) return;
+
+					audioPlayer.isTrackInPlaylist(NowPlaying.currentTrack, (err, result) => {
+						if (err) return console.error(err);
+						NowPlaying.isExistInPlaylist = result;
+					});
+					
 					if (NowPlaying.currentTrack.id && NowPlaying.currentTrack.id !== 'mockId' && NowPlaying.currentTrack.instanceId === Buildfire.context.instanceId) {
 						Messaging.sendMessageToControl({
 							name: EVENTS.ROUTE_CHANGE,
