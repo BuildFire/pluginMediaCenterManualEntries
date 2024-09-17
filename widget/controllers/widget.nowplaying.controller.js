@@ -576,12 +576,15 @@
 						}
 					});
 				};
-				NowPlaying.setSettings = function (settings) {
-					if (settings.shufflePlaylist && !NowPlaying.settings.shufflePlaylist) {
+				NowPlaying.showShufflePlaylistToast = function () {
+					if (NowPlaying.settings.shufflePlaylist) {
 						buildfire.dialog.toast({ message: getString('mediaPlayer.shufflePlaylistItemsConfirmation'), type: 'info' });
-					} else if (!settings.shufflePlaylist && NowPlaying.settings.shufflePlaylist) {
+					} else if (!NowPlaying.settings.shufflePlaylist) {
 						buildfire.dialog.toast({ message: getString('mediaPlayer.shuffleOffConfirmation'), type: 'info' });
 					}
+				};
+
+				NowPlaying.setSettings = function (settings) {
 					if (!settings.autoPlayNext && $rootScope.forceAutoPlay) {
 						settings.autoPlayNext = true;
 					}

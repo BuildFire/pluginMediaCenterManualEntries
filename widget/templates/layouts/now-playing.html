@@ -237,7 +237,7 @@
                         <div class="col-md-2 pull-right text-right">
                             <div class="checkbox checkbox-primary checked no-label margin-zero">
                                 <input type="checkbox" id="playfromLast" ng-model="NowPlaying.settings.shufflePlaylist"
-                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)">
+                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)" ng-click="NowPlaying.showShufflePlaylistToast()">
                                 <label for="playfromLast"></label>
                             </div>
                         </div>
