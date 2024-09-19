@@ -5,10 +5,10 @@
     <div class="media-center-plugin" ng-if="!(NowPlaying.openMoreInfo || NowPlaying.openSettings)">
         <div class="media-holder">
             <div class="media-inner text-center">
-                <img ng-if="NowPlaying.currentTrack.topImage && NowPlaying.isOnline" 
-                    ng-src="{{NowPlaying.currentTrack.topImage | resizeImage : 400:400 }}" alt="{{NowPlaying.currentTrack.title}} top image">
-                <img ng-if="NowPlaying.currentTrack.topImage && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.topImage}}" alt="{{NowPlaying.currentTrack.title}} top image">
-                <img ng-if="!NowPlaying.currentTrack.topImage" src="./assets/images/now-playing.png" alt="top image">
+                <img ng-if="(NowPlaying.currentTrack.topImage || NowPlaying.currentTrack.image) && NowPlaying.isOnline" 
+                    ng-src="{{(NowPlaying.currentTrack.topImage ? NowPlaying.currentTrack.topImage : NowPlaying.currentTrack.image) | resizeImage : 400:400 }}" alt="{{NowPlaying.currentTrack.title}} top image">
+                <img ng-if="(NowPlaying.currentTrack.topImage || NowPlaying.currentTrack.image) && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.topImage ? NowPlaying.currentTrack.topImage : NowPlaying.currentTrack.image}}" alt="{{NowPlaying.currentTrack.title}} top image">
+                <img ng-if="!NowPlaying.currentTrack.topImage && !NowPlaying.currentTrack.image" src="./assets/images/now-playing.png" alt="top image">
             </div>
         </div>
         <div class="media-player-info ellipsis">
@@ -121,12 +121,11 @@
                         ng-repeat="track in playListItems">
                         <div class="list-item-media text-left" ng-class="{'edit' : track.swiped}">
                             <div class="list-media-holder square-icon pull-left">
-                                <img ng-if="track.image || track.topImage" load-image="2x2" crop-width="55" crop-height="55"
-                                    crop-type="crop" data-ng-src="{{track.topImage ? track.topImage : track.image | resizeImage : 55:55}}">
+                                <img ng-if="track.image || track.topImage" ng-src="{{(track.topImage ? track.topImage : track.image) | resizeImage : 60:60}}">
                                 <img ng-if="!track.image && !track.topImage" src="../../../styles/media/holder-16x9.png" style="width:100%;">
                             </div>
-                            <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-                                <p class="margin-bottom-zero ellipsis margin-top-twenty bodyTextTheme">{{track.title}}</p>
+                            <div class="list-item-copy text-left padding-left-ten padding-right-ten flex flex-align-center">
+                                <p class="margin-bottom-zero ellipsis bodyTextTheme">{{track.title}}</p>
                             </div>
                             <div class="btns text-center">
                                 <a ng-class="track.playing ? 'icon-pause-circle' : 'icon-play-circle'"
@@ -157,10 +156,10 @@
             <div class="media-player-more-info">
                 <div class="media-holder margin-top-thirty">
                     <div class="media-inner text-center">
-                        <img ng-if="NowPlaying.currentTrack.topImage && NowPlaying.isOnline" 
-                            ng-src="{{NowPlaying.currentTrack.topImage | resizeImage : 400:400 }}" alt="{{NowPlaying.currentTrack.title}} top image">
-                        <img ng-if="NowPlaying.currentTrack.topImage && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.topImage}}" alt="{{NowPlaying.currentTrack.title}} top image">
-                        <img ng-if="!NowPlaying.currentTrack.topImage" src="./assets/images/now-playing.png" alt="top image">
+                        <img ng-if="(NowPlaying.currentTrack.topImage || NowPlaying.currentTrack.image) && NowPlaying.isOnline" 
+                            ng-src="{{(NowPlaying.currentTrack.topImage ? NowPlaying.currentTrack.topImage : NowPlaying.currentTrack.image) | resizeImage : 400:400 }}" alt="{{NowPlaying.currentTrack.title}} top image">
+                        <img ng-if="(NowPlaying.currentTrack.topImage || NowPlaying.currentTrack.image) && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.topImage ? NowPlaying.currentTrack.topImage : NowPlaying.currentTrack.image}}" alt="{{NowPlaying.currentTrack.title}} top image">
+                        <img ng-if="!NowPlaying.currentTrack.topImage && !NowPlaying.currentTrack.image" src="./assets/images/now-playing.png" alt="top image">
                     </div>
                 </div>
                 <hr class="none">

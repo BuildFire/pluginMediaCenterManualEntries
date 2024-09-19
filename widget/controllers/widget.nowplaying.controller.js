@@ -164,7 +164,7 @@
 							if (track && Math.abs(e.data.currentTime - $rootScope.lastUpdatedPosition) > 5) {
 								updateAudioLastPosition(track.id, e.data.currentTime);
 							}
-							if (track && NowPlaying.currentTrack && track.url === NowPlaying.currentTrack.url) {
+							if (track && NowPlaying.currentTrack && track.url === NowPlaying.currentTrack.url && track.id === NowPlaying.currentTrack.id) {
 								if (e.data.duration) {
 									NowPlaying.currentTime = e.data.currentTime;
 									NowPlaying.duration = e.data.duration;
@@ -216,7 +216,7 @@
 						NowPlaying.getPlaylistData().then(() => {
 							audioPlayer.getCurrentTrack((track) => {
 								$rootScope.playListItems.forEach((element, index) => {
-									const isAudioPlaying = (track && track.url === element.url && !isPaused && !track.isAudioFromPluginList && $rootScope.playlistTrackIndex === index);
+									const isAudioPlaying = (track && track.url === element.url && track.id === element.id && !isPaused && !track.isAudioFromPluginList && $rootScope.playlistTrackIndex === index);
 									element.playing = isAudioPlaying;
 								});
 								if (!$scope.$$phase) {
@@ -241,7 +241,7 @@
 						if (NowPlaying.isOnline) {
 							if ($rootScope.seekTime) {
 								NowPlaying.currentTime = $rootScope.seekTime;
-							} else if (track && !track.isAudioFromPluginList && track.url === NowPlaying.currentTrack.url && $rootScope.playlistTrackIndex > -1 && $rootScope.playListItems[$rootScope.playlistTrackIndex] && $rootScope.playListItems[$rootScope.playlistTrackIndex].url === track.url) {
+							} else if (track && !track.isAudioFromPluginList && track.url === NowPlaying.currentTrack.url && track.id === NowPlaying.currentTrack.id) {
 								NowPlaying.currentTime = $rootScope.playListItems[$rootScope.playlistTrackIndex].lastPosition;
 								NowPlaying.audioFromPlayList = $rootScope.playlistTrackIndex;
 								NowPlaying.currentTrack.isAudioFromPluginList = false;
@@ -255,7 +255,7 @@
 								} else {
 									NowPlaying.currentTime = 0;
 								}
-							} else if (NowPlaying.lastSavedPosition && (NowPlaying.settings.autoJumpToLastPosition || (track && track.url === NowPlaying.currentTrack.url))) {
+							} else if (NowPlaying.lastSavedPosition && (NowPlaying.settings.autoJumpToLastPosition || (track && track.url === NowPlaying.currentTrack.url && track.id === NowPlaying.currentTrack.id))) {
 								NowPlaying.currentTime = NowPlaying.lastSavedPosition;
 							} else {
 								NowPlaying.currentTime = 0;
@@ -360,17 +360,21 @@
 
 					if (!NowPlaying.currentTrack.isAudioFromPluginList) {
 						if (NowPlaying.audioFromPlayList === $rootScope.playlistTrackIndex && $rootScope.isPlayerReady && !NowPlaying.shouldPlayTrackAgain) {
+							audioPlayer.pause();
 							audioPlayer.play();
 						} else {
+							audioPlayer.pause();
 							audioPlayer.play(NowPlaying.audioFromPlayList);
 						}
 					} else {
 						audioPlayer.getCurrentTrack((track) => {
-							if (track && track.url === NowPlaying.currentTrack.url && $rootScope.isPlayerReady && !NowPlaying.shouldPlayTrackAgain) {
+							if (track && track.url === NowPlaying.currentTrack.url && track.id === NowPlaying.currentTrack.id && $rootScope.isPlayerReady && !NowPlaying.shouldPlayTrackAgain) {
+								audioPlayer.pause();
 								audioPlayer.play();
 							} else {
 								const _track = { ...NowPlaying.currentTrack, isAudioFromPluginList: true };
 								delete _track.lastPosition;
+								audioPlayer.pause();
 								audioPlayer.play(_track);
 							}
 						});
@@ -435,7 +439,7 @@
 						} else {
 							NowPlaying.currentTime = _currentTime + 5;
 						}
-						if (track && track.url === NowPlaying.currentTrack.url && $rootScope.isPlayerReady) {
+						if (track && track.url === NowPlaying.currentTrack.url && track.id === NowPlaying.currentTrack.id && $rootScope.isPlayerReady) {
 							audioPlayer.setTime(NowPlaying.currentTime);
 						} else {
 							NowPlaying.currentTrack.startAt = NowPlaying.currentTime;
@@ -455,7 +459,7 @@
 						} else {
 							NowPlaying.currentTime = 0;
 						}
-						if (track && track.url === NowPlaying.currentTrack.url && $rootScope.isPlayerReady) {
+						if (track && track.url === NowPlaying.currentTrack.url && track.id === NowPlaying.currentTrack.id && $rootScope.isPlayerReady) {
 							audioPlayer.setTime(NowPlaying.currentTime);
 						} else {
 							NowPlaying.currentTrack.startAt = NowPlaying.currentTime;
@@ -554,7 +558,7 @@
 				NowPlaying.changeTime = function (time) {
 					if (typeof time !== 'number') time = parseInt(time);
 					audioPlayer.getCurrentTrack((track) => {
-						if (track && track.url === NowPlaying.currentTrack.url && $rootScope.isPlayerReady) {
+						if (track && track.url === NowPlaying.currentTrack.url && track.id === NowPlaying.currentTrack.id && $rootScope.isPlayerReady) {
 							audioPlayer.setTime(time);
 						} else {
 							NowPlaying.currentTime = time;
@@ -708,9 +712,11 @@
 						NowPlaying.audioFromPlayList = index;
 						
 						audioPlayer.getCurrentTrack((currentTrack) => {
-							if (currentTrack.url === track.url && $rootScope.isPlayerReady && !NowPlaying.shouldPlayTrackAgain && !NowPlaying.currentTrack.isAudioFromPluginList) {
+							if (currentTrack.url === track.url && currentTrack.id === track.id && $rootScope.isPlayerReady && !NowPlaying.shouldPlayTrackAgain && !NowPlaying.currentTrack.isAudioFromPluginList) {
+								audioPlayer.pause();
 								audioPlayer.play();
 							} else {
+								audioPlayer.pause();
 								audioPlayer.play(index);
 							}
 						});

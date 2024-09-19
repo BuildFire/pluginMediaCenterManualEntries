@@ -742,6 +742,8 @@ html[browser="Firefox"] .third-layout .list-layout .list-item-media .list-media-
 	max-height: 100%;
 	vertical-align: middle;
 	border-radius: 4px;
+	height: 100%;
+	object-fit: cover;
 }
 
 .third-layout .list-layout .list-item-media .list-media-holder .main-icon {

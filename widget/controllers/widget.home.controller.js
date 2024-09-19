@@ -1672,8 +1672,8 @@
                 WidgetHome.loadCarousel = function () {
                     const carouselContainer = document.getElementById('carousel');
                     if (carouselContainer) {
-                        if (!view) view = new Buildfire.components.carousel.view("#carousel", WidgetHome.media.data.content.images);
-                        else view.loadItems(WidgetHome.media.data.content.images);
+                        view = new Buildfire.components.carousel.view("#carousel", WidgetHome.media.data.content.images);
+                        view.loadItems(WidgetHome.media.data.content.images);
     
                         if (!$scope.$$phase) {
                             $scope.$digest();

@@ -598,27 +598,15 @@
                 }
 
                 WidgetMedia.ApplayUpdates = function () {
-                    if ($rootScope.skipMediaPage && !WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl) {
-                        if (WidgetMedia.showVideo) {
-                            WidgetMedia.showVideo = false;
-                            if(WidgetMedia.API) WidgetMedia.API.pause();
-                        }
-                        WidgetMedia.playAudio();
-                    } else if ($rootScope.autoPlay && !WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl) {
-                        if (WidgetMedia.showVideo) {
-                            WidgetMedia.showVideo = false;
-                            if(WidgetMedia.API) WidgetMedia.API.pause();
-                        }
-                        WidgetMedia.playAudio()
-                    }
-                    else if ($rootScope.autoPlay && WidgetMedia.item.data.videoUrl) {
+                    if (($rootScope.autoPlay || $rootScope.skipMediaPage) && WidgetMedia.item.data.videoUrl) {
                         WidgetMedia.toggleShowVideo(true);
-                    }
-                    else if ($rootScope.skipMediaPage && WidgetMedia.item.data.videoUrl) {
-                        WidgetMedia.showVideo = true;
                     } else {
-                        WidgetMedia.showVideo = false;
+                        WidgetMedia.toggleShowVideo(false);
                         if(WidgetMedia.API) WidgetMedia.API.pause();
+
+                        if (($rootScope.skipMediaPage || $rootScope.autoPlay) && !WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl) {
+                            WidgetMedia.playAudio();
+                        }
                     }
                 };
 
@@ -649,7 +637,10 @@
                         return;
                     }
                     WidgetMedia.showVideo = forceShow ? true : !WidgetMedia.showVideo;
-                    if (!$scope.$$phase) $scope.$apply();
+                    if (!$scope.$$phase) {
+                        $scope.$apply();
+                        $scope.$digest();
+                    }
                 };
 
                 WidgetMedia.showSourceIframe = function () {
@@ -796,10 +787,13 @@
                         WidgetMedia.changeVideoSrc();
                     } else if (event.name === EVENTS.ROUTE_CHANGE) {
                         Location.goToHome();
+                    } else if (event.name === EVENTS.DESIGN_LAYOUT_CHANGE) {
+                        WidgetMedia.media.data.design = event.message.design
                     }
 
-                    WidgetMedia.showVideo = true;
-                    WidgetMedia.ApplayUpdates();
+                    setTimeout(() => {
+                        WidgetMedia.ApplayUpdates();
+                    }, 50);
                     if (!$scope.$$phase) {
                         $scope.$apply();
                         $scope.$digest();

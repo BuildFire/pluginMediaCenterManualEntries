@@ -7,7 +7,7 @@
                 <div ng-class="WidgetMedia.showVideo == false ? '' : 'video-container-background'"
                     style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;" class="plugin-slide">
                     <img ng-if="!WidgetMedia.fullScreen"
-                        data-ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage || ( skipMediaPage && WidgetMedia.item.data.videoUrl )"
+                        ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage || ( skipMediaPage && WidgetMedia.item.data.videoUrl )"
                         load-image="16x9" style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
                         crop-width="1280" crop-height="720" crop-type="crop"
                         data-final-src="{{WidgetMedia.item.data.topImage }}" alt="{{WidgetMedia.item.data.title}} top image"/>
