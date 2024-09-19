@@ -791,9 +791,11 @@
                         WidgetMedia.media.data.design = event.message.design
                     }
 
-                    setTimeout(() => {
-                        WidgetMedia.ApplayUpdates();
-                    }, 50);
+                    if ($rootScope.autoPlay || $rootScope.skipMediaPage) {
+                        setTimeout(() => {
+                            WidgetMedia.ApplayUpdates();
+                        }, 50);
+                    }
                     if (!$scope.$$phase) {
                         $scope.$apply();
                         $scope.$digest();
