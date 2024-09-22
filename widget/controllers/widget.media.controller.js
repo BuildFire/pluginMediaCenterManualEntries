@@ -601,7 +601,7 @@
                     if (($rootScope.autoPlay || $rootScope.skipMediaPage) && WidgetMedia.item.data.videoUrl) {
                         WidgetMedia.toggleShowVideo(true);
                     } else {
-                        WidgetMedia.toggleShowVideo(false);
+                        WidgetMedia.showVideo = false;
                         if(WidgetMedia.API) WidgetMedia.API.pause();
 
                         if (($rootScope.skipMediaPage || $rootScope.autoPlay) && !WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl) {
