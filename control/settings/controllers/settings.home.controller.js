@@ -74,6 +74,8 @@
 				const isUnchanged = angular.equals(Settings.lastSavedContent, Settings.data);
 				if (isUnchanged) return;
 
+				$scope.syncWithWidget();
+
 				MediaCenter.save(Settings.data).then(() => {
 					Settings.lastSavedContent = angular.copy(Settings.data);
 					Messaging.sendMessageToWidget({ cmd: 'settings', data: Settings.data });
@@ -177,8 +179,6 @@
 					$scope.$apply();
 					$scope.$digest();
 				}
-
-				$scope.syncWithWidget();
 
 				if ($scope.saveTimer) clearTimeout($scope.saveTimer);
 				$scope.saveTimer = setTimeout(() => {

@@ -59,8 +59,8 @@
                     </defs>
                 </svg>
                 <span class="shuffle-indicator" ng-if="((NowPlaying.currentTrack.isAudioFromPluginList && NowPlaying.settings.shufflePluginList) || (!NowPlaying.currentTrack.isAudioFromPluginList && NowPlaying.settings.shufflePlaylist && !globalPlaylist))">
-                    <span class="shuffle-indicator-text" ng-if="NowPlaying.currentTrack.isAudioFromPluginList">{{NowPlaying.shuffleAllItemsIndicator}}</span>
-                    <span class="shuffle-indicator-text" ng-if="!NowPlaying.currentTrack.isAudioFromPluginList">{{NowPlaying.shufflePlaylistItemsIndicator}}</span>
+                    <span class="shuffle-indicator-text" ng-if="NowPlaying.currentTrack.isAudioFromPluginList">{{NowPlaying.shuffleAllItemsIndicator ? NowPlaying.shuffleAllItemsIndicator.slice(0,1) : 'A'}}</span>
+                    <span class="shuffle-indicator-text" ng-if="!NowPlaying.currentTrack.isAudioFromPluginList">{{NowPlaying.shufflePlaylistItemsIndicator ? NowPlaying.shufflePlaylistItemsIndicator.slice(0,1) : 'P'}}</span>
                 </span>
             </span>
                 
