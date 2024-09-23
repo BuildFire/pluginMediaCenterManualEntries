@@ -614,7 +614,8 @@
 				};
 				NowPlaying.resizeImage = function (url) {
 					if (!url) return;
-					if (url.indexOf('http') === -1) return url;
+					const isDefaultImage = isDefaultTrackImage(url);
+					if (isDefaultImage) return url;
 					return buildfire.imageLib.resizeImage(url, { size: '1080', aspect: '16:9' });
 				};
 				NowPlaying.addEvents = function (e, i, toggle, track) {
@@ -803,8 +804,13 @@
 					}).replace(/\\(.)/g, '$1');
 				}
 
+				function isDefaultTrackImage(url) {
+					return url.indexOf('media/album-art-placeholder') > -1;
+				}
+
 				const setTrackImages = () => {
-					if (NowPlaying.currentTrack.image.indexOf('https://') === -1 || NowPlaying.currentTrack.image.indexOf('media/album-art-placeholder')) {
+					const isDefaultImage = isDefaultTrackImage(NowPlaying.currentTrack.image);
+					if (isDefaultImage) {
 						NowPlaying.currentTrack.image = NowPlaying.currentTrack.topImage || '';
 					}
 					if (!NowPlaying.isOnline) {
@@ -819,7 +825,7 @@
 						if (backgroundImage.indexOf('/https://') === -1) {
 							backgroundImage = NowPlaying.resizeImage(backgroundImage);
 						}
-					} else if (NowPlaying.currentTrack && NowPlaying.currentTrack.image) {
+					} else if (NowPlaying.currentTrack && NowPlaying.currentTrack.image && !isDefaultImage) {
 						backgroundImage = NowPlaying.resizeImage(NowPlaying.currentTrack.image);
 					} else if (NowPlaying.currentTrack && NowPlaying.currentTrack.topImage) {
 						backgroundImage = NowPlaying.resizeImage(NowPlaying.currentTrack.topImage);
