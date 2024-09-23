@@ -698,7 +698,7 @@
                     if (shufflePluginList) {
                         do {
                             newIndex = Math.floor((Math.random() * WidgetHome.items.length));
-                        } while (newIndex === $rootScope.currentIndex);
+                        } while (newIndex === $rootScope.currentIndex && WidgetHome.items.length > 1);
                     }
                     if (userInput) return WidgetHome.goToMedia(newIndex);
 

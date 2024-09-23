@@ -614,6 +614,7 @@
 				};
 				NowPlaying.resizeImage = function (url) {
 					if (!url) return;
+					if (url.indexOf('http') === -1) return url;
 					return buildfire.imageLib.resizeImage(url, { size: '1080', aspect: '16:9' });
 				};
 				NowPlaying.addEvents = function (e, i, toggle, track) {
@@ -634,8 +635,8 @@
 					this.lastPosition = lastPosition;
 					this.title = track.title || getString('mediaPlayer.unknownTrack');
 					this.url = track.audioUrl || track.url;
-					this.image = track.image;
-					this.topImage = track.topImage;
+					this.image = track.image || track.topImage;
+					this.topImage = track.topImage || track.image;
 					this.album = track.title;
 					this.artists = track.artists;
 					this.startAt = 0; // where to begin playing
@@ -803,6 +804,9 @@
 				}
 
 				const setTrackImages = () => {
+					if (NowPlaying.currentTrack.image.indexOf('https://') === -1 || NowPlaying.currentTrack.image.indexOf('media/album-art-placeholder')) {
+						NowPlaying.currentTrack.image = NowPlaying.currentTrack.topImage || '';
+					}
 					if (!NowPlaying.isOnline) {
 						NowPlaying.currentTrack.image = './assets/images/now-playing.png';
 						NowPlaying.currentTrack.topImage = './assets/images/now-playing.png';
