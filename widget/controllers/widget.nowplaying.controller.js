@@ -825,7 +825,7 @@
 						if (backgroundImage.indexOf('/https://') === -1) {
 							backgroundImage = NowPlaying.resizeImage(backgroundImage);
 						}
-					} else if (NowPlaying.currentTrack && NowPlaying.currentTrack.image && !isDefaultImage) {
+					} else if (NowPlaying.currentTrack && NowPlaying.currentTrack.image) {
 						backgroundImage = NowPlaying.resizeImage(NowPlaying.currentTrack.image);
 					} else if (NowPlaying.currentTrack && NowPlaying.currentTrack.topImage) {
 						backgroundImage = NowPlaying.resizeImage(NowPlaying.currentTrack.topImage);
