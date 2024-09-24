@@ -1,4 +1,4 @@
-<div id="emptyContainer" class="padded"
+<div id="filterEmptyContainer" class="padded"
     ng-if="!loadingData && (!WidgetFilters.allCategories || (WidgetFilters.allCategories && WidgetFilters.allCategories.length === 0))">
 </div>
 <div id="filterScreen">
@@ -34,7 +34,7 @@
                                         class="subcategory-label" for="{{category.id}}"></label>
                                 </div>
                             </div>
-                            <span ng-click="WidgetFilters.expand($index)"
+                            <span ng-class="!category.data.subcategories || !category.data.subcategories.length ? 'hidden-category-arrow' : ''" ng-click="WidgetFilters.expand($index)"
                                 class="expand-collapse chevron top chev drop-control"></span>
 
                         </div>
@@ -50,13 +50,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <h2>{{category.data.name}}</h4>
-            <div ng-repeat="subcategory in category.data.subcategories">
-                <input type="checkbox" id="subcategory.id" name="subcategory.name" ng-click="WidgetFilters.pickSubcategory(category.id, subcategory.id)" value="subcategory.checked">
-                <label for="subcategory.id">{{subcategory.name}}</label><br>
-            </div> -->
                 </div>
-
             </div>
         </div>
     </div>

@@ -18,7 +18,7 @@
 <div class="holder padding-zero list-layout-1" ng-class="{'pb40': globalPlaylist}">
     <div class="media-center-plugin first-layout text-overlay">
         <div class="plugin-banner clearfix">
-            <div  id="carousel" build-fire-carousel=""></div>
+            <div id="carousel" build-fire-carousel="" ng-init="WidgetHome.loadCarousel()"></div>
         </div>
         <div class="text-left padded padding-bottom-zero clearfix text-overlay wysiwyg" >
             <p ng-if="WidgetHome.showDescription()" ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">
@@ -49,7 +49,7 @@
                                 <div class="li-actions-item">
                                     <i id="drawericon" style="right: 0;" class="glyphicon glyphicon-option-horizontal" ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
                                 </div>
-                                <img ng-if="item.data.topImage" load-image="16x9" crop-width="240" crop-height="135" crop-type="crop" data-final-src="{{item.data.topImage | resizeImage : 240:135}}">
+                                <img ng-if="item.data.topImage" load-image="16x9" crop-width="240" crop-height="135" crop-type="crop" data-final-src="{{item.data.topImage}}">
                                 <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png" style="max-width:100%">
                             </div>
                         </div>

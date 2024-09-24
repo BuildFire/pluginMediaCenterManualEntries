@@ -1,11 +1,9 @@
 class Analytics {
-  
-
-    static trackAction = (eventName, metaData) => {
+    static trackAction(eventName, metaData) {
         buildfire.analytics.trackAction(eventName, metaData);
     }
 
-    static registerEvent = (event = {}, options = {}) => {
+    static registerEvent(event = {}, options = {}) {
         var _event = {
             title: event.title || null,
             key: event.key || undefined,
@@ -28,7 +26,41 @@ class Analytics {
         });
     }
 
-    static unregisterEvent = (key) => {
+    static bulkRegisterEvents(events = [], options = {}) {
+        return new Promise((resolve, reject) => {
+            const _events = events.map(event => {
+                return {
+                    title: event.title || null,
+                    key: event.key || undefined,
+                    description: event.description || null,
+                };
+            });
+
+            const _options = {
+                silentNotification: options.silentNotification || true,
+            };
+
+            if (_events.some(event => !event.title || !event.key)) {
+                return reject("Missing Data");
+            }
+
+            buildfire.analytics.bulkRegisterEvents(_events, _options, (err, res) => {
+                if (err) return reject(err);
+                resolve(res);
+            });
+        });
+    }
+
+    static bulkUnRegisterEvents(keys = []) {
+        return new  Promise((resolve, reject) => {
+            buildfire.analytics.bulkUnregisterEvents(keys, (err, res) => {
+                if (err) return reject(err);
+                resolve(res);
+            });
+        });
+    }
+
+    static unregisterEvent(key) {
         if (!key) {
             return console.error("Missing Data");
         }
@@ -41,7 +73,7 @@ class Analytics {
         });
     }
 
-    static showReports = (options = {}) => {
+    static showReports(options = {}) {
         var _options = {
             eventKey: options.eventKey || undefined,
         };

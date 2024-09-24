@@ -11,7 +11,6 @@
         ])
         //injected ngRoute for routing
         //injected ui.bootstrap for angular bootstrap component
-        //injected ui.sortable for manual ordering of list
         //ngClipboard to provide copytoclipboard feature
         .config(['$routeProvider', function ($routeProvider) {
             $routeProvider

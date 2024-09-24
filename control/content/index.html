@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="mediaCenterContent">
 <head lang="en">
+    <meta charset="UTF-8">
 
     <!--SDK js-->
     <script src="../../../../scripts/buildfire.min.js"></script>
@@ -14,16 +15,14 @@
     <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
     <script src="../../../../scripts/tinymce/tinymce.min.js"></script>
     <script src="../../../../scripts/tinymce/ui-tinymce.js"></script>
-    <script src="../../../../scripts/sortable.min.js"></script>
     <script src="../../../../scripts/buildfire/components/carousel/carousel.js"></script>
-    <script src="../../../../scripts/buildfire/components/actionItems/sortableList.js"></script>
     <script
        src="../../../../scripts/buildfire/components/images/thumbnail.js"></script>
     <script src="../../../../scripts/buildfire/services/searchEngine/searchEngine.js"></script>
-    
+    <script src="../../../../scripts/buildfire/components/control/listView/listView.js"></script>
+
     <!-- JS -->
     <script src="../../../../scripts/jquery/jquery-ui.min.js"></script>
-    <script src="assets/js/sortable.js"></script>
     <script src="../../../../scripts/angular/ng-infinite-scroll.custom.js"></script>
     <script src="../../widget/js/shared/Deeplink.js"></script>
     <script src="../../widget/js/shared/analytics.js"></script>
@@ -36,6 +35,7 @@
     <script src="../../widget/js/data/Subcategory.js"></script>
 
 
+    <script src="js/DialogComponent.js"></script>
     <script src="app.js"></script>
     <script src="enums.js"></script>
     <script src="services.js"></script>
@@ -43,29 +43,79 @@
     <script src="directives.js"></script>
     <script src="modals.js"></script>
     <!-- Controllers -->
-    <script src="controllers/content.home.controller.js"></script>
-    <script src="controllers/content.media.controller.js"></script>
-    <script src="controllers/content.categoryHome.controller.js"></script>
-    <script src="controllers/content.category.controller.js"></script>
+    <script src="controllers/homeController.js"></script>
+    <script src="controllers/addEditMediaController.js"></script>
+    <script src="controllers/addEditCategoryController.js"></script>
+    <script src="controllers/categoryHomeController.js"></script>
+    <script src="controllers/mediaHomeController.js"></script>
     <link rel="stylesheet" href="../../../../styles/transitionAnimation.css">
-    <meta charset="UTF-8">
 
     <!-- CSS -->
     <!-- <link rel="stylesheet" href="assets/css/jquery-ui.css"/> -->
-    <link
-    href="../../../../styles/control/siteIcons-control.css"
-    rel="stylesheet"
-  />
     <link href="../../../../styles/helper.css" rel="stylesheet">
     <link href="../../../../styles/siteIcons.css" rel="stylesheet">
+    <link href="../../../../styles/control/siteIcons-control.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="../../../../styles/control/bf-base.css">
+    <link rel="stylesheet" href="../../../../styles/components/control/listView/listView.css"></link>
     <link href="assets/css/control.content.css" rel="stylesheet">
-    <link rel="stylesheet" href="../content/assets/css/reset.css">
-    <link rel="stylesheet" href="../content/assets/css/bf_base.css">
-    <link rel="stylesheet" href="../content/assets/css/sortable.css">
+    <link href="assets/css/dialog.css" rel="stylesheet">
+
+    <script src="../../../../scripts/sortable.min.js"></script>
+    <script src="../../../../scripts/buildfire/components/actionItems/sortableList.js"></script>
 </head>
 <body style="overflow:auto; overflow:initial;">
 <div class="main_view">
-    <div class="content infinite-scroll-parent padded-sm" ng-view=""></div>
+  <div class="content infinite-scroll-parent" ng-view=""></div>
+
+  <div id="dialogComponent" class="dialog-component">
+    <div class="dialog-header padded">
+        <h4 class="dialog-header-text">Entity Title</h4>
+        <a><span class="icon icon-cross2 close-modal"></span></a>
+    </div>
+    <div class="dialog-body padded"> <!-- dialog content will be parsed here --> </div>
+    <div class="dialog-footer padded flex flex-justify-end">
+        <button class="btn btn-default dialog-cancel-btn">Cancel</button>
+        <button class="btn btn-success dialog-save-btn">Save</button>
+    </div>
+  </div>
+
+  <template id="subcategoryDialogTemplate">
+    <div class="input-control side-label">
+      <label class="required-label" for="subcategoryNameInput">Subcategory Name</label>
+      <div>
+        <input placeholder="Enter Name" type="text" class="form-control" required maxlength="30" id="subcategoryNameInput" />
+        <div id="subcategoryNameInputError" class="text-danger margin-left-ten small hidden">Required</div>
+      </div>
+    </div>
+  </template>
+
+  <template id="selectCategoryDialogTemplate">
+    <div class="input-control side-label">
+      <div id="selectCategoryList"></div>
+      <div class="empty-state margin-bottom-fifteen hidden" id='selectCategoriesEmptyState'>
+        <h5>You haven't added anything yet</h5>
+      </div>
+    </div>
+  </template>
+
+  <template id="bulkActionTemplate">
+    <div class="margin-left-auto">
+      <div class="dropdown flex-left-auto margin-right-ten" dropdown>
+        <button class="btn btn-default text-left dropdown-toggle bulk-action-btn" data-toggle="dropdown" dropdown-toggle aria-expanded="true">
+          <span class="pull-left ellipsis">Bulk Actions</span>
+          <span class="chevron icon-chevron-down pull-right"></span>
+        </button>
+        <ul class="dropdown-menu extended" role="menu">
+          <li class="export-csv"><a>Export CSV</a></li>
+          <li class="get-csv-template"><a>Get Template</a></li>
+          <li class="import-csv"><a>Import CSV</a></li>
+          <li class="margin-top-ten">
+            <p class="info-note caption margin-bottom-zero">Safari users need to rename the file to .csv to open the file.</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </template>
 </div>
 </body>
 </html>

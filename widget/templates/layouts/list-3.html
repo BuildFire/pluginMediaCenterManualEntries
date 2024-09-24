@@ -15,7 +15,7 @@
 <div class="holder padding-zero list-layout-3" ng-class="{'pb75': globalPlaylist}">
     <div class="media-center-plugin third-layout list-3 text-overlay">
         <div class="plugin-banner clearfix text-overlay">
-            <div id="carousel" build-fire-carousel=""></div>
+            <div id="carousel" build-fire-carousel="" ng-init="WidgetHome.loadCarousel()"></div>
         </div>
         <div class="padded text-left text-overlay wysiwyg" ng-if="WidgetHome.showDescription()">
             <p class="margin-bottom-zero" ng-bind-html="WidgetHome.media.data.content.descriptionHTML | safeHtml">
@@ -49,7 +49,7 @@
                         play-btn="{{item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0 }}">
                         <img ng-if="item.data.topImage" load-image="16x9" style="width:100%;" crop-width="340"
                             crop-height="190" crop-type="crop"
-                            data-final-src="{{item.data.topImage | resizeImage : 340:190}}">
+                            data-final-src="{{item.data.topImage}}">
                         <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png"
                             style="width:100%;">
                     </div>

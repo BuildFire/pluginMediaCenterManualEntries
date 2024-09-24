@@ -16,7 +16,6 @@
                         allowShare: true,
                         allowAddingNotes: true,
                         allowSource: true,
-                        transferAudioContentToPlayList:false,
                         forceAutoPlay:false,
                         dateIndexed: true,
                         dateCreatedIndexed: true
@@ -78,6 +77,12 @@
             $scope.$watch(function () {
                 return DesignHome.mediaInfo;
             }, function () {
+                Messaging.sendMessageToWidget({
+                    name: EVENTS.DESIGN_LAYOUT_CHANGE,
+                    message: {
+                        design: DesignHome.mediaInfo.data.design
+                    }
+                })
 
                 if (isUnchanged(DesignHome._lastSaved))
                     return;

@@ -28,9 +28,6 @@
 
                 function init() {
                     WidgetFilters.isBusy = true;
-                    // if (!MediaCenterSettings.content.enableFiltering) {
-                    //     Location.goToHome();
-                    // }
                     WidgetFilters.filtersApplyButtonString = getString('filtersScreen.applyButton');
                     if ($rootScope.online) {
                         MediaCenter.get().then(function (data) {
@@ -61,7 +58,6 @@
                                     allowAddingNotes: true,
                                     allowSource: true,
                                     allowOfflineDownload: false,
-                                    transferAudioContentToPlayList: false,
                                     forceAutoPlay: false,
                                     autoPlay: false,
                                     autoPlayDelay: { label: "Off", value: 0 },
@@ -82,16 +78,11 @@
                             if (err) WidgetMedia.media = _infoData;
                             else {
                                 WidgetMedia.media = res
-                                // buildfire.dialog.toast({
-                                //     message: `Found Cached media center ${WidgetMedia.media.data.content.allowOfflineDownload}`,
-                                //     type: 'warning',
-                                // });
                             }
-                            // WidgetMedia.media = _infoData;
                             WidgetFilters.isBusy = false;
                             WidgetFilters.getMore();
                             setTimeout(() => {
-                                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                if (!$scope.$$phase) $scope.$apply();
                             }, 0);
                         });
 
@@ -118,6 +109,9 @@
                     }
                     WidgetFilters.isBusy = true;
                     WidgetFilters.updateSearchOptions();
+                    if (!searchOptions.sort.rank) {
+                        searchOptions.sort.rank = 1;
+                    }
                     CategoryContent.find(searchOptions).then(function success(result) {
                         if (result.length <= _limit) {// to indicate there are more
                             WidgetFilters.noMore = true;
@@ -129,7 +123,12 @@
                         }
 
                         WidgetFilters.allCategories = WidgetFilters.allCategories ? WidgetFilters.allCategories.concat(result) : result;
-                        if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                        if (!WidgetFilters.allCategories.length) {
+                            angular.element('#filterEmptyContainer').css('display', 'block');
+                        } else {
+                            angular.element('#filterEmptyContainer').css('display', 'none');
+                        }
+                        if (!$scope.$$phase) $scope.$apply();
                         WidgetFilters.isBusy = false;
                     }, function fail() {
                         WidgetFilters.isBusy = false;
@@ -262,7 +261,7 @@
                 };
 
                 WidgetFilters.applyUpdates = function () {
-                    if (!WidgetFilters.media.data.content.enableFiltering) {
+                    if (!$rootScope.enableFiltering) {
                         Location.goToHome();
                         return;
                     }
@@ -271,55 +270,21 @@
                     }
                 }
 
-                WidgetFilters.onUpdateFn = Buildfire.datastore.onUpdate(function (event) {
-
-                    buildfire.components.drawer.closeDrawer();
-                    switch (event.tag) {
-                        case COLLECTIONS.CategoryContent:
-                            if (event.data) {
-                                WidgetFilters.pickedCategories = {};
-                                WidgetFilters.allCategories = [];
-                                WidgetFilters.skip = 0;
-                                WidgetFilters.noMore = false;
-                                WidgetFilters.applyUpdates();
-                            }
-                            break;
-                        case COLLECTIONS.MediaCenter:
-                            var oldSort = WidgetFilters.media.data.content.sortCategoriesBy;
-                            var oldFiltering = WidgetFilters.media.data.content.enableFiltering;
-                            WidgetFilters.media = event;
-                            $rootScope.backgroundImage = WidgetFilters.media.data.design.backgroundImage;
-                            $rootScope.allowShare = WidgetFilters.media.data.content.allowShare;
-                            $rootScope.allowAddingNotes = WidgetFilters.media.data.content.allowAddingNotes;
-                            $rootScope.allowSource = WidgetFilters.media.data.content.allowSource;
-                            $rootScope.transferAudioContentToPlayList = WidgetFilters.media.data.content.transferAudioContentToPlayList;
-                            $rootScope.forceAutoPlay = WidgetFilters.media.data.content.forceAutoPlay;
-                            $rootScope.skipMediaPage = WidgetFilters.media.data.design.skipMediaPage;
-
-                            $rootScope.autoPlay = WidgetFilters.media.data.content.autoPlay;
-                            $rootScope.autoPlayDelay = WidgetFilters.media.data.content.autoPlayDelay;
-                            $rootScope.globalPlaylist = WidgetFilters.media.data.content.globalPlaylist;
-                            $rootScope.globalPlaylistPlugin = WidgetFilters.media.data.content.globalPlaylistPlugin;
-                            $rootScope.showGlobalPlaylistNavButton = WidgetFilters.media.data.content.showGlobalPlaylistNavButton;
-                            $rootScope.showGlobalAddAllToPlaylistButton = WidgetFilters.media.data.content.showGlobalAddAllToPlaylistButton;
-                            $rootScope.allowOfflineDownload = WidgetFilters.media.data.content.allowOfflineDownload;
-                            $rootScope.enableFiltering = WidgetFilters.media.data.content.enableFiltering;
-                            $rootScope.refreshItems();
-                            WidgetFilters.media.data.content.sortCategoriesBy = event.data.content.sortCategoriesBy;
-                            WidgetFilters.media.data.content.enableFiltering = event.data.content.enableFiltering;
-                            if (oldSort != WidgetFilters.media.data.content.sortCategoriesBy || oldFiltering != WidgetFilters.media.data.content.enableFiltering) {
-                                WidgetFilters.pickedCategories = {};
-                                WidgetFilters.allCategories = [];
-                                WidgetFilters.skip = 0;
-                                WidgetFilters.noMore = false;
-                                WidgetFilters.applyUpdates();
-                            }
-                            $scope.$apply();
-                            break;
-                        default:
-                            return;
+                Messaging.onReceivedMessage = (event) => {
+                    if (event.message && event.message.path == 'MEDIA') {
+						Location.go('#/media/' + event.message.id, true);
+					} else if (event.message && event.message.path == 'HOME') {
+                        Location.goToHome();
+                    } else if (event.name === EVENTS.CATEGORIES_CHANGE) {
+                        WidgetFilters.pickedCategories = {};
+                        WidgetFilters.allCategories = [];
+                        WidgetFilters.skip = 0;
+                        WidgetFilters.noMore = false;
+                        WidgetFilters.applyUpdates();
+                    } else if (!$rootScope.enableFiltering) {
+                        return Location.goToHome();
                     }
-                });
+                };
 
                 WidgetFilters.hasFilters = function () {
                     if (WidgetFilters.allCategories && WidgetFilters.allCategories.length > 0) {

@@ -23,7 +23,7 @@
 <div class="holder padding-zero list-layout-4" ng-class="{'pb30': globalPlaylist}">
     <div class="media-center-plugin list-layout fourth-layout text-overlay">
         <div class="media-center-banner clearfix text-overlay">
-            <div id="carousel" build-fire-carousel=""></div>
+            <div id="carousel" build-fire-carousel="" ng-init="WidgetHome.loadCarousel()"></div>
         </div>
         <div class="text-left padded padding-bottom-zero clearfix text-overlay wysiwyg">
             <p ng-if="WidgetHome.showDescription()"
@@ -63,7 +63,7 @@
                                 play-btn="{{WidgetHome.items[$index].data.videoUrl.length > 0 || WidgetHome.items[$index].data.audioUrl.length > 0 }}">
                                 <img ng-if="WidgetHome.items[$index].data.topImage" load-image="1x1" crop-width="200"
                                     crop-height="200" crop-type="crop"
-                                    data-final-src="{{WidgetHome.items[$index].data.topImage | resizeImage : 200:200}}"
+                                    data-final-src="{{WidgetHome.items[$index].data.topImage}}"
                                     style="width: 200px;">
                                 <img ng-if="!WidgetHome.items[$index].data.topImage"
                                     src="../../../styles/media/holder-1x1.png">
@@ -121,7 +121,7 @@
                                 play-btn="{{WidgetHome.items[$index+1].data.videoUrl.length > 0 || WidgetHome.items[$index+1].data.audioUrl.length > 0 }}">
                                 <img ng-if="WidgetHome.items[$index + 1].data.topImage" load-image="1x1"
                                     crop-width="200" crop-height="200" crop-type="crop"
-                                    data-final-src="{{WidgetHome.items[$index + 1].data.topImage | resizeImage : 200:200}}"
+                                    data-final-src="{{WidgetHome.items[$index + 1].data.topImage}}"
                                     style="width: 200px;">
                                 <img ng-if="!WidgetHome.items[$index + 1].data.topImage"
                                     src="../../../styles/media/holder-1x1.png">

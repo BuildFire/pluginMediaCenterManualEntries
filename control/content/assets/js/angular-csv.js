@@ -175,6 +175,12 @@
                             deferred.reject(error);
                         });
                         return deferred.promise;
+                    },
+                    showInvalidCSV: function (message) {
+                        buildfire.dialog.alert({
+                            title: 'Invalid CSV Import',
+                            message: 'Uploaded CSV data is incomplete. Please follow provided template.',
+                          });
                     }
                 }
             }]

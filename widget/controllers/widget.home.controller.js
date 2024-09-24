@@ -1,8 +1,8 @@
 (function (angular) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetHomeCtrl', ['$scope', '$timeout', '$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location', 'openedMediaHandler', 'LocalStorageOpenedItemsHandler',
-            function ($scope, $timeout, $window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location, openedMediaHandler, LocalStorageOpenedItemsHandler) {
+        .controller('WidgetHomeCtrl', ['$scope', '$timeout', '$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location', 'openedMediaHandler', 'LocalStorageOpenedItemsHandler', 'DropboxLinksManager',
+            function ($scope, $timeout, $window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location, openedMediaHandler, LocalStorageOpenedItemsHandler, DropboxLinksManager) {
                 $rootScope.loadingGlobalPlaylist = true;
                 $rootScope.showFeed = true;
                 $rootScope.currentlyDownloading = [];
@@ -12,14 +12,10 @@
                 $rootScope.loadingData = true;
                 WidgetHome.isWeb = Buildfire.getContext().device.platform == 'web';
                 WidgetHome.openedItems = [];
-                // $rootScope.online = $window.navigator.onLine;
                 $rootScope.online = $window.navigator.onLine;
                 WidgetHome.online = $rootScope.online;
                 $rootScope.backgroundColor = buildfire.getContext().appTheme.colors.backgroundColor ? { "background-color": buildfire.getContext().appTheme.colors.backgroundColor } : { "background-color": '#ffffff' };
-                // $rootScope.online = false;
-                // WidgetHome.online = false;
                 buildfire.spinner.hide();
-                $rootScope.resizeImg = (url) => buildfire.imageLib.resizeImage(url);
 
 
                 const isLauncher = window.location.href.includes('launcherPlugin');
@@ -45,7 +41,6 @@
                             allowShare: true,
                             allowAddingNotes: true,
                             allowSource: true,
-                            transferAudioContentToPlayList: false,
                             forceAutoPlay: false,
                             autoPlay: false,
                             autoPlayDelay: { label: "Off", value: 0 },
@@ -64,7 +59,8 @@
                         }
                     }
                 };
-                var view = null;
+                let view = null;
+                WidgetHome.media = _infoData;
 
                 /**
                  * Create instance of MediaContent, MediaCenter db collection
@@ -106,7 +102,7 @@
                         }
                     })
                     MediaCenter.get().then(function success(result) {
-                        if (result && result.data && result.id) {
+                        if (result && result.data && Object.keys(result.data).length && result.id) {
                             MediaCenterInfo = result;
                         } else {
                             MediaCenterInfo = _infoData;
@@ -116,7 +112,6 @@
                         $rootScope.allowShare = MediaCenterInfo.data.content.allowShare;
                         $rootScope.allowAddingNotes = MediaCenterInfo.data.content.allowAddingNotes;
                         $rootScope.allowSource = MediaCenterInfo.data.content.allowSource;
-                        $rootScope.transferAudioContentToPlayList = MediaCenterInfo.data.content.transferAudioContentToPlayList;
                         $rootScope.forceAutoPlay = MediaCenterInfo.data.content.forceAutoPlay;
                         $rootScope.skipMediaPage = MediaCenterInfo.data.design.skipMediaPage
 
@@ -174,7 +169,6 @@
                             $rootScope.allowShare = WidgetHome.media.data.content.allowShare;
                             $rootScope.allowAddingNotes = WidgetHome.media.data.content.allowAddingNotes;
                             $rootScope.allowSource = WidgetHome.media.data.content.allowSource;
-                            $rootScope.transferAudioContentToPlayList = WidgetHome.media.data.content.transferAudioContentToPlayList;
                             $rootScope.forceAutoPlay = WidgetHome.media.data.content.forceAutoPlay;
                             $rootScope.skipMediaPage = WidgetHome.media.data.design.skipMediaPage
 
@@ -229,7 +223,7 @@
                             }, 500);
                         } else {
                             callback();
-                            if (!$scope.$$phase && !$scope.$root.$$phase) {
+                            if (!$scope.$$phase) {
                                 $scope.$apply();
                             }
                         }
@@ -258,7 +252,7 @@
                 }
 
                 WidgetHome.goTo = function (id, type) {
-                    var documentFocused = WidgetHome.isDocumentFocused();
+                    const documentFocused = WidgetHome.isDocumentFocused();
                     // stop the autoplay if shared media via PWA to prevent video freeze
                     if(documentFocused) $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                     else $rootScope.autoPlay = false;
@@ -272,21 +266,25 @@
                     var navigate = function (item) {
                         if (item && item.data) {
                             if(type === 'audio'){
+                                $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                                 Location.go('#/nowplaying/' + item.id, true);
-                                if (!$rootScope.$$phase) $rootScope.$digest();
-                            }
-                            else if (!$rootScope.skipMediaPage || ($rootScope.skipMediaPage && item.data.videoUrl)
-                                || ($rootScope.skipMediaPage && !item.data.videoUrl && !item.data.audioUrl)) {
-                                    Location.go('#/media/' + item.id, true);
+                            } else if ($rootScope.skipMediaPage && item.data.audioUrl) {
+                                $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
+                                Location.go('#/nowplaying/' + item.id, true);
                             } else {
-                                Location.go('#/nowplaying/' + item.id, true);
+                                Location.go('#/media/' + item.id, true);
                             }
+                        } else {
+                            Location.go('#/media/' + item.id, true);
                         }
+                        if (!$rootScope.$$phase) $rootScope.$digest();
                     }
 
                     if (index != -1) {
                         navigate(WidgetHome.items[index]);
                         $rootScope.showGlobalPlaylistButtons = false;
+                    } else if (id === 'mockId') {
+                        navigate({ id: 'mockId' });
                     } else {
                         MediaContent.getById(id).then(function success(result) {
 
@@ -314,30 +312,33 @@
                  * Messaging.onReceivedMessage is called when any event is fire from Content/design section.
                  * @param event
                  */
-                Messaging.onReceivedMessage = function (event) {
-                    if (event.message && event.message.path == 'MEDIA') {
-                        WidgetHome.goTo(event.message.id);
+                $rootScope.setupHomeCPSync = function () {
+                    if ($rootScope.showFeed) {
+                        Messaging.onReceivedMessage = function (event) {
+                            if (event.message && event.message.path == 'MEDIA') {
+                                WidgetHome.goTo(event.message.id);
+                            }
+                            if (event.message && event.message.path == 'HOME') {
+                                buildfire.history.get({ pluginBreadCrumbsOnly: true }, function (err, result) {
+                                    result.map(item => buildfire.history.pop());
+                                    Location.goToHome();
+                                });
+                            }
+                            if (event.cmd == "refresh") /// message comes from the strings page on the control side
+                                location.reload();
+                        };
                     }
-                    if (event.message && event.message.path == 'HOME') {
-                        buildfire.history.get({ pluginBreadCrumbsOnly: true }, function (err, result) {
-                            result.map(item => buildfire.history.pop());
-                            Location.goToHome();
-                        });
-                    }
-                    if (event.cmd == "refresh") /// message comes from the strings page on the control side
-                        location.reload();
-                };
+                }
 
                 var onUpdateCallback = function (event) {
                     buildfire.spinner.show();
                     if (event.tag == "MediaCenter") {
-                        if (event.data) {
+                        if (event.data && event.data.content && event.data.design) {
                             WidgetHome.media.data = event.data;
                             $rootScope.backgroundImage = WidgetHome.media.data.design && WidgetHome.media.data.design.backgroundImage;
                             $rootScope.allowShare = WidgetHome.media.data.content.allowShare;
                             $rootScope.allowAddingNotes = WidgetHome.media.data.content.allowAddingNotes;
                             $rootScope.allowSource = WidgetHome.media.data.content.allowSource;
-                            $rootScope.transferAudioContentToPlayList = WidgetHome.media.data.content.transferAudioContentToPlayList;
                             $rootScope.forceAutoPlay = WidgetHome.media.data.content.forceAutoPlay;
                             $rootScope.skipMediaPage = WidgetHome.media.data.design.skipMediaPage;
 
@@ -352,10 +353,6 @@
                             $rootScope.indicatePlayedItems = WidgetHome.media.data.content.indicatePlayedItems;
                             $rootScope.autoJumpToLastPosition = WidgetHome.media.data.content.startWithAutoJumpByDefault ;
 
-                            if (view && event.data.content && event.data.content.images) {
-                                view.loadItems(event.data.content.images);
-                            }
-
                             if (isLauncher && WidgetHome.media.data.content.enableFiltering) {
                                 slideElement.classList.add("launcher-with-filter");
                             } else {
@@ -363,10 +360,11 @@
                             }
                             $rootScope.refreshItems();
                             buildfire.spinner.hide();
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            WidgetHome.loadCarousel();
+                            if (!$scope.$$phase) $scope.$apply();
                         } else {
                             buildfire.spinner.hide();
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            if (!$scope.$$phase) $scope.$apply();
                         }
                     } else if (event.tag === "MediaContent") {
                         // Make sure to delete from globalPlaylist if exists
@@ -376,7 +374,7 @@
                                     $rootScope.globalPlaylistItems.playlist[event.id] = event.data;
                                     $rootScope.refreshItems();
                                     buildfire.spinner.hide();
-                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                    if (!$scope.$$phase) $scope.$apply();
                                 });
                             } else {
                                 // If there is no data, it means the the item has been deleted
@@ -385,7 +383,7 @@
                                     delete $rootScope.globalPlaylistItems.playlist[event.id];
                                     $rootScope.refreshItems();
                                     buildfire.spinner.hide();
-                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                    if (!$scope.$$phase) $scope.$apply();
                                 });
                             }
                         } else {
@@ -410,12 +408,16 @@
                             }
                         } else if (event.tag === globalPlaylistTag) {
                             if (event.data.playlist) {
-                                $rootScope.globalPlaylistItems.playlist = event.data.playlist;
+                                if ($rootScope.globalPlaylistItems && typeof $rootScope.globalPlaylistItems === 'object') {
+                                    $rootScope.globalPlaylistItems.playlist = event.data.playlist;
+                                } else {
+                                    $rootScope.globalPlaylistItems = { playlist: event.data.playlist };
+                                }
                             }
                         }
                     }
                     buildfire.spinner.hide();
-                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                    if (!$scope.$$phase) $scope.$apply();
                 });
 
                 /**
@@ -462,6 +464,9 @@
                             console.log(finalFilter);
                         }
                         searchOptions.filter = finalFilter;
+                    }
+                    if (!WidgetHome.media || !WidgetHome.media.data || !WidgetHome.media.data.content) {
+                        WidgetHome.media = _infoData;
                     }
                     var order = Orders.getOrder(WidgetHome.media.data.content.sortBy || Orders.ordersMap.Default);
                     if (order) {
@@ -612,7 +617,7 @@
                                 duration: 2000
                             });
 
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            if (!$scope.$$phase) $scope.$apply();
                         });
                     } else {
 
@@ -624,9 +629,9 @@
                                 type: 'warning'
                             });
                             $rootScope.addAllToPlaylistLoading = false;
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            if (!$scope.$$phase) $scope.$apply();
                         } else {
-                            var filteredItems = WidgetHome.items.filter(el => !$rootScope.isInGlobalPlaylist(el.id));
+                            var filteredItems = WidgetHome.items.filter(el => !$rootScope.isInGlobalPlaylist(el.id)).filter(item => item.data.audioUrl);
                             var itemsToAdd = [...filteredItems].splice(0, freeSlots);
                             GlobalPlaylist.insertAndUpdateAll(itemsToAdd).then(() => {
                                 for (let item of itemsToAdd) {
@@ -642,7 +647,7 @@
                                     duration: 2000
                                 });
                                 $rootScope.addAllToPlaylistLoading = false;
-                                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                if (!$scope.$$phase) $scope.$apply();
                             });
                         }
                     }
@@ -688,28 +693,34 @@
                 }
 
                 let delayInterval;
-                $rootScope.playNextItem = (userInput) => {
-                    if (userInput) return WidgetHome.goToMedia($rootScope.currentIndex + 1);
+                $rootScope.playNextItem = (userInput, shufflePluginList) => {
+                    let newIndex = $rootScope.currentIndex + 1;
+                    if (shufflePluginList) {
+                        do {
+                            newIndex = Math.floor((Math.random() * WidgetHome.items.length));
+                        } while (newIndex === $rootScope.currentIndex && WidgetHome.items.length > 1);
+                    }
+                    if (userInput) return WidgetHome.goToMedia(newIndex);
 
                     if ($rootScope.autoPlay) {
                         let delay = $rootScope.autoPlayDelay.value;
                         if (!delay) {
-                            WidgetHome.goToMedia($rootScope.currentIndex + 1);
+                            WidgetHome.goToMedia(newIndex);
                         } else {
                             $rootScope.showCountdown = true;
 
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            if (!$scope.$$phase) $scope.$apply();
 
                             $rootScope.delayCountdownText = `Next will play in ${delay}`;
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            if (!$scope.$$phase) $scope.$apply();
                             if (delayInterval) clearInterval(delayInterval);
                             delayInterval = setInterval(() => {
                                 --delay
                                 $rootScope.delayCountdownText = delay !== 0 ? `Next will play in ${delay}` : 'Loading next item...';
-                                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                if (!$scope.$$phase) $scope.$apply();
                                 if (delay === 0) {
                                     $rootScope.clearCountdown();
-                                    WidgetHome.goToMedia($rootScope.currentIndex + 1);
+                                    WidgetHome.goToMedia(newIndex);
                                 }
                             }, 1000);
                         }
@@ -719,7 +730,7 @@
                 $rootScope.clearCountdown = () => {
                     $rootScope.showCountdown = false;
                     $rootScope.delayCountdownText = '';
-                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                    if (!$scope.$$phase) $scope.$apply();
                     if (delayInterval) clearInterval(delayInterval);
                 }
 
@@ -861,7 +872,7 @@
                             WidgetHome.isBusy = false;
                             $rootScope.loadingData = false;
                             $rootScope.loadingGlobalPlaylist = false;
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            if (!$scope.$$phase) $scope.$apply();
                             return callback(null, true);
                         }, 0);
                     }
@@ -927,7 +938,7 @@
                                 WidgetHome.isBusy = false;
                                 $rootScope.loadingData = false;
                                 $rootScope.loadingGlobalPlaylist = false;
-                                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                if (!$scope.$$phase) $scope.$apply();
                                 callback(null, true);
                             }, 0);
                         });
@@ -969,18 +980,28 @@
                     });
                 };
 
-                // correct image src for dropbox to crop/resize and show it
-                function getImageUrl(imageSrc) {
-                   if (imageSrc) {
-                      imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent");
-                      imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com");
-                      imageSrc = imageSrc.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
-                    }
-                    return imageSrc;
+                function setupImages(records) {
+                    // this function is used to preload audio player images
+                    records.forEach((record) => {
+                        if (record.data.audioUrl) {
+                            if (record.data.image) {
+                                const img = new Image();
+                                img.src = buildfire.imageLib.resizeImage(record.data.image, { size: '1080', aspect: '16:9' })
+                            } else if (record.data.topImage) {
+                                const img = new Image();
+                                img.src = buildfire.imageLib.resizeImage(record.data.topImage, { size: '1080', aspect: '16:9' })
+                            }
+    
+                            if (record.data.topImage) {
+                                const img = new Image();
+                                img.src = buildfire.imageLib.resizeImage(record.data.topImage, { width: '400', height: '400' });
+                            }
+                        }
+                    });
                 }
 
-                WidgetHome.loadMore = () => {
 
+                WidgetHome.loadMore = () => {
                     localOpenedItems();
                     updateGetOptions();
                     const getRecords = () => {
@@ -989,15 +1010,23 @@
                         WidgetHome.stopScroll = true;
                         WidgetHome.currentlyLoading = true;
 
+                        if (!searchOptions.sort.rank) {
+                            searchOptions.sort.rank = 1;
+                        }
                         MediaContent.find(searchOptions).then((result) => {
                             result = result.map((item) => {
-                                item.data.topImage = getImageUrl(item.data.topImage);
-                                item.data.image = getImageUrl(item.data.image);
+                                item.data.topImage = DropboxLinksManager.convertDropbox(item.data.topImage);
+                                item.data.image = DropboxLinksManager.convertDropbox(item.data.image);
                                 return item;
                             });
+                            setupImages(result);
                             WidgetHome.items = WidgetHome.items.concat(result);
                             WidgetHome.items.forEach((item) => {
-                                var searchOptions = {
+                                item.data.opened = isOpened(item);
+                                // no need to get the view count if the feature is disabled
+                                if (!WidgetHome.media.data.content.showViewCount) return;
+
+                                let searchOptions = {
                                     filter: {
                                         '_buildfire.index.string1': item.id + '-true',
                                     },
@@ -1005,14 +1034,15 @@
                                     limit: 1,
                                     recordCount: true,
                                 };
-                                item.data.opened = isOpened(item);
 
                                 buildfire.publicData.search(
                                     searchOptions,
                                     COLLECTIONS.MediaCount,
                                     function (err, res) {
-                                        item.data.count = res.totalRecord;
-                                        if (!$scope.$$phase && !$scope.$root.$$phase) {
+                                        if (err) console.error(err);
+                                        else if (res && res.totalRecord) item.data.count = res.totalRecord;
+                                        
+                                        if (!$scope.$$phase) {
                                             $scope.$apply();
                                         }
                                     }
@@ -1065,7 +1095,7 @@
                                     WidgetHome.isBusy = false;
                                     $rootScope.loadingData = false;
                                     $rootScope.loadingGlobalPlaylist = false;
-                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                    if (!$scope.$$phase) $scope.$apply();
                                 }, 0);
                             });
                     } else {
@@ -1175,7 +1205,7 @@
                         listItems.push({ id: "openLinks", text: getString("homeDrawer.openLinks") });
                     }
 
-                    if (WidgetHome.media.data.content.globalPlaylist && $rootScope.online) {
+                    if (WidgetHome.media.data.content.globalPlaylist && $rootScope.online && item.data.audioUrl) {
                         if ($rootScope.isInGlobalPlaylist(item.id)) {
                             listItems.push({ id: "removeFromPlaylist", text: getString("homeDrawer.removeFromPlaylist") });
                         }
@@ -1485,12 +1515,12 @@
                     WidgetHome.noMore = false;
                     WidgetHome.globalPlaylistLoaded = false;
                     if ($rootScope.globalPlaylist) $rootScope.globalPlaylistItems = { playlist: {} };
-                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                    if (!$scope.$$phase) $scope.$apply();
                     WidgetHome.loadMore();
                 };
 
                 WidgetHome.goToMedia = function (ind) {
-                    var documentFocused = WidgetHome.isDocumentFocused();
+                    const documentFocused = WidgetHome.isDocumentFocused();
                     // stop the autoplay if shared via PWA to prevent video freeze
                     if(documentFocused) $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                     else $rootScope.autoPlay = false;
@@ -1511,11 +1541,11 @@
 
                         $rootScope.currentIndex = ind;
 
-                        if (!$rootScope.skipMediaPage || ($rootScope.skipMediaPage && WidgetHome.items[ind].data.videoUrl)
-                            || ($rootScope.skipMediaPage && !WidgetHome.items[ind].data.videoUrl && !WidgetHome.items[ind].data.audioUrl)) {
-                            Location.go('#/media/' + WidgetHome.items[ind].id, true);
-                        } else {
+                        if ($rootScope.skipMediaPage && WidgetHome.items[ind].data.audioUrl) {
+                            $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                             Location.go('#/nowplaying/' + WidgetHome.items[ind].id, true);
+                        } else {
+                            Location.go('#/media/' + WidgetHome.items[ind].id, true);
                         }
                         $rootScope.showGlobalPlaylistButtons = false;
                     }
@@ -1583,15 +1613,6 @@
                     $rootScope.showOfflineBox = false;
                 };
 
-                $rootScope.$on("Carousel:LOADED", function () {
-                    if (WidgetHome.media.data.content && WidgetHome.media.data.content.images) {
-                        view = new Buildfire.components.carousel.view("#carousel", WidgetHome.media.data.content.images);
-                        //view.loadItems(WidgetHome.media.data.content.images, false);
-                    } else {
-                        view.loadItems([]);
-                    }
-                });
-
                 $rootScope.$on('online', function () {
                     WidgetHome.online = $rootScope.online;
                     Location.goToHome();
@@ -1617,7 +1638,7 @@
 
                                 WidgetHome.loadMore();
                                 setTimeout(() => {
-                                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                    if (!$scope.$$phase) $scope.$apply();
                                 }, 0);
                             });
                         }
@@ -1630,7 +1651,7 @@
                                         if (err) {
                                         }
                                         setTimeout(() => {
-                                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                            if (!$scope.$$phase) $scope.$apply();
                                         }, 0);
                                     });
                                 }
@@ -1639,12 +1660,33 @@
                                 function fail() {
                                     WidgetHome.media = _infoData;
                                     setTimeout(() => {
-                                        if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                                        if (!$scope.$$phase) $scope.$apply();
                                     }, 0);
                                 }
 
                             );
                         }
+                    }
+                });
+
+                WidgetHome.loadCarousel = function () {
+                    const carouselContainer = document.getElementById('carousel');
+                    if (carouselContainer) {
+                        view = new Buildfire.components.carousel.view("#carousel", WidgetHome.media.data.content.images);
+                        view.loadItems(WidgetHome.media.data.content.images);
+    
+                        if (!$scope.$$phase) {
+                            $scope.$digest();
+                            $scope.$apply();
+                        }
+                    }
+                }
+
+                $scope.$watch(function () {
+                    return WidgetHome.media;
+                }, function () {
+                    if (WidgetHome.media && WidgetHome.media.data.content && WidgetHome.media.data.content.images) {
+                        WidgetHome.loadCarousel();
                     }
                 });
 
@@ -1660,6 +1702,9 @@
                         WidgetHome.deepLink = true;
                     }
                 });
+                $rootScope.$watch(function () {
+					return $rootScope.showFeed;
+				}, $rootScope.setupHomeCPSync, true);
                 $rootScope.$on('activeFiltersChanged', function () {
                     if ($rootScope.activeFilters) {
                         if (Object.keys($rootScope.activeFilters) && Object.keys($rootScope.activeFilters).length) {
@@ -1675,13 +1720,7 @@
                         WidgetHome.loadMore();
                     }
                 });
-                /**
-                 * Implementation of pull down to refresh
-                 */
-                var onRefresh = Buildfire.datastore.onRefresh(function () {
-                    Location.goToHome();
-                });
-
+                
                 // get opened items
                 const localOpenedItems = () => {
                     getCurrentUser(() => {

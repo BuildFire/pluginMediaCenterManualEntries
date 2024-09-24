@@ -54,7 +54,7 @@
                 Least: " Oldest"
             };
             var orders = [
-                {id: 1, name: "Manually", value: "Manually", key: "rank", order: 1},
+                {id: 1, name: "Manual", value: "Manually", key: "rank", order: 1},
                 {id: 1, name: "Media Title A-Z", value: "Media Title A-Z", key: "title", order: 1},
                 {id: 1, name: "Media Title Z-A", value: "Media Title Z-A", key: "title", order: -1},
                 {id: 1, name: "Media Date Asc", value: "Media Date Asc", key: "mediaDateIndex", order: 1},
@@ -83,9 +83,9 @@
                 Least: " Oldest"
             };
             var orders = [
-                {id: 1, name: "Manually", value: "Manually", key: "rank", order: 1},
-                {id: 1, name: "Category Title A-Z", value: "Category Title A-Z", key: "title", order: 1},
-                {id: 1, name: "Category Title Z-A", value: "Category Title Z-A", key: "title", order: -1},
+                {id: 1, name: "Manual", value: "Manually", key: "rank", order: 1},
+                {id: 1, name: "Category Title A-Z", value: "Category Title A-Z", key: "name", order: 1},
+                {id: 1, name: "Category Title Z-A", value: "Category Title Z-A", key: "name", order: -1},
                 {id: 1, name: "Newest", value: "Newest", key: "createdOn", order: -1},
                 {id: 1, name: "Oldest", value: "Oldest", key: "createdOn", order: 1},
             ];
@@ -110,7 +110,7 @@
                 Least: " Oldest"
             };
             var orders = [
-                {id: 1, name: "Manually", value: "Manually", key: "rank", order: 1},
+                {id: 1, name: "Manual", value: "Manually", key: "rank", order: 1},
                 {id: 1, name: "Subcategory Title A-Z", value: "Subcategory Title A-Z", key: "title", order: 1},
                 {id: 1, name: "Subcategory Title Z-A", value: "Subcategory Title Z-A", key: "title", order: -1},
                 {id: 1, name: "Subcategory Date Asc", value: "Subcategory Date Asc", key: "subcategoryDateIndex", order: 1},
@@ -140,6 +140,7 @@
                     return deferred.reject(new Error(MESSAGES.ERROR.DATA_NOT_DEFINED));
                 }
                 var data = {
+                    key: item.id,
                     tag: that._tagName,
                     title: item.title,
                     description: item.summary,
@@ -152,7 +153,7 @@
                     }
                 };
 
-                Buildfire.services.searchEngine.insert(data, function (err, result) {
+                Buildfire.services.searchEngine.save(data, function (err, result) {
                     if (err) {
                         return deferred.reject(err);
                     }
@@ -367,6 +368,20 @@
                 });
                 return deferred.promise;
             };
+            DB.prototype.bulkUpdateItems = function (items, callback) {
+                if (!items.length) return callback(null, []);
+                const batchSize = 20;
+                const batch = items.splice(0, batchSize);
+        
+                const promises = batch.map(_record => 
+                    new Promise((resolve, reject) => 
+                        this.update(_record.id, _record).then(() => {
+                            resolve(true);
+                        }).catch(err => reject(err))
+                    ));
+                
+                Promise.allSettled(promises).then(() => this.bulkUpdateItems(items, callback));
+            };
             return DB;
         }])
         .value('Settings', Settings)
@@ -484,6 +499,23 @@
             }
           } 
         
+        }])
+        .factory("nanoid", [function() {
+            return (t = 21) =>
+                crypto
+                  .getRandomValues(new Uint8Array(t))
+                  .reduce(
+                    (t, e) =>
+                      (t +=
+                        (e &= 63) < 36
+                          ? e.toString(36)
+                          : e < 62
+                          ? (e - 26).toString(36).toUpperCase()
+                          : e > 62
+                          ? '-'
+                          : '_'),
+                    ''
+                  )
         }])
 
 

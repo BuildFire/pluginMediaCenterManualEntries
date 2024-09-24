@@ -1,6 +1,47 @@
 {
     "mainInfo": "Change values to update main wall labels and messages",
     "sections": {
+        "mediaPlayer": {
+            "title": "Media Player",
+            "labels": {
+                "shuffleAllItemsIndicator": {
+                    "title": "Shuffle All Items Indicator",
+                    "placeholder": "A",
+                    "maxLength": 1,
+                    "defaultValue": "A"
+                },
+                "shufflePlaylistItemsIndicator": {
+                    "title": "Shuffle Playlist Items Indicator",
+                    "placeholder": "P",
+                    "maxLength": 1,
+                    "defaultValue": "P"
+                },
+                "shuffleAllItemsConfirmation": {
+                    "title": "Shuffle All Items Confirmation",
+                    "placeholder": "Shuffle all items",
+                    "maxLength": 50,
+                    "defaultValue": "Shuffle all items"
+                },
+                "shufflePlaylistItemsConfirmation": {
+                    "title": "Shuffle Playlist Items Confirmation",
+                    "placeholder": "Shuffle items in your playlist only",
+                    "maxLength": 50,
+                    "defaultValue": "Shuffle items in your playlist only"
+                },
+                "shuffleOffConfirmation": {
+                    "title": "Shuffle Off Confirmation",
+                    "placeholder": "Shuffle off",
+                    "maxLength": 50,
+                    "defaultValue": "Shuffle off"
+                },
+                "unknownTrack": {
+                    "title": "Unknown Track",
+                    "placeholder": "Unknown Track",
+                    "maxLength": 50,
+                    "defaultValue": "Unknown Track"
+                }
+            }
+        },
         "playlist": {
             "title": "Audio Playlist",
             "labels": {

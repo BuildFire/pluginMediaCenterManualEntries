@@ -1,8 +1,8 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope', 'Location', 'OFSTORAGE', 'openedMediaHandler',
-            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope, Location, OFSTORAGE, openedMediaHandler) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope', 'Location', 'OFSTORAGE', 'openedMediaHandler', 'DropboxLinksManager',
+            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope, Location, OFSTORAGE, openedMediaHandler, DropboxLinksManager) {
                 var WidgetMedia = this;
                 WidgetMedia.API = null;
                 $rootScope.online = $window.navigator.onLine;
@@ -39,9 +39,11 @@
                 };
 
                 buildfire.publicData.search(allCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
-                    if (res && res.totalRecord) {
+                    if (err) console.error(err);
+                    
+                    if (res && res.totalRecord && WidgetMedia) {
                         WidgetMedia.count = res.totalRecord;
-                        if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                        if (!$scope.$$phase) $scope.$apply();
                     }
                 })
 
@@ -142,7 +144,7 @@
                         listItems.push({ id: "openLinks", text: getString("itemDrawer.openLinks") });
                     }
 
-                    if (WidgetMedia.media.data.content.globalPlaylist && $rootScope.online) {
+                    if (WidgetMedia.media.data.content.globalPlaylist && $rootScope.online && WidgetMedia.item.data.audioUrl) {
                         if ($rootScope.isInGlobalPlaylist(WidgetMedia.item.id)) {
                             listItems.push({ id: "removeFromPlaylist", text: getString("itemDrawer.removeFromPlaylist") });
                         }
@@ -339,15 +341,6 @@
                         url: "./assets/css/videogular.css"
                     }
                 };
-                // correct image src for dropbox to crop/resize and show it
-                function getImageUrl(imageSrc) {
-                    if (imageSrc) {
-                      imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent");
-                      imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com");
-                      imageSrc = imageSrc.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
-                    }
-                    return imageSrc;
-                }
 
                 WidgetMedia.changeVideoSrc = function () {
                     if (WidgetMedia.item.data.videoUrl) {
@@ -401,7 +394,6 @@
                                 allowAddingNotes: true,
                                 allowSource: true,
                                 allowOfflineDownload: false,
-                                transferAudioContentToPlayList: false,
                                 forceAutoPlay: false,
                                 autoPlay: false,
                                 autoPlayDelay: { label: "Off", value: 0 },
@@ -424,15 +416,10 @@
                         if (err) WidgetMedia.media = _infoData;
                         else {
                             WidgetMedia.media = res
-                            // buildfire.dialog.toast({
-                            //     message: `Found Cached media center ${WidgetMedia.media.data.content.allowOfflineDownload}`,
-                            //     type: 'warning',
-                            // });
                         }
-                        // WidgetMedia.media = _infoData;
                         $rootScope.backgroundImage = WidgetMedia.media && WidgetMedia.media.data && WidgetMedia.media.data.design && WidgetMedia.media.data.design.backgroundImage;
                         setTimeout(() => {
-                            if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                            if (!$scope.$$phase) $scope.$apply();
                         }, 0);
                     });
 
@@ -474,8 +461,8 @@
                     //Check if item has newly downloaded media
                     WidgetMedia.loadingData = true;
 
-                    media.data.topImage = getImageUrl(media.data.topImage);
-                    media.data.image = getImageUrl(media.data.image);
+                    media.data.topImage = DropboxLinksManager.convertDropbox(media.data.topImage);
+                    media.data.image = DropboxLinksManager.convertDropbox(media.data.image);
                     WidgetMedia.item = media;
                     WidgetMedia.mediaType = media.data.audioUrl ? 'AUDIO' : (media.data.videoUrl ? 'VIDEO' : null);
                     if(!WidgetMedia.mediaType){
@@ -494,7 +481,7 @@
                                 filter: getIndexedFilter(WidgetMedia.item.id, user._id, "Article")
                             };
                             buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
-                                console.log(res)
+                                if (!WidgetMedia) return
                                 if (res && res.length > 0) {
                                     WidgetMedia.isCounted = true;
                                 } else if (WidgetMedia.mediaType == null) {
@@ -516,6 +503,7 @@
                                         data._buildfire.index.text= WidgetMedia.item.id + "-" + $rootScope.user._id + "-Article-true";
                                     }
                                     buildfire.publicData.insert(data, COLLECTIONS.MediaCount, false, function (err, res) {
+                                        if (!WidgetMedia) return;
                                         WidgetMedia.isCounted = true;
                                         sendArticleAnalytics(WidgetMedia);
                                     })
@@ -545,8 +533,6 @@
                         Analytics.trackAction("allMediaTypes_continuesCount");
                     }
 
-                    WidgetMedia.item.srcUrl = media.data.srcUrl ? media.data.srcUrl
-                        : (media.data.audioUrl ? media.data.audioUrl : media.data.videoUrl);
                     bookmarks.sync($scope);
                     WidgetMedia.changeVideoSrc();
 
@@ -589,148 +575,38 @@
                             }, 500);
                         } else {
                             callback();
-                            if (!$scope.$$phase && !$scope.$root.$$phase) {
+                            if (!$scope.$$phase) {
                                 $scope.$apply();
                             }
                         }
                     }
                 };
 
-                Messaging.onReceivedMessage(function (event) {
-                    if (event) {
-                        switch (event.name) {
-                            case EVENTS.ROUTE_CHANGE:
-                                var path = event.message.path,
-                                    id = event.message.id;
-                                var url = "#/";
-                                switch (path) {
-                                    case PATHS.MEDIA:
-                                        url = url + "media";
-                                        if (id) {
-                                            url = url + "/" + id;
-                                        }
-                                        break;
-                                    default:
-
-                                        break
-                                }
-                                Location.go(url);
-                                break;
-                        }
-                    }
-                });
-
-                WidgetMedia.onUpdateFn = Buildfire.datastore.onUpdate(function (event) {
-                    buildfire.components.drawer.closeDrawer();
-                    switch (event.tag) {
-                        case COLLECTIONS.MediaContent:
-                            if (event.data) {
-                                event.data.topImage = getImageUrl(event.data.topImage);
-                                event.data.image = getImageUrl(event.data.image);
-                                WidgetMedia.item = event;
-                                $scope.$digest();
-                                // Update item in globalPlaylist
-                                if ($rootScope.isInGlobalPlaylist(event.id)) {
-                                    if (event.data) {
-                                        GlobalPlaylist.insertAndUpdate(event).then(() => {
-                                            $rootScope.globalPlaylistItems.playlist[event.id] = event.data;
-                                        });
-                                    } else {
-                                        // If there is no data, it means the the item has been deleted
-                                        GlobalPlaylist.delete(event.id).then(() => {
-                                            delete $rootScope.globalPlaylistItems.playlist[event.id];
-                                        });
-                                    }
-                                }
-                            }
-                            break;
-                        case COLLECTIONS.MediaCenter:
-                            var old = WidgetMedia.media.data.design.itemLayout;
-                            WidgetMedia.media = event;
-                            $rootScope.backgroundImage = WidgetMedia.media.data.design.backgroundImage;
-                            $rootScope.allowShare = WidgetMedia.media.data.content.allowShare;
-                            $rootScope.allowAddingNotes = WidgetMedia.media.data.content.allowAddingNotes;
-                            $rootScope.allowSource = WidgetMedia.media.data.content.allowSource;
-                            $rootScope.transferAudioContentToPlayList = WidgetMedia.media.data.content.transferAudioContentToPlayList;
-                            $rootScope.forceAutoPlay = WidgetMedia.media.data.content.forceAutoPlay;
-                            $rootScope.skipMediaPage = WidgetMedia.media.data.design.skipMediaPage;
-
-                            $rootScope.autoPlay = WidgetMedia.media.data.content.autoPlay;
-                            $rootScope.autoPlayDelay = WidgetMedia.media.data.content.autoPlayDelay;
-                            $rootScope.globalPlaylist = WidgetMedia.media.data.content.globalPlaylist;
-                            $rootScope.globalPlaylistPlugin = WidgetMedia.media.data.content.globalPlaylistPlugin;
-                            $rootScope.showGlobalPlaylistNavButton = WidgetMedia.media.data.content.showGlobalPlaylistNavButton;
-                            $rootScope.showGlobalAddAllToPlaylistButton = WidgetMedia.media.data.content.showGlobalAddAllToPlaylistButton;
-                            $rootScope.allowOfflineDownload = WidgetMedia.media.data.content.allowOfflineDownload;
-                            $rootScope.showViewCount = WidgetMedia.media.data.content.showViewCount;
-                            $rootScope.indicatePlayedItems = WidgetMedia.media.data.content.indicatePlayedItems;
-                            // Update Data in media contoller
-                            WidgetMedia.fixIOSAutoPlay();
-                            $rootScope.refreshItems();
-                            WidgetMedia.media.data.design.itemLayout = event.data.design.itemLayout;
-                            if (old == WidgetMedia.media.data.design.itemLayout) WidgetMedia.ApplayUpdates();
-                            $scope.$apply();
-                            if (old != WidgetMedia.media.data.design.itemLayout)
-                                $scope.$$postDigest(function () {
-                                    WidgetMedia.ApplayUpdates();
-                                })
-                            break;
-                        default:
-                            return;
-                    }
-                });
-
-                Buildfire.appData.onUpdate(event => {
-                    // Tag name for global playlist
-                    const globalPlaylistTag = 'MediaContent' + ($rootScope.user && $rootScope.user._id ? $rootScope.user._id : Buildfire.context.deviceId ? Buildfire.context.deviceId : 'globalPlaylist');
-                    if (event) {
-                        if (event.tag === "GlobalPlayListSettings") {
-                            if (event.data) {
-                                $rootScope.globalPlaylistLimit = event.data.globalPlaylistLimit;
-                            }
-                        } else if (event.tag === globalPlaylistTag) {
-                            if (event.data.playlist && event.data.playlist) {
-                                $rootScope.globalPlaylistItems.playlist = event.data.playlist;
-                            }
-                        }
-                    }
-                });
-
                 Buildfire.publicData.onUpdate(event => {
                     if (event.data && event.tag == COLLECTIONS.MediaCount) {
                         WidgetMedia.count = WidgetMedia.count ? WidgetMedia.count + 1 : 1;
-                        if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                        if ($scope && !$scope.$$phase) $scope.$apply();
                         $rootScope.refreshItems();
 
                     }
                 });
 
                 WidgetMedia.playAudio = function () {
-                    Location.go('#/nowplaying/' + WidgetMedia.item.id, true);
+                    let mediaId = WidgetMedia.item.id;
+                    if (!mediaId) return;
+                    Location.go('#/nowplaying/' + mediaId, true);
                 }
 
                 WidgetMedia.ApplayUpdates = function () {
-                    if ($rootScope.skipMediaPage && !WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl) {
-                        if (WidgetMedia.showVideo) {
-                            WidgetMedia.showVideo = false;
-                            WidgetMedia.API.pause();
-                        }
-                        WidgetMedia.playAudio();
-                    } else if ($rootScope.autoPlay && !WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl) {
-                        if (WidgetMedia.showVideo) {
-                            WidgetMedia.showVideo = false;
-                            WidgetMedia.API.pause();
-                        }
-                        WidgetMedia.playAudio()
-                    }
-                    else if ($rootScope.autoPlay && WidgetMedia.item.data.videoUrl) {
+                    if (($rootScope.autoPlay || $rootScope.skipMediaPage) && WidgetMedia.item.data.videoUrl) {
                         WidgetMedia.toggleShowVideo(true);
-                    }
-                    else if ($rootScope.skipMediaPage && WidgetMedia.item.data.videoUrl) {
-                        WidgetMedia.showVideo = true;
                     } else {
                         WidgetMedia.showVideo = false;
-                        WidgetMedia.API.pause();
+                        if(WidgetMedia.API) WidgetMedia.API.pause();
+
+                        if (($rootScope.skipMediaPage || $rootScope.autoPlay) && !WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl) {
+                            WidgetMedia.playAudio();
+                        }
                     }
                 };
 
@@ -761,7 +637,10 @@
                         return;
                     }
                     WidgetMedia.showVideo = forceShow ? true : !WidgetMedia.showVideo;
-                    if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
+                    if (!$scope.$$phase) {
+                        $scope.$apply();
+                        $scope.$digest();
+                    }
                 };
 
                 WidgetMedia.showSourceIframe = function () {
@@ -796,23 +675,6 @@
                     }
                     WidgetMedia.loadingVideo = false;
                 };
-
-                buildfire.auth.onLogin(function (user) {
-                    buildfire.spinner.show();
-                    bookmarks.sync($scope);
-                    if (!WidgetMedia.isWeb) downloads.sync($scope, DownloadedMedia);
-                    $rootScope.user = user;
-                    $rootScope.refreshItems(true);
-                });
-
-                buildfire.auth.onLogout(function () {
-                    buildfire.spinner.show();
-                    bookmarks.sync($scope);
-                    openedMediaHandler.reset();
-                    if (!WidgetMedia.isWeb) downloads.sync($scope, DownloadedMedia);
-                    $rootScope.user = null;
-                    $rootScope.refreshItems();
-                });
 
                 WidgetMedia.bookmark = function () {
                     var isBookmarked = WidgetMedia.item.data.bookmarked ? true : false;
@@ -906,9 +768,51 @@
                     buildfire.notes.openDialog(options, callback);
                 };
 
-                WidgetMedia.openLink = function (link) {
+                WidgetMedia.openLink = function (item) {
+                    let link = item.data.srcUrl;
+                    if (!link && item.data.audioUrl) {
+                        link = item.data.audioUrl;
+                    } else if (!link && item.data.videoUrl) {
+                        link = item.data.videoUrl;
+                    }
                     Buildfire.navigation.openWindow(link, '_system');
                 };
+
+                //Sync with Control section
+                Messaging.onReceivedMessage = (event) => {
+                    if (event.message && event.message.path == 'MEDIA') {
+                        Location.go('#/media/' + event.message.id, true);
+                    } else if (event.name === EVENTS.ITEMS_CHANGE) {
+                        WidgetMedia.item = event.message.itemUpdatedData;
+                        WidgetMedia.changeVideoSrc();
+                    } else if (event.name === EVENTS.ROUTE_CHANGE) {
+                        Location.goToHome();
+                    } else if (event.name === EVENTS.DESIGN_LAYOUT_CHANGE) {
+                        WidgetMedia.media.data.design = event.message.design
+                    }
+
+                    if ($rootScope.autoPlay || $rootScope.skipMediaPage) {
+                        setTimeout(() => {
+                            WidgetMedia.ApplayUpdates();
+                        }, 50);
+                    }
+                    if (!$scope.$$phase) {
+                        $scope.$apply();
+                        $scope.$digest();
+                    }
+                };
+                if (WidgetMedia.item.id !== 'mockId') {
+                    Messaging.sendMessageToControl({
+                        name: EVENTS.ROUTE_CHANGE,
+                        message: {
+                            path: PATHS.MEDIA,
+                            id: WidgetMedia.item.id || null
+                        }
+                    });
+                }
+                if (media.data.audioUrl && $rootScope.skipMediaPage && WidgetMedia) {
+                    WidgetMedia.playAudio();
+                }
 
                 var initializing = true;
                 $scope.$watch(function () {
@@ -931,39 +835,9 @@
                     }
                 });
                 $scope.$on("$destroy", function () {
-                    WidgetMedia.onUpdateFn.clear();
                     if (WidgetMedia && WidgetMedia.clearCountdown) {
                         WidgetMedia.clearCountdown();
                     }
-                });
-
-                //Sync with Control section
-                Messaging.sendMessageToControl({
-                    name: EVENTS.ROUTE_CHANGE,
-                    message: {
-                        path: PATHS.MEDIA,
-                        id: WidgetMedia.item.id || null
-                    }
-                });
-
-                /**
-                 * Implementation of pull down to refresh
-                 */
-                var onRefresh = Buildfire.datastore.onRefresh(function () {
-                });
-
-                /**
-                 * Unbind the onRefresh
-                 */
-                $scope.$on('$destroy', function () {
-                    onRefresh.clear();
-                    if (WidgetMedia && WidgetMedia.clearCountdown) {
-                        WidgetMedia.clearCountdown();
-                    }
-                    WidgetMedia = null;
-                    Buildfire.datastore.onRefresh(function () {
-                        Location.goToHome();
-                    });
                 });
 
                 $rootScope.$watch('goingBackFullScreen', function () {

@@ -8,8 +8,8 @@
     /**
      * Inject dependency
      */
-    .controller('ContentMediaCtrl', ['$scope', 'Buildfire', 'SearchEngine', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig', 'Orders', 'CategoryOrders',
-      function ($scope, Buildfire, SearchEngine, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig, Orders, CategoryOrders) {
+    .controller('ContentMediaCtrl', ['$scope', '$compile', 'Buildfire', 'SearchEngine', 'DB', 'COLLECTIONS', 'Location', 'media', 'Messaging', 'EVENTS', 'PATHS', 'AppConfig', 'Orders', 'CategoryOrders',
+      function ($scope, $compile, Buildfire, SearchEngine, DB, COLLECTIONS, Location, media, Messaging, EVENTS, PATHS, AppConfig, Orders, CategoryOrders) {
         window.scrollTo(0, 0);
         /**
          * Breadcrumbs  related implementation
@@ -26,7 +26,6 @@
          * @type {DB}
          */
         var MediaContent = new DB(COLLECTIONS.MediaContent);
-        var MediaCenter = new DB(COLLECTIONS.MediaCenter);
         var SearchEngineService = new SearchEngine(COLLECTIONS.MediaContent);
         var CategoryContent = new DB(COLLECTIONS.CategoryContent);
         /**
@@ -44,7 +43,6 @@
               allowShare: true,
               allowAddingNotes: true,
               allowSource: true,
-              transferAudioContentToPlayList: false,
               forceAutoPlay: false,
               dateIndexed: true,
               dateCreatedIndexed: true,
@@ -60,10 +58,7 @@
         }
         var MediaCenterSettings = AppConfig.getSettings();
         ContentMedia.filtersEnabled = MediaCenterSettings.content.enableFiltering;
-        /**
-         * Get the MediaCenter master collection data object id
-         */
-        var appId = AppConfig.getAppId();
+
         /**
          * Options for image library
          * @type {{showIcons: boolean, multiSelection: boolean}}
@@ -71,6 +66,25 @@
         var selectImageOptions = { showIcons: false, multiSelection: false };
 
         ContentMedia.saving = false;
+
+        $scope.selectCategoriesListOptions = {
+          settings: {
+            allowDragAndDrop: false,
+            showSearchBar: true,
+            showSortOptions: true,
+            showAddButton: false,
+            showEditButton: false,
+            showDeleteButton: false,
+            contentMapping: {
+              idKey: "id",
+              columns: [
+                { titleKey: "name" },
+                { toggleKey: "isIncluded" },
+              ],
+            },
+            sortOptions: []
+          },
+        };
 
         /**
          * Init bootstrapping data
@@ -94,7 +108,6 @@
             allowShare: true,
             allowAddingNotes: true,
             allowSource: true,
-            transferAudioContentToPlayList: false,
             forceAutoPlay: false,
           };
           /**
@@ -135,12 +148,6 @@
               ContentMedia.item.data.mediaDate = new Date(media.data.mediaDate);
               ContentMedia.item.data.mediaDateIndex = new Date(media.data.mediaDate).getTime();
             }
-            if (ContentMedia.item.data.topImage) {
-              //topImage.loadbackground(ContentMedia.item.data.topImage);
-            }
-            if (ContentMedia.item.data.image) {
-              audioImage.loadbackground(ContentMedia.item.data.image);
-            }
             if (ContentMedia.item && ContentMedia.item.data && ((ContentMedia.item.data.categories && ContentMedia.item.data.categories.length) || (ContentMedia.item.data.subcategories && ContentMedia.item.data.subcategories.length))) {
               fetchAssignedCategories();
             }
@@ -156,10 +163,7 @@
           /**
            * Initialize the links
            */
-          if (ContentMedia.item.data.links)
-            ContentMedia.linkEditor.loadItems(ContentMedia.item.data.links);
-
-          registerEventAnalytics();
+          if (ContentMedia.item.data.links) ContentMedia.linkEditor.loadItems(ContentMedia.item.data.links);
         }
 
         /**
@@ -168,73 +172,6 @@
          */
         function updateMasterItem(item) {
           ContentMedia.masterItem = angular.copy(item);
-        }
-
-        function registerEventAnalytics() {
-          Analytics.registerEvent(
-            {
-              title: "All Media Types Count",
-              key: "allMediaTypes_count",
-              description: "All Media Types Count",
-            },
-            { silentNotification: true }
-          );
-          Analytics.registerEvent(
-            {
-              title: "All Media Types Continues Count",
-              key: "allMediaTypes_continuesCount",
-              description: "All Media Types Continues Count",
-            },
-            { silentNotification: true }
-          );
-          Analytics.registerEvent(
-            {
-              title: "All Articles Open Count",
-              key: "allArticles_count",
-              description: "All Articles Open Count",
-            },
-            { silentNotification: true }
-          );
-          Analytics.registerEvent(
-            {
-              title: "All Articles Continues Open Count",
-              key: "allArticles_continuesCount",
-              description: "All Articles Continues Open Count",
-            },
-            { silentNotification: true }
-          );
-          Analytics.registerEvent(
-            {
-              title: "All Audio Play Count",
-              key: "allAudios_count",
-              description: "All Audio Play Count",
-            },
-            { silentNotification: true }
-          );
-          Analytics.registerEvent(
-            {
-              title: "All Audio Continues Play Count",
-              key: "allAudios_continuesCount",
-              description: "All Audio Continues Play Count",
-            },
-            { silentNotification: true }
-          );
-          Analytics.registerEvent(
-            {
-              title: "All Video Play Count",
-              key: "allVideos_count",
-              description: "All Video Play Count",
-            },
-            { silentNotification: true }
-          );
-          Analytics.registerEvent(
-            {
-              title: "All Video Continues Play Count",
-              key: "allVideos_continuesCount",
-              description: "All Video Continues Play Count",
-            },
-            { silentNotification: true }
-          );
         }
 
         function fetchAssignedCategories() {
@@ -373,12 +310,11 @@
 
 
           if (ContentMedia.dbItem.videoUrl != ContentMedia.item.data.videoUrl ||
-            ContentMedia.dbItem.audioUrl != ContentMedia.item.data.audioUrl ||
-            ContentMedia.dbItem.title != ContentMedia.item.data.title) {
+            ContentMedia.dbItem.audioUrl != ContentMedia.item.data.audioUrl) {
             isAnalyticDataChanged = true;
           }
 
-          if (isAnalyticDataChanged) {
+          if (isAnalyticDataChanged && MediaCenterSettings.content.showViewCount) {
             Buildfire.dialog.confirm(
               {
                 title: "Data Changed",
@@ -389,196 +325,72 @@
                 }
               },
               (err, isConfirmed) => {
-                updadteData();
                 if (isConfirmed) {
-                  registerEventAnalyticsIfAny(true)
+                  unregisterEventAnalyticsIfAny(true);
                 } else {
-                  registerEventAnalyticsIfAny(false)
+                  unregisterEventAnalyticsIfAny(false);
                 }
               }
             )
+          } else if (isAnalyticDataChanged) {
+            unregisterEventAnalyticsIfAny(true);
           } else {
-            updadteData();
+            updateData();
           }
+        }
 
+        function updateData() {
+          MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then((data) => {
 
-          function updadteData() {
+            const promises = [registerAnalytics(ContentMedia.item, createNewDeeplink(ContentMedia.item))];
             if (ContentMedia.item.data.searchEngineId) {
-              SearchEngineService.update(ContentMedia.item.data.searchEngineId, ContentMedia.item.data).then(function () {
-                update();
-              }, function () {
-                SearchEngineService.insert(ContentMedia.item.data).then(function (result) {
-                  if (result && result.id)
-                    ContentMedia.item.data.searchEngineId = result.id;
-                  update();
-                }, function () {
-                  update();
-                });;
-              });
+              promises.push(SearchEngineService.update(ContentMedia.item.data.searchEngineId, ContentMedia.item.data));
             } else {
-              update();
+              promises.push(SearchEngineService.insert({ ...ContentMedia.item.data, id: ContentMedia.item.id }));
             }
-          }
 
-          function update() {
-            MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then((data) => {
+            Promise.all(promises).then(() => {
               updateMasterItem(ContentMedia.item);
               ContentMedia.saving = false;
               if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-              Messaging.sendMessageToWidget({
-                name: EVENTS.ITEMS_CHANGE,
-                message: {}
-              });
               buildfire.dialog.toast({
                 message: "Item updated successfully",
                 type: "success",
               });
               ContentMedia.done();
-            }, (err) => {
+            }).catch((err) => {
+              console.error(err);
               resetItem();
               return buildfire.dialog.toast({
                 message: "Error while updating",
                 type: "danger",
               });
             });
-          }
+          }, (err) => {
+            console.error(err);
+            resetItem();
+            return buildfire.dialog.toast({
+              message: "Error while updating",
+              type: "danger",
+            });
+          });
         }
 
-
-        function registerEventAnalyticsIfAny(isResetConfirmed) {
-          if (isResetConfirmed) {
+        function unregisterEventAnalyticsIfAny(deleteViews) {
+          if (deleteViews) {
             removeViews(media.id, "VIDEO");
             removeViews(media.id, "AUDIO");
             removeViews(media.id, "Article");
           }
-          //For Video
-          if (ContentMedia.dbItem.videoUrl != "" && ContentMedia.item.data.videoUrl == "") {
-            Analytics.unregisterEvent(ContentMedia.item.id + "_videoPlayCount");
-            Analytics.unregisterEvent(ContentMedia.item.id + "_continuesVideoPlayCount");
-          } // If There was a video and removed
-          else if ((ContentMedia.dbItem.videoUrl == "" && ContentMedia.item.data.videoUrl != "") ||
-            (ContentMedia.item.data.videoUrl != "" && ContentMedia.dbItem.title != ContentMedia.item.data.title)) {
-
-            if (isResetConfirmed) {
-              buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_videoPlayCount", (err, res) => {
-                if (err) return reject(err);
-                registerVideoEvent();
-              });
-              buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_continuesVideoPlayCount", (err, res) => {
-                if (err) return reject(err);
-                registerContinuesVideoEvent();
-              });
-            } else {
-              registerVideoEvent();
-              registerContinuesVideoEvent();
-            }
-
-          } // Video Was Empty and Added new one Or There is a video and title only changes
-
-          //Audio
-          if (ContentMedia.dbItem.audioUrl != "" && ContentMedia.item.data.audioUrl == "") { //here
-            Analytics.unregisterEvent(ContentMedia.item.id + "_audioPlayCount");
-            Analytics.unregisterEvent(ContentMedia.item.id + "_continuesAudioPlayCount");
-          }
-          else if ((ContentMedia.dbItem.audioUrl == "" && ContentMedia.item.data.audioUrl != "") ||
-            (ContentMedia.item.data.audioUrl != "" && ContentMedia.dbItem.title != ContentMedia.item.data.title)) {
-            if (isResetConfirmed) {
-              buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_audioPlayCount", (err, res) => {
-                if (err) return reject(err);
-                registerAudioEvent();
-              });
-              buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_continuesAudioPlayCount", (err, res) => {
-                if (err) return reject(err);
-                registerContinuesAudioEvent();
-              });
-            } else {
-              registerAudioEvent();
-              registerContinuesAudioEvent();
-            }
-          } // Audio was empty and added new one Or There is a video and title only changes
-
-
-          // For Article
-          if (ContentMedia.item.data.audioUrl != "" || ContentMedia.item.data.videoUrl != "") {
-            Analytics.unregisterEvent(ContentMedia.item.id + "_articleOpenCount");
-            Analytics.unregisterEvent(ContentMedia.item.id + "_continuesArticleOpenCount");
-          }
-          else if (ContentMedia.item.data.audioUrl == "" && ContentMedia.item.data.videoUrl == "") {
-            if (isResetConfirmed) {
-              buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_articleOpenCount", (err, res) => {
-                if (err) return reject(err);
-                registerArticleEvent();
-              });
-              buildfire.analytics.unregisterEvent(ContentMedia.item.id + "_continuesArticleOpenCount", (err, res) => {
-                if (err) return reject(err);
-                registerContinuesArticleEvent();
-              });
-            } else {
-              registerArticleEvent();
-              registerContinuesArticleEvent();
-            }
-          }
-        }
-
-        function registerAudioEvent() {
-          Analytics.registerEvent(
-            {
-              title: ContentMedia.item.data.title + " Audio Play Count",
-              key: ContentMedia.item.id + "_audioPlayCount",
-              description: "Audio Play Count",
-            },
-            { silentNotification: true }
-          );
-        }
-        function registerContinuesAudioEvent() {
-          Analytics.registerEvent(
-            {
-              title: ContentMedia.item.data.title + " Continues Audio Play Count",
-              key: ContentMedia.item.id + "_continuesAudioPlayCount",
-              description: "Continues Audio Play Count",
-            },
-            { silentNotification: true }
-          );
-        }
-        function registerVideoEvent() {
-          Analytics.registerEvent(
-            {
-              title: ContentMedia.item.data.title + " Video Play Count",
-              key: ContentMedia.item.id + "_videoPlayCount",
-              description: "Video Play Count",
-            },
-            { silentNotification: true }
-          );
-        }
-        function registerContinuesVideoEvent() {
-          Analytics.registerEvent(
-            {
-              title: ContentMedia.item.data.title + " Continues Video Play Count",
-              key: ContentMedia.item.id + "_continuesVideoPlayCount",
-              description: "Continues Video Play Count",
-            },
-            { silentNotification: true }
-          );
-        }
-        function registerArticleEvent() {
-          Analytics.registerEvent(
-            {
-              title: ContentMedia.item.data.title + " Article Open Count",
-              key: ContentMedia.item.id + "_articleOpenCount",
-              description: "Article Open Count",
-            },
-            { silentNotification: true }
-          );
-        }
-        function registerContinuesArticleEvent() {
-          Analytics.registerEvent(
-            {
-              title: ContentMedia.item.data.title + " Continues Article Open Count",
-              key: ContentMedia.item.id + "_continuesArticleOpenCount",
-              description: "Continues Article Open Count",
-            },
-            { silentNotification: true }
-          );
+          unregisterAnalytics(ContentMedia.item).then(() => {
+            updateData();
+          }).catch((err) => {
+            console.error(err);
+            return buildfire.dialog.toast({
+              message: "Error while updating",
+              type: "danger",
+            });
+          });
         }
 
         function removeViews(mediaId, mediaType) {
@@ -610,18 +422,20 @@
          * This addNewItem method will call the Builfire insert method to insert ContentMedia.item
          */
 
-        function createNewDeeplink(obj, cb) {
-          new Deeplink({
-            deeplinkId: obj.id,
-            name: obj.data.title,
-            deeplinkData: { id: obj.id },
-            imageUrl: (obj.data.topImage) ? obj.data.topImage : null
-          }).save((err, res) => {
-            if (err)
-              return cb(err);
-            else
-              return cb(null, res);
-          });
+        function createNewDeeplink(obj) {
+          return new Promise((resolve, reject) => {
+            new Deeplink({
+              deeplinkId: obj.id,
+              name: obj.data.title,
+              deeplinkData: { id: obj.id },
+              imageUrl: (obj.data.topImage) ? obj.data.topImage : null
+            }).save((err, res) => {
+              if (err)
+                return reject(err);
+              else
+                return resolve(res);
+            });
+          })
         }
 
         function addNewItem(callback) {
@@ -631,113 +445,115 @@
 
           MediaContent.insert(ContentMedia.item.data).then((item) => {
             item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: item.id });
-            SearchEngineService.insert(item.data).then(function (searchEngineData) {
-              item.data.searchEngineId = searchEngineData.id;
-              MediaContent.update(item.id, item.data);
-              createNewDeeplink(item, (err, deeplink) => {
-                if (err) {
-                  callback(err);
-                }
-                if (MediaCenterSettings.content.allowOfflineDownload) {
-                  Analytics.registerEvent(
-                    {
-                      title: item.data.title + " Video Downloads",
-                      key: data.id + "_downloads",
-                      description: "Video Downloads",
-                    },
-                    { silentNotification: true }
-                  );
-                }
 
-                registerAnalytics(item);
-                item.data.topImage = getImageUrl(item.data.topImage);
-                item.data.image = getImageUrl(item.data.image);
-                ContentMedia.item = item;
-                updateMasterItem(item);
+            Promise.all([registerAnalytics(item), SearchEngineService.insert({ ...item.data, id: item.id }), createNewDeeplink(item)])
+              .then(() => {
                 ContentMedia.saving = false;
-                if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
-                MediaCenterSettings.content.rankOfLastItem = item.data.rank;
-                if (appId && MediaCenterSettings) {
-                  MediaCenter.update(appId, MediaCenterSettings).then((data) => {
-                  }, (err) => {
-                    callback(err);
-                  });
-                } else {
-                  MediaCenter.insert(MediaCenterSettings).then((data) => {
-                    console.info("Inserted MediaCenter rank");
-                  }, (err) => {
-                    callback(err);
-                  });
+                callback();
+                if (!$scope.$$phase) {
+                  $scope.$digest();
+                  $scope.$apply();
                 }
-                Messaging.sendMessageToWidget({
-                  name: EVENTS.ITEMS_CHANGE,
-                  message: {}
-                });
-
-                callback()
-              }, (err) => {
+              }).catch((err) => {
                 callback(err);
               });
+          }).catch((err) => {
+            callback(err);
+          });
+        }
+
+        function registerAnalytics(item) {
+          return new Promise((resolve, reject) => {
+            let events = [];
+            if (item.data.videoUrl) {
+              events = events.concat([{
+                title: item.data.title + " Video Play Count",
+                key: item.id + "_videoPlayCount",
+                description: "Video Play Count",
+              }, {
+                title: item.data.title + " Continues Video Play Count",
+                key: item.id + "_continuesVideoPlayCount",
+                description: "Continues Video Play Count",
+              }]);
+
+              if (MediaCenterSettings.content.allowOfflineDownload) {
+                events.push({
+                  title: item.data.title + " Video Downloads",
+                  key: item.id + "_downloads",
+                  description: "Video Downloads",
+                });
+              }
+            }
+            if (item.data.audioUrl) {
+              events = events.concat([{
+                title: item.data.title + " Audio Play Count",
+                key: item.id + "_audioPlayCount",
+                description: "Audio Play Count",
+              }, {
+                title: item.data.title + " Continues Audio Play Count",
+                key: item.id + "_continuesAudioPlayCount",
+                description: "Continues Audio Play Count",
+              }]);
+
+              if (MediaCenterSettings.content.allowOfflineDownload) {
+                events.push({
+                  title: item.data.title + " Audio Downloads",
+                  key: item.id + "_downloads",
+                  description: "Audio Downloads",
+                });
+              }
+            }
+            if (!item.data.videoUrl && !item.data.audioUrl) {
+              events = events.concat([{
+                title: item.data.title + " Article Open Count",
+                key: item.id + "_articleOpenCount",
+                description: "Article Open Count",
+              }, {
+                title: item.data.title + " Continues Article Open Count",
+                key: item.id + "_continuesArticleOpenCount",
+                description: "Continues Article Open Count",
+              }]);
+
+            }
+
+            Analytics.bulkRegisterEvents(events, { silentNotification: true }).then(() => {
+              resolve();
+            }).catch((err) => {
+              reject(err);
             });
           });
         }
 
-        function registerAnalytics(item) { //here
-          if (item.data.videoUrl) {
-            Analytics.registerEvent(
-              {
-                title: item.data.title + " Video Play Count",
-                key: item.id + "_videoPlayCount",
-                description: "Video Play Count",
-              },
-              { silentNotification: true }
-            );
+        function unregisterAnalytics(item) {
+          return new Promise((resolve, reject) => {
+            let eventKeys = [];
+            if (item.data.videoUrl) {
+              eventKeys.push(item.id + "_videoPlayCount");
+              eventKeys.push(item.id + "_continuesVideoPlayCount");
 
-            Analytics.registerEvent(
-              {
-                title: item.data.title + " Continues Video Play Count",
-                key: item.id + "_continuesVideoPlayCount",
-                description: "Continues Video Play Count",
-              },
-              { silentNotification: true }
-            );
-          }
-          if (item.data.audioUrl) {
-            Analytics.registerEvent(
-              {
-                title: item.data.title + " Audio Play Count",
-                key: item.id + "_audioPlayCount",
-                description: "Audio Play Count",
-              },
-              { silentNotification: true }
-            );
-            Analytics.registerEvent(
-              {
-                title: item.data.title + " Continues Audio Play Count",
-                key: item.id + "_continuesAudioPlayCount",
-                description: "Continues Audio Play Count",
-              },
-              { silentNotification: true }
-            );
-          }
-          if (!item.data.videoUrl && !item.data.audioUrl) {
-            Analytics.registerEvent(
-              {
-                title: item.data.title + " Article Open Count",
-                key: item.id + "_articleOpenCount",
-                description: "Article Open Count",
-              },
-              { silentNotification: true }
-            );
-            Analytics.registerEvent(
-              {
-                title: item.data.title + " Continues Article Open Count",
-                key: item.id + "_continuesArticleOpenCount",
-                description: "Continues Article Open Count",
-              },
-              { silentNotification: true }
-            );
-          }
+              if (MediaCenterSettings.content.allowOfflineDownload) {
+                eventKeys.push(item.id + "_downloads");
+              }
+            }
+            if (item.data.audioUrl) {
+              eventKeys.push(item.id + "_audioPlayCount");
+              eventKeys.push(item.id + "_continuesAudioPlayCount");
+
+              if (MediaCenterSettings.content.allowOfflineDownload) {
+                eventKeys.push(item.id + "_downloads");
+              }
+            }
+            if (!item.data.videoUrl && !item.data.audioUrl) {
+              eventKeys.push(item.id + "_articleOpenCount");
+              eventKeys.push(item.id + "_continuesArticleOpenCount");
+            }
+
+            Analytics.bulkUnRegisterEvents(eventKeys).then(() => {
+              resolve();
+            }).catch((err) => {
+              reject(err);
+            });
+          });
         }
 
         function isValidItem(item) {
@@ -763,19 +579,7 @@
               ContentMedia.item.data.mediaDateIndex = new Date(ContentMedia.item.data.mediaDate).getTime();
             }
             if (ContentMedia.item.id) {
-              createNewDeeplink(ContentMedia.item, (err, res) => {
-                if (MediaCenterSettings.content.allowOfflineDownload) {
-                  Analytics.registerEvent(
-                    {
-                      title: ContentMedia.item.data.title + " Video Downloads",
-                      key: ContentMedia.item.id + "_downloads",
-                      description: "Video Downloads",
-                    },
-                    { silentNotification: true }
-                  );
-                }
-                updateItemData();
-              })
+              updateItemData();
             } else {
               ContentMedia.item.data.dateCreated = new Date().getTime();
               addNewItem((err) => {
@@ -797,6 +601,15 @@
           }
         }
 
+        // correct image src for dropbox to crop/resize and show it
+        function getImageUrl(imageSrc) {
+          if (imageSrc && imageSrc.includes("dropbox.com")) {
+            imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent");
+            imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com");
+          }
+          return imageSrc;
+        }
+
         ContentMedia.addListImage = function () {
           var options = { showIcons: false, multiSelection: false },
             listImgCB = function (error, result) {
@@ -812,53 +625,20 @@
         ContentMedia.removeListImage = function () {
           ContentMedia.item.data.topImage = "";
         };
-        /* Build fire thumbnail component to add thumbnail image*/
-        //var topImage = new Buildfire.components.images.thumbnail("#topImage", {
-        //  title: "Top Image",
-        //  dimensionsLabel: "1200x675"
-        //});
-        //
-        //topImage.onChange = function (url) {
-        //  ContentMedia.item.data.topImage = url;
-        //  if (!$scope.$$phase && !$scope.$root.$$phase) {
-        //    $scope.$apply();
-        //  }
-        //};
-        //
-        //topImage.onDelete = function (url) {
-        //  ContentMedia.item.data.topImage = "";
-        //  if (!$scope.$$phase && !$scope.$root.$$phase) {
-        //    $scope.$apply();
-        //  }
-        //};
-
-        // correct image src for dropbox to crop/resize and show it
-        function getImageUrl(imageSrc) {
-          if (imageSrc && imageSrc.includes("dropbox.com")) {
-            imageSrc = imageSrc.replace("www.dropbox", "dl.dropboxusercontent");
-            imageSrc = imageSrc.replace("dropbox.com", "dl.dropboxusercontent.com");
-          }
-          return imageSrc;
-      }
-
-        /* Build fire thumbnail component to add thumbnail image*/
-        var audioImage = new Buildfire.components.images.thumbnail("#audioImage", {
-          title: "Audio Image",
-          dimensionsLabel: "1024x1024"
-        });
-
-        audioImage.onChange = function (url) {
-          ContentMedia.item.data.image = url;
-          if (!$scope.$$phase && !$scope.$root.$$phase) {
-            $scope.$apply();
-          }
+        ContentMedia.addAudioImage = function () {
+          var options = { showIcons: false, multiSelection: false },
+            listImgCB = function (error, result) {
+              if (error) {
+                console.error('Error:', error);
+              } else {
+                ContentMedia.item.data.image = result && result.selectedFiles && result.selectedFiles[0] || null;
+                if (!$scope.$$phase) $scope.$digest();
+              }
+            };
+          buildfire.imageLib.showDialog(options, listImgCB);
         };
-
-        audioImage.onDelete = function (url) {
+        ContentMedia.removeAudioImage = function () {
           ContentMedia.item.data.image = "";
-          if (!$scope.$$phase && !$scope.$root.$$phase) {
-            $scope.$apply();
-          }
         };
 
         /**
@@ -932,8 +712,6 @@
          * done will close the single item view
          */
         ContentMedia.done = function () {
-          //console.log('Done called------------------------------------------------------------------------');
-          //Buildfire.history.pop();
           setTimeout(() => {
             Messaging.sendMessageToWidget({
               name: EVENTS.ROUTE_CHANGE,
@@ -956,43 +734,50 @@
         };
 
         var _skip = 0,
-          _limit = 10,
-          _maxLimit = 19,
+          _limit = 50,
           searchOptions = {
             filter: {},
             skip: _skip,
-            limit: _limit + 1 // the plus one is to check if there are any more
+            limit: _limit // the plus one is to check if there are any more
           };
 
         ContentMedia.showCategories = function () {
-          if (ContentMedia.isBusy && !ContentMedia.noMore) {
-            return;
+          const subcategoryDialog = new DialogComponent('dialogComponent', 'subcategoryModal');
+
+          const container = document.querySelector('#dialogComponent');
+          $compile(container)($scope);
+
+          if (!$scope.$$phase) {
+            $scope.$apply();
+            $scope.$digest();
           }
 
+          subcategoryDialog.showDialog(
+            {
+              title: 'Select Categories',
+              saveText: 'Save',
+              hideDelete: false,
+            }, (e) => subcategoryDialog.close());
+
           ContentMedia.isBusy = true;
-          //Then we are editing an item that already has categories
-          //Grab the assigned categories first and then get the rest
-
-
           searchOptions.skip = 0;
-
           ContentMedia.updateSearchOptions();
 
           CategoryContent.find(searchOptions).then(function success(result) {
-            if (result.length <= _limit) {// to indicate there are more
+            if (result.length < _limit) {
               ContentMedia.noMore = true;
-            }
-            else {
-              result.pop();
+            } else {
               searchOptions.skip = searchOptions.skip + _limit;
               ContentMedia.noMore = false;
             }
 
             ContentMedia.allCategories = result;
-            document.body.classList.add('modal-open')
             ContentMedia.showCatModal = true;
-            if (!$scope.$$phase) $scope.$digest();
             ContentMedia.isBusy = false;
+            if (!$scope.$$phase) {
+              $scope.$apply();
+              $scope.$digest();
+            }
           }, function fail() {
             ContentMedia.isBusy = false;
           });
@@ -1046,11 +831,6 @@
           });
         };
 
-        ContentMedia.closeCategoryModal = function () {
-          ContentMedia.showCatModal = false;
-          document.body.classList.remove('modal-open')
-        };
-
         ContentMedia.isIcon = function (icon) {
           if (icon) {
             return icon.indexOf("http") != 0;
@@ -1101,21 +881,32 @@
           }
         }
 
+        ContentMedia.sendUpdatedDataToWidget = function () {
+          if (ContentMedia.item) {
+            Messaging.sendMessageToWidget({
+              name: EVENTS.ITEMS_CHANGE,
+              message: {
+                itemUpdatedData: ContentMedia.item
+              }
+            });
+          }
+        }
+
         /**
- * ContentMedia.searchListItem() used to search items list
- * @param value to be search.
- */
+         * ContentMedia.searchListItem() used to search items list
+         * @param value to be search.
+         */
         ContentMedia.searchListItem = function (value) {
           searchOptions.skip = 0;
           /*reset the skip value*/
 
           ContentMedia.isBusy = false;
           ContentMedia.items = [];
-          value = value.trim();
           if (!value) {
             value = '/*';
           }
-          searchOptions.filter = { "$json.name": { "$regex": value, $options: "i", } };
+          value = value.trim();
+          searchOptions.filter = { "$json.name": { "$regex": value, $options: "-i", } };
           ContentMedia.allCategories = [];
           ContentMedia.getMore();
         };
@@ -1127,15 +918,9 @@
          * Initialize bootstrap data
          */
         init();
-        /**
-         * On rout change update the widget layout
-         */
-        // Messaging.sendMessageToWidget({
-        //   name: EVENTS.ROUTE_CHANGE,
-        //   message: {
-        //     path: PATHS.MEDIA,
-        //     id: ContentMedia.item.id || null
-        //   }
-        // });
+        
+        $scope.$watch(function () {
+					return ContentMedia.item;
+				}, ContentMedia.sendUpdatedDataToWidget, true);
       }]);
 })(window.angular, window.tinymce);

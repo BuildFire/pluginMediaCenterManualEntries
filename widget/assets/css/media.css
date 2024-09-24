@@ -94,6 +94,7 @@ h5 {
     position: fixed;
     width: 100%;
     height: 100%;
+    background-color: #000000de;
 }
 
 .holder.now-playing .media-center-plugin {
@@ -240,6 +241,19 @@ h5 {
     display: flex;
     align-items: center;
 }
+.holder.now-playing .media-player-btns .icon .shuffle-indicator {
+    width: 12px;
+    height: 12px;
+    background: hsl(0deg 0% 100% / 70%);
+}
+
+.holder.now-playing .media-player-btns .icon .shuffle-indicator .shuffle-indicator-text {
+    font-size: 10px;
+    width: 100%;
+    height: 100%;
+    font-weight: 700;
+    color: var(--bf-theme-primary);
+}
 
 .holder.now-playing .media-player-action-btns span,
 .holder.now-playing .media-player-btns span,
@@ -267,11 +281,16 @@ h5 {
     height: 64px;
 }
 
-.holder.now-playing .media-player-btns .active {
+.holder.now-playing .media-player-btns .icon:not(.disabled) .active {
     fill: var(--bf-theme-primary);
 }
-.holder.now-playing .media-player-btns .not-active {
+.holder.now-playing .media-player-btns .icon.disabled path,
+.holder.now-playing .media-player-btns .icon .not-active {
     fill: #fff;
+}
+
+.holder.now-playing .media-player-btns .icon.disabled .shuffle-indicator {
+    display: none;
 }
 
 .btn.btn-icon {
@@ -630,36 +649,20 @@ videogular .iconButton,
     padding-right: 0.3rem;
 }
 
-/* .second-layout .people-holder {
-    display: flex;
-}
-
-.second-layout .people-media img {
-    flex-shrink: 0;
-    width: 35%;
-    padding: .75rem;
-}
-
-.second-layout .people-info p {
-    font-size: .875rem;
-    text-align: left;
-} */
-
 .now-playing-backgroundImage {
     -o-filter: blur(10px) brightness(0.4);
     -moz-filter: blur(10px) brightness(0.4);
     -webkit-filter: blur(10px) brightness(0.4);
     filter: blur(10px) brightness(0.4);
     position: absolute;
-    top: -5%;
-    left: -5%;
     -o-background-size: cover;
     -moz-background-size: cover;
     -webkit-background-size: cover;
     background-size: cover !important;
-    height: 110%;
-    width: 110%;
-    z-index: 0;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
 }
 
 .glyphicon-option-horizontal {

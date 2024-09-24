@@ -7,10 +7,10 @@
                 <div ng-class="WidgetMedia.showVideo == false ? '' : 'video-container-background'"
                     style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;" class="plugin-slide">
                     <img ng-if="!WidgetMedia.fullScreen"
-                        data-ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage || ( skipMediaPage && WidgetMedia.item.data.videoUrl )"
+                        ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage || ( skipMediaPage && WidgetMedia.item.data.videoUrl )"
                         load-image="16x9" style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
                         crop-width="1280" crop-height="720" crop-type="crop"
-                        data-final-src="{{WidgetMedia.item.data.topImage | resizeImage }}" alt="{{WidgetMedia.item.data.title}} top image"/>
+                        data-final-src="{{WidgetMedia.item.data.topImage }}" alt="{{WidgetMedia.item.data.title}} top image"/>
                         <img ng-if="!WidgetMedia.item.data.topImage && !WidgetMedia.showVideo" src="../../../styles/media/holder-16x9.png" style="width:100%;">
                     <div id="myVideo" ng-include="'templates/layouts/video-player.html'"></div>
                 </div>
@@ -40,28 +40,12 @@
                         ng-if="WidgetMedia.item.data.audioUrl && !skipMediaPage">
                         <i class="btn btn-success glyphicon glyphicon-headphones"></i>
                     </a>
-                    <a ng-if="WidgetMedia.item.srcUrl && allowSource && WidgetMedia.online"
-                        ng-click="WidgetMedia.openLink(WidgetMedia.item.srcUrl)" target="_blank">
+                    <a ng-if="(WidgetMedia.item.data.srcUrl || WidgetMedia.item.data.audioUrl || WidgetMedia.item.data.videoUrl) && allowSource && WidgetMedia.online"
+                        ng-click="WidgetMedia.openLink(WidgetMedia.item)" target="_blank">
                         <i class="glyphicon share glyphicon-link"></i>
                     </a>
                 </div>
                 <div class="li-actions">
-                    <!-- <i class="glyphicon glyphicon glyphicon-edit" ng-click="WidgetMedia.addNote()" ng-click=""
-                        role="button"></i>
-                    <i class="share glyphicon glyphicon-share-alt" ng-if="allowOfflineDownload"
-                        ng-click="WidgetMedia.download('video')" role="button"></i>
-                    <i class="share glyphicon glyphicon-share-alt" ng-if="allowShare"
-                        ng-click="WidgetMedia.share($event)" role="button"></i>
-                    <i class="glyphicon icon bookmark" style="font-family: 'Glyphicons Halflings' !important;"
-                        ng-class="{ 'glyphicon-star-empty' : !WidgetMedia.item.data.bookmarked, 'glyphicon-star' : WidgetMedia.item.data.bookmarked }"
-                        ng-click="WidgetMedia.bookmark($event)" role="button"></i>
-                    <i ng-if="WidgetMedia.item.data.links.length" class="glyphicon glyphicon-align-justify"
-                        ng-click="WidgetMedia.openLinks(WidgetMedia.item.data.links)" role="button"></i>
-                    <i ng-if="globalPlaylist" class="glyphicon star" style="font-size: 17px;top: -2px;"
-                        ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(WidgetMedia.item.id), 'glyphicon-minus' : isInGlobalPlaylist(WidgetMedia.item.id) }"
-                        ng-click="toggleGlobalPlaylistItem($event, WidgetMedia.item)" role="button"></i> -->
-                        <!-- <i class="glyphicon glyphicon glyphicon-edit" ng-click="WidgetMedia.addNote()" ng-click=""
-                        role="button"></i> -->
                         <i class="glyphicon icon bookmark" style="font-family: 'Glyphicons Halflings' !important;"
                         ng-class="{ 'glyphicon-star-empty' : !WidgetMedia.item.data.bookmarked, 'glyphicon-star' : WidgetMedia.item.data.bookmarked }"
                         ng-click="WidgetMedia.bookmark($event)" role="button"></i>

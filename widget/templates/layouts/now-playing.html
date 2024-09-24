@@ -5,10 +5,10 @@
     <div class="media-center-plugin" ng-if="!(NowPlaying.openMoreInfo || NowPlaying.openSettings)">
         <div class="media-holder">
             <div class="media-inner text-center">
-                <img ng-if="NowPlaying.currentTrack.image && NowPlaying.isOnline" load-image="1x1" crop-width="260" crop-height="260"
-                    crop-type="crop" data-final-src="{{NowPlaying.currentTrack.image | resizeImage : 260:260}}" alt="{{NowPlaying.currentTrack.title}} top image">
-                <img ng-if="NowPlaying.currentTrack.image && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.image}}" alt="{{NowPlaying.currentTrack.title}} top image">
-                <img ng-if="!NowPlaying.currentTrack.image" src="./assets/images/now-playing.png" alt="top image">
+                <img ng-if="(NowPlaying.currentTrack.topImage || NowPlaying.currentTrack.image) && NowPlaying.isOnline" 
+                    ng-src="{{(NowPlaying.currentTrack.topImage ? NowPlaying.currentTrack.topImage : NowPlaying.currentTrack.image) | resizeImage : 400:400 }}" alt="{{NowPlaying.currentTrack.title}} top image">
+                <img ng-if="(NowPlaying.currentTrack.topImage || NowPlaying.currentTrack.image) && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.topImage ? NowPlaying.currentTrack.topImage : NowPlaying.currentTrack.image}}" alt="{{NowPlaying.currentTrack.title}} top image">
+                <img ng-if="!NowPlaying.currentTrack.topImage && !NowPlaying.currentTrack.image" src="./assets/images/now-playing.png" alt="top image">
             </div>
         </div>
         <div class="media-player-info ellipsis">
@@ -17,7 +17,7 @@
             <div class="media-title ellipsis">
                 <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title}}</h4>
                 <p class="margin-zero whiteTheme ellipsis">
-                    {{NowPlaying.currentTrack.user.username}}{{NowPlaying.currentTrack.artist}}</p>
+                    {{NowPlaying.currentTrack.user.username}}{{NowPlaying.currentTrack.artists}}</p>
             </div>
             <span class="glyphicon whiteTheme btn btn-icon"
                 ng-class="{ 'glyphicon-star-empty' : !NowPlaying.item.data.bookmarked, 'glyphicon-star' : NowPlaying.item.data.bookmarked }"
@@ -25,7 +25,7 @@
         </div>
         <div class="slider">
             <div>
-                <div ng-if="!NowPlaying.isAudioPlayerPlayingAnotherSong" >
+                <div>
                     <div class="audio-plyer"><input type="range" min="0.0" max="{{NowPlaying.duration}}"
                         ng-model="NowPlaying.currentTime" ng-change="NowPlaying.changeTime(NowPlaying.currentTime)" />
                     </div>
@@ -42,30 +42,15 @@
                         <span>{{"--:--"}}</span>
                     </div>
                 </div>
-                <div ng-if="NowPlaying.isAudioPlayerPlayingAnotherSong" >
-                    <div class="audio-plyer"><input  type="range" value="0" />
-                    </div>
-                    <div  class="time-indicator" style="float:left">
-                        <span>00:00</span>
-                    </div>
-                </div>
                 
-                
-            </div>
-            <div class="volume">
-                &nbsp;<input class="volume-button rotate-270"
-                    ng-style="NowPlaying.showVolume? {'visibility':'visible'}:{'visibility':'hidden'}" type="range"
-                    min="0.0" max="100" ng-model="NowPlaying.volume"
-                    ng-change="NowPlaying.changeVolume(NowPlaying.volume)"
-                    style="width: 149px; border-radius:4px; background:#fff; margin-top: -93px;margin-left: -14px;z-index: 1000000" />
             </div>
         </div>
         <div class="media-player-btns">
-            <span class="icon " ng-click="NowPlaying.shufflePlaylist()">
+            <span class="icon" ng-class="(((NowPlaying.currentTrack.isAudioFromPluginList && !autoPlay) || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist)) || !NowPlaying.isAudioInitialized) && 'disabled'" ng-click="NowPlaying.shufflePlaylist()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <g opacity="0.9" clip-path="url(#clip0_1431_2874)">
                         <path d="M10.59 9.17L5.41 4L4 5.41L9.17 10.58L10.59 9.17ZM14.5 4L16.54 6.04L4 18.59L5.41 20L17.96 7.46L20 9.5V4H14.5ZM14.83 13.41L13.42 14.82L16.55 17.95L14.5 20H20V14.5L17.96 16.54L14.83 13.41Z" 
-                        ng-class="(NowPlaying.settings && NowPlaying.settings.shufflePlaylist) ? 'active' : 'not-active'"/>
+                        ng-class="((NowPlaying.currentTrack.isAudioFromPluginList && NowPlaying.settings.shufflePluginList) || (!NowPlaying.currentTrack.isAudioFromPluginList && NowPlaying.settings.shufflePlaylist && !globalPlaylist)) ? 'active' : 'not-active'"/>
                     </g>
                     <defs>
                         <clipPath id="clip0_1431_2874">
@@ -73,6 +58,10 @@
                         </clipPath>
                     </defs>
                 </svg>
+                <span class="shuffle-indicator" ng-if="((NowPlaying.currentTrack.isAudioFromPluginList && NowPlaying.settings.shufflePluginList) || (!NowPlaying.currentTrack.isAudioFromPluginList && NowPlaying.settings.shufflePlaylist && !globalPlaylist))">
+                    <span class="shuffle-indicator-text" ng-if="NowPlaying.currentTrack.isAudioFromPluginList">{{NowPlaying.shuffleAllItemsIndicator ? NowPlaying.shuffleAllItemsIndicator.slice(0,1) : 'A'}}</span>
+                    <span class="shuffle-indicator-text" ng-if="!NowPlaying.currentTrack.isAudioFromPluginList">{{NowPlaying.shufflePlaylistItemsIndicator ? NowPlaying.shufflePlaylistItemsIndicator.slice(0,1) : 'P'}}</span>
+                </span>
             </span>
                 
             <div class="player-btns">
@@ -81,7 +70,7 @@
                 <span ng-if="autoPlay" class="btn btn-icon" ng-click="NowPlaying.prev()"><i style="font-size: 18px; color: #D7D7D8;" class="glyphicon glyphicon-step-backward" role="button"></i></span>
                 <button class="btn btn-icon btn-lg btn-primary">
                     <span ng-if="!NowPlaying.playing" class="icon icon-main whiteTheme play-pause-icon"
-                        ng-click="NowPlaying.playTrack()">
+                        ng-click="NowPlaying.playTrack()" ng-class="!NowPlaying.isAudioInitialized && 'disabled'">
                         <img src="assets/css/icons/ic_play2.svg" alt="">
                     </span>
                     <span ng-if="NowPlaying.playing" class="icon icon-main whiteTheme play-pause-icon"
@@ -93,11 +82,11 @@
                         src="assets/css/icons/ic_fast_forward.svg" alt=""></span>
                 <span ng-if="autoPlay" class="btn btn-icon" ng-click="NowPlaying.next()"><i style="font-size: 18px; color: #D7D7D8;" class="glyphicon glyphicon-step-forward" role="button"></i></span>
             </div>
-            <span class="icon icon-sm" ng-click="NowPlaying.loopPlaylist()">
+            <span ng-class="((NowPlaying.currentTrack.isAudioFromPluginList || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist)) || !NowPlaying.isAudioInitialized) && 'disabled'" class="icon icon-sm" ng-click="NowPlaying.loopPlaylist()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <g opacity="0.9" clip-path="url(#clip0_1431_2881)">
                         <path d="M7 7H17V10L21 6L17 2V5H5V11H7V7ZM17 17H7V14L3 18L7 22V19H19V13H17V17Z" 
-                        ng-class="(NowPlaying.settings && NowPlaying.settings.loopPlaylist) ? 'active' : 'not-active'">
+                        ng-class="(!NowPlaying.currentTrack.isAudioFromPluginList && NowPlaying.settings && NowPlaying.settings.loopPlaylist && !globalPlaylist) ? 'active' : 'not-active'">
                     </g>
                     <defs>
                         <clipPath id="clip0_1431_2881">
@@ -132,24 +121,24 @@
                         ng-repeat="track in playListItems">
                         <div class="list-item-media text-left" ng-class="{'edit' : track.swiped}">
                             <div class="list-media-holder square-icon pull-left">
-                                <img ng-if="track.image" load-image="2x1" crop-width="55" crop-height="22"
-                                    crop-type="crop" data-ng-src="{{track.image | resizeImage : 55:22}}">
+                                <img ng-if="track.image || track.topImage" ng-src="{{(track.topImage ? track.topImage : track.image) | resizeImage : 60:60}}">
+                                <img ng-if="!track.image && !track.topImage" src="../../../styles/media/holder-16x9.png" style="width:100%;">
                             </div>
-                            <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-                                <p class="margin-bottom-zero ellipsis margin-top-twenty bodyTextTheme">
-                                    {{track.title}}</p>
+                            <div class="list-item-copy text-left padding-left-ten padding-right-ten flex flex-align-center">
+                                <p class="margin-bottom-zero ellipsis bodyTextTheme">{{track.title}}</p>
                             </div>
                             <div class="btns text-center">
                                 <a ng-class="track.playing ? 'icon-pause-circle' : 'icon-play-circle'"
                                     class="icon primaryTheme" ng-click="NowPlaying.playlistPlayPause(track, $index)"></a>
                             </div>
                             <div class="remove-btn text-center dangerBackgroundTheme" style="background:red;"
-                                ng-click="NowPlaying.removeTrackFromPlayList($index)">
+                                ng-click="NowPlaying.removeFromPlaylist(track)">
                                 <span class="whiteTheme">{{NowPlaying.playListStrings.removePlayListButton}}</span>
                             </div>
                         </div>
                     </div>
-                    <div ng-if="!playListItems.length">
+                    <div class="playlist-empty-container" ng-if="!playListItems.length">
+                        <img src="./assets/images/empty_page.svg" alt="playlist">
                         <h3 class="ellipsis">{{NowPlaying.playListStrings.emptyPlaylist}}</h3>
                     </div>
                 </div>
@@ -167,14 +156,17 @@
             <div class="media-player-more-info">
                 <div class="media-holder margin-top-thirty">
                     <div class="media-inner text-center">
-                        <img ng-if="NowPlaying.currentTrack.image" ng-src="{{NowPlaying.currentTrack.image | resizeImage : 260:260}}">
+                        <img ng-if="(NowPlaying.currentTrack.topImage || NowPlaying.currentTrack.image) && NowPlaying.isOnline" 
+                            ng-src="{{(NowPlaying.currentTrack.topImage ? NowPlaying.currentTrack.topImage : NowPlaying.currentTrack.image) | resizeImage : 400:400 }}" alt="{{NowPlaying.currentTrack.title}} top image">
+                        <img ng-if="(NowPlaying.currentTrack.topImage || NowPlaying.currentTrack.image) && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.topImage ? NowPlaying.currentTrack.topImage : NowPlaying.currentTrack.image}}" alt="{{NowPlaying.currentTrack.title}} top image">
+                        <img ng-if="!NowPlaying.currentTrack.topImage && !NowPlaying.currentTrack.image" src="./assets/images/now-playing.png" alt="top image">
                     </div>
                 </div>
                 <hr class="none">
                 <div class="media-player-info margin-top-twenty padding-left-ten padding-right-ten">
                     <div class="ellipsis">
                         <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title}}</h4>
-                        <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.artist}}</p>
+                        <p class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.artists}}</p>
                     </div>
                 </div>
                 <hr class="none">
@@ -182,10 +174,10 @@
                     <div class="text-center item">
                         <a ng-click="NowPlaying.showPlaylistPage()" class="whiteTheme">{{NowPlaying.playListStrings.goToPlaylist}}</a>
                     </div>
-                    <div class="text-center item" ng-if="!NowPlaying.transferPlaylist">
+                    <div class="text-center item" ng-if="!forceAutoPlay && !NowPlaying.isExistInPlaylist">
                         <a ng-click="NowPlaying.addToPlaylist(NowPlaying.currentTrack)" class="whiteTheme">{{NowPlaying.playListStrings.addToPlaylist}}</a>
                     </div>
-                    <div class="text-center item" ng-if="!NowPlaying.transferPlaylist">
+                    <div class="text-center item" ng-if="!forceAutoPlay && NowPlaying.isExistInPlaylist">
                         <a ng-click="NowPlaying.removeFromPlaylist(NowPlaying.currentTrack)" class="whiteTheme">{{NowPlaying.playListStrings.removeFromPlaylist}}</a>
                     </div>
                     <div class="text-center item">
@@ -195,14 +187,13 @@
             </div>
         </div>
     </div>
-
     <!-- Settings Overlay -->
     <div ng-if="NowPlaying.openSettings" class="overlay"
         style="position:fixed; top:0; left:0; width:100%; height:100%;">
         <div class="overlay-content" style="position:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
             <div class="media-player-settings">
                 <div class="settings-list padded padding-top-zero">
-                    <div class="item clearfix row" ng-if="!NowPlaying.forceAutoPlay && !globalPlaylist">
+                    <div class="item clearfix row" ng-if="!forceAutoPlay && !globalPlaylist">
                         <div class="col-md-10 pull-left text-left">
                             <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.automaticallyPlayNextTrack}}</span>
                         </div>
@@ -214,7 +205,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="item clearfix row">
+                    <div class="item clearfix row" ng-if="!globalPlaylist">
                         <div class="col-md-10 pull-left text-left">
                             <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.loopPlaylist}}</span>
                         </div>
@@ -226,28 +217,26 @@
                             </div>
                         </div>
                     </div>
-                    <div class="item clearfix row" ng-if="!NowPlaying.forceAutoPlay">
+                    <div class="item clearfix row" ng-if="!forceAutoPlay">
                         <div class="col-md-10 pull-left text-left">
                             <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.autoJumpToLastPositon}}</span>
                         </div>
                         <div class="col-md-2 pull-right text-right">
                             <div class="checkbox checkbox-primary no-label margin-zero">
                                 <input type="checkbox" id="repeat" ng-model="NowPlaying.settings.autoJumpToLastPosition"
-                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)"
-                                    ng-checked="NowPlaying.autoJumpToLastPosition"
-                                    >
+                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)">
                                 <label for="repeat"></label>
                             </div>
                         </div>
                     </div>
-                    <div class="item clearfix row" ng-if="!NowPlaying.transferPlaylist">
+                    <div class="item clearfix row" ng-if="!globalPlaylist">
                         <div class="col-md-10 pull-left text-left" >
                             <span class="ellipsis whiteTheme">{{NowPlaying.settingsStrings.shufflePlaylist}}</span>
                         </div>
                         <div class="col-md-2 pull-right text-right">
                             <div class="checkbox checkbox-primary checked no-label margin-zero">
                                 <input type="checkbox" id="playfromLast" ng-model="NowPlaying.settings.shufflePlaylist"
-                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)">
+                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)" ng-click="NowPlaying.showShufflePlaylistToast()">
                                 <label for="playfromLast"></label>
                             </div>
                         </div>

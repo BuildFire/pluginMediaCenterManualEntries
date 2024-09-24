@@ -576,8 +576,18 @@
             };
 
             return LocalStorageDB;
+        }])
+        .factory("DropboxLinksManager", [function () {
+            return {
+                convertDropbox(url) {
+                    if (url) {
+                        url = url.replace("www.dropbox", "dl.dropboxusercontent");
+                        url = url.replace("dropbox.com", "dl.dropboxusercontent.com");
+                        url = url.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
+                      }
+                      return url;
+                }
+            }
         }]);
-        
-        
         
 })(window.angular, window.buildfire, window.location);
