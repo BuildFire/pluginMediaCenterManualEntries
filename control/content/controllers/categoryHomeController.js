@@ -211,7 +211,7 @@
 						value = '/*';
 					}
 					value = value.trim();
-					searchOptions.filter = { '$json.name': { $regex: value, $options: '-i' } };
+					searchOptions.filter = { '$json.name': { $regex: value, $options: 'i' } };
 					$scope.toggleLoadingState(true);
 					$scope.getMore();
 				};
@@ -307,7 +307,7 @@
 				$scope.initBulkActions = () => {
 					const addButton = $scope.mediaList.selector.querySelector('.sortable-list-add-button');
 					const parent = addButton.parentNode;
-          
+
 					const bulkActionTemplate = document.getElementById('bulkActionTemplate');
 					const bulkActionContainer = bulkActionTemplate.content.cloneNode(true);
 
@@ -317,7 +317,7 @@
 					const exportBtn = bulkActionContainer.querySelector('.export-csv');
 					const importBtn = bulkActionContainer.querySelector('.import-csv');
 					const getTemplateBtn = bulkActionContainer.querySelector('.get-csv-template');
-          
+
 					dropdownBtn.onclick = () => dropdownMenu.classList.toggle('open');
 					exportBtn.onclick = () => {
 						$scope.exportCSV();

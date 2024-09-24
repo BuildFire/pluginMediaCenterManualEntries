@@ -65,7 +65,7 @@
 				$scope.initList = (listSelector) => {
 
 					$scope.mediaList = new buildfire.components.control.listView(listSelector, $scope.mediaItemsListOptions);
-					
+
 					$scope.initBulkActions();
 					$scope.handleListScroll();
 					$scope.toggleLoadingState(true);
@@ -211,7 +211,7 @@
 						value = '/*';
 					}
 					value = value.trim();
-					searchOptions.filter = { '$json.title': { $regex: value, $options: '-i' } };
+					searchOptions.filter = { '$json.title': { $regex: value, $options: 'i' } };
 					$scope.toggleLoadingState(true);
 					$scope.getMore();
 				};
@@ -390,7 +390,7 @@
 									key: record.id + '_continuesVideoPlayCount',
 									description: 'Continues Video Play Count',
 								}]);
-	
+
 								if (mediaCenterData && mediaCenterData.content.allowOfflineDownload) {
 									analyticsEvents.push({
 										title: record.data.title + ' Video Downloads',
@@ -409,7 +409,7 @@
 									key: record.id + '_continuesAudioPlayCount',
 									description: 'Continues Audio Play Count',
 								}]);
-	
+
 								if (mediaCenterData && mediaCenterData.content.allowOfflineDownload) {
 									analyticsEvents.push({
 										title: record.data.title + ' Audio Downloads',

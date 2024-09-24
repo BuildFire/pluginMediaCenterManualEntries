@@ -906,7 +906,7 @@
             value = '/*';
           }
           value = value.trim();
-          searchOptions.filter = { "$json.name": { "$regex": value, $options: "-i", } };
+          searchOptions.filter = { "$json.name": { "$regex": value, $options: "i", } };
           ContentMedia.allCategories = [];
           ContentMedia.getMore();
         };
@@ -918,7 +918,7 @@
          * Initialize bootstrap data
          */
         init();
-        
+
         $scope.$watch(function () {
 					return ContentMedia.item;
 				}, ContentMedia.sendUpdatedDataToWidget, true);
