@@ -628,7 +628,7 @@
           ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
           ContentMedia.item.data && ContentMedia.item.data.title ?
             ContentMedia.item.data.titleIndex = ContentMedia.item.data.title.toLowerCase() : '';
-         
+
           MediaContent.insert(ContentMedia.item.data).then((item) => {
             item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: item.id });
             SearchEngineService.insert(item.data).then(function (searchEngineData) {
@@ -1115,7 +1115,7 @@
           if (!value) {
             value = '/*';
           }
-          searchOptions.filter = { "$json.name": { "$regex": value, $options: "-i", } };
+          searchOptions.filter = { "$json.name": { "$regex": value, $options: "i", } };
           ContentMedia.allCategories = [];
           ContentMedia.getMore();
         };
