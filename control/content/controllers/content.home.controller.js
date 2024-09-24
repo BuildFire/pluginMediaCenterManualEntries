@@ -704,7 +704,7 @@
                     if (!value) {
                         value = '/*';
                     }
-                    searchOptions.filter = { "$json.title": { "$regex": value, $options: "-i", } };
+                    searchOptions.filter = { "$json.title": { "$regex": value, $options: "i", } };
                     ContentHome.getMore();
                 };
 

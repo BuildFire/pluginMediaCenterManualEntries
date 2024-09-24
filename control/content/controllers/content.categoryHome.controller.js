@@ -106,7 +106,7 @@
                         } else if (!ContentCategoryHome.info.data.content.dateIndexed && order.key == "categoryDateIndex") {//so it don't couse issues before data is updated
                             order.key = "categoryDate";
                         }
-                        //END Handles Indexing Changes categoryDate/mediaDateIndex                        
+                        //END Handles Indexing Changes categoryDate/mediaDateIndex
                         var sort = {};
                         sort[order.key] = order.order;
                         if ((order.name == "Category Title A-Z" || order.name === "Category Title Z-A")) {
@@ -160,7 +160,7 @@
                     updateSearchOptions();
                     ContentCategoryHome.isBusy = true;
                     CategoryContent.find(searchOptions).then(function success(result) {
-                
+
                         if (result.length <= _limit) {// to indicate there are more
                             ContentCategoryHome.noMore = true;
                         }
@@ -490,7 +490,7 @@
                     if (!value) {
                         value = '/*';
                     }
-                    searchOptions.filter = { "$json.name": { "$regex": value, $options: "-i", } };
+                    searchOptions.filter = { "$json.name": { "$regex": value, $options: "i", } };
                     ContentCategoryHome.getMore();
                 };
 
