@@ -10,15 +10,27 @@
                 vg-complete="playNextItem()"
                 vg-auto-play="autoPlay"
                 >
-        <vg-media 
-                vg-vimeo
+            <vg-media
                 vg-youtube
                 vg-native-controls="false"
                 vg-src="WidgetMedia.videoPlayerConfig.sources"
                 vg-tracks="WidgetMedia.videoPlayerConfig.tracks"
                 ng-show="!WidgetMedia.loadingVideo"
-                >
-        </vg-media>
+                ng-if="WidgetMedia.videoPlayerConfig.videoType === 'youtube'"></vg-media>
+            <vg-media
+                vg-vimeo
+                vg-native-controls="false"
+                vg-src="WidgetMedia.videoPlayerConfig.sources"
+                vg-tracks="WidgetMedia.videoPlayerConfig.tracks"
+                ng-show="!WidgetMedia.loadingVideo"
+                ng-if="WidgetMedia.videoPlayerConfig.videoType === 'vimeo'"></vg-media>
+            <vg-media
+                vg-native-controls="false"
+                vg-src="WidgetMedia.videoPlayerConfig.sources"
+                vg-tracks="WidgetMedia.videoPlayerConfig.tracks"
+                ng-show="!WidgetMedia.loadingVideo"
+                ng-if="WidgetMedia.videoPlayerConfig.videoType !== 'vimeo' && WidgetMedia.videoPlayerConfig.videoType !== 'youtube'"></vg-media>
+    
 
         <vg-controls ng-if="WidgetMedia.item.data.videoUrl" vg-autohide="false" ng-show="!WidgetMedia.loadingVideo" id="vg-controls">
             <div class="prev-item-btn" ng-click="playPrevItem()">
