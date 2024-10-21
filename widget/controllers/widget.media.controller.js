@@ -228,11 +228,7 @@
                         Buildfire.services.media.audioPlayer.pause();
                     }
 
-                    if ($rootScope.autoPlay && WidgetMedia.item.data.videoUrl && !$rootScope.deepLinkNavigate) {
-                        WidgetMedia.toggleShowVideo();
-                    } else if ($rootScope.skipMediaPage && WidgetMedia.item.data.videoUrl && !$rootScope.deepLinkNavigate) {
-                        WidgetMedia.toggleShowVideo();
-                    }
+                    WidgetMedia.toggleShowVideo(($rootScope.skipMediaPage || $rootScope.autoPlay) && WidgetMedia.item.data.videoUrl && !$rootScope.deepLinkNavigate);
                 };
 
                 WidgetMedia.fixIOSAutoPlay = function () { //Ticket https://buildfire.atlassian.net/browse/CS-598
@@ -339,31 +335,36 @@
                     tracks: undefined,
                     theme: {
                         url: "./assets/css/videogular.css"
-                    }
+                    },
+                    videoType: null
                 };
 
                 WidgetMedia.changeVideoSrc = function () {
                     if (WidgetMedia.item.data.videoUrl) {
-                        var myType;
-                        var videoUrlToSend = $scope.downloadedVideoUrl ? $scope.downloadedVideoUrl : WidgetMedia.item.data.videoUrl;
+                        let videoType;
+                        let videoUrlToSend = $scope.downloadedVideoUrl ? $scope.downloadedVideoUrl : WidgetMedia.item.data.videoUrl;
                         if (videoUrlToSend.includes("www.dropbox") || videoUrlToSend.includes("dl.dropbox.com")) {
                             videoUrlToSend = videoUrlToSend.replace("www.dropbox", "dl.dropboxusercontent");
                             videoUrlToSend = videoUrlToSend.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
-                            myType = videoUrlToSend.split('.').pop();
                         } else if (videoUrlToSend.includes("www.youtube") && videoUrlToSend.includes("/channel") && videoUrlToSend.includes("/live")) {
-                            var liveId = videoUrlToSend.split("channel/")[1].split("/live")[0];
+                            let liveId = videoUrlToSend.split("channel/")[1].split("/live")[0];
                             videoUrlToSend = "https://www.youtube.com/embed/live_stream?channel=" + liveId;
-                            myType = videoUrlToSend.split('.').pop();
-                        } else {
-                            myType = videoUrlToSend.split('.').pop();
                         }
-						myType = myType.split("?")[0];
 
                         $scope.videoPlayed = false;
 
+                        if (videoUrlToSend.includes("youtube.com") || videoUrlToSend.includes("youtu.be")) {
+                            videoType = "youtube";
+                        } else if (videoUrlToSend.includes("vimeo.com")) {
+                            videoType = "vimeo";
+                        } else {
+                            videoType = "video/mp4";
+                        }
+
+                        WidgetMedia.videoPlayerConfig.videoType = videoType;
 						WidgetMedia.videoPlayerConfig.sources = [{
                             src: $rootScope.online ? $sce.trustAsUrl(videoUrlToSend) : videoUrlToSend,
-                            type: 'video/' + myType //"video/mp4"
+                            type: videoType
                         }];
                     }
                 };
@@ -545,7 +546,7 @@
                                 } else {
                                     clearInterval(retry);
                                     WidgetMedia.API.seekTime($rootScope.seekTime);
-                                    WidgetMedia.toggleShowVideo();
+                                    WidgetMedia.toggleShowVideo(true);
                                     $rootScope.deepLinkNavigate = null;
                                     $rootScope.seekTime = null;
                                     setTimeout(function () {
@@ -597,24 +598,11 @@
                     Location.go('#/nowplaying/' + mediaId, true);
                 }
 
-                WidgetMedia.ApplayUpdates = function () {
-                    if (($rootScope.autoPlay || $rootScope.skipMediaPage) && WidgetMedia.item.data.videoUrl) {
-                        WidgetMedia.toggleShowVideo(true);
-                    } else {
-                        WidgetMedia.showVideo = false;
-                        if(WidgetMedia.API) WidgetMedia.API.pause();
-
-                        if (($rootScope.skipMediaPage || $rootScope.autoPlay) && !WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl) {
-                            WidgetMedia.playAudio();
-                        }
-                    }
-                };
-
                 WidgetMedia.goToNextItem = () => {
                     $rootScope.playNextItem();
                 }
 
-                WidgetMedia.toggleShowVideo = function (forceShow) {
+                WidgetMedia.toggleShowVideo = function (showVideo) {
                     if ((!$rootScope.online && !$rootScope.allowOfflineDownload) || ((!$rootScope.online && $rootScope.allowOfflineDownload && !WidgetMedia.item.data.hasDownloadedVideo))) {
                         buildfire.dialog.show(
                             {
@@ -636,7 +624,7 @@
                         );
                         return;
                     }
-                    WidgetMedia.showVideo = forceShow ? true : !WidgetMedia.showVideo;
+                    WidgetMedia.showVideo = showVideo;
                     if (!$scope.$$phase) {
                         $scope.$apply();
                         $scope.$digest();
@@ -709,42 +697,6 @@
                     });
                 };
 
-                WidgetMedia.getVideoDownloadURL = function () {
-                    if (WidgetMedia.item.data.videoUrl) {
-                        var myType;
-                        var source;
-                        var videoUrlToSend = WidgetMedia.item.data.videoUrl;
-                        if (videoUrlToSend.includes("www.dropbox") || videoUrlToSend.includes("dl.dropbox.com")) {
-                            videoUrlToSend = videoUrlToSend.replace("www.dropbox", "dl.dropboxusercontent");
-                            videoUrlToSend = videoUrlToSend.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
-                            myType = videoUrlToSend.split('.').pop();
-                            source = "dropbox";
-                        } else {
-                            source = videoUrlToSend.includes("youtube.com") ? "youtube" : videoUrlToSend.includes("vimeo") ? "vimeo" : "other";
-                            myType = videoUrlToSend.split('.').pop();
-                        }
-						myType = myType.split("?")[0];
-                        return {
-                            uri: videoUrlToSend,
-                            type: myType,
-                            source: source
-                        }
-                    }
-                }
-
-                WidgetMedia.getAudioDownloadURL = function () {
-                    if (WidgetMedia.item.data.audioUrl) {
-                        var myType;
-                        var audioUrlToSend = WidgetMedia.item.data.audioUrl;
-                        myType = audioUrlToSend.split('.').pop();
-						myType = myType.split("?")[0];
-                        return {
-                            uri: audioUrlToSend,
-                            type: myType,
-                        }
-                    }
-                }
-
                 WidgetMedia.isDownloading = function (item) {
                     return $rootScope.currentlyDownloading.indexOf(item.id) > -1;
                 };
@@ -792,9 +744,16 @@
                     }
 
                     if ($rootScope.autoPlay || $rootScope.skipMediaPage) {
-                        setTimeout(() => {
-                            WidgetMedia.ApplayUpdates();
-                        }, 50);
+                        if (WidgetMedia.item.data.videoUrl) {
+                            WidgetMedia.toggleShowVideo(true);
+                        } else {
+                            WidgetMedia.toggleShowVideo(false);
+                            if(WidgetMedia.API) WidgetMedia.API.pause();
+                            
+                            if (!WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl) {
+                                WidgetMedia.playAudio();
+                            }
+                        }
                     }
                     if (!$scope.$$phase) {
                         $scope.$apply();
