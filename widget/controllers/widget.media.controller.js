@@ -1,15 +1,13 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope', 'Location', 'OFSTORAGE', 'openedMediaHandler', 'DropboxLinksManager',
-            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope, Location, OFSTORAGE, openedMediaHandler, DropboxLinksManager) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope', 'Location', 'OFSTORAGE', 'openedMediaHandler', 'DropboxLinksManager', 'VideoJSController',
+            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope, Location, OFSTORAGE, openedMediaHandler, DropboxLinksManager, VideoJSController) {
                 var WidgetMedia = this;
-                WidgetMedia.API = null;
                 $rootScope.online = $window.navigator.onLine;
                 WidgetMedia.online = $window.navigator.onLine;
                 WidgetMedia.mediaType = null;
                 WidgetMedia.showSource = false;
-                WidgetMedia.loadingVideo = false;
                 WidgetMedia.error = "";
                 WidgetMedia.showVideo = false;
                 WidgetMedia.emptyBG = '../../../styles/media/holder-16x9.png';
@@ -40,7 +38,7 @@
 
                 buildfire.publicData.search(allCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
                     if (err) console.error(err);
-                    
+
                     if (res && res.totalRecord && WidgetMedia) {
                         WidgetMedia.count = res.totalRecord;
                         if (!$scope.$$phase) $scope.$apply();
@@ -219,81 +217,6 @@
                     );
                 };
 
-                WidgetMedia.onPlayerReady = function ($API) {
-                    WidgetMedia.API = $API;
-                    WidgetMedia.loadingVideo = true;
-                    WidgetMedia.fixIOSAutoPlay();
-                    if ($rootScope.autoPlay) {
-                        // Make sure the audio is turned off
-                        Buildfire.services.media.audioPlayer.pause();
-                    }
-
-                    WidgetMedia.toggleShowVideo(($rootScope.skipMediaPage || $rootScope.autoPlay) && WidgetMedia.item.data.videoUrl && !$rootScope.deepLinkNavigate);
-                };
-
-                WidgetMedia.fixIOSAutoPlay = function () { //Ticket https://buildfire.atlassian.net/browse/CS-598
-                    var video = angular.element('video');
-                    if ($rootScope.autoPlay)
-                        video.attr('autoplay', 'autoplay');//Solution https://stackoverflow.com/questions/24057565/video-autoplay-for-ios-not-working-in-app/24063028#24063028
-                    else
-                        video.removeAttr('autoplay');
-                }
-
-                $scope.onVideoStateChange = function (state) {
-                    if (state === 'play') { // The video started playing
-                        openedMediaHandler.add(WidgetMedia.item, 'Video', $rootScope.user?.userId);
-                        if(!$rootScope.online){
-                            $rootScope.markItemAsOpened(WidgetMedia.item.id)
-                        }
-                        if (!WidgetMedia.isCounted && $rootScope.user) {
-                            var userCheckViewFilter = {
-                                filter: getIndexedFilter(WidgetMedia.item.id, $rootScope.user._id, 'Video')
-                            };
-                            buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
-                                if (res.length > 0) {
-                                    WidgetMedia.isCounted = true;
-                                } else {
-                                    let data = {
-                                        mediaId: WidgetMedia.item.id,
-                                        mediaType: "VIDEO",
-                                        userId: $rootScope.user._id,
-                                        isActive: true,
-                                        _buildfire: {
-                                            index: {
-                                                string1: WidgetMedia.item.id + "-true",
-                                                array1:[{
-                                                    string1: "mediaCount-" + WidgetMedia.item.id + "-" + $rootScope.user._id + "-Video-true",
-                                                }]
-                                            },
-                                        },
-                                    }
-                                    if(!$rootScope.indexingUpdateDoneV2){
-                                        data._buildfire.index.text = WidgetMedia.item.id + "-" + $rootScope.user._id + "-Video-true";
-                                    }
-                                    buildfire.publicData.insert(data, COLLECTIONS.MediaCount, false, function (err, res) {
-                                        WidgetMedia.isCounted = true;
-                                        sendAnalytics(WidgetMedia);
-                                    })
-                                }
-                            })
-                        } else if(!WidgetMedia.isCounted){
-                            let lastTimeWatched = localStorage.getItem(`${WidgetMedia.item.id}_videoPlayCount`);
-                            if (!lastTimeWatched) {
-                                localStorage.setItem(`${WidgetMedia.item.id}_videoPlayCount`, new Date().getTime());
-                                sendAnalytics(WidgetMedia);
-                            }
-                        }
-                        if (!WidgetMedia.isContinuesCounted) {
-                            sendContinuesAnalytics(WidgetMedia);
-                            WidgetMedia.isContinuesCounted = true;
-                        }
-
-                        // Make sure the audio is turned off
-                        Buildfire.services.media.audioPlayer.pause();
-                        $scope.videoPlayed = true;
-                    }
-                };
-
                 const sendAnalytics = (WidgetMedia) => {
                     Analytics.trackAction(`${WidgetMedia.item.id}_videoPlayCount`);
                     Analytics.trackAction("allVideos_count");
@@ -321,51 +244,27 @@
 
                     return filter;
                 }
-                // To overcome an issue with google showing it's play button on their videos
-                $scope.videoAlreadyPlayed = () => {
-                    if (WidgetMedia.item && WidgetMedia.item.data && WidgetMedia.item.data.videoUrl) {
-                        return (WidgetMedia.item.data.videoUrl.indexOf('youtu.be') >= 0 || media.data.videoUrl.indexOf('youtube.com') >= 0) && !$scope.videoPlayed;
-                    } else return false;
-                }
-
-                WidgetMedia.videoPlayerConfig = {
-                    autoHide: false,
-                    preload: "none",
-                    sources: undefined,
-                    tracks: undefined,
-                    theme: {
-                        url: "./assets/css/videogular.css"
-                    },
-                    videoType: null
-                };
 
                 WidgetMedia.changeVideoSrc = function () {
                     if (WidgetMedia.item.data.videoUrl) {
                         let videoType;
                         let videoUrlToSend = $scope.downloadedVideoUrl ? $scope.downloadedVideoUrl : WidgetMedia.item.data.videoUrl;
-                        if (videoUrlToSend.includes("www.dropbox") || videoUrlToSend.includes("dl.dropbox.com")) {
-                            videoUrlToSend = videoUrlToSend.replace("www.dropbox", "dl.dropboxusercontent");
-                            videoUrlToSend = videoUrlToSend.replace("dl.dropbox.com", "dl.dropboxusercontent.com");
-                        } else if (videoUrlToSend.includes("www.youtube") && videoUrlToSend.includes("/channel") && videoUrlToSend.includes("/live")) {
+                        videoUrlToSend = DropboxLinksManager.convertDropbox(videoUrlToSend);
+
+                        if (videoUrlToSend.includes("www.youtube") && videoUrlToSend.includes("/channel") && videoUrlToSend.includes("/live")) {
                             let liveId = videoUrlToSend.split("channel/")[1].split("/live")[0];
                             videoUrlToSend = "https://www.youtube.com/embed/live_stream?channel=" + liveId;
                         }
 
-                        $scope.videoPlayed = false;
-
                         if (videoUrlToSend.includes("youtube.com") || videoUrlToSend.includes("youtu.be")) {
-                            videoType = "youtube";
+                            videoType = "video/youtube";
                         } else if (videoUrlToSend.includes("vimeo.com")) {
-                            videoType = "vimeo";
+                            videoType = "video/vimeo";
                         } else {
                             videoType = "video/mp4";
                         }
 
-                        WidgetMedia.videoPlayerConfig.videoType = videoType;
-						WidgetMedia.videoPlayerConfig.sources = [{
-                            src: $rootScope.online ? $sce.trustAsUrl(videoUrlToSend) : videoUrlToSend,
-                            type: videoType
-                        }];
+                        WidgetMedia.videoType = videoType;
                     }
                 };
 
@@ -427,7 +326,7 @@
                 }
 
                 WidgetMedia.sourceChanged = function ($source) {
-                    WidgetMedia.API.stop();
+                    VideoJSController.pause();
                 };
 
                 WidgetMedia.item = {
@@ -538,24 +437,6 @@
                     WidgetMedia.changeVideoSrc();
 
                     WidgetMedia.iframeSrcUrl = $sce.trustAsUrl(WidgetMedia.item.data.srcUrl);
-                    if ($rootScope.deepLinkNavigate && $rootScope.seekTime) {
-                        if (WidgetMedia.mediaType == 'VIDEO') {
-                            var retry = setInterval(function () {
-                                if (!WidgetMedia.API || !WidgetMedia.API.isReady || WidgetMedia.API.totalTime === 0) {
-                                    return;
-                                } else {
-                                    clearInterval(retry);
-                                    WidgetMedia.API.seekTime($rootScope.seekTime);
-                                    WidgetMedia.toggleShowVideo(true);
-                                    $rootScope.deepLinkNavigate = null;
-                                    $rootScope.seekTime = null;
-                                    setTimeout(function () {
-                                        WidgetMedia.API.play();
-                                    }, 500);
-                                }
-                            }, 500);
-                        }
-                    }
                 }
                 else {
                     WidgetMedia.iframeSrcUrl = '';
@@ -655,15 +536,6 @@
                     Buildfire.actionItems.execute(actionItem);
                 };
 
-                WidgetMedia.videoLoaded = function () {
-                    if (!buildfire.isWeb() && Android) {//set next video to fullscreen mode
-                        if ($rootScope.fullScreen && !WidgetMedia.fullScreen) {
-                            WidgetMedia.handeFullScreen();
-                        }
-                    }
-                    WidgetMedia.loadingVideo = false;
-                };
-
                 WidgetMedia.bookmark = function () {
                     var isBookmarked = WidgetMedia.item.data.bookmarked ? true : false;
                     if (isBookmarked) {
@@ -708,8 +580,8 @@
                         title: WidgetMedia.item.data.title,
                         imageUrl: WidgetMedia.item.data.topImage
                     };
-                    if (WidgetMedia.mediaType === 'VIDEO' && WidgetMedia.API) {
-                        options.timeIndex = WidgetMedia.API.currentTime / 1000;
+                    if (WidgetMedia.mediaType === 'VIDEO') {
+                        options.timeIndex = VideoJSController.currentTime;
                     }
 
                     var callback = function (err, data) {
@@ -730,6 +602,75 @@
                     Buildfire.navigation.openWindow(link, '_system');
                 };
 
+                WidgetMedia.onVideoPlay = () => {
+                    openedMediaHandler.add(WidgetMedia.item, 'Video', $rootScope.user?.userId);
+                    if (!$rootScope.online) {
+                        $rootScope.markItemAsOpened(WidgetMedia.item.id)
+                    }
+                    if (!WidgetMedia.isCounted && $rootScope.user) {
+                        var userCheckViewFilter = {
+                            filter: getIndexedFilter(WidgetMedia.item.id, $rootScope.user._id, 'Video')
+                        };
+                        buildfire.publicData.search(userCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
+                            if (res.length > 0) {
+                                WidgetMedia.isCounted = true;
+                            } else {
+                                let data = {
+                                    mediaId: WidgetMedia.item.id,
+                                    mediaType: "VIDEO",
+                                    userId: $rootScope.user._id,
+                                    isActive: true,
+                                    _buildfire: {
+                                        index: {
+                                            string1: WidgetMedia.item.id + "-true",
+                                            array1: [{
+                                                string1: "mediaCount-" + WidgetMedia.item.id + "-" + $rootScope.user._id + "-Video-true",
+                                            }]
+                                        },
+                                    },
+                                }
+                                if (!$rootScope.indexingUpdateDoneV2) {
+                                    data._buildfire.index.text = WidgetMedia.item.id + "-" + $rootScope.user._id + "-Video-true";
+                                }
+                                buildfire.publicData.insert(data, COLLECTIONS.MediaCount, false, function (err, res) {
+                                    WidgetMedia.isCounted = true;
+                                    sendAnalytics(WidgetMedia);
+                                })
+                            }
+                        })
+                    } else if (!WidgetMedia.isCounted) {
+                        let lastTimeWatched = localStorage.getItem(`${WidgetMedia.item.id}_videoPlayCount`);
+                        if (!lastTimeWatched) {
+                            localStorage.setItem(`${WidgetMedia.item.id}_videoPlayCount`, new Date().getTime());
+                            sendAnalytics(WidgetMedia);
+                        }
+                    }
+                    if (!WidgetMedia.isContinuesCounted) {
+                        sendContinuesAnalytics(WidgetMedia);
+                        WidgetMedia.isContinuesCounted = true;
+                    }
+
+                    // Make sure the audio is turned off
+                    Buildfire.services.media.audioPlayer.pause();
+                }
+
+                WidgetMedia.initVideoPlayer = () => {
+                    WidgetMedia.toggleShowVideo(($rootScope.skipMediaPage || $rootScope.autoPlay) && WidgetMedia.item.data.videoUrl);
+                    Buildfire.services.media.audioPlayer.pause();
+
+                    const videoOptions = {
+                        item: {...WidgetMedia.item.data, id: WidgetMedia.item.id},
+                        videoType: WidgetMedia.videoType,
+                        startAt: $rootScope.seekTime
+                    }
+                    VideoJSController.init(videoOptions);
+
+                    VideoJSController.onPlayerReady(() => {
+                        VideoJSController.onVideoPlayed(WidgetMedia.onVideoPlay);
+                        VideoJSController.onVideoPaused(WidgetMedia.onVideoPlay);
+                    })
+                };
+
                 //Sync with Control section
                 Messaging.onReceivedMessage = (event) => {
                     if (event.message && event.message.path == 'MEDIA') {
@@ -737,6 +678,9 @@
                     } else if (event.name === EVENTS.ITEMS_CHANGE) {
                         WidgetMedia.item = event.message.itemUpdatedData;
                         WidgetMedia.changeVideoSrc();
+                        if (VideoJSController.currentSource !== DropboxLinksManager.convertDropbox(WidgetMedia.item.data.videoUrl)) {
+                            WidgetMedia.initVideoPlayer();
+                        }
                     } else if (event.name === EVENTS.ROUTE_CHANGE) {
                         Location.goToHome();
                     } else if (event.name === EVENTS.DESIGN_LAYOUT_CHANGE) {
@@ -745,11 +689,11 @@
 
                     if ($rootScope.autoPlay || $rootScope.skipMediaPage) {
                         if (WidgetMedia.item.data.videoUrl) {
-                            WidgetMedia.toggleShowVideo(true);
+                            WidgetMedia.initVideoPlayer();
                         } else {
                             WidgetMedia.toggleShowVideo(false);
-                            if(WidgetMedia.API) WidgetMedia.API.pause();
-                            
+                            VideoJSController.pause();
+
                             if (!WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl) {
                                 WidgetMedia.playAudio();
                             }
@@ -807,15 +751,7 @@
                 });
 
                 $rootScope.$on('deviceLocked', function () {
-                    // pause videogular video (if any)
-                    if (WidgetMedia.API)
-                        WidgetMedia.API.pause();
-
-                    // pause Youtube video (no need to check if there is any yt video playing)
-                    callPlayer('ytPlayer', 'pauseVideo');
-
-                    // pause Vimeo video (no need to check if there is any vimeo video playing)
-                    callVimeoPlayer('ytPlayer');
+                    VideoJSController.pause();
                 });
 
             }]);
