@@ -13,12 +13,6 @@
             'ui.bootstrap',
             'infinite-scroll',
             "ngSanitize",
-            "com.2fdevs.videogular",
-            "com.2fdevs.videogular.plugins.controls",
-            "com.2fdevs.videogular.plugins.overlayplay",
-            "rc-videogular.plugins.youtube",
-            "rc-videogular.plugins.vimeo",
-            // "videosharing-embed",
             "ngTouch"
         ])
         //injected ngRoute for routing
@@ -332,7 +326,7 @@
             $httpProvider.interceptors.push(interceptor);
 
         }])
-        .run(['Location', '$location', '$rootScope', '$window', 'Messaging', 'EVENTS', 'PATHS', 'openedMediaHandler', function (Location, $location, $rootScope, $window, Messaging, EVENTS, PATHS, openedMediaHandler) {            
+        .run(['Location', '$location', '$rootScope', '$window', 'Messaging', 'EVENTS', 'PATHS', 'openedMediaHandler', function (Location, $location, $rootScope, $window, Messaging, EVENTS, PATHS, openedMediaHandler) {
             openedMediaHandler.sync();
             buildfire.appearance.navbar.show(null, (err) => {
                 if (err) return console.error(err);
@@ -387,7 +381,7 @@
                 }
 
                 var path = $location.path();
-                if (path.indexOf('/media') == 0 || path.indexOf('/filters') == 0) {
+                if ((path.indexOf('/media') == 0 || path.indexOf('/filters') == 0) && !$rootScope.itemFromDeeplink) {
                     navigate();
                 } else if (path.indexOf('/nowplaying') == 0) {
                     if ($rootScope.showPlaylist) {
@@ -471,7 +465,6 @@
 
             buildfire.device.onAppBackgrounded(function () {
                 $rootScope.$emit('deviceLocked', {});
-                //callPlayer('ytPlayer', 'pauseVideo');
             });
         }]);
 
