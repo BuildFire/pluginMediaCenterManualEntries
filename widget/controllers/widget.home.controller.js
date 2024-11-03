@@ -673,28 +673,62 @@
                     }
                 }
 
-                $rootScope.playPrevItem = () => {
-                    if ($rootScope.currentIndex === 0) {
-                        WidgetHome.goToMedia(WidgetHome.items.length - 1);
+                function getCurrentItemType() {
+                    let currentItemType;
+                    if (WidgetHome.items[$rootScope.currentIndex].data.audioUrl) {
+                        currentItemType = 'audio';
+                    } else if (WidgetHome.items[$rootScope.currentIndex].data.videoUrl) {
+                        currentItemType = 'video';
                     } else {
-                        WidgetHome.goToMedia($rootScope.currentIndex - 1);
+                        currentItemType = 'article';
                     }
+                    return currentItemType;
+                }
+
+                function getItemsWithSameType() {
+                    const currentItemType = getCurrentItemType();
+                    return WidgetHome.items.filter(item => (currentItemType === 'audio' && item.data.audioUrl) || (currentItemType === 'video' && item.data.videoUrl));
+                }
+
+                $rootScope.playPrevItem = () => {
+                    // each item should go to the previous item with same type;
+                    // audio should go to audios, video should go to videos
+                    const availableItems = getItemsWithSameType();
+
+                    const currentIndex = availableItems.findIndex(item => item.id === WidgetHome.items[$rootScope.currentIndex].id);
+                    if (currentIndex === 0) {
+                        newIndex = WidgetHome.items.findIndex(item => item.id === availableItems[availableItems.length - 1].id);
+                    } else {
+                        newIndex = WidgetHome.items.findIndex(item => item.id === availableItems[currentIndex - 1].id);
+                    }
+
+                    WidgetHome.goToMedia(newIndex, false);
                 }
 
                 let delayInterval;
                 $rootScope.playNextItem = (userInput, shufflePluginList) => {
-                    let newIndex = $rootScope.currentIndex + 1;
-                    if (shufflePluginList) {
-                        do {
-                            newIndex = Math.floor((Math.random() * WidgetHome.items.length));
-                        } while (newIndex === $rootScope.currentIndex && WidgetHome.items.length > 1);
+                    // each item should go to the next item with same type;
+                    // audio should go to audios, video should go to videos
+                    const availableItems = getItemsWithSameType();
+
+                    const currentIndex = availableItems.findIndex(item => item.id === WidgetHome.items[$rootScope.currentIndex].id);
+                    let newIndex = currentIndex + 1;
+                    if (newIndex === availableItems.length) {
+                        newIndex = 0;
                     }
-                    if (userInput) return WidgetHome.goToMedia(newIndex);
+                    const currentItemType = getCurrentItemType();
+                    if (shufflePluginList && currentItemType === 'audio') {
+                        do {
+                            newIndex = Math.floor((Math.random() * availableItems.length));
+                        } while (newIndex === currentIndex && availableItems.length > 1);
+                    }
+                    newIndex = WidgetHome.items.findIndex(item => item.id === availableItems[newIndex].id);
+                    if (userInput) return WidgetHome.goToMedia(newIndex, false);
 
                     if ($rootScope.autoPlay) {
                         let delay = $rootScope.autoPlayDelay.value;
                         if (!delay) {
-                            WidgetHome.goToMedia(newIndex);
+                            WidgetHome.goToMedia(newIndex, false);
                         } else {
                             $rootScope.showCountdown = true;
 
@@ -709,7 +743,7 @@
                                 if (!$scope.$$phase) $scope.$apply();
                                 if (delay === 0) {
                                     $rootScope.clearCountdown();
-                                    WidgetHome.goToMedia(newIndex);
+                                    WidgetHome.goToMedia(newIndex, false);
                                 }
                             }, 1000);
                         }
@@ -1507,7 +1541,7 @@
                     WidgetHome.loadMore();
                 };
 
-                WidgetHome.goToMedia = function (ind) {
+                WidgetHome.goToMedia = function (ind, pushToHistory = true) {
                     const documentFocused = WidgetHome.isDocumentFocused();
                     // stop the autoplay if shared via PWA to prevent video freeze
                     if(documentFocused) $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
@@ -1531,9 +1565,9 @@
 
                         if ($rootScope.skipMediaPage && WidgetHome.items[ind].data.audioUrl) {
                             $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
-                            Location.go('#/nowplaying/' + WidgetHome.items[ind].id, true);
+                            Location.go('#/nowplaying/' + WidgetHome.items[ind].id, pushToHistory);
                         } else {
-                            Location.go('#/media/' + WidgetHome.items[ind].id, true);
+                            Location.go('#/media/' + WidgetHome.items[ind].id, pushToHistory);
                         }
                         $rootScope.showGlobalPlaylistButtons = false;
                     }

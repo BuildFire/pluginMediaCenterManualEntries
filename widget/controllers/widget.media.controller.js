@@ -475,9 +475,6 @@
                     Location.go('#/nowplaying/' + mediaId, true);
                 }
 
-                WidgetMedia.goToNextItem = () => {
-                    $rootScope.playNextItem();
-                }
 
                 WidgetMedia.toggleShowVideo = function (showVideo) {
                     if ((!$rootScope.online && !$rootScope.allowOfflineDownload) || ((!$rootScope.online && $rootScope.allowOfflineDownload && !WidgetMedia.item.data.hasDownloadedVideo))) {
@@ -506,14 +503,6 @@
                         $scope.$apply();
                         $scope.$digest();
                     }
-                };
-
-                WidgetMedia.showSourceIframe = function () {
-                    var link = WidgetMedia.item.data.srcUrl;
-                    if (!/^(?:f|ht)tps?\:\/\//.test(link)) {
-                        link = "http://" + link;
-                    }
-                    Buildfire.navigation.openWindow(link, '_system');
                 };
 
                 WidgetMedia.openLinks = function (actionItems) {

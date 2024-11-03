@@ -665,7 +665,7 @@
                         this.addClass('vjs-icon-placeholder');
                     },
                     handleClick: function () {
-                        $rootScope.playPrevItem();
+                        $rootScope.playNextItem(true);
                     }
                 });
 
@@ -677,7 +677,7 @@
                         this.addClass('vjs-icon-placeholder');
                     },
                     handleClick: function () {
-                        $rootScope.playNextItem(true);
+                        $rootScope.playPrevItem();
                     }
                 });
 
