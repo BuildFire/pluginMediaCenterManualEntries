@@ -1,8 +1,7 @@
+.video-js-container .video-holder,
 .video-js-container .video-js {
 	width: 100%;
-	height: 56.25vw !important;
-	min-height: 12.1875rem !important;
-	max-height: 21.625rem !important;
+	height: 100%;
 }
 
 .vjs-svg-icon {
@@ -663,6 +662,7 @@
 	top: 0;
 	left: 0;
 	height: 100%;
+	width: 100%;
 }
 
 .video-js.vjs-audio-only-mode .vjs-tech {

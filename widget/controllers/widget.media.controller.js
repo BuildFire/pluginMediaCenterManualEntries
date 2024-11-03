@@ -663,6 +663,11 @@
                     VideoJSController.onPlayerReady(() => {
                         VideoJSController.onVideoPlayed(WidgetMedia.onVideoPlay);
                         VideoJSController.onVideoPaused(WidgetMedia.onVideoPlay);
+                        VideoJSController.onVideoEnded(() => {
+                            if ($rootScope.autoPlay) {
+                                $rootScope.playNextItem();
+                            }
+                        });
                     })
                 };
 

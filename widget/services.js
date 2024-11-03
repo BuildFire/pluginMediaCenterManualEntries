@@ -613,7 +613,6 @@
                     playsinline: true,
                     controls: true,
                     techOrder: ["html5", "youtube", "vimeo"],
-                    modestbranding: true,
                     enableDocumentPictureInPicture: true,
                     autoplay: $rootScope.autoPlay
                 });
@@ -730,6 +729,12 @@
                 });
             }
 
+            function onVideoEnded(callback) {
+                vidPlayer.on('ended', function () {
+                    callback();
+                });
+            }
+
             function play() {
                 if (vidPlayer) vidPlayer.play();
             }
@@ -746,6 +751,7 @@
                 onVideoReady,
                 onVideoPlayed,
                 onVideoPaused,
+                onVideoEnded,
                 get currentTime() {
                     return vidPlayer.currentTime();
                 },

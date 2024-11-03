@@ -340,7 +340,7 @@
                 }
                 $rootScope.goingBackFullScreen = false;
                 $rootScope.goingBack = true;
-                var navigate = function () {
+                const navigate = function () {
                     buildfire.history.pop();
                     console.log($("#feedView").hasClass('notshowing'))
                     if ($("#feedView").hasClass('notshowing')) {
@@ -379,9 +379,33 @@
                         }
                     }
                 }
+                const goBackOne = () => {
+                    if ($rootScope.currentlyDownloading.length > 0) {
+                        buildfire.dialog.confirm(
+                            {
+                                message: "There is media currently downloading, are you sure you want to go back?",
+                            },
+                            (err, isConfirmed) => {
+                                if (err) console.error(err);
+
+                                if (isConfirmed) {
+                                    buildfire.navigation._goBackOne()
+                                    if (!$rootScope.$$phase) $rootScope.$digest();
+                                }
+                            }
+                        );
+                    } else {
+                        buildfire.navigation._goBackOne()
+                        if (!$rootScope.$$phase) $rootScope.$digest();
+                    }
+                }
+
+                if ($rootScope.itemFromDeeplink) {
+                    goBackOne();
+                }
 
                 var path = $location.path();
-                if ((path.indexOf('/media') == 0 || path.indexOf('/filters') == 0) && !$rootScope.itemFromDeeplink) {
+                if (path.indexOf('/media') == 0 || path.indexOf('/filters') == 0) {
                     navigate();
                 } else if (path.indexOf('/nowplaying') == 0) {
                     if ($rootScope.showPlaylist) {
@@ -399,27 +423,7 @@
                     $rootScope.showGlobalPlaylistButtons = true;
                     $rootScope.showEmptyState = false;
                 } else {
-                    if ($rootScope.currentlyDownloading.length > 0) {
-                        buildfire.dialog.confirm(
-                            {
-                                message: "There is media currently downloading, are you sure you want to go back?",
-                            },
-                            (err, isConfirmed) => {
-                                if (err) console.error(err);
-
-                                if (isConfirmed) {
-                                    buildfire.navigation._goBackOne()
-                                    if (!$rootScope.$$phase) $rootScope.$digest();
-                                } else {
-                                    //Prevent action
-                                }
-                            }
-                        );
-                    }
-                    else {
-                        buildfire.navigation._goBackOne()
-                        if (!$rootScope.$$phase) $rootScope.$digest();
-                    }
+                    goBackOne();
                 };
             }
 
