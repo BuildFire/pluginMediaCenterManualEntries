@@ -1,3 +1,4 @@
 <div ng-style="WidgetMedia.fullScreen == false && {height: (WidgetMedia.deviceWidth*9)/16}" ng-if="WidgetMedia.item.data.videoUrl" ng-show="WidgetMedia.showVideo" class="video-js-container">
+    <img class="loading-video" src="../../../styles/media/holder-16x9.gif" ng-if="WidgetMedia.loadingVideo">
     <div ng-init="WidgetMedia.initVideoPlayer()" id="videoContainer"></div>
 </div>

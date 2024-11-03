@@ -1079,8 +1079,17 @@ body.vjs-pip-window .video-js {
 	margin: 0;
 	padding: 0;
 	height: 100%;
-	width: 4em;
+	width: 30px;
 	flex: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.video-js .vjs-control .vjs-icon-placeholder::before {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .video-js .vjs-control.vjs-visible-text {
@@ -1092,6 +1101,7 @@ body.vjs-pip-window .video-js {
 .vjs-remaining-time.vjs-time-control span,
 .video-js-container .vjs-icon-placeholder {
 	color: white !important;
+	font-size: 12px;
 }
 
 .vjs-button.vjs-icon-placeholder:before,

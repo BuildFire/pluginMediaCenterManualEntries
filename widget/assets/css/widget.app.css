@@ -1548,3 +1548,11 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
 	pointer-events: none;
 	opacity: 0.35 !important;
 }
+
+.loading-video {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 100;
+}

@@ -590,16 +590,15 @@
             }
         }])
         .factory("VideoJSController", ['$rootScope', 'DropboxLinksManager', function ($rootScope, DropboxLinksManager) {
-            let vidPlayer = null, playOverlay, currentTime = 0;
+            let vidPlayer = null, playOverlay, currentTime = 0, type = null;
+            let playInterval;
 
             function init(videoOptions) {
                 let { item, videoType, startAt } = videoOptions;
 
                 currentTime = startAt ? startAt : 0;
+                type = videoType;
 
-                if (!videoType.includes('video')) {
-                    videoType = 'video/' + videoType;
-                }
                 const videoContainer = document.getElementById('videoContainer');
                 const videoId = `videoJsElement_${item.id}_${Date.now()}`;
                 videoContainer.innerHTML = `
@@ -610,7 +609,6 @@
                 ></video>`;
 
                 vidPlayer = videojs(videoId, {
-                    autoplay: $rootScope.autoPlay,
                     muted: false,
                     playsinline: true,
                     controls: true,
@@ -625,9 +623,14 @@
                 vidPlayer.src({
                     src: DropboxLinksManager.convertDropbox(item.videoUrl),
                     type: videoType,
-                    autoplay: $rootScope.autoPlay
                 });
-                // TODO: here to handle youtube autoplay ---
+
+
+                if ($rootScope.autoPlay) {
+                    playInterval = setInterval(() => {
+                        play();
+                    }, 50)
+                }
             }
             function addOverlayPlayButton() {
                 // Create the play button overlay
@@ -678,6 +681,16 @@
                 vidPlayer.getChild('controlBar').addChild('NextButton', {}, vidPlayer.controlBar.children().indexOf(vidPlayer.controlBar.getChild('playToggle')) + 1);
             }
 
+            function onVideoReady(callback) {
+                if (type === 'video/mp4') {
+                    vidPlayer.on('canplay', function () {
+                        callback();
+                    });
+                } else {
+                    callback();
+                }
+            }
+
             function onPlayerReady(callback) {
                 vidPlayer.on('ready', function () {
                     vidPlayer.currentTime(currentTime);
@@ -696,6 +709,7 @@
                 vidPlayer.on('play', function () {
                     callback();
                     playOverlay.classList.add('hidden');
+                    clearInterval(playInterval);
                 });
             }
 
@@ -719,13 +733,14 @@
                 play,
                 pause,
                 onPlayerReady,
+                onVideoReady,
                 onVideoPlayed,
                 onVideoPaused,
                 get currentTime() {
                     return vidPlayer.currentTime();
                 },
                 get currentSource() {
-                    return vidPlayer.src();
+                    return vidPlayer ? vidPlayer.src() : '';
                 }
             };
         }])

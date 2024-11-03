@@ -655,6 +655,8 @@
                 }
 
                 WidgetMedia.initVideoPlayer = () => {
+                    if (!WidgetMedia.item.data.videoUrl) return;
+                    WidgetMedia.loadingVideo = true;
                     WidgetMedia.toggleShowVideo(($rootScope.skipMediaPage || $rootScope.autoPlay) && WidgetMedia.item.data.videoUrl);
                     Buildfire.services.media.audioPlayer.pause();
 
@@ -665,6 +667,13 @@
                     }
                     VideoJSController.init(videoOptions);
 
+                    VideoJSController.onVideoReady(() => {
+                        WidgetMedia.loadingVideo = false;
+                        if (!$scope.$$phase) {
+                            $scope.$apply();
+                            $scope.$digest();
+                        }
+                    });
                     VideoJSController.onPlayerReady(() => {
                         VideoJSController.onVideoPlayed(WidgetMedia.onVideoPlay);
                         VideoJSController.onVideoPaused(WidgetMedia.onVideoPlay);
@@ -689,7 +698,9 @@
 
                     if ($rootScope.autoPlay || $rootScope.skipMediaPage) {
                         if (WidgetMedia.item.data.videoUrl) {
-                            WidgetMedia.initVideoPlayer();
+                            if (VideoJSController.currentSource !== DropboxLinksManager.convertDropbox(WidgetMedia.item.data.videoUrl)) {
+                                WidgetMedia.initVideoPlayer();
+                            }
                         } else {
                             WidgetMedia.toggleShowVideo(false);
                             VideoJSController.pause();

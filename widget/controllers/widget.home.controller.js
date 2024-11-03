@@ -755,24 +755,21 @@
                             if (!data) return WidgetHome.startWatch();
                             $rootScope.itemFromDeeplink = true;
                             let itemId = null;
-                            if (data.id) {
-                                itemId = data.id;
-                            }
+                            if (data.id) itemId = data.id;
                             else if (data.mediaId) itemId = data.mediaId;
-                            else if (data && data.deepLinkUrl) {
+                            else if (data.deepLinkUrl) {
                                 var startOfQueryString = data.deepLinkUrl.indexOf("?dld");
                                 var deepLinkUrl = data.deepLinkUrl.slice(startOfQueryString + 5, data.deepLinkUrl.length);
                                 itemId = JSON.parse(deepLinkUrl).id;
                             }
-                            else if (data && data.link) {
-                                if (data.timeIndex && foundObj.data.videoUrl || foundObj.data.audioUrl) {
+                            else if (data.link || data.itemId) {
+                                if (data.timeIndex) {
                                     $rootScope.deepLinkNavigate = true;
                                     $rootScope.seekTime = data.timeIndex;
                                 }
-                                if (foundObj.data.audioUrl && $rootScope.seekTime)
-                                    return Location.go('#/nowplaying/' + foundObj.id);
+                                itemId = data.link ? data.link : data.itemId;
                             }
-                            else if (data && data.screen) {
+                            else if (data.screen) {
                                 if (WidgetHome.media && WidgetHome.media.data && WidgetHome.media.data.content) {
                                     if (WidgetHome.media.data.content.enableFiltering) {
                                         $window.deeplinkingDone = true;
