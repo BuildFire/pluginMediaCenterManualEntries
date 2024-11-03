@@ -691,6 +691,12 @@
                 }
 
                 $rootScope.playPrevItem = () => {
+                    if (typeof $rootScope.currentIndex !== 'number' || $rootScope.currentIndex < 0) {
+                        $rootScope.currentIndex = WidgetHome.items.findIndex(item => item.id === $rootScope.itemFromDeeplink.id);
+                        if ($rootScope.currentIndex < 0) {
+                            return;
+                        }
+                    }
                     // each item should go to the previous item with same type;
                     // audio should go to audios, video should go to videos
                     const availableItems = getItemsWithSameType();
@@ -707,6 +713,12 @@
 
                 let delayInterval;
                 $rootScope.playNextItem = (userInput, shufflePluginList) => {
+                    if (typeof $rootScope.currentIndex !== 'number' || $rootScope.currentIndex < 0) {
+                        $rootScope.currentIndex = WidgetHome.items.findIndex(item => item.id === $rootScope.itemFromDeeplink.id);
+                        if ($rootScope.currentIndex < 0) {
+                            return;
+                        }
+                    }
                     // each item should go to the next item with same type;
                     // audio should go to audios, video should go to videos
                     const availableItems = getItemsWithSameType();
@@ -787,7 +799,6 @@
                     if (!$window.deeplinkingDone) {
                         buildfire.deeplink.getData((data) => {
                             if (!data) return WidgetHome.startWatch();
-                            $rootScope.itemFromDeeplink = true;
                             let itemId = null;
                             if (data.id) itemId = data.id;
                             else if (data.mediaId) itemId = data.mediaId;
@@ -819,7 +830,15 @@
                             if(itemId && data.type === 'audio') {
                                 options.type = data.type;
                             }
+                            $rootScope.itemFromDeeplink = {
+                                id: itemId,
+                                type: data.type? data.type : null,
+                                deepLinkData: data,
+                                pushToHistory: false,
+                                isDeeplink: true,
+                            };
                             WidgetHome.goTo(options);
+                            WidgetHome.loadMore();
                         });
                     }
 
