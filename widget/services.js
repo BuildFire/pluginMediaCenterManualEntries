@@ -614,7 +614,8 @@
                     controls: true,
                     techOrder: ["html5", "youtube", "vimeo"],
                     modestbranding: true,
-                    enableDocumentPictureInPicture: true
+                    enableDocumentPictureInPicture: true,
+                    autoplay: $rootScope.autoPlay
                 });
 
                 addNextPreviousButtons();
@@ -625,12 +626,21 @@
                     type: videoType,
                 });
 
-
+                // this interval is to handle youtube videos autoplay
                 if ($rootScope.autoPlay) {
                     playInterval = setInterval(() => {
                         play();
-                    }, 50)
+                    }, 500)
                 }
+
+                // to handle click on mobile
+                vidPlayer.controlBar.playToggle.on("touchend", function () {
+                    if (vidPlayer.paused()) {
+                        play();
+                    } else {
+                        pause();
+                    }
+                });
             }
             function addOverlayPlayButton() {
                 // Create the play button overlay
@@ -683,7 +693,7 @@
 
             function onVideoReady(callback) {
                 if (type === 'video/mp4') {
-                    vidPlayer.on('canplay', function () {
+                    vidPlayer.on('loadedmetadata', function () {
                         callback();
                     });
                 } else {
@@ -721,11 +731,11 @@
             }
 
             function play() {
-                vidPlayer.play();
+                if (vidPlayer) vidPlayer.play();
             }
 
             function pause() {
-                vidPlayer.pause();
+                if (vidPlayer) vidPlayer.pause();
             }
 
             return {

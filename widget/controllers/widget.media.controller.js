@@ -325,10 +325,6 @@
 
                 }
 
-                WidgetMedia.sourceChanged = function ($source) {
-                    VideoJSController.pause();
-                };
-
                 WidgetMedia.item = {
                     data: {
                         audioUrl: "",
@@ -655,7 +651,8 @@
                 }
 
                 WidgetMedia.initVideoPlayer = () => {
-                    if (!WidgetMedia.item.data.videoUrl) return;
+                    const videoContainer = document.getElementById('videoContainer');
+                    if (!WidgetMedia.item.data.videoUrl || !videoContainer) return;
                     WidgetMedia.loadingVideo = true;
                     WidgetMedia.toggleShowVideo(($rootScope.skipMediaPage || $rootScope.autoPlay) && WidgetMedia.item.data.videoUrl);
                     Buildfire.services.media.audioPlayer.pause();

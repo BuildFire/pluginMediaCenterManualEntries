@@ -272,7 +272,7 @@
                         navigate(WidgetHome.items[index]);
                         $rootScope.showGlobalPlaylistButtons = false;
                     } else if (itemId === 'mockId') {
-                        navigate({ itemId: 'mockId' });
+                        navigate({ id: 'mockId' });
                     } else {
                         MediaContent.getById(itemId).then(function success(result) {
 
