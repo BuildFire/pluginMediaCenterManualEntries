@@ -640,6 +640,13 @@
                         pause();
                     }
                 });
+                vidPlayer.controlBar.volumePanel.on("touchend", function () {
+                    if (vidPlayer.muted()) {
+                        vidPlayer.muted(false);
+                    } else {
+                        vidPlayer.muted(true);
+                    }
+                });
             }
             function addOverlayPlayButton() {
                 // Create the play button overlay

@@ -330,7 +330,6 @@
             openedMediaHandler.sync();
             buildfire.appearance.navbar.show(null, (err) => {
                 if (err) return console.error(err);
-                console.log('Navbar is visible');
             });
             buildfire.navigation.onBackButtonClick = function () {
                 if ($rootScope.fullScreen) {
@@ -340,50 +339,15 @@
                 }
                 $rootScope.goingBackFullScreen = false;
                 $rootScope.goingBack = true;
-                const navigate = function () {
-                    buildfire.history.pop();
-                    console.log($("#feedView").hasClass('notshowing'))
-                    if ($("#feedView").hasClass('notshowing')) {
-                        Messaging.sendMessageToControl({
-                            name: EVENTS.ROUTE_CHANGE,
-                            message: {
-                                path: PATHS.HOME
-                            }
-                        });
-                        $("#showFeedBtn").click();
-                        $rootScope.showGlobalPlaylistButtons = true;
-                        if (!$rootScope.$$phase) $rootScope.$digest();
-                        buildfire.appearance.navbar.show(null, (err) => {
-                            if (err) return console.error(err);
-                            console.log('Navbar is visible');
-                        });
-                    } else {
-                        if ($rootScope.currentlyDownloading.length > 0) {
-                            buildfire.dialog.confirm(
-                                {
-                                    message: "There is media currently downloading, are you sure you want to go back?",
-                                },
-                                (err, isConfirmed) => {
-                                    if (err) console.error(err);
 
-                                    if (isConfirmed) {
-                                        buildfire.navigation._goBackOne()
-                                    } else {
-                                        //Prevent action
-                                    }
-                                }
-                            );
-                        }
-                        else {
-                            buildfire.navigation._goBackOne()
-                        }
-                    }
-                }
                 const goBackOne = () => {
                     if ($rootScope.currentlyDownloading.length > 0) {
                         buildfire.dialog.confirm(
                             {
-                                message: "There is media currently downloading, are you sure you want to go back?",
+                                title: getString('cancelDownloadItem.title'),
+                                message: getString('cancelDownloadItem.body'),
+                                confirmButton: { type: 'danger', text: getString('cancelDownloadItem.confirm') },
+                                cancelButtonText: getString('cancelDownloadItem.cancel')
                             },
                             (err, isConfirmed) => {
                                 if (err) console.error(err);
@@ -401,7 +365,27 @@
                 }
 
                 if ($rootScope.itemFromDeeplink) {
-                    goBackOne();
+                    return goBackOne();
+                }
+
+                const navigate = function () {
+                    buildfire.history.pop();
+                    if ($("#feedView").hasClass('notshowing')) {
+                        Messaging.sendMessageToControl({
+                            name: EVENTS.ROUTE_CHANGE,
+                            message: {
+                                path: PATHS.HOME
+                            }
+                        });
+                        $("#showFeedBtn").click();
+                        $rootScope.showGlobalPlaylistButtons = true;
+                        if (!$rootScope.$$phase) $rootScope.$digest();
+                        buildfire.appearance.navbar.show(null, (err) => {
+                            if (err) return console.error(err);
+                        });
+                    } else {
+                        goBackOne();
+                    }
                 }
 
                 var path = $location.path();

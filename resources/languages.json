@@ -224,6 +224,35 @@
                 }
             }
         },
+        "cancelDownloadItem": {
+            "title": "Terminate Media Download",
+            "labels": {
+                "title": {
+                    "title": "Title",
+                    "placeholder": "Cancel Download",
+                    "maxLength": 25,
+                    "defaultValue": "Cancel Download"
+                },
+                "body": {
+                    "title": "Message",
+                    "placeholder": "There is media currently downloading, are you sure you want to go back?",
+                    "maxLength": 100,
+                    "defaultValue": "There is media currently downloading, are you sure you want to go back?"
+                },
+                "cancel": {
+                    "title": "Cancel",
+                    "placeholder": "Cancel",
+                    "maxLength": 20,
+                    "defaultValue": "Cancel"
+                },
+                "confirm": {
+                    "title": "Confirm",
+                    "placeholder": "Go Back",
+                    "maxLength": 20,
+                    "defaultValue": "Go Back"
+                }
+            }
+        },
         "deeplink": {
             "title": "Deep link to media that does not exist",
             "labels": {
