@@ -1762,6 +1762,11 @@
                             WidgetHome.loadMore();
                         }
                     });
+
+                    if (!$scope.$$phase) {
+                        $scope.$apply();
+                        $scope.$digest();
+                    }
                 }
 
                 // get opened items
