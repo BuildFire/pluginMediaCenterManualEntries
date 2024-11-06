@@ -13,12 +13,6 @@
             'ui.bootstrap',
             'infinite-scroll',
             "ngSanitize",
-            "com.2fdevs.videogular",
-            "com.2fdevs.videogular.plugins.controls",
-            "com.2fdevs.videogular.plugins.overlayplay",
-            "rc-videogular.plugins.youtube",
-            "rc-videogular.plugins.vimeo",
-            // "videosharing-embed",
             "ngTouch"
         ])
         //injected ngRoute for routing
@@ -332,11 +326,10 @@
             $httpProvider.interceptors.push(interceptor);
 
         }])
-        .run(['Location', '$location', '$rootScope', '$window', 'Messaging', 'EVENTS', 'PATHS', 'openedMediaHandler', function (Location, $location, $rootScope, $window, Messaging, EVENTS, PATHS, openedMediaHandler) {            
+        .run(['Location', '$location', '$rootScope', '$window', 'Messaging', 'EVENTS', 'PATHS', 'openedMediaHandler', function (Location, $location, $rootScope, $window, Messaging, EVENTS, PATHS, openedMediaHandler) {
             openedMediaHandler.sync();
             buildfire.appearance.navbar.show(null, (err) => {
                 if (err) return console.error(err);
-                console.log('Navbar is visible');
             });
             buildfire.navigation.onBackButtonClick = function () {
                 if ($rootScope.fullScreen) {
@@ -346,9 +339,37 @@
                 }
                 $rootScope.goingBackFullScreen = false;
                 $rootScope.goingBack = true;
-                var navigate = function () {
+
+                const goBackOne = () => {
+                    if ($rootScope.currentlyDownloading.length > 0) {
+                        buildfire.dialog.confirm(
+                            {
+                                title: getString('cancelDownloadItem.title'),
+                                message: getString('cancelDownloadItem.body'),
+                                confirmButton: { type: 'danger', text: getString('cancelDownloadItem.confirm') },
+                                cancelButtonText: getString('cancelDownloadItem.cancel')
+                            },
+                            (err, isConfirmed) => {
+                                if (err) console.error(err);
+
+                                if (isConfirmed) {
+                                    buildfire.navigation._goBackOne()
+                                    if (!$rootScope.$$phase) $rootScope.$digest();
+                                }
+                            }
+                        );
+                    } else {
+                        buildfire.navigation._goBackOne()
+                        if (!$rootScope.$$phase) $rootScope.$digest();
+                    }
+                }
+
+                if ($rootScope.itemFromDeeplink) {
+                    return goBackOne();
+                }
+
+                const navigate = function () {
                     buildfire.history.pop();
-                    console.log($("#feedView").hasClass('notshowing'))
                     if ($("#feedView").hasClass('notshowing')) {
                         Messaging.sendMessageToControl({
                             name: EVENTS.ROUTE_CHANGE,
@@ -361,28 +382,9 @@
                         if (!$rootScope.$$phase) $rootScope.$digest();
                         buildfire.appearance.navbar.show(null, (err) => {
                             if (err) return console.error(err);
-                            console.log('Navbar is visible');
                         });
                     } else {
-                        if ($rootScope.currentlyDownloading.length > 0) {
-                            buildfire.dialog.confirm(
-                                {
-                                    message: "There is media currently downloading, are you sure you want to go back?",
-                                },
-                                (err, isConfirmed) => {
-                                    if (err) console.error(err);
-
-                                    if (isConfirmed) {
-                                        buildfire.navigation._goBackOne()
-                                    } else {
-                                        //Prevent action
-                                    }
-                                }
-                            );
-                        }
-                        else {
-                            buildfire.navigation._goBackOne()
-                        }
+                        goBackOne();
                     }
                 }
 
@@ -405,27 +407,7 @@
                     $rootScope.showGlobalPlaylistButtons = true;
                     $rootScope.showEmptyState = false;
                 } else {
-                    if ($rootScope.currentlyDownloading.length > 0) {
-                        buildfire.dialog.confirm(
-                            {
-                                message: "There is media currently downloading, are you sure you want to go back?",
-                            },
-                            (err, isConfirmed) => {
-                                if (err) console.error(err);
-
-                                if (isConfirmed) {
-                                    buildfire.navigation._goBackOne()
-                                    if (!$rootScope.$$phase) $rootScope.$digest();
-                                } else {
-                                    //Prevent action
-                                }
-                            }
-                        );
-                    }
-                    else {
-                        buildfire.navigation._goBackOne()
-                        if (!$rootScope.$$phase) $rootScope.$digest();
-                    }
+                    goBackOne();
                 };
             }
 
@@ -471,7 +453,6 @@
 
             buildfire.device.onAppBackgrounded(function () {
                 $rootScope.$emit('deviceLocked', {});
-                //callPlayer('ytPlayer', 'pauseVideo');
             });
         }]);
 

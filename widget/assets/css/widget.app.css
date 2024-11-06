@@ -284,59 +284,6 @@
 	max-height: 580px;
 }
 
-/*html, body {
-    margin: 0;
-    padding: 0;
-}*/
-
-.videogular-container {
-	width: 100%;
-	height: auto;
-	margin: auto;
-	overflow: hidden;
-}
-
-@media (min-width: 1200px) {
-	.videogular-container {
-		width: 1170px;
-		height: 658.125px;
-	}
-
-	.videogular-container.audio {
-		width: 1170px;
-		height: 50px;
-	}
-}
-
-@media (min-width: 992px) and (max-width: 1199px) {
-	.videogular-container {
-		width: 940px;
-		height: 528.75px;
-	}
-
-	.videogular-container.audio {
-		width: 940px;
-		height: 50px;
-	}
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-	.videogular-container {
-		width: 728px;
-		height: 409.5px;
-	}
-
-	.videogular-container.audio {
-		width: 728px;
-		height: 50px;
-	}
-}
-
-vg-overlay-play {
-	left: 0;
-}
-
-/*# sourceMappingURL=main.css.map */
 
 /*Styles for slider*/
 .playerMP {
@@ -483,16 +430,6 @@ vg-overlay-play {
 .fourth-layout .list-layout .list-item-even {
 	padding-left: 8px;
 	padding-right: 15px;
-}
-
-videogular vg-controls {
-	height: 48px !important;
-	overflow: hidden;
-}
-
-videogular,
-[videogular] {
-	background-color: transparent !important;
 }
 
 .video-container-background {
@@ -1610,4 +1547,14 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
 .disabled {
 	pointer-events: none;
 	opacity: 0.35 !important;
+}
+
+.loading-video {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	max-height: unset !important;
+	z-index: 100;
 }

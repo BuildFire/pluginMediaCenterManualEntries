@@ -10,7 +10,7 @@
     <link href="../../../scripts/owlCarousel/owlCarousel.css" rel="stylesheet">
     <link href="../../../styles/transitionAnimation.css" rel="stylesheet">
     <link href="assets/css/widget.app.css" rel="stylesheet">
-    <!-- <link href="assets/css/videogular.css" rel="stylesheet"> -->
+    <link href="assets/lib/videojs/videojs.css" rel="stylesheet">
     <link href="assets/css/media.css" rel="stylesheet">
     <!--SDK js-->
     <script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
@@ -56,12 +56,10 @@
     <script src="../../../scripts/buildfire/components/carousel/carousel.js"></script>
 
     <script src="assets/js/angular-sanitize.min.js"></script>
-    <script src="assets/js/videogular.min.js"></script>
-    <script src="assets/js/vg-youtube.min.js"></script>
-    <!-- <script src="assets/js/vg-vimeo.min.js"></script> -->
-    <script src="assets/js/vg-vimeo-buildfire-edited.js"></script>
-    <script src="assets/js/vg-controls.min.js"></script>
-    <script src="assets/js/vg-overlay-play.min.js"></script>
+    <script src="assets/lib/videojs/videojs.min.js"></script>
+    <script src="assets/lib/videojs/videojs-landscape-fullscreen.min.js"></script>
+    <script src="assets/lib/videojs/videojs-youtube.min.js"></script>
+    <script src="assets/lib/videojs/videojs-vimeo.min.js"></script>
     <script src="../../../scripts/angular/angular-touch.js"></script>
     <script src="../../../scripts/buildfire/components/toast/toast.js"></script>
 
@@ -72,7 +70,7 @@
 
 <body class="body-scroll">
     <div class="main_view">
-        <div ng-class="showFeed ? 'showing' : 'notshowing'" data-back-img="{{backgroundImage}}" id="feedView" class="content slide infinite-scroll-parent" 
+        <div ng-class="showFeed ? 'showing' : 'notshowing'" data-back-img="{{backgroundImage}}" id="feedView" class="content slide infinite-scroll-parent"
         scrolly="loadMore()"
         >
             <div ng-controller="WidgetHomeCtrl as WidgetHome">
@@ -109,7 +107,7 @@
             <div class="play-list-icon go-to-button-icon" style="background-color: #FFF;"></div>
         </button>
     </div>
-    
+
     <div id="countdownOverlay" ng-class="{'h30': showCountdown}">
         <div class="overlay-content">
             <h5 class="margin-top-zero">{{delayCountdownText}}</h5>
@@ -124,29 +122,5 @@
 <script src="./utils/strings.js"></script>
 <script>
     initLanguageStrings();
-    
-    function callPlayer(frame_id, func, args) {
-        if (window.jQuery && frame_id instanceof jQuery) frame_id = frame_id.get(0).id;
-        var iframe = document.getElementById(frame_id);
-        if (iframe && iframe.tagName.toUpperCase() != 'IFRAME') {
-            iframe = iframe.getElementsByTagName('iframe')[0];
-        }
-        if (iframe) {
-            // Frame exists,
-            iframe.contentWindow.postMessage(JSON.stringify({
-                "event": "command",
-                "func": func,
-                "args": args || [],
-                "id": frame_id
-            }), "*");
-        }
-    }
-    // function callVimeoPlayer(iframeId) {
-    //     var iframe = $('#' + iframeId)[0];
-    //     var url = 'https://player.vimeo.com';
-    //     /*   if (iframe.src.indexOf('https') == 0)
-    //      url = 'https://player.vimeo.com';*/
-    //     iframe.contentWindow.postMessage({method: 'pause'}, url);
-    // }
 </script>
 </html>

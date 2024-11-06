@@ -100,7 +100,7 @@
                     }, (error, result) => {
                         if (error && error.code !== 1) {
                             return callback(error);
-                        } 
+                        }
                         let parsedResult;
                         try {
                             if (result) {
@@ -126,7 +126,7 @@
             };
 
             OFSTORAGE.prototype.insert = function (item, callback) {
-                try {                  
+                try {
                     buildfire.services.fileSystem.fileManager.writeFileAsText(
                         {
                             path: this.path,
@@ -136,8 +136,8 @@
                         (err, isWritten) => {
                             if (err) {
                                 return callback(err);
-                            } 
-    
+                            }
+
                             callback(null, isWritten);
                         }
                     );
@@ -238,7 +238,7 @@
                 }
                 Buildfire.datastore.search(options, that._tagName, function (err, result) {
                     if (err) {
-           
+
                         return deferred.reject(err);
                     }
                     else if (result) {
@@ -492,7 +492,7 @@
             function UserDB(tagName) {
                 this._tagName = tagName;
             }
-            
+
             UserDB.prototype.get = function () {
                 const that = this;
                 const deferred = $q.defer();
@@ -540,7 +540,7 @@
             return UserDB;
         }])
         .factory("LocalStorageDB", ['Buildfire', function (Buildfire) {
-            
+
             function LocalStorageDB (key){
                 this.key = key;
             }
@@ -588,6 +588,184 @@
                       return url;
                 }
             }
-        }]);
-        
+        }])
+        .factory("VideoJSController", ['$rootScope', 'DropboxLinksManager', function ($rootScope, DropboxLinksManager) {
+            let vidPlayer = null, playOverlay, currentTime = 0, type = null;
+            let playInterval;
+
+            function init(videoOptions) {
+                let { item, videoType, startAt } = videoOptions;
+
+                currentTime = startAt ? startAt : 0;
+                type = videoType;
+
+                const videoContainer = document.getElementById('videoContainer');
+                const videoId = `videoJsElement_${item.id}_${Date.now()}`;
+                videoContainer.innerHTML = `
+                <video
+                    class="video-js vjs-styles-defaults"
+                    id="${videoId}"
+                    title="${item.title}"
+                ></video>`;
+
+                vidPlayer = videojs(videoId, {
+                    muted: false,
+                    playsinline: true,
+                    controls: true,
+                    techOrder: ["html5", "youtube", "vimeo"],
+                    enableDocumentPictureInPicture: true,
+                    autoplay: $rootScope.autoPlay
+                });
+
+                addNextPreviousButtons();
+                addOverlayPlayButton();
+
+                vidPlayer.src({
+                    src: DropboxLinksManager.convertDropbox(item.videoUrl),
+                    type: videoType,
+                });
+
+                // this interval is to handle youtube videos autoplay
+                if ($rootScope.autoPlay) {
+                    playInterval = setInterval(() => {
+                        play();
+                    }, 500)
+                }
+
+                // to handle click on mobile
+                vidPlayer.controlBar.playToggle.on("touchend", function () {
+                    if (vidPlayer.paused()) {
+                        play();
+                    } else {
+                        pause();
+                    }
+                });
+                vidPlayer.controlBar.volumePanel.on("touchend", function () {
+                    if (vidPlayer.muted()) {
+                        vidPlayer.muted(false);
+                    } else {
+                        vidPlayer.muted(true);
+                    }
+                });
+            }
+            function addOverlayPlayButton() {
+                // Create the play button overlay
+                playOverlay = document.createElement('button');
+                playOverlay.className = 'vjs-play-overlay hidden';
+                playOverlay.onclick = function () {
+                    play();
+                };
+
+                // Add the overlay to the player container
+                vidPlayer.el().appendChild(playOverlay);
+            }
+
+            function addNextPreviousButtons() {
+                let Button = videojs.getComponent('Button');
+
+                // Define the Next Button
+                let NextButton = videojs.extend(Button, {
+                    constructor: function () {
+                        Button.apply(this, arguments);
+                        this.addClass('vjs-icon-next-item');
+                        this.addClass('vjs-icon-placeholder');
+                    },
+                    handleClick: function () {
+                        $rootScope.playNextItem(true);
+                    }
+                });
+
+                // Define the Previous Button
+                let PrevButton = videojs.extend(Button, {
+                    constructor: function () {
+                        Button.apply(this, arguments);
+                        this.addClass('vjs-icon-previous-item');
+                        this.addClass('vjs-icon-placeholder');
+                    },
+                    handleClick: function () {
+                        $rootScope.playPrevItem();
+                    }
+                });
+
+                videojs.registerComponent('NextButton', NextButton);
+                videojs.registerComponent('PrevButton', PrevButton);
+
+                // Add Next button
+                vidPlayer.getChild('controlBar').addChild('PrevButton', {}, vidPlayer.controlBar.children().indexOf(vidPlayer.controlBar.getChild('playToggle')));
+
+                // Insert Next button after the play button
+                vidPlayer.getChild('controlBar').addChild('NextButton', {}, vidPlayer.controlBar.children().indexOf(vidPlayer.controlBar.getChild('playToggle')) + 1);
+            }
+
+            function onVideoReady(callback) {
+                if (type === 'video/mp4') {
+                    vidPlayer.on('loadedmetadata', function () {
+                        callback();
+                    });
+                } else {
+                    callback();
+                }
+            }
+
+            function onPlayerReady(callback) {
+                vidPlayer.on('ready', function () {
+                    vidPlayer.currentTime(currentTime);
+                    playOverlay.classList.remove('hidden');
+
+                    if (buildfire.getContext().device.platform === 'Android') {
+                        const fullScreenIcon = document.querySelector('.vjs-fullscreen-control');
+                        fullScreenIcon.classList.add('hidden');
+                    }
+
+                    callback();
+                });
+            }
+
+            function onVideoPlayed(callback) {
+                vidPlayer.on('play', function () {
+                    callback();
+                    playOverlay.classList.add('hidden');
+                    clearInterval(playInterval);
+                });
+            }
+
+            function onVideoPaused(callback) {
+                vidPlayer.on('pause', function () {
+                    callback();
+                    playOverlay.classList.remove('hidden');
+                });
+            }
+
+            function onVideoEnded(callback) {
+                vidPlayer.on('ended', function () {
+                    callback();
+                });
+            }
+
+            function play() {
+                if (vidPlayer) vidPlayer.play();
+            }
+
+            function pause() {
+                if (vidPlayer) vidPlayer.pause();
+            }
+
+            return {
+                init,
+                play,
+                pause,
+                onPlayerReady,
+                onVideoReady,
+                onVideoPlayed,
+                onVideoPaused,
+                onVideoEnded,
+                get currentTime() {
+                    return vidPlayer.currentTime();
+                },
+                get currentSource() {
+                    return vidPlayer ? vidPlayer.src() : '';
+                }
+            };
+        }])
+
 })(window.angular, window.buildfire, window.location);
