@@ -7,7 +7,6 @@ const htmlReplace = require("gulp-html-replace");
 const uglifyes = require("uglify-es");
 const composer = require("gulp-uglify/composer");
 const uglify = composer(uglifyes, console);
-const imagemin = require("gulp-imagemin");
 const babel = require("gulp-babel");
 
 const destinationFolder = releaseFolder();
@@ -21,7 +20,7 @@ function releaseFolder() {
 const cssTasks = [
     {
         name: "widgetCSS",
-        src: "widget/assets/css/*.css",
+        src: ["widget/assets/css/*.css", "!widget/assets/**"],
         dest: "/widget/assets/css",
     },
     {
@@ -42,8 +41,6 @@ cssTasks.forEach(function (task) {
           gulp
             .src(task.src, { base: "." })
             .pipe(concat("styles.min.css"))
-
-            /// write result to the 'build' folder
             .pipe(gulp.dest(destinationFolder + task.dest))
         );
     });
@@ -61,15 +58,13 @@ const jsTasks = [
         src: [
             "widget/**/**/**/*.js",
             "!widget/js/**",
-            "!widget/assets/lib/videojs",
-            "!widget/assets/js",
             "!widget/assets/**",
         ],
         dest: "/widget",
     },
     {
         name: "controlContentJS",
-        src: ["control/content/**/**/**/*.js","!control/content/assets/js",],
+        src: "control/content/**/**/**/*.js",
         dest: "/control/content",
     },
     {
@@ -107,8 +102,8 @@ gulp.task("sharedJS", function () {
           "widget/js/data/*.js",
           "widget/js/dataAcess/*.js",
       ])
-      .pipe(concat("scripts.shared-min.js"))
-      .pipe(gulp.dest(destinationFolder + "/widget"));
+      .pipe(concat("scripts.min.js"))
+      .pipe(gulp.dest(destinationFolder + "/widget/global"));
 });
 
 gulp.task("libJS", function () {
@@ -118,26 +113,21 @@ gulp.task("libJS", function () {
           "control/content/assets/js/ng-clip.min.js",
           "control/content/assets/js/ZeroClipboard.min.js",
       ])
-      .pipe(concat("script.js"))
+      .pipe(concat("vendor.js"))
       .pipe(gulp.dest(destinationFolder + "/control/content/assets/js"));
 });
 
 gulp.task("assetsJs", function () {
     return gulp
-      .src(["widget/assets/**", "!widget/assets/css/*.css"], { base: "widget" })
+      .src(["widget/assets/**/*", "!widget/assets/css/**"], { base: "widget" })
       .pipe(gulp.dest(destinationFolder + "/widget"));
 });
 
 gulp.task("contentAssetsJs", function () {
     return gulp
-      .src(
-        [
-            "control/content/assets/**/*",
-            "!control/content/assets/css/**"],
-        {
-            base: "control/content/assets",
-        },
-      )
+      .src(["control/content/assets/**/*", "!control/content/assets/css/**", "!control/content/assets/js/**"], {
+          base: "control/content/assets",
+      })
       .pipe(gulp.dest(destinationFolder + "/control/content/assets"));
 });
 
@@ -152,33 +142,39 @@ gulp.task("clean", function () {
 });
 
 gulp.task("controlHtml", function () {
-    return gulp
-      .src(["control/**/*.html", "control/**/*.htm"], { base: "." })
-      .pipe(
-        htmlReplace({
-            bundleJSFiles: "scripts.min.js?v=" + new Date().getTime(),
-            bundleCSSFiles: "assets/css/styles.min.css?v=" + new Date().getTime(),
-            bundleSharedJSFiles:
-              "../../widget/scripts.shared-min.js?v=" + new Date().getTime(),
-            bundleLibJsFiles: "assets/js/script.js?v=" + new Date().getTime(),
-        }),
-      )
-      .pipe(minHTML({ removeComments: true, collapseWhitespace: true }))
-      .pipe(gulp.dest(destinationFolder));
+    return (
+      gulp
+        .src(["control/**/*.html"], { base: "." })
+        .pipe(
+          htmlReplace({
+              bundleJSFiles: "scripts.min.js?v=" + new Date().getTime(),
+              bundleCSSFiles: "assets/css/styles.min.css?v=" + new Date().getTime(),
+              bundleSharedJSFiles:
+                "../../widget/global/scripts.min.js?v=" + new Date().getTime(),
+              bundleLibJsFiles: 'assets/js/vendor.js?v=' + new Date().getTime(),
+          }),
+        )
+        .pipe(minHTML({ removeComments: true, collapseWhitespace: true }))
+        .pipe(gulp.dest(destinationFolder))
+    );
 });
 
 gulp.task("widgetHtml", function () {
-    return gulp
-      .src(["widget/**/*.html", "widget/**/*.htm"], { base: "." })
-      .pipe(
-        htmlReplace({
-            bundleJSFiles: "scripts.min.js?v=" + new Date().getTime(),
-            bundleSharedJSFiles: "scripts.shared-min.js?v=" + new Date().getTime(),
-            bundleCSSFiles: "./assets/css/styles.min.css?v=" + new Date().getTime(),
-        }),
-      )
-      .pipe(minHTML({ removeComments: true, collapseWhitespace: true }))
-      .pipe(gulp.dest(destinationFolder));
+    return (
+      gulp
+        .src(["widget/**/*.html"], { base: "." })
+        .pipe(
+          htmlReplace({
+              bundleJSFiles: "scripts.min.js?v=" + new Date().getTime(),
+              bundleSharedJSFiles:
+                "./global/scripts.min.js?v=" + new Date().getTime(),
+              bundleCSSFiles:
+                "./assets/css/styles.min.css?v=" + new Date().getTime(),
+          }),
+        )
+        .pipe(minHTML({ removeComments: true, collapseWhitespace: true }))
+        .pipe(gulp.dest(destinationFolder))
+    );
 });
 
 gulp.task("resources", function () {
@@ -187,19 +183,12 @@ gulp.task("resources", function () {
       .pipe(gulp.dest(destinationFolder));
 });
 
-gulp.task("images", function () {
-    return gulp
-      .src(["widget/assets/images/*"], { base: "." })
-      .pipe(imagemin())
-      .pipe(gulp.dest(destinationFolder));
-});
 
 var buildTasksToRun = [
     "widgetHtml",
     "widgetCSSLayouts",
     "controlHtml",
     "resources",
-    "images",
     "sharedJS",
     "libJS",
     "assetsJs",
