@@ -647,7 +647,11 @@
                     Buildfire.services.media.audioPlayer.pause();
 
                     const videoOptions = {
-                        item: {...WidgetMedia.item.data, id: WidgetMedia.item.id},
+                        item: {
+                            ...WidgetMedia.item.data,
+                            title: WidgetMedia.item.data.title ? WidgetMedia.item.data.title.replaceAll('"', '\'') : 'Video',
+                            id: WidgetMedia.item.id
+                        },
                         videoType: WidgetMedia.videoType,
                         startAt: $rootScope.seekTime
                     }
