@@ -649,7 +649,7 @@
                     const videoOptions = {
                         item: {
                             ...WidgetMedia.item.data,
-                            title: WidgetMedia.item.data.title ? WidgetMedia.item.data.title.replaceAll('"', '\'') : 'Video',
+                            title: WidgetMedia.item.data.title.replaceAll('"', '&quot;'),
                             id: WidgetMedia.item.id
                         },
                         videoType: WidgetMedia.videoType,
