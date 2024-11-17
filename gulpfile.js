@@ -20,7 +20,11 @@ function releaseFolder() {
 const cssTasks = [
     {
         name: "widgetCSS",
-        src: ["widget/assets/css/*.css", "!widget/assets/**"],
+        src: [
+            "widget/assets/css/widget.app.css",
+            "widget/assets/css/videojs.css",
+            "widget/assets/css/media.css"
+        ],
         dest: "/widget/assets/css",
     },
     {
@@ -119,7 +123,7 @@ gulp.task("libJS", function () {
 
 gulp.task("assetsJs", function () {
     return gulp
-      .src(["widget/assets/**/*", "!widget/assets/css/**"], { base: "widget" })
+      .src(["widget/assets/**/*", "!widget/assets/css/*.css"], { base: "widget" })
       .pipe(gulp.dest(destinationFolder + "/widget"));
 });
 
