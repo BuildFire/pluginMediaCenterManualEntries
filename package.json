@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "./node_modules/.bin/bower install",
     "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS",
-    "build": "cd ..  && zip -r mediaCenterManual.zip pluginMediaCenterManualEntries/ -x \\*node_modules\\* \\*.git\\* \\*test\\*"
+    "build": "gulp build && cd ../ && rm -rf pluginMediaCenterManualEntries.zip && zip -r pluginMediaCenterManualEntries.zip pluginMediaCenterManualEntries_release && rm -rf pluginMediaCenterManualEntries_release"
   },
   "keywords": [
     "angularjs",
@@ -15,7 +15,6 @@
     "karma",
     "jasmine"
   ],
-  "author": "deepak.m.shrma@gmail.com",
   "license": "ISC",
   "dependencies": {
     "bower": "^1.5.3",
@@ -24,17 +23,31 @@
   },
   "devDependencies": {
     "chai": "^3.0.0",
-    "gulp": "^3.9.0",
-    "gulp-eslint": "^1.0.0",
+    "del": "^3.0.0",
+    "gulp": "^4.0.2",
+    "gulp-bytediff": "^1.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-csso": "^3.0.0",
+    "gulp-eslint": "^4.0.0",
+    "gulp-html-replace": "^1.6.2",
+    "gulp-htmlmin": "^3.0.0",
+    "gulp-minify": "^3.1.0",
+    "gulp-strip-comments": "^2.5.1",
+    "gulp-uglify": "^3.0.0",
     "gulp-util": "^3.0.6",
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "gulp-babel": "^8.0.0",
     "jasmine-core": "^2.3.4",
     "karma": "^0.13.9",
     "karma-chai": "^0.1.0",
+    "karma-coverage": "^0.5.3",
     "karma-jasmine": "^0.3.6",
-    "karma-junit-reporter": "^0.3.3",
+    "karma-junit-reporter": "^0.3.8",
     "karma-mocha": "^0.2.0",
-    "karma-phantomjs-launcher": "^0.2.0",
+    "karma-phantomjs-launcher": "^0.2.2",
     "mocha": "^2.2.5",
-    "phantomjs": "^1.9.17"
+    "phantomjs": "^1.9.17",
+    "uglify-es": "^3.3.9"
   }
 }

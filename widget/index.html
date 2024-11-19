@@ -3,15 +3,19 @@
 <head lang="en">
     <meta name="buildfire" content="enablePluginJsonLoad">
     <meta charset="UTF-8">
-
+    
     <!-- CSS -->
     <link href="../../../styles/helper.css" rel="stylesheet">
     <link href="../../../styles/siteIcons.css" rel="stylesheet">
     <link href="../../../scripts/owlCarousel/owlCarousel.css" rel="stylesheet">
     <link href="../../../styles/transitionAnimation.css" rel="stylesheet">
+    
+    <!-- build:bundleCSSFiles  -->
     <link href="assets/css/widget.app.css" rel="stylesheet">
-    <link href="assets/lib/videojs/videojs.css" rel="stylesheet">
+    <link href="assets/css/videojs/videojs.css" rel="stylesheet">
     <link href="assets/css/media.css" rel="stylesheet">
+    <!-- endbuild -->
+    
     <!--SDK js-->
     <script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
     <script src="../../../scripts/smartcrop.js"></script>
@@ -23,11 +27,12 @@
     <script src="../../../scripts/angular/angular-animate.min.js"></script>
     <script src="../../../scripts/angular/ui-bootstrap.min.js"></script>
     <script src="../../../scripts/owlCarousel/owlCarousel.js"></script>
-    <!-- JS -->
-    <script src="js/shared/analytics.js"></script>
     <script src="../../../scripts/angular/ng-infinite-scroll.custom.js"></script>
-    <script src = "js/data/offlineMedia.js"></script>
-    <script src = "js/shared/offlineAccess.js"></script>
+    
+    <!-- build:bundleSharedJSFiles  -->
+    <script src="js/shared/analytics.js"></script>
+    <script src="js/data/offlineMedia.js"></script>
+    <script src="js/shared/offlineAccess.js"></script>
     <script src="js/dataAcess/Categories.js"></script>
     <script src="js/dataAcess/Subcategories.js"></script>
     <script src="js/data/Category.js"></script>
@@ -35,8 +40,9 @@
     <script src="js/data/MediaMetaData.js"></script>
     <!-- <script src="https://player.vimeo.com/api/player.js"></script> -->
     <script src="js/shared/vimeo.js"></script>
-
-    <!--app js-->
+    <!-- endbuild -->
+    
+    <!-- build:bundleJSFiles  -->
     <script src="app.js"></script>
     <script src="enums.js"></script>
     <script src="services.js"></script>
@@ -46,15 +52,18 @@
     <script src="modals.js"></script>
     <script src="bookmarkHandler.js"></script>
     <script src="downloadHandler.js"></script>
-    <!--controllers js-->
     <script src="controllers/widget.home.controller.js"></script>
     <script src="controllers/widget.media.controller.js"></script>
     <script src="controllers/widget.nowplaying.controller.js"></script>
     <script src="controllers/widget.filters.controller.js"></script>
-
+    <script src="utils/stringsKeys.js"></script>
+    <script src="utils/strings.js"></script>
+    <!-- endbuild -->
+    
+    
     <!--carousel-->
     <script src="../../../scripts/buildfire/components/carousel/carousel.js"></script>
-
+    
     <script src="assets/js/angular-sanitize.min.js"></script>
     <script src="assets/lib/videojs/videojs.min.js"></script>
     <script src="assets/lib/videojs/videojs-landscape-fullscreen.min.js"></script>
@@ -62,64 +71,62 @@
     <script src="assets/lib/videojs/videojs-vimeo.min.js"></script>
     <script src="../../../scripts/angular/angular-touch.js"></script>
     <script src="../../../scripts/buildfire/components/toast/toast.js"></script>
-
+    
     <!-- Audio player-->
     <script src="../../../scripts/buildfire/services/media/audioPlayer.js"></script>
     <script src="../../../scripts/buildfire/services/notifications/localNotifications.js"></script>
 </head>
 
 <body class="body-scroll">
-    <div class="main_view">
-        <div ng-class="showFeed ? 'showing' : 'notshowing'" data-back-img="{{backgroundImage}}" id="feedView" class="content slide infinite-scroll-parent"
-        scrolly="loadMore()"
-        >
-            <div ng-controller="WidgetHomeCtrl as WidgetHome">
-                <div ng-include="'templates/home.html'">
-                </div>
+<div class="main_view">
+    <div ng-class="showFeed ? 'showing' : 'notshowing'" data-back-img="{{backgroundImage}}" id="feedView" class="content slide infinite-scroll-parent"
+         scrolly="loadMore()"
+    >
+        <div ng-controller="WidgetHomeCtrl as WidgetHome">
+            <div ng-include="'templates/home.html'">
             </div>
         </div>
-        <div ng-class="WidgetHome.deepLink ? 'no-slide' : 'slide'"
-            data-back-img="{{backgroundImage}}"
-            class="content infinite-scroll-parent"
-            ng-if="!showFeed">
-            <div ng-view=""></div>
-        </div>
-
-        <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>
     </div>
+    <div ng-class="WidgetHome.deepLink ? 'no-slide' : 'slide'"
+         data-back-img="{{backgroundImage}}"
+         class="content infinite-scroll-parent"
+         ng-if="!showFeed">
+        <div ng-view=""></div>
+    </div>
+    
+    <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>
+</div>
 
-    <div class="playlist-actions" style="display: none;" ng-class="(globalPlaylist && !loadingGlobalPlaylist && showGlobalPlaylistButtons && myItems.length > 0) ? 'show' : 'hidden'">
-        <button
+<div class="playlist-actions" style="display: none;" ng-class="(globalPlaylist && !loadingGlobalPlaylist && showGlobalPlaylistButtons && myItems.length > 0) ? 'show' : 'hidden'">
+    <button
             class="btn btn-standard add-button"
             ng-disabled="addAllToPlaylistLoading"
             ng-click="addAllToGlobalPlaylist($event)"
             ng-class="{'add-button-only': (!showGlobalPlaylistNavButton || !globalPlaylistPlugin), 'hidden': !showGlobalAddAllToPlaylistButton || !globalPlaylistPlugin}"
-        >
-            <div ng-if="!areAllInGlobalPlaylist()" class="play-list-icon add-button-icon" style="background-color: #FFF;"></div>
-            <div ng-if="areAllInGlobalPlaylist()" class="play-list-icon remove-button-icon" style="background-color: #FFF;"></div>
-        </button>
-        <button
+    >
+        <div ng-if="!areAllInGlobalPlaylist()" class="play-list-icon add-button-icon" style="background-color: #FFF;"></div>
+        <div ng-if="areAllInGlobalPlaylist()" class="play-list-icon remove-button-icon" style="background-color: #FFF;"></div>
+    </button>
+    <button
             class="btn add-button-only go-to-button"
             ng-if="globalPlaylist"
             ng-click="goToPlaylistPlugin()"
             ng-class="{'hidden': (!showGlobalPlaylistNavButton || !globalPlaylistPlugin)}"
-        >
-            <div class="play-list-icon go-to-button-icon" style="background-color: #FFF;"></div>
+    >
+        <div class="play-list-icon go-to-button-icon" style="background-color: #FFF;"></div>
+    </button>
+</div>
+
+<div id="countdownOverlay" ng-class="{'h30': showCountdown}">
+    <div class="overlay-content">
+        <h5 class="margin-top-zero">{{delayCountdownText}}</h5>
+        <br />
+        <button class="btn btn-warning media-action margin-zero" ng-if="showCountdown" ng-click="clearCountdown()">
+            Cancel
         </button>
     </div>
-
-    <div id="countdownOverlay" ng-class="{'h30': showCountdown}">
-        <div class="overlay-content">
-            <h5 class="margin-top-zero">{{delayCountdownText}}</h5>
-            <br />
-            <button class="btn btn-warning media-action margin-zero" ng-if="showCountdown" ng-click="clearCountdown()">
-                Cancel
-            </button>
-        </div>
-    </div>
+</div>
 </body>
-<script src="./utils/stringsKeys.js"></script>
-<script src="./utils/strings.js"></script>
 <script>
     initLanguageStrings();
 </script>
