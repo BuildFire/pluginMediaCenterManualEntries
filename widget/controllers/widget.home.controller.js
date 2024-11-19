@@ -1246,7 +1246,7 @@
                         listItems.push({ id: "openLinks", text: getString("homeDrawer.openLinks") });
                     }
 
-                    if (WidgetHome.media.data.content.globalPlaylist && $rootScope.online && item.data.audioUrl) {
+                    if (WidgetHome.media.data.content.globalPlaylist && $rootScope.online && (item.data.audioUrl || item.data.videoUrl)) {
                         if ($rootScope.isInGlobalPlaylist(item.id)) {
                             listItems.push({ id: "removeFromPlaylist", text: getString("homeDrawer.removeFromPlaylist") });
                         }

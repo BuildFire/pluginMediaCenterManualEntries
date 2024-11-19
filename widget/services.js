@@ -694,20 +694,22 @@
                     vidPlayer.on('loadedmetadata', function () {
                         callback();
 
-                        if ($rootScope.autoPlay) {
+                         if ($rootScope.autoPlay) {
                             playInterval = setInterval(() => {
                                 play();
-                            }, 500)
+                            }, 500);
                         }
                     });
                 } else {
-                    callback();
+                    vidPlayer.tech().on("ready", function () {
+                        if ($rootScope.autoPlay) {
+                            playInterval = setInterval(() => {
+                                play();
+                            }, 500);
+                        }
 
-                    if ($rootScope.autoPlay) {
-                        playInterval = setInterval(() => {
-                            play();
-                        }, 500)
-                    }
+                       callback();
+                    });
                 }
             }
 
