@@ -620,7 +620,7 @@
                             $rootScope.addAllToPlaylistLoading = false;
                             if (!$scope.$$phase) $scope.$apply();
                         } else {
-                            var filteredItems = WidgetHome.items.filter(el => !$rootScope.isInGlobalPlaylist(el.id)).filter(item => item.data.audioUrl);
+                            var filteredItems = WidgetHome.items.filter(el => !$rootScope.isInGlobalPlaylist(el.id)).filter(item => (item.data.audioUrl || item.data.videoUrl));
                             var itemsToAdd = [...filteredItems].splice(0, freeSlots);
                             GlobalPlaylist.insertAndUpdateAll(itemsToAdd).then(() => {
                                 for (let item of itemsToAdd) {
