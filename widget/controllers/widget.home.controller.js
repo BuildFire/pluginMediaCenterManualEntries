@@ -1118,27 +1118,21 @@
                         });
                     };
 
-                    if ($rootScope.globalPlaylist && $rootScope.online) {
+                    if ($rootScope.online) {
                         getCurrentUser(() => {
                             getGlobalPlaylistLimit();
 
                             getGlobalPlaylistItems()
                                 .then(getRecords)
                                 .finally(() => {
-                                    $rootScope.loadingGlobalPlaylist = false;
+                                    setTimeout(() => {
+                                        WidgetHome.isBusy = false;
+                                        $rootScope.loadingData = false;
+                                        $rootScope.loadingGlobalPlaylist = false;
+                                        if (!$scope.$$phase) $scope.$apply();
+                                    }, 0);
                                 });
                         });
-                    } else if ($rootScope.online) {
-                        getGlobalPlaylistItems()
-                            .then(getRecords)
-                            .finally(() => {
-                                setTimeout(() => {
-                                    WidgetHome.isBusy = false;
-                                    $rootScope.loadingData = false;
-                                    $rootScope.loadingGlobalPlaylist = false;
-                                    if (!$scope.$$phase) $scope.$apply();
-                                }, 0);
-                            });
                     } else {
                         getCachedItems((err, res) => {});
                     }
