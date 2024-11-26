@@ -614,7 +614,6 @@
                     controls: true,
                     techOrder: ["html5", "youtube", "vimeo"],
                     enableDocumentPictureInPicture: true,
-                    autoplay: $rootScope.autoPlay
                 });
 
                 addNextPreviousButtons();
@@ -624,13 +623,6 @@
                     src: DropboxLinksManager.convertDropbox(item.videoUrl),
                     type: videoType,
                 });
-
-                // this interval is to handle youtube videos autoplay
-                if ($rootScope.autoPlay) {
-                    playInterval = setInterval(() => {
-                        play();
-                    }, 500)
-                }
 
                 // to handle click on mobile
                 vidPlayer.controlBar.playToggle.on("touchend", function () {
@@ -701,9 +693,23 @@
                 if (type === 'video/mp4') {
                     vidPlayer.on('loadedmetadata', function () {
                         callback();
+
+                         if ($rootScope.autoPlay) {
+                            playInterval = setInterval(() => {
+                                play();
+                            }, 500);
+                        }
                     });
                 } else {
-                    callback();
+                    vidPlayer.tech().on("ready", function () {
+                        if ($rootScope.autoPlay) {
+                            playInterval = setInterval(() => {
+                                play();
+                            }, 500);
+                        }
+
+                       callback();
+                    });
                 }
             }
 
