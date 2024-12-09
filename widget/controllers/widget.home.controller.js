@@ -620,7 +620,7 @@
                             $rootScope.addAllToPlaylistLoading = false;
                             if (!$scope.$$phase) $scope.$apply();
                         } else {
-                            var filteredItems = WidgetHome.items.filter(el => !$rootScope.isInGlobalPlaylist(el.id)).filter(item => item.data.audioUrl);
+                            var filteredItems = WidgetHome.items.filter(el => !$rootScope.isInGlobalPlaylist(el.id)).filter(item => (item.data.audioUrl || item.data.videoUrl));
                             var itemsToAdd = [...filteredItems].splice(0, freeSlots);
                             GlobalPlaylist.insertAndUpdateAll(itemsToAdd).then(() => {
                                 for (let item of itemsToAdd) {
@@ -1118,27 +1118,21 @@
                         });
                     };
 
-                    if ($rootScope.globalPlaylist && $rootScope.online) {
+                    if ($rootScope.online) {
                         getCurrentUser(() => {
                             getGlobalPlaylistLimit();
 
                             getGlobalPlaylistItems()
                                 .then(getRecords)
                                 .finally(() => {
-                                    $rootScope.loadingGlobalPlaylist = false;
+                                    setTimeout(() => {
+                                        WidgetHome.isBusy = false;
+                                        $rootScope.loadingData = false;
+                                        $rootScope.loadingGlobalPlaylist = false;
+                                        if (!$scope.$$phase) $scope.$apply();
+                                    }, 0);
                                 });
                         });
-                    } else if ($rootScope.online) {
-                        getGlobalPlaylistItems()
-                            .then(getRecords)
-                            .finally(() => {
-                                setTimeout(() => {
-                                    WidgetHome.isBusy = false;
-                                    $rootScope.loadingData = false;
-                                    $rootScope.loadingGlobalPlaylist = false;
-                                    if (!$scope.$$phase) $scope.$apply();
-                                }, 0);
-                            });
                     } else {
                         getCachedItems((err, res) => {});
                     }
@@ -1246,7 +1240,7 @@
                         listItems.push({ id: "openLinks", text: getString("homeDrawer.openLinks") });
                     }
 
-                    if (WidgetHome.media.data.content.globalPlaylist && $rootScope.online && item.data.audioUrl) {
+                    if (WidgetHome.media.data.content.globalPlaylist && $rootScope.online && (item.data.audioUrl || item.data.videoUrl)) {
                         if ($rootScope.isInGlobalPlaylist(item.id)) {
                             listItems.push({ id: "removeFromPlaylist", text: getString("homeDrawer.removeFromPlaylist") });
                         }
