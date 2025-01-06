@@ -1,7 +1,7 @@
 {
   "author": "Buildfire",
-  "pluginName": "Media Center Manual",
-  "pluginDescription": "The Media Center plugin is incredibly useful for a variety of different media use cases. Create categorized manual entries of audio, video, and other stream media content. Keywords: MP4, stream, music, podcast, radio",
+  "pluginName": "Media Center",
+  "pluginDescription": "Create, categorize, and manage diverse media content with the Media Center plugin. Easily organize MP4, streams, music, podcasts, and radio entries for efficient access.",
   "supportEmail": "support@buildfire.com",
   "pluginIcon": "icon.png",
   "offlineModeEnabled": true,
