@@ -186,7 +186,7 @@
         </div>
     </div>
     <hr class="none">
-    
+
     <div class="row flex audio-image-selector">
         <div class="col-md-3">
             <span>Audio Image</span>
@@ -206,6 +206,29 @@
                 </div>
             </div>
             <p class="caption text-small">Recommended: 1024x1024</p>
+        </div>
+    </div>
+
+    <hr class="none">
+    <div class="row flex audio-image-selector">
+        <div class="col-md-3">
+            <span>Audio Background Image</span>
+        </div>
+        <div class="col-md-9 main ">
+            <div class="screens clearfix margin-bottom-zero">
+                <div class="screen pull-left">
+                    <a class="border-grey border-radius-three default-background-hover"
+                        style="width: 122px; height: 244px; display: flex; align-items: center; justify-content: center;"
+                        ng-click="ContentMedia.addAudioBackgroundImage()">
+                        <span ng-if="!ContentMedia.item.data.backgroundImage" class="add-icon" style="height: 65%;">+</span>
+                        <img ng-if="ContentMedia.item.data.backgroundImage" ng-src="{{ContentMedia.item.data.backgroundImage | resizeImage : 122:244}}">
+                    </a>
+                    <span ng-if="ContentMedia.item.data.backgroundImage"
+                        class="icon btn-delete-icon btn-danger transition-third"
+                        ng-click="ContentMedia.removeAudioBackgroundImage()"></span>
+                </div>
+            </div>
+            <p class="caption text-small">Recommended: 780x1688</p>
         </div>
     </div>
 

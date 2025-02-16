@@ -640,6 +640,21 @@
         ContentMedia.removeAudioImage = function () {
           ContentMedia.item.data.image = "";
         };
+        ContentMedia.addAudioBackgroundImage = function () {
+          var options = { showIcons: false, multiSelection: false },
+            listImgCB = function (error, result) {
+              if (error) {
+                console.error('Error:', error);
+              } else {
+                ContentMedia.item.data.backgroundImage = result && result.selectedFiles && result.selectedFiles[0] || null;
+                if (!$scope.$$phase) $scope.$digest();
+              }
+            };
+          buildfire.imageLib.showDialog(options, listImgCB);
+        };
+        ContentMedia.removeAudioBackgroundImage = function () {
+          ContentMedia.item.data.backgroundImage = "";
+        };
 
         /**
          * callback function of top image icon selection click

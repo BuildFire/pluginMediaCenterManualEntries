@@ -592,3 +592,9 @@ Style for loader
 .bottom-actions {
     z-index: 1000;
 }
+
+.screens .screen a span.add-icon {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+}
