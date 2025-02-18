@@ -229,7 +229,7 @@
 				function initAudio(cpSync = false) {
 					if (!cpSync) NowPlaying.currentTrack = new Track({ ...media.data, id: media.id }, 0);
 					else NowPlaying.currentTrack = new Track(NowPlaying.currentTrack, 0);
-					
+
 					NowPlaying.currentTrack.url = DropboxLinksManager.convertDropbox(NowPlaying.currentTrack.url);
 					NowPlaying.currentTrack.topImage = DropboxLinksManager.convertDropbox(NowPlaying.currentTrack.topImage);
 					NowPlaying.currentTrack.image = DropboxLinksManager.convertDropbox(NowPlaying.currentTrack.image);
@@ -249,7 +249,7 @@
 								NowPlaying.currentTrack.isAudioFromPluginList = false;
 								if ($rootScope.playListItems.length) NowPlaying.audioFromPlayList = $rootScope.playListItems.findIndex((el) => el.url === NowPlaying.currentTrack.url);
 								else NowPlaying.audioFromPlayList = -1;
-	
+
 								if (NowPlaying.audioFromPlayList > -1 && NowPlaying.settings.autoJumpToLastPosition) {
 									NowPlaying.currentTime = $rootScope.playListItems[NowPlaying.audioFromPlayList].lastPosition;
 								} else {
@@ -388,7 +388,7 @@
 					NowPlaying.isAudioPlayed = true;
 					sendContinuesAnalytics(NowPlaying);
 
-					
+
 					const userId = $rootScope.user ? $rootScope.user._id : Buildfire.context.deviceId;
 					if (userId) {
 						const data = {
@@ -616,7 +616,7 @@
 					if (!url) return;
 					const isDefaultImage = isDefaultTrackImage(url);
 					if (isDefaultImage) return url;
-					return buildfire.imageLib.resizeImage(url, { size: '1080', aspect: '16:9' });
+					return buildfire.imageLib.resizeImage(url, { size: '1080', aspect: '9:16' });
 				};
 				NowPlaying.addEvents = function (e, i, toggle, track) {
 					toggle ? track.swiped = true : track.swiped = false;
@@ -712,7 +712,7 @@
 					} else {
 						NowPlaying.playing = true;
 						NowPlaying.audioFromPlayList = index;
-						
+
 						audioPlayer.getCurrentTrack((currentTrack) => {
 							if (currentTrack.url === track.url && currentTrack.id === track.id && $rootScope.isPlayerReady && !NowPlaying.shouldPlayTrackAgain && !NowPlaying.currentTrack.isAudioFromPluginList) {
 								audioPlayer.pause();
@@ -877,7 +877,7 @@
 								if (res && res.length > 0) {
 									NowPlaying.isAudioPlayed = true;
 									if (res[0].data.duration) NowPlaying.duration = res[0].data.duration;
-	
+
 									if (res[0].data.lastPosition) {
 										NowPlaying.lastSavedPosition = res[0].data.lastPosition;
 										NowPlaying.currentTime = res[0].data.lastPosition;
@@ -941,7 +941,7 @@
 						if (err) return console.error(err);
 						NowPlaying.isExistInPlaylist = result;
 					});
-					
+
 					if (NowPlaying.currentTrack.id && NowPlaying.currentTrack.id !== 'mockId' && NowPlaying.currentTrack.instanceId === Buildfire.context.instanceId) {
 						Messaging.sendMessageToControl({
 							name: EVENTS.ROUTE_CHANGE,
