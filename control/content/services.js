@@ -54,13 +54,13 @@
                 Least: " Oldest"
             };
             var orders = [
-                {id: 1, name: "Manual", value: "Manually", key: "rank", order: 1},
-                {id: 1, name: "Media Title A-Z", value: "Media Title A-Z", key: "title", order: 1},
-                {id: 1, name: "Media Title Z-A", value: "Media Title Z-A", key: "title", order: -1},
-                {id: 1, name: "Media Date Asc", value: "Media Date Asc", key: "mediaDateIndex", order: 1},
-                {id: 1, name: "Media Date Desc", value: "Media Date Desc", key: "mediaDateIndex", order: -1},
-                {id: 1, name: "Newest", value: "Newest", key: "dateCreated", order: -1},
-                {id: 1, name: "Oldest", value: "Oldest", key: "dateCreated", order: 1},
+                { id: 1, name: "Manual", value: "Manually", key: "rank", order: 1 },
+                { id: 1, name: "Media Title A-Z", value: "Media Title A-Z", key: "title", order: 1 },
+                { id: 1, name: "Media Title Z-A", value: "Media Title Z-A", key: "title", order: -1 },
+                { id: 1, name: "Media Date Asc", value: "Media Date Asc", key: "mediaDateIndex", order: 1 },
+                { id: 1, name: "Media Date Desc", value: "Media Date Desc", key: "mediaDateIndex", order: -1 },
+                { id: 1, name: "Newest", value: "Newest", key: "dateCreated", order: -1 },
+                { id: 1, name: "Oldest", value: "Oldest", key: "dateCreated", order: 1 },
             ];
 
             return {
@@ -83,11 +83,11 @@
                 Least: " Oldest"
             };
             var orders = [
-                {id: 1, name: "Manual", value: "Manually", key: "rank", order: 1},
-                {id: 1, name: "Category Title A-Z", value: "Category Title A-Z", key: "name", order: 1},
-                {id: 1, name: "Category Title Z-A", value: "Category Title Z-A", key: "name", order: -1},
-                {id: 1, name: "Newest", value: "Newest", key: "createdOn", order: -1},
-                {id: 1, name: "Oldest", value: "Oldest", key: "createdOn", order: 1},
+                { id: 1, name: "Manual", value: "Manually", key: "rank", order: 1 },
+                { id: 1, name: "Category Title A-Z", value: "Category Title A-Z", key: "name", order: 1 },
+                { id: 1, name: "Category Title Z-A", value: "Category Title Z-A", key: "name", order: -1 },
+                { id: 1, name: "Newest", value: "Newest", key: "createdOn", order: -1 },
+                { id: 1, name: "Oldest", value: "Oldest", key: "createdOn", order: 1 },
             ];
 
             return {
@@ -110,13 +110,13 @@
                 Least: " Oldest"
             };
             var orders = [
-                {id: 1, name: "Manual", value: "Manually", key: "rank", order: 1},
-                {id: 1, name: "Subcategory Title A-Z", value: "Subcategory Title A-Z", key: "title", order: 1},
-                {id: 1, name: "Subcategory Title Z-A", value: "Subcategory Title Z-A", key: "title", order: -1},
-                {id: 1, name: "Subcategory Date Asc", value: "Subcategory Date Asc", key: "subcategoryDateIndex", order: 1},
-                {id: 1, name: "Subcategory Date Desc", value: "Subcategory Date Desc", key: "subcategoryDateIndex", order: -1},
-                {id: 1, name: "Newest", value: "Newest", key: "dateCreated", order: -1},
-                {id: 1, name: "Oldest", value: "Oldest", key: "dateCreated", order: 1},
+                { id: 1, name: "Manual", value: "Manually", key: "rank", order: 1 },
+                { id: 1, name: "Subcategory Title A-Z", value: "Subcategory Title A-Z", key: "title", order: 1 },
+                { id: 1, name: "Subcategory Title Z-A", value: "Subcategory Title Z-A", key: "title", order: -1 },
+                { id: 1, name: "Subcategory Date Asc", value: "Subcategory Date Asc", key: "subcategoryDateIndex", order: 1 },
+                { id: 1, name: "Subcategory Date Desc", value: "Subcategory Date Desc", key: "subcategoryDateIndex", order: -1 },
+                { id: 1, name: "Newest", value: "Newest", key: "dateCreated", order: -1 },
+                { id: 1, name: "Oldest", value: "Oldest", key: "dateCreated", order: 1 },
             ];
 
             return {
@@ -129,11 +129,11 @@
                 }
             };
         }])
-        .factory("SearchEngine", ["Buildfire", '$q', 'MESSAGES', function(Buildfire, $q, MESSAGES) {
+        .factory("SearchEngine", ["Buildfire", '$q', 'MESSAGES', function (Buildfire, $q, MESSAGES) {
             function SearchEngine(tagName) {
                 this._tagName = tagName;
             }
-            SearchEngine.prototype.insert = function(item) {
+            SearchEngine.prototype.insert = function (item) {
                 var that = this;
                 var deferred = $q.defer();
                 if (typeof item == 'undefined') {
@@ -147,7 +147,7 @@
                     imageUrl: item.topImage,
                 };
 
-                if(item.deepLinkUrl) {
+                if (item.deepLinkUrl) {
                     data.data = {
                         deepLinkUrl: item.deepLinkUrl
                     }
@@ -189,7 +189,11 @@
 
                 Buildfire.services.searchEngine.update(data, function (err, result) {
                     if (err) {
-                        return deferred.reject(err);
+                        if (err.errorMessage === "Not Found") {
+                            return deferred.resolve(that.insert(item));
+                        } else {
+                            return deferred.reject(err);
+                        }
                     }
                     else if (result) {
                         return deferred.resolve(result);
@@ -372,14 +376,14 @@
                 if (!items.length) return callback(null, []);
                 const batchSize = 20;
                 const batch = items.splice(0, batchSize);
-        
-                const promises = batch.map(_record => 
-                    new Promise((resolve, reject) => 
+
+                const promises = batch.map(_record =>
+                    new Promise((resolve, reject) =>
                         this.update(_record.id, _record).then(() => {
                             resolve(true);
                         }).catch(err => reject(err))
                     ));
-                
+
                 Promise.allSettled(promises).then(() => this.bulkUpdateItems(items, callback));
             };
             return DB;
@@ -402,120 +406,120 @@
             };
         }])
         .factory("PerfomanceIndexingService", ['Buildfire', function (Buildfire) {
-          return {
-            buildMediaCountDataIndex: function (data) {
-                var mediaType = data.mediaType;
-                if(mediaType === "VIDEO"){
-                    mediaType = "Video"
-                }
-                var index = {
-                    'string1': data.mediaId + "-" + (data.isActive ? "true":"false"),
-                    "text": data.mediaId + "-" + data.userId + '-' + mediaType + "-" + (data.isActive ? "true":"false"),
-                    "array1":[{
-                        "string1": "mediaCount-" + data.mediaId + "-" + data.userId + '-' + mediaType + "-" + (data.isActive ? "true":"false"),
-                    }]
-                }
-                return index;
-            },
-
-            getMediaCountDataWithIndex: function (item) {
-                item.data._buildfire = {
-                    index: this.buildMediaCountDataIndex(item.data)
-                }
-                return item;
-            },
-            processMediaCountsData: function (record, callback) {
-                if(record.data.userId){
-                    record = this.getMediaCountDataWithIndex(record);
-                    buildfire.publicData.update(record.id, record.data, 'MediaCount', function (err, result) {
-                        if (err) return console.error(err);
-                        if (result && result.id) {
-                            callback();
-                        }
-                    });
-                } else {
-                    callback();
-                }
-               
-            },
-
-            iterateMediaCountData: function (records, index) {
-                if (index !== records.length) {
-                    this.processMediaCountsData(records[index], () => this.iterateMediaCountData(records, index + 1));
-                } else {
-                    buildfire.datastore.get('MediaCenter', (err, result) => {
-                        result.data.indexingUpdateDoneV2 = true;
-                        buildfire.datastore.save(result.data, 'MediaCenter', (err, saved) => {
-                            buildfire.dialog.alert(
-                                {
-                                    title: 'MCM Update',
-                                    message: "Database has been successfully updated. Thank you for your patience!",
-                                }, (err, isConfirmed) => {
-                                    if (err) return console.error(err);
-                                    if (isConfirmed) {
-
-                                    }
-                                }
-                            );
-                        });
-                    });
-                }
-            },
-            startMediaCountDataIndexingUpdate: function () {
-                let searchOptions = {
-                    limit: 50,
-                    skip: 0,
-                    
-                }, records = [];
-                
-                const getMediaCountData = () => {
-                    buildfire.publicData.search(searchOptions, "MediaCount", (err, result) => {
-                        if (err) console.error(err);
-                        if (result.length < searchOptions.limit) {
-                            records = records.concat(result);
-                            console.log(records)
-                            this.iterateMediaCountData(records, 0);
-                        } else {
-                            searchOptions.skip = searchOptions.skip + searchOptions.limit;
-                            records = records.concat(result);
-                            return getMediaCountData();
-                        }
-                    })
-                }
-
-                getMediaCountData();
-            },
-            showIndexingDialog: function () {
-                buildfire.dialog.confirm(
-                    {
-                        title: 'MCM Update',
-                        message: "We are improving your database perfomance, please do not close your browser or leave the plugin until you see success dialog. This may take a while...",
-                        confirmButton: { text: "Yes", type: "success" },
-                    }, (err, isConfirmed) => {
-                        if (err) return console.error(err);
-                        if (isConfirmed) return this.startMediaCountDataIndexingUpdate();
+            return {
+                buildMediaCountDataIndex: function (data) {
+                    var mediaType = data.mediaType;
+                    if (mediaType === "VIDEO") {
+                        mediaType = "Video"
                     }
-                );
+                    var index = {
+                        'string1': data.mediaId + "-" + (data.isActive ? "true" : "false"),
+                        "text": data.mediaId + "-" + data.userId + '-' + mediaType + "-" + (data.isActive ? "true" : "false"),
+                        "array1": [{
+                            "string1": "mediaCount-" + data.mediaId + "-" + data.userId + '-' + mediaType + "-" + (data.isActive ? "true" : "false"),
+                        }]
+                    }
+                    return index;
+                },
+
+                getMediaCountDataWithIndex: function (item) {
+                    item.data._buildfire = {
+                        index: this.buildMediaCountDataIndex(item.data)
+                    }
+                    return item;
+                },
+                processMediaCountsData: function (record, callback) {
+                    if (record.data.userId) {
+                        record = this.getMediaCountDataWithIndex(record);
+                        buildfire.publicData.update(record.id, record.data, 'MediaCount', function (err, result) {
+                            if (err) return console.error(err);
+                            if (result && result.id) {
+                                callback();
+                            }
+                        });
+                    } else {
+                        callback();
+                    }
+
+                },
+
+                iterateMediaCountData: function (records, index) {
+                    if (index !== records.length) {
+                        this.processMediaCountsData(records[index], () => this.iterateMediaCountData(records, index + 1));
+                    } else {
+                        buildfire.datastore.get('MediaCenter', (err, result) => {
+                            result.data.indexingUpdateDoneV2 = true;
+                            buildfire.datastore.save(result.data, 'MediaCenter', (err, saved) => {
+                                buildfire.dialog.alert(
+                                    {
+                                        title: 'MCM Update',
+                                        message: "Database has been successfully updated. Thank you for your patience!",
+                                    }, (err, isConfirmed) => {
+                                        if (err) return console.error(err);
+                                        if (isConfirmed) {
+
+                                        }
+                                    }
+                                );
+                            });
+                        });
+                    }
+                },
+                startMediaCountDataIndexingUpdate: function () {
+                    let searchOptions = {
+                        limit: 50,
+                        skip: 0,
+
+                    }, records = [];
+
+                    const getMediaCountData = () => {
+                        buildfire.publicData.search(searchOptions, "MediaCount", (err, result) => {
+                            if (err) console.error(err);
+                            if (result.length < searchOptions.limit) {
+                                records = records.concat(result);
+                                console.log(records)
+                                this.iterateMediaCountData(records, 0);
+                            } else {
+                                searchOptions.skip = searchOptions.skip + searchOptions.limit;
+                                records = records.concat(result);
+                                return getMediaCountData();
+                            }
+                        })
+                    }
+
+                    getMediaCountData();
+                },
+                showIndexingDialog: function () {
+                    buildfire.dialog.confirm(
+                        {
+                            title: 'MCM Update',
+                            message: "We are improving your database perfomance, please do not close your browser or leave the plugin until you see success dialog. This may take a while...",
+                            confirmButton: { text: "Yes", type: "success" },
+                        }, (err, isConfirmed) => {
+                            if (err) return console.error(err);
+                            if (isConfirmed) return this.startMediaCountDataIndexingUpdate();
+                        }
+                    );
+                }
             }
-          } 
-        
+
         }])
-        .factory("nanoid", [function() {
+        .factory("nanoid", [function () {
             return (t = 21) =>
                 crypto
-                  .getRandomValues(new Uint8Array(t))
-                  .reduce(
-                    (t, e) =>
-                      (t +=
-                        (e &= 63) < 36
-                          ? e.toString(36)
-                          : e < 62
-                          ? (e - 26).toString(36).toUpperCase()
-                          : e > 62
-                          ? '-'
-                          : '_'),
-                    ''
-                  )
+                    .getRandomValues(new Uint8Array(t))
+                    .reduce(
+                        (t, e) =>
+                        (t +=
+                            (e &= 63) < 36
+                                ? e.toString(36)
+                                : e < 62
+                                    ? (e - 26).toString(36).toUpperCase()
+                                    : e > 62
+                                        ? '-'
+                                        : '_'),
+                        ''
+                    )
         }])
 
 
