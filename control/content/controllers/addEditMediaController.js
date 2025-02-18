@@ -344,7 +344,7 @@
 
             const promises = [registerAnalytics(ContentMedia.item, createNewDeeplink(ContentMedia.item))];
             if (ContentMedia.item.data.searchEngineId) {
-              promises.push(SearchEngineService.update(ContentMedia.item.data.searchEngineId, ContentMedia.item.data));
+              promises.push(SearchEngineService.update(ContentMedia.item.data.searchEngineId, {...ContentMedia.item.data, id: ContentMedia.item.id}));
             } else {
               promises.push(SearchEngineService.insert({ ...ContentMedia.item.data, id: ContentMedia.item.id }));
             }
