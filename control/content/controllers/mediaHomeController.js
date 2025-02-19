@@ -473,8 +473,8 @@
 					audioTitle: 'Audio Title',
 					audioUrl: 'Audio URL',
 					videoUrl: 'Video URL',
-					image: 'Media Image',
-					backgroundImage: 'Media Background',
+					image: 'Audio Image',
+					backgroundImage: 'Audio Background',
 				};
 				const headerRow = ['topImage', 'title', 'artists', 'summary', 'bodyHTML', 'srcUrl', 'audioTitle', 'audioUrl', 'videoUrl', 'image', 'backgroundImage'];
 				/**
