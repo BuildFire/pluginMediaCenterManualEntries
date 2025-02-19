@@ -18,8 +18,7 @@
                     <a class="border-grey border-radius-three default-background-hover"
                         style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;"
                         ng-click="ContentCategory.addIcon()">
-                        <span ng-if="!ContentCategory.item.data.icon" class="add-icon"
-                            style="height: 82px; margin: -8px;">+</span>
+                        <span ng-if="!ContentCategory.item.data.icon" class="add-icon">+</span>
                         <img class="categoryScreenIcon" load-image="1x1" aspect="1:1" size="xxs" crop-type="crop"
                             ng-if="ContentCategory.item.data.icon && !ContentCategory.isIcon()"
                             data-final-src="{{ContentCategory.item.data.icon }}">

@@ -21,7 +21,7 @@
                     <div class="category-container" ng-repeat="category in ContentMedia.allCategories">
                         <div class="top-row">
                             <div class="screen logoicon pull-left">
-                                <div class="border-grey border-radius-three default-background-hover"
+                                <div class="border-grey border-radius-four default-background-hover"
                                     style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
                                     <img ng-if="category.data.icon && !ContentMedia.isIcon(category.data.icon)"
                                         ng-src="{{category.data.icon | resizeImage : 40:40 }}">
@@ -88,7 +88,7 @@
         <div class="col-md-9 main ">
             <div class="screens clearfix margin-bottom-zero">
                 <div class="screen pull-left">
-                    <a class="border-grey border-radius-three default-background-hover"
+                    <a class="border-grey border-radius-four default-background-hover"
                         style="width: 122px; height: 69px; display: flex; align-items: center; justify-content: center;"
                         ng-click="ContentMedia.addListImage()">
                         <span ng-if="!ContentMedia.item.data.topImage" class="add-icon" style="height: 85%;">+</span>
@@ -204,7 +204,7 @@
         <div class="col-md-9 main ">
             <div class="screens clearfix margin-bottom-zero">
                 <div class="screen pull-left">
-                    <a class="border-grey border-radius-three default-background-hover"
+                    <a class="border-grey border-radius-four default-background-hover"
                         style="width: 122px; height: 122px; display: flex; align-items: center; justify-content: center;"
                         ng-click="ContentMedia.addAudioImage()">
                         <span ng-if="!ContentMedia.item.data.image" class="add-icon" style="height: 65%;">+</span>
@@ -231,7 +231,7 @@
         <div class="col-md-9 main ">
             <div class="screens clearfix margin-bottom-zero">
                 <div class="screen pull-left">
-                    <a class="border-grey border-radius-three default-background-hover"
+                    <a class="border-grey border-radius-four default-background-hover"
                         style="width: 122px; height: 264px; display: flex; align-items: center; justify-content: center;"
                         ng-click="ContentMedia.addAudioBackgroundImage()">
                         <span ng-if="!ContentMedia.item.data.backgroundImage" class="add-icon"
