@@ -265,6 +265,17 @@
                 });
                 return deferred.promise;
             };
+            DB.prototype.getManyByIds = function (ids, callback, records = []) {
+                if (!ids.length) return callback(records);
+                const batchSize = 20;
+                const batch = ids.splice(0, batchSize);
+
+                const promises = batch.map(_recordId => this.getById(_recordId));
+
+                Promise.all(promises).then((res) => {
+                    this.getManyByIds(ids, callback, [...records, ...res])
+                });
+            }
             DB.prototype.insert = function (items) {
                 var that = this;
                 var deferred = $q.defer();
