@@ -901,9 +901,11 @@
 						Location.go('#/media/' + event.message.id, true);
 					} else if (event.name === EVENTS.ITEMS_CHANGE) {
 						if (event.message.itemUpdatedData.id !== NowPlaying.currentTrack.id || !event.message.itemUpdatedData.data.audioUrl) {
+							$rootScope.currentEditingItem = event.message.itemUpdatedData;
 							Location.go('#/media/' + event.message.itemUpdatedData.id, true);
 						} else {
 							NowPlaying.currentTrack = {...NowPlaying.currentTrack, ...event.message.itemUpdatedData.data};
+							$rootScope.currentEditingItem = event.message.itemUpdatedData;
 							if (event.message.itemUpdatedData.data.title) {
 								NowPlaying.currentTrack.audioTitle = event.message.itemUpdatedData.data.title;
 							}
