@@ -588,19 +588,14 @@ button.btn-icon.btn-lg {
 }
 
 .now-playing-backgroundImage {
-    -o-filter: blur(10px) brightness(0.4);
-    -moz-filter: blur(10px) brightness(0.4);
-    -webkit-filter: blur(10px) brightness(0.4);
     filter: blur(10px) brightness(0.4);
     position: absolute;
-    -o-background-size: cover;
-    -moz-background-size: cover;
-    -webkit-background-size: cover;
     background-size: cover !important;
     height: 100%;
     width: 100%;
     top: 0;
     left: 0;
+    background-position: center;
 }
 
 .glyphicon-option-horizontal {

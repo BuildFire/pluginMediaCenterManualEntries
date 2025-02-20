@@ -11,7 +11,8 @@
             </div>
             <div infinite-scroll="ContentMedia.getMore()" infinite-scroll-distance="0"
                 data-infinite-container="#modalBody" infinite-scroll-disabled="ContentMedia.noMore">
-                <div class="empty-state dialog-empty-state" ng-if="!ContentMedia.allCategories || !ContentMedia.allCategories.length">
+                <div class="empty-state dialog-empty-state"
+                    ng-if="!ContentMedia.allCategories || !ContentMedia.allCategories.length">
                     <h5 ng-if="!ContentMedia.isBusy">You haven't added anything yet</h5>
                     <h5 ng-if="ContentMedia.isBusy">Loading...</h5>
                 </div>
@@ -20,7 +21,7 @@
                     <div class="category-container" ng-repeat="category in ContentMedia.allCategories">
                         <div class="top-row">
                             <div class="screen logoicon pull-left">
-                                <div class="border-grey border-radius-three default-background-hover"
+                                <div class="border-grey border-radius-four default-background-hover"
                                     style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
                                     <img ng-if="category.data.icon && !ContentMedia.isIcon(category.data.icon)"
                                         ng-src="{{category.data.icon | resizeImage : 40:40 }}">
@@ -29,7 +30,7 @@
                                         ng-class="category.data.icon">
                                     </div>
                                     <div ng-if="!category.data.icon" class="add-icon">
-                                        <img src="../../../../styles/media/holder-1x1.png" >
+                                        <img src="../../../../styles/media/holder-1x1.png">
                                     </div>
                                 </div>
 
@@ -77,17 +78,22 @@
     <h1>Item Content Details</h1>
 
     <div class="row flex thumbnail-image-selector">
-        <div class="col-md-3">
-            <span>Thumbnail Image</span>
-        </div>
+        <label class="tooltip-container col-md-3">Media Thumbnail
+            <span class="btn-info-icon btn-primary">
+                <span class="cp-tooltip">
+                    Upload a thumbnail image that will appear in the items list and item details.
+                </span>
+            </span>
+        </label>
         <div class="col-md-9 main ">
             <div class="screens clearfix margin-bottom-zero">
                 <div class="screen pull-left">
-                    <a class="border-grey border-radius-three default-background-hover"
-                        style="width: 122px; height: 90px; display: flex; align-items: center; justify-content: center;"
+                    <a class="border-grey border-radius-four default-background-hover"
+                        style="width: 122px; height: 69px; display: flex; align-items: center; justify-content: center;"
                         ng-click="ContentMedia.addListImage()">
                         <span ng-if="!ContentMedia.item.data.topImage" class="add-icon" style="height: 85%;">+</span>
-                        <img ng-if="ContentMedia.item.data.topImage" ng-src="{{ContentMedia.item.data.topImage | resizeImage : 122:90}}">
+                        <img ng-if="ContentMedia.item.data.topImage"
+                            ng-src="{{ContentMedia.item.data.topImage | cropImage : 122:69}}">
                     </a>
                     <span ng-if="ContentMedia.item.data.topImage"
                         class="icon btn-delete-icon btn-danger transition-third"
@@ -186,26 +192,59 @@
         </div>
     </div>
     <hr class="none">
-    
+
     <div class="row flex audio-image-selector">
-        <div class="col-md-3">
-            <span>Audio Image</span>
-        </div>
+        <label class="tooltip-container col-md-3">Audio Image
+            <span class="btn-info-icon btn-primary">
+                <span class="cp-tooltip">
+                    Upload a high-quality image that will be displayed in the audio player and playback bar..
+                </span>
+            </span>
+        </label>
         <div class="col-md-9 main ">
             <div class="screens clearfix margin-bottom-zero">
                 <div class="screen pull-left">
-                    <a class="border-grey border-radius-three default-background-hover"
+                    <a class="border-grey border-radius-four default-background-hover"
                         style="width: 122px; height: 122px; display: flex; align-items: center; justify-content: center;"
                         ng-click="ContentMedia.addAudioImage()">
                         <span ng-if="!ContentMedia.item.data.image" class="add-icon" style="height: 65%;">+</span>
-                        <img ng-if="ContentMedia.item.data.image" ng-src="{{ContentMedia.item.data.image | resizeImage : 122:90}}">
+                        <img ng-if="ContentMedia.item.data.image"
+                            ng-src="{{ContentMedia.item.data.image | cropImage : 122:122}}">
                     </a>
-                    <span ng-if="ContentMedia.item.data.image"
-                        class="icon btn-delete-icon btn-danger transition-third"
+                    <span ng-if="ContentMedia.item.data.image" class="icon btn-delete-icon btn-danger transition-third"
                         ng-click="ContentMedia.removeAudioImage()"></span>
                 </div>
             </div>
             <p class="caption text-small">Recommended: 1024x1024</p>
+        </div>
+    </div>
+
+    <hr class="none">
+    <div class="row flex audio-image-selector">
+        <label class="tooltip-container col-md-3">Media Background
+            <span class="btn-info-icon btn-primary">
+                <span class="cp-tooltip">
+                    Upload a background image that will be displayed as a blurred background in the audio player.
+                </span>
+            </span>
+        </label>
+        <div class="col-md-9 main ">
+            <div class="screens clearfix margin-bottom-zero">
+                <div class="screen pull-left">
+                    <a class="border-grey border-radius-four default-background-hover"
+                        style="width: 122px; height: 264px; display: flex; align-items: center; justify-content: center;"
+                        ng-click="ContentMedia.addAudioBackgroundImage()">
+                        <span ng-if="!ContentMedia.item.data.backgroundImage" class="add-icon"
+                            style="height: 65%;">+</span>
+                        <img ng-if="ContentMedia.item.data.backgroundImage"
+                            ng-src="{{ContentMedia.item.data.backgroundImage | cropImage : 122:264}}">
+                    </a>
+                    <span ng-if="ContentMedia.item.data.backgroundImage"
+                        class="icon btn-delete-icon btn-danger transition-third"
+                        ng-click="ContentMedia.removeAudioBackgroundImage()"></span>
+                </div>
+            </div>
+            <p class="caption text-small">Recommended: 780x1688</p>
         </div>
     </div>
 
@@ -270,7 +309,8 @@
                                 <span ng-if="!$last">, </span></span>
                     </div>
                 </div>
-                <div class="empty-state small-empty-state" ng-if="!ContentMedia.assignedCategories || ContentMedia.assignedCategories.length == 0">
+                <div class="empty-state small-empty-state"
+                    ng-if="!ContentMedia.assignedCategories || ContentMedia.assignedCategories.length == 0">
                     <h5>No Categories Selected.</h5>
                 </div>
             </div>

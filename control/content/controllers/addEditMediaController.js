@@ -176,28 +176,19 @@
 
         function fetchAssignedCategories() {
           if (ContentMedia.item && ContentMedia.item.data && ContentMedia.item.data.categories && ContentMedia.item.data.categories.length) {
-            var opts =
-            {
-              filter: {
-                "$json.id": { $in: ContentMedia.item.data.categories }
-              },
-              skip: 0,
-              limit: 50,
-            }
 
             ContentMedia.isBusy = true;
             var shouldUpdate = false; //to check if any categories are deleted
-            CategoryContent.find(opts).then(function success(result) {
+            CategoryContent.getManyByIds([...ContentMedia.item.data.categories], (result) => {
               if (!result || result.length == 0) {
                 if (ContentMedia.item.data.categories && ContentMedia.item.data.categories.length || ContentMedia.item.data.subcategories && ContentMedia.item.data.subcategories.length) {
                   ContentMedia.item.data.categories = [];
                   ContentMedia.item.data.subcategories = [];
                   update();
                 }
-              }
-              else if (result.length < opts.limit) {
+              } else {
                 // In case a category or subcategory is deleted
-                let resIds = result.map(function (item) { return item.id; });
+                let resIds = result.map((item) => item.id);
                 var resultSubcatIds = [];
 
                 result.forEach(cat => {
@@ -229,10 +220,7 @@
               ContentMedia.assignedCategories = result;
               if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
               ContentMedia.isBusy = false;
-            }, function fail() {
-              ContentMedia.isBusy = false;
             });
-
           }
           else {
             if (ContentMedia.item.data.categories && ContentMedia.item.data.categories.length || ContentMedia.item.data.subcategories && ContentMedia.item.data.subcategories.length) {
@@ -248,7 +236,9 @@
               if (!$scope.$$phase && !$scope.$root.$$phase) $scope.$apply();
               Messaging.sendMessageToWidget({
                 name: EVENTS.ITEMS_CHANGE,
-                message: {}
+                message: {
+                    itemUpdatedData: ContentMedia.item
+                }
               });
               buildfire.dialog.toast({
                 message: "Item updated successfully",
@@ -344,7 +334,7 @@
 
             const promises = [registerAnalytics(ContentMedia.item, createNewDeeplink(ContentMedia.item))];
             if (ContentMedia.item.data.searchEngineId) {
-              promises.push(SearchEngineService.update(ContentMedia.item.data.searchEngineId, ContentMedia.item.data));
+              promises.push(SearchEngineService.update(ContentMedia.item.data.searchEngineId, {...ContentMedia.item.data, id: ContentMedia.item.id}));
             } else {
               promises.push(SearchEngineService.insert({ ...ContentMedia.item.data, id: ContentMedia.item.id }));
             }
@@ -640,6 +630,21 @@
         ContentMedia.removeAudioImage = function () {
           ContentMedia.item.data.image = "";
         };
+        ContentMedia.addAudioBackgroundImage = function () {
+          var options = { showIcons: false, multiSelection: false },
+            listImgCB = function (error, result) {
+              if (error) {
+                console.error('Error:', error);
+              } else {
+                ContentMedia.item.data.backgroundImage = result && result.selectedFiles && result.selectedFiles[0] || null;
+                if (!$scope.$$phase) $scope.$digest();
+              }
+            };
+          buildfire.imageLib.showDialog(options, listImgCB);
+        };
+        ContentMedia.removeAudioBackgroundImage = function () {
+          ContentMedia.item.data.backgroundImage = "";
+        };
 
         /**
          * callback function of top image icon selection click
@@ -920,7 +925,7 @@
         init();
 
         $scope.$watch(function () {
-					return ContentMedia.item;
-				}, ContentMedia.sendUpdatedDataToWidget, true);
+                    return ContentMedia.item;
+                }, ContentMedia.sendUpdatedDataToWidget, true);
       }]);
 })(window.angular, window.tinymce);

@@ -4,6 +4,7 @@
         .controller('WidgetHomeCtrl', ['$scope', '$timeout', '$window', 'DB', 'AppDB', 'OFSTORAGE', 'COLLECTIONS', '$rootScope', 'Buildfire', 'Messaging', 'EVENTS', 'PATHS', 'Location', 'Orders', '$location', 'openedMediaHandler', 'LocalStorageOpenedItemsHandler', 'DropboxLinksManager',
             function ($scope, $timeout, $window, DB, AppDB, OFSTORAGE, COLLECTIONS, $rootScope, Buildfire, Messaging, EVENTS, PATHS, Location, Orders, $location, openedMediaHandler, LocalStorageOpenedItemsHandler, DropboxLinksManager) {
                 $rootScope.loadingGlobalPlaylist = true;
+                $rootScope.currentEditingItem = null;
                 $rootScope.showFeed = true;
                 $rootScope.currentlyDownloading = [];
                 var WidgetHome = this;

@@ -681,6 +681,7 @@
                         Location.go('#/media/' + event.message.id, true);
                     } else if (event.name === EVENTS.ITEMS_CHANGE) {
                         WidgetMedia.item = event.message.itemUpdatedData;
+                        $rootScope.currentEditingItem = event.message.itemUpdatedData;
                         WidgetMedia.changeVideoSrc();
                         if (VideoJSController.currentSource !== DropboxLinksManager.convertDropbox(WidgetMedia.item.data.videoUrl)) {
                             WidgetMedia.initVideoPlayer();

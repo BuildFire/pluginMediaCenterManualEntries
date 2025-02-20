@@ -464,7 +464,7 @@
 
 				// CSV Handlers
 				const header = {
-					topImage: 'Thumbnail Image',
+					topImage: 'Media Thumbnail',
 					title: 'Title',
 					artists: 'Album Artists',
 					summary: 'Summary',
@@ -473,9 +473,10 @@
 					audioTitle: 'Audio Title',
 					audioUrl: 'Audio URL',
 					videoUrl: 'Video URL',
-					image: 'Thumbnail Image URL'
+					image: 'Audio Image',
+					backgroundImage: 'Audio Background',
 				};
-				const headerRow = ['topImage', 'title', 'artists', 'summary', 'bodyHTML', 'srcUrl', 'audioTitle', 'audioUrl', 'videoUrl', 'image'];
+				const headerRow = ['topImage', 'title', 'artists', 'summary', 'bodyHTML', 'srcUrl', 'audioTitle', 'audioUrl', 'videoUrl', 'image', 'backgroundImage'];
 				/**
 				 * $scope.getTemplate() used to download csv template
 				 */
@@ -488,7 +489,8 @@
 						srcUrl: '',
 						audioUrl: '',
 						videoUrl: '',
-						image: ''
+						image: '',
+						backgroundImage: ''
 					}];
 					const csv = $csv.jsonToCsv(angular.toJson(templateData), { header });
 					$csv.download(csv, 'Template.csv');

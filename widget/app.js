@@ -39,7 +39,7 @@
                     controllerAs: 'WidgetMedia',
                     controller: 'WidgetMediaCtrl',
                     resolve: {
-                        media: ['$q', '$window', 'DB', 'OFSTORAGE', 'COLLECTIONS', 'Location', '$route', function ($q, $window, DB, OFSTORAGE, COLLECTIONS, Location, $route) {
+                        media: ['$rootScope', '$q', '$window', 'DB', 'OFSTORAGE', 'COLLECTIONS', 'Location', '$route', function ($rootScope, $q, $window, DB, OFSTORAGE, COLLECTIONS, Location, $route) {
                             var isOnline = $window.navigator.onLine;
                             var isWeb = buildfire.getContext().device.platform === 'web'
                             var deferred = $q.defer();
@@ -54,7 +54,9 @@
                                 fileName: "downloadedMedia"
                             });
                             if (mediaId) {
-                                if (mediaId === 'mockId') {
+                                if ($rootScope.currentEditingItem && $rootScope.currentEditingItem.id == $route.current.params.mediaId) {
+                                    deferred.resolve({...$rootScope.currentEditingItem});
+                                } else if (mediaId === 'mockId') {
                                     deferred.resolve({id: 'mockId', data: {
                                         audioUrl: "",
                                         body: "",
@@ -206,7 +208,7 @@
                     controllerAs: 'NowPlaying',
                     controller: 'NowPlayingCtrl',
                     resolve: {
-                        media: ['$q', '$window', 'DB', 'OFSTORAGE', 'COLLECTIONS', 'Location', '$route', function ($q, $window, DB, OFSTORAGE, COLLECTIONS, Location, $route) {
+                        media: ['$rootScope', '$q', '$window', 'DB', 'OFSTORAGE', 'COLLECTIONS', 'Location', '$route', function ($rootScope, $q, $window, DB, OFSTORAGE, COLLECTIONS, Location, $route) {
                             var deferred = $q.defer();
                             var MediaContent = new DB(COLLECTIONS.MediaContent);
                             var isOnline = $window.navigator.onLine;
@@ -222,18 +224,22 @@
 
                             if (isOnline) {
                                 if ($route.current.params.mediaId) {
-                                    MediaContent.getById($route.current.params.mediaId).then(function success(result) {
-                                        if (result && result.data) {
-                                            deferred.resolve(result);
-                                        }
-                                        else {
-                                            Location.goToHome();
-                                        }
-                                    },
-                                        function fail() {
-                                            Location.goToHome();
-                                        }
-                                    );
+                                    if ($rootScope.currentEditingItem && $rootScope.currentEditingItem.id == $route.current.params.mediaId) {
+                                        deferred.resolve({...$rootScope.currentEditingItem});
+                                    } else {
+                                        MediaContent.getById($route.current.params.mediaId).then(function success(result) {
+                                            if (result && result.data) {
+                                                deferred.resolve(result);
+                                            }
+                                            else {
+                                                Location.goToHome();
+                                            }
+                                        },
+                                            function fail() {
+                                                Location.goToHome();
+                                            }
+                                        );
+                                    }
                                 }
                                 else {
                                     Location.goToHome();
