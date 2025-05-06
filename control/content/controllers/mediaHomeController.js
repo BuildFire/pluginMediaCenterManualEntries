@@ -516,48 +516,55 @@
 
 							if (!$rootScope.loading)
 								return;
-
-							// var rank = ContentHome.info.data.content.rankOfLastItem || 0;
-							let rank = 0;
-							for (var index = 0; index < rows.length; index++) {
-								rank += 10;
-								rows[index].dateCreated = new Date().getTime();
-								rows[index].links = [];
-								rows[index].rank = rank;
-								rows[index].body = rows[index].bodyHTML;
-								rows[index].titleIndex = rows[index].title ? rows[index].titleIndex = rows[index].title.toLowerCase() : '';
-								//MEDIA DATE INDEX
-								var setMediaDateIndex = new Date().getTime();
-								if (rows[index].mediaDateIndex) {
-									setMediaDateIndex = rows[index].mediaDateIndex;
-								} else if (rows[index].mediaDate) {
-									setMediaDateIndex = new Date(rows[index].mediaDate).getTime();
-								} else if (rows[index].dateCreated) {
-									setMediaDateIndex = new Date(rows[index].dateCreated).getTime();
+							MediaContent.find({sort:{rank: -1}, limit:1, skip: 0}).then(function (res) {
+								const result = res.result;
+								// var rank = ContentHome.info.data.content.rankOfLastItem || 0;
+								let rank = 0;
+								console.log(result,'RESULT RANK')
+								if (result && result.length) {
+									rank = result[0].rank;
 								}
-								rows[index].mediaDateIndex = setMediaDateIndex;
-								rows[index]._buildfire = {
-									index: {
-										date1: new Date(),
+								for (var index = 0; index < rows.length; index++) {
+									rank += 10;
+									rows[index].dateCreated = new Date().getTime();
+									rows[index].links = [];
+									rows[index].rank = rank;
+									rows[index].body = rows[index].bodyHTML;
+									rows[index].titleIndex = rows[index].title ? rows[index].titleIndex = rows[index].title.toLowerCase() : '';
+									//MEDIA DATE INDEX
+									var setMediaDateIndex = new Date().getTime();
+									if (rows[index].mediaDateIndex) {
+										setMediaDateIndex = rows[index].mediaDateIndex;
+									} else if (rows[index].mediaDate) {
+										setMediaDateIndex = new Date(rows[index].mediaDate).getTime();
+									} else if (rows[index].dateCreated) {
+										setMediaDateIndex = new Date(rows[index].dateCreated).getTime();
 									}
-								};
-							}
-							if (validateCsv(rows)) {
-								MediaContent.insert(rows).then(function (data) {
+									rows[index].mediaDateIndex = setMediaDateIndex;
+									rows[index]._buildfire = {
+										index: {
+											date1: new Date(),
+										}
+									};
+								}
+								if (validateCsv(rows)) {
+									MediaContent.insert(rows).then(function (data) {
+										$rootScope.loading = false;
+										$scope.isBusy = false;
+										$scope.items = [];
+										$scope.searchListItem();
+										$scope.setDeeplinks();
+									}, function errorHandler(error) {
+										console.error(error);
+										$rootScope.loading = false;
+										$scope.$apply();
+									});
+								} else {
 									$rootScope.loading = false;
-									$scope.isBusy = false;
-									$scope.items = [];
-									$scope.searchListItem();
-									$scope.setDeeplinks();
-								}, function errorHandler(error) {
-									console.error(error);
-									$rootScope.loading = false;
-									$scope.$apply();
-								});
-							} else {
-								$rootScope.loading = false;
-								$csv.showInvalidCSV();
-							}
+									$csv.showInvalidCSV();
+								}
+							})
+
 						} else {
 							$rootScope.loading = false;
 							$csv.showInvalidCSV();
