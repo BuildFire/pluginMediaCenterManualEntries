@@ -74,6 +74,8 @@ class Deeplink {
       if (err) {
         console.error(err, '<<< ERROR WHILE DELETING DEEP LINK.');
 		if (err === 'no result found for this deeplink id'){
+		  // Some items may not have a deeplink ID, which can result in this specific error.
+		  // In such cases, we can safely ignore the error and proceed without it.
 		  return callback(null)
 		}
         return callback(err);
