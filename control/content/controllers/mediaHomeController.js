@@ -444,7 +444,7 @@
 
 					const searchOptions = {
 						filter: { '$json._buildfire.index.date1': { $gte: date } },
-						limit: 50, skip: 0, recordCount: true
+						limit: 50, skip: 0, recordCount: true, sort:{rank: -1}
 					};
 					getRecords(searchOptions, [], function (records) {
 						$scope.registerAnalyticsEvent(records);
