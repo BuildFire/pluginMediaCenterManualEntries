@@ -520,7 +520,6 @@
 								const result = res.result;
 								// var rank = ContentHome.info.data.content.rankOfLastItem || 0;
 								let rank = 0;
-								console.log(result,'RESULT RANK')
 								if (result && result.length) {
 									rank = result[0].rank;
 								}
