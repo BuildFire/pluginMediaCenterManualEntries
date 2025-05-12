@@ -246,20 +246,27 @@
 						(err, isConfirmed) => {
 							if (isConfirmed) {
 								$scope.isBusy = true;
-								Deeplink.deleteById(item.id, (err, res) => {
-									if (err) {
+								SearchEngineService.delete(item.id, (err, result)=>{
+									if (err){
 										$scope.isBusy = false;
 										return console.error(err);
 									}
+									Deeplink.deleteById(item.id, (err, res) => {
+										if (err) {
+											$scope.isBusy = false;
+											return console.error(err);
+										}
 
-									MediaContent.delete(item.id).then(() => {
-										$scope.isBusy = false;
-										$scope.items = $scope.items.filter((_item) => _item.id !== item.id);
-										$scope.buildList();
-									}).catch((err) => {
-										$scope.isBusy = false;
-										return console.error(err);
+										MediaContent.delete(item.id).then(() => {
+											$scope.isBusy = false;
+											$scope.items = $scope.items.filter((_item) => _item.id !== item.id);
+											$scope.buildList();
+										}).catch((err) => {
+											$scope.isBusy = false;
+											return console.error(err);
+										});
 									});
+
 								});
 							}
 						}
