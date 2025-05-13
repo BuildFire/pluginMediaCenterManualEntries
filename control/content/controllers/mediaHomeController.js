@@ -246,20 +246,27 @@
 						(err, isConfirmed) => {
 							if (isConfirmed) {
 								$scope.isBusy = true;
-								Deeplink.deleteById(item.id, (err, res) => {
-									if (err) {
+								SearchEngineService.delete(item.id, (err, result)=>{
+									if (err){
 										$scope.isBusy = false;
 										return console.error(err);
 									}
+									Deeplink.deleteById(item.id, (err, res) => {
+										if (err) {
+											$scope.isBusy = false;
+											return console.error(err);
+										}
 
-									MediaContent.delete(item.id).then(() => {
-										$scope.isBusy = false;
-										$scope.items = $scope.items.filter((_item) => _item.id !== item.id);
-										$scope.buildList();
-									}).catch((err) => {
-										$scope.isBusy = false;
-										return console.error(err);
+										MediaContent.delete(item.id).then(() => {
+											$scope.isBusy = false;
+											$scope.items = $scope.items.filter((_item) => _item.id !== item.id);
+											$scope.buildList();
+										}).catch((err) => {
+											$scope.isBusy = false;
+											return console.error(err);
+										});
 									});
+
 								});
 							}
 						}
@@ -444,7 +451,7 @@
 
 					const searchOptions = {
 						filter: { '$json._buildfire.index.date1': { $gte: date } },
-						limit: 50, skip: 0, recordCount: true
+						limit: 50, skip: 0, recordCount: true, sort:{dateCreated: 1, rank: -1}
 					};
 					getRecords(searchOptions, [], function (records) {
 						$scope.registerAnalyticsEvent(records);
@@ -516,48 +523,54 @@
 
 							if (!$rootScope.loading)
 								return;
-
-							// var rank = ContentHome.info.data.content.rankOfLastItem || 0;
-							let rank = 0;
-							for (var index = 0; index < rows.length; index++) {
-								rank += 10;
-								rows[index].dateCreated = new Date().getTime();
-								rows[index].links = [];
-								rows[index].rank = rank;
-								rows[index].body = rows[index].bodyHTML;
-								rows[index].titleIndex = rows[index].title ? rows[index].titleIndex = rows[index].title.toLowerCase() : '';
-								//MEDIA DATE INDEX
-								var setMediaDateIndex = new Date().getTime();
-								if (rows[index].mediaDateIndex) {
-									setMediaDateIndex = rows[index].mediaDateIndex;
-								} else if (rows[index].mediaDate) {
-									setMediaDateIndex = new Date(rows[index].mediaDate).getTime();
-								} else if (rows[index].dateCreated) {
-									setMediaDateIndex = new Date(rows[index].dateCreated).getTime();
+							MediaContent.find({sort:{rank: -1}, limit:1, skip: 0}).then(function (res) {
+								const result = res.result;
+								// var rank = ContentHome.info.data.content.rankOfLastItem || 0;
+								let rank = 0;
+								if (result && result.length) {
+									rank = result[0].rank;
 								}
-								rows[index].mediaDateIndex = setMediaDateIndex;
-								rows[index]._buildfire = {
-									index: {
-										date1: new Date(),
+								for (var index = 0; index < rows.length; index++) {
+									rank += 10;
+									rows[index].dateCreated = new Date().getTime();
+									rows[index].links = [];
+									rows[index].rank = rank;
+									rows[index].body = rows[index].bodyHTML;
+									rows[index].titleIndex = rows[index].title ? rows[index].titleIndex = rows[index].title.toLowerCase() : '';
+									//MEDIA DATE INDEX
+									var setMediaDateIndex = new Date().getTime();
+									if (rows[index].mediaDateIndex) {
+										setMediaDateIndex = rows[index].mediaDateIndex;
+									} else if (rows[index].mediaDate) {
+										setMediaDateIndex = new Date(rows[index].mediaDate).getTime();
+									} else if (rows[index].dateCreated) {
+										setMediaDateIndex = new Date(rows[index].dateCreated).getTime();
 									}
-								};
-							}
-							if (validateCsv(rows)) {
-								MediaContent.insert(rows).then(function (data) {
+									rows[index].mediaDateIndex = setMediaDateIndex;
+									rows[index]._buildfire = {
+										index: {
+											date1: new Date(),
+										}
+									};
+								}
+								if (validateCsv(rows)) {
+									MediaContent.insert(rows).then(function (data) {
+										$rootScope.loading = false;
+										$scope.isBusy = false;
+										$scope.items = [];
+										$scope.searchListItem();
+										$scope.setDeeplinks();
+									}, function errorHandler(error) {
+										console.error(error);
+										$rootScope.loading = false;
+										$scope.$apply();
+									});
+								} else {
 									$rootScope.loading = false;
-									$scope.isBusy = false;
-									$scope.items = [];
-									$scope.searchListItem();
-									$scope.setDeeplinks();
-								}, function errorHandler(error) {
-									console.error(error);
-									$rootScope.loading = false;
-									$scope.$apply();
-								});
-							} else {
-								$rootScope.loading = false;
-								$csv.showInvalidCSV();
-							}
+									$csv.showInvalidCSV();
+								}
+							})
+
 						} else {
 							$rootScope.loading = false;
 							$csv.showInvalidCSV();

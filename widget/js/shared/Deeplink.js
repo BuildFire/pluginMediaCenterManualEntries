@@ -17,7 +17,6 @@ class Deeplink {
       deeplinkData: this.deeplinkData,
       imageUrl: this.imageUrl
     };
-
     buildfire.deeplink.registerDeeplink(options, (err, result) => {
 
       if (err || !result) {
@@ -25,7 +24,7 @@ class Deeplink {
         return callback(err);
       }
 
-      callback(null, { 
+      callback(null, {
         deeplinkId: result && result.data && result.data.deeplinkId ? result.data.deeplinkId : null,
         deeplinkData: new Deeplink(result && result.data ? result.data : null)
       });
@@ -74,11 +73,16 @@ class Deeplink {
 
       if (err) {
         console.error(err, '<<< ERROR WHILE DELETING DEEP LINK.');
+        if (err === 'no result found for this deeplink id'){
+          // Some items may not have a deeplink ID, which can result in this specific error.
+          // In such cases, we can safely ignore the error and proceed without it.
+          return callback(null)
+        }
         return callback(err);
       }
 
       callback(null);
-      
+
     });
 
   }
