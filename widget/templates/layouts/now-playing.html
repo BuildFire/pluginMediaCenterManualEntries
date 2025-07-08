@@ -8,12 +8,12 @@
                 <img ng-if="(NowPlaying.currentTrack.image || NowPlaying.currentTrack.topImage) && NowPlaying.isOnline"
                     ng-src="{{(NowPlaying.currentTrack.image ? NowPlaying.currentTrack.image : NowPlaying.currentTrack.topImage) | resizeImage : 400:400 }}" alt="{{NowPlaying.currentTrack.title}} top image">
                 <img ng-if="(NowPlaying.currentTrack.image || NowPlaying.currentTrack.topImage) && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.image ? NowPlaying.currentTrack.image : NowPlaying.currentTrack.topImage}}" alt="{{NowPlaying.currentTrack.title}} top image">
-                <img ng-if="!NowPlaying.currentTrack.topImage && !NowPlaying.currentTrack.image" src="./assets/images/now-playing.png" alt="top image">
+                <img ng-if="!NowPlaying.currentTrack.topImage && !NowPlaying.currentTrack.image" src="./assets/images/now-playing.png" alt="top image" aria-hidden="true">
             </div>
         </div>
         <div class="media-player-info ellipsis">
             <span class="glyphicon glyphicon-share-alt whiteTheme btn btn-icon" ng-style="{'visibility': allowShare ? 'visible' : 'hidden'}" ng-click="NowPlaying.share($event)"
-                role="button"></span>
+                role="button" tabindex="0" aria-label="Share {{NowPlaying.currentTrack.title}} button"></span>
             <div class="media-title ellipsis">
                 <h4 class="margin-zero ellipsis whiteTheme">{{NowPlaying.currentTrack.title}}</h4>
                 <p class="margin-zero whiteTheme ellipsis">
@@ -21,7 +21,7 @@
             </div>
             <span class="glyphicon whiteTheme btn btn-icon"
                 ng-class="{ 'glyphicon-star-empty' : !NowPlaying.item.data.bookmarked, 'glyphicon-star' : NowPlaying.item.data.bookmarked }"
-                ng-click="NowPlaying.bookmark($event)" role="button"></span>
+                ng-click="NowPlaying.bookmark($event)" role="button" tabindex="0" aria-label="{{NowPlaying.item.data.bookmarked ? 'Un-bookmark' : 'Bookmark'}} {{NowPlaying.currentTrack.title}} button"></span>
         </div>
         <div class="slider">
             <div>
@@ -30,82 +30,91 @@
                         ng-model="NowPlaying.currentTime" ng-change="NowPlaying.changeTime(NowPlaying.currentTime)" />
                     </div>
                     <div ng-if="NowPlaying.currentTime!=0" class="time-indicator" style="float:left">
-                        <span>{{NowPlaying.currentTime | secondsToDateTime}}</span>
+                        <span role="text" aria-label="Current time {{NowPlaying.currentTime | secondsToDateTime}}">{{NowPlaying.currentTime | secondsToDateTime}}</span>
                     </div>
-                    <div ng-if="NowPlaying.currentTime==0" class="time-indicator" style="float: left;">
+                    <div ng-if="NowPlaying.currentTime==0" class="time-indicator" style="float: left;" aria-hidden="true">
                         <span>{{"--:--"}}</span>
                     </div>
                     <div ng-if="NowPlaying.duration" class="time-indicator" style="float: right;">
-                        <span>{{(NowPlaying.duration | secondsToDateTime)}}</span>
+                        <span role="text" aria-label="Item total time {{NowPlaying.duration | secondsToDateTime}}">{{(NowPlaying.duration | secondsToDateTime)}}</span>
                     </div>
-                    <div ng-if="!NowPlaying.duration" class="time-indicator" style="float: right;">
+                    <div ng-if="!NowPlaying.duration" class="time-indicator" style="float: right;" aria-hidden="true">
                         <span>{{"--:--"}}</span>
                     </div>
                 </div>
 
             </div>
         </div>
-        <div class="media-player-btns">
-            <span class="icon" ng-class="(((NowPlaying.currentTrack.isAudioFromPluginList && !autoPlay) || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist)) || !NowPlaying.isAudioInitialized) && 'disabled'" ng-click="NowPlaying.shufflePlaylist()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <g opacity="0.9" clip-path="url(#clip0_1431_2874)">
-                        <path d="M10.59 9.17L5.41 4L4 5.41L9.17 10.58L10.59 9.17ZM14.5 4L16.54 6.04L4 18.59L5.41 20L17.96 7.46L20 9.5V4H14.5ZM14.83 13.41L13.42 14.82L16.55 17.95L14.5 20H20V14.5L17.96 16.54L14.83 13.41Z"
-                        ng-class="((NowPlaying.currentTrack.isAudioFromPluginList && NowPlaying.settings.shufflePluginList) || (!NowPlaying.currentTrack.isAudioFromPluginList && NowPlaying.settings.shufflePlaylist && !globalPlaylist)) ? 'active' : 'not-active'"/>
-                    </g>
-                    <defs>
-                        <clipPath id="clip0_1431_2874">
-                            <rect width="24" height="24" fill="white"/>
-                        </clipPath>
-                    </defs>
-                </svg>
-                <span class="shuffle-indicator" ng-if="((NowPlaying.currentTrack.isAudioFromPluginList && NowPlaying.settings.shufflePluginList) || (!NowPlaying.currentTrack.isAudioFromPluginList && NowPlaying.settings.shufflePlaylist && !globalPlaylist))">
-                    <span class="shuffle-indicator-text" ng-if="NowPlaying.currentTrack.isAudioFromPluginList">{{NowPlaying.shuffleAllItemsIndicator ? NowPlaying.shuffleAllItemsIndicator.slice(0,1) : 'A'}}</span>
-                    <span class="shuffle-indicator-text" ng-if="!NowPlaying.currentTrack.isAudioFromPluginList">{{NowPlaying.shufflePlaylistItemsIndicator ? NowPlaying.shufflePlaylistItemsIndicator.slice(0,1) : 'P'}}</span>
+        <div class="audio-actions-container">
+            <div class="media-player-action-btns">
+                <span class="playback-speed whiteTheme" ng-click="NowPlaying.openPlaybackDrawer()" role="button" tabindex="0" aria-label="Playback speed {{NowPlaying.settings.playbackSpeed || 1 | number:'1'}} x">{{NowPlaying.settings.playbackSpeed || 1 | number:'1'}}x</span>
+                <span  ng-style="{'visibility': allowAddingNotes !== false ? 'visible' : 'hidden'}"  class="glyphicon glyphicon-edit whiteTheme" ng-click="NowPlaying.addNote()" role="button" tabindex="0" aria-label="Add notes"></span>
+                <span ng-if="!globalPlaylist" class="btn btn-icon" ng-click="NowPlaying.showPlaylistPage()">
+                    <button class="playList-icon"  role="button" tabindex="0" aria-label="Playlist">P</button>
                 </span>
-            </span>
-
-            <div class="player-btns">
-                <span ng-if="!autoPlay" class="btn btn-icon" ng-click="NowPlaying.backward()"><img
-                        src="assets/css/icons/ic_fast_rewind.svg" alt=""></span>
-                <span ng-if="autoPlay" class="btn btn-icon" ng-click="NowPlaying.prev()"><i style="font-size: 18px; color: #D7D7D8;" class="glyphicon glyphicon-step-backward" role="button"></i></span>
-                <button class="btn btn-icon btn-lg btn-primary">
-                    <span ng-if="!NowPlaying.playing" class="icon icon-main whiteTheme play-pause-icon"
-                        ng-click="NowPlaying.playTrack()" ng-class="!NowPlaying.isAudioInitialized && 'disabled'">
-                        <img src="assets/css/icons/ic_play2.svg" alt="">
-                    </span>
-                    <span ng-if="NowPlaying.playing" class="icon icon-main whiteTheme play-pause-icon"
-                        ng-click="NowPlaying.pauseTrack()">
-                        <img src="assets/css/icons/ic_pause_2.svg" alt="">
-                    </span>
-                </button>
-                <span ng-if="!autoPlay" class="btn btn-icon" ng-click="NowPlaying.forward()"><img
-                        src="assets/css/icons/ic_fast_forward.svg" alt=""></span>
-                <span ng-if="autoPlay" class="btn btn-icon" ng-click="NowPlaying.next()"><i style="font-size: 18px; color: #D7D7D8;" class="glyphicon glyphicon-step-forward" role="button"></i></span>
+                <span ng-if="!globalPlaylist" class="glyphicon glyphicon-option-horizontal whiteTheme"
+                    ng-click="NowPlaying.openMoreInfoOverlay()" role="button" tabindex="0" aria-label="Media item options"></span>
+                <i ng-if="globalPlaylist" class="btn btn-icon glyphicon whiteTheme" style="font-size: 17px; opacity: .5;" ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(NowPlaying.item.id), 'glyphicon-minus' : isInGlobalPlaylist(NowPlaying.item.id) }" ng-click="toggleGlobalPlaylistItem(NowPlaying.item)"
+                    role="button" tabindex="0" aria-label="{{isInGlobalPlaylist(NowPlaying.item.id) ? 'Remove item from global playlist' : 'Add item to global playlist'}}"></i>
+                <span class="glyphicon glyphicon-cog whiteTheme" ng-click="NowPlaying.getSettings()" role="button" tabindex="0" aria-label="Audio player settings"></span>
             </div>
-            <span ng-class="((NowPlaying.currentTrack.isAudioFromPluginList || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist)) || !NowPlaying.isAudioInitialized) && 'disabled'" class="icon icon-sm" ng-click="NowPlaying.loopPlaylist()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <g opacity="0.9" clip-path="url(#clip0_1431_2881)">
-                        <path d="M7 7H17V10L21 6L17 2V5H5V11H7V7ZM17 17H7V14L3 18L7 22V19H19V13H17V17Z"
-                        ng-class="(!NowPlaying.currentTrack.isAudioFromPluginList && NowPlaying.settings && NowPlaying.settings.loopPlaylist && !globalPlaylist) ? 'active' : 'not-active'">
-                    </g>
-                    <defs>
-                        <clipPath id="clip0_1431_2881">
-                            <rect width="24" height="24" fill="white"/>
-                        </clipPath>
-                    </defs>
-                </svg>
-            </span>
-        </div>
-        <div class="media-player-action-btns">
-            <span class="playback-speed whiteTheme" ng-click="NowPlaying.openPlaybackDrawer()">{{NowPlaying.settings.playbackSpeed || 1 | number:'1'}}x</span>
-            <span  ng-style="{'visibility': allowAddingNotes !== false ? 'visible' : 'hidden'}"  class="glyphicon glyphicon-edit whiteTheme" ng-click="NowPlaying.addNote()"></span>
-            <span ng-if="!globalPlaylist" class="btn btn-icon" ng-click="NowPlaying.showPlaylistPage()">
-                <img class="playList-icon" src="assets/css/icons/ic_playlist.svg" alt="playlist">
-            </span>
-            <span ng-if="!globalPlaylist" class="glyphicon glyphicon-option-horizontal whiteTheme"
-                ng-click="NowPlaying.openMoreInfoOverlay()"></span>
-                <i ng-if="globalPlaylist" class="btn btn-icon glyphicon whiteTheme" style="font-size: 17px; opacity: .5;" ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(NowPlaying.item.id), 'glyphicon-minus' : isInGlobalPlaylist(NowPlaying.item.id) }" ng-click="toggleGlobalPlaylistItem(NowPlaying.item)" role="button"></i>
-            <span class="glyphicon glyphicon-cog whiteTheme" ng-click="NowPlaying.getSettings()"></span>
+            <div class="media-player-btns">
+                <span class="icon" ng-class="(((NowPlaying.currentTrack.isAudioFromPluginList && !autoPlay) || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist)) || !NowPlaying.isAudioInitialized) && 'disabled'" ng-click="NowPlaying.shufflePlaylist()" role="button" tabindex="0" aria-label="Shuffle items"
+                    aria-hidden="{{(((NowPlaying.currentTrack.isAudioFromPluginList && !autoPlay) || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist)) || !NowPlaying.isAudioInitialized) ? true : false}}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <g opacity="0.9" clip-path="url(#clip0_1431_2874)">
+                            <path d="M10.59 9.17L5.41 4L4 5.41L9.17 10.58L10.59 9.17ZM14.5 4L16.54 6.04L4 18.59L5.41 20L17.96 7.46L20 9.5V4H14.5ZM14.83 13.41L13.42 14.82L16.55 17.95L14.5 20H20V14.5L17.96 16.54L14.83 13.41Z"
+                            ng-class="((NowPlaying.currentTrack.isAudioFromPluginList && NowPlaying.settings.shufflePluginList) || (!NowPlaying.currentTrack.isAudioFromPluginList && NowPlaying.settings.shufflePlaylist && !globalPlaylist)) ? 'active' : 'not-active'"/>
+                        </g>
+                        <defs>
+                            <clipPath id="clip0_1431_2874">
+                                <rect width="24" height="24" fill="white"/>
+                            </clipPath>
+                        </defs>
+                    </svg>
+                    <span class="shuffle-indicator" ng-if="((NowPlaying.currentTrack.isAudioFromPluginList && NowPlaying.settings.shufflePluginList) || (!NowPlaying.currentTrack.isAudioFromPluginList && NowPlaying.settings.shufflePlaylist && !globalPlaylist))">
+                        <span class="shuffle-indicator-text" ng-if="NowPlaying.currentTrack.isAudioFromPluginList">{{NowPlaying.shuffleAllItemsIndicator ? NowPlaying.shuffleAllItemsIndicator.slice(0,1) : 'A'}}</span>
+                        <span class="shuffle-indicator-text" ng-if="!NowPlaying.currentTrack.isAudioFromPluginList">{{NowPlaying.shufflePlaylistItemsIndicator ? NowPlaying.shufflePlaylistItemsIndicator.slice(0,1) : 'P'}}</span>
+                    </span>
+                </span>
+
+                <div class="player-btns">
+                    <span ng-if="!autoPlay" class="btn btn-icon" ng-click="NowPlaying.backward()"><img
+                            src="assets/css/icons/ic_fast_rewind.svg" alt="Backward 5 seconds"></span>
+                    <span ng-if="autoPlay" class="btn btn-icon" ng-click="NowPlaying.prev()" role="button" tabindex="0" aria-label="Previous item">
+                        <i style="font-size: 18px; color: #D7D7D8;" class="glyphicon glyphicon-step-backward"></i>
+                    </span>
+                    <button class="btn btn-icon btn-lg btn-primary" role="button" tabindex="0" aria-label="{{NowPlaying.playing ? 'Pause track' : 'Play track'}}">
+                        <span ng-if="!NowPlaying.playing" class="icon icon-main whiteTheme play-pause-icon" aria-hidden="{{!NowPlaying.isAudioInitialized ? true : false}}"
+                            ng-click="NowPlaying.playTrack()" ng-class="!NowPlaying.isAudioInitialized && 'disabled'">
+                            <img src="assets/css/icons/ic_play2.svg" alt="">
+                        </span>
+                        <span ng-if="NowPlaying.playing" class="icon icon-main whiteTheme play-pause-icon"
+                            ng-click="NowPlaying.pauseTrack()">
+                            <img src="assets/css/icons/ic_pause_2.svg" alt="">
+                        </span>
+                    </button>
+                    <span ng-if="!autoPlay" class="btn btn-icon" ng-click="NowPlaying.forward()"><img
+                            src="assets/css/icons/ic_fast_forward.svg" alt="Forward 5 seconds"></span>
+                    <span ng-if="autoPlay" class="btn btn-icon" ng-click="NowPlaying.next()" role="button" tabindex="0" aria-label="Next item">
+                        <i style="font-size: 18px; color: #D7D7D8;" class="glyphicon glyphicon-step-forward"></i>
+                    </span>
+                </div>
+                <span ng-class="((NowPlaying.currentTrack.isAudioFromPluginList || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist)) || !NowPlaying.isAudioInitialized) && 'disabled'" class="icon icon-sm" ng-click="NowPlaying.loopPlaylist()" role="button" tabindex="0" aria-label="Loop items"
+                    aria-hidden="{{((NowPlaying.currentTrack.isAudioFromPluginList || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist)) || !NowPlaying.isAudioInitialized) ? true : false}}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <g opacity="0.9" clip-path="url(#clip0_1431_2881)">
+                            <path d="M7 7H17V10L21 6L17 2V5H5V11H7V7ZM17 17H7V14L3 18L7 22V19H19V13H17V17Z"
+                            ng-class="(!NowPlaying.currentTrack.isAudioFromPluginList && NowPlaying.settings && NowPlaying.settings.loopPlaylist && !globalPlaylist) ? 'active' : 'not-active'">
+                        </g>
+                        <defs>
+                            <clipPath id="clip0_1431_2881">
+                                <rect width="24" height="24" fill="white"/>
+                            </clipPath>
+                        </defs>
+                    </svg>
+                </span>
+            </div>
         </div>
     </div>
 
@@ -121,14 +130,14 @@
                         ng-repeat="track in playListItems">
                         <div class="list-item-media text-left" ng-class="{'edit' : track.swiped}">
                             <div class="list-media-holder square-icon pull-left">
-                                <img ng-if="track.image || track.topImage" ng-src="{{(track.topImage ? track.topImage : track.image) | resizeImage : 60:60}}">
-                                <img ng-if="!track.image && !track.topImage" src="../../../styles/media/holder-16x9.png" style="width:100%;">
+                                <img ng-if="track.image || track.topImage" ng-src="{{(track.topImage ? track.topImage : track.image) | resizeImage : 60:60}}" alt="{{track.title}}">
+                                <img ng-if="!track.image && !track.topImage" src="../../../styles/media/holder-16x9.png" style="width:100%;" aria-hidden="true">
                             </div>
                             <div class="list-item-copy text-left padding-left-ten padding-right-ten flex flex-align-center">
                                 <p class="margin-bottom-zero ellipsis bodyTextTheme">{{track.title}}</p>
                             </div>
                             <div class="btns text-center">
-                                <a ng-class="track.playing ? 'icon-pause-circle' : 'icon-play-circle'"
+                                <a ng-class="track.playing ? 'icon-pause-circle' : 'icon-play-circle'" role="button" tabindex="0" aria-label="{{track.playing ? 'Pause' : 'Play'}} track"
                                     class="icon primaryTheme" ng-click="NowPlaying.playlistPlayPause(track, $index)"></a>
                             </div>
                             <div class="remove-btn text-center dangerBackgroundTheme" style="background:red;"
@@ -138,7 +147,7 @@
                         </div>
                     </div>
                     <div class="playlist-empty-container" ng-if="!playListItems.length">
-                        <img src="./assets/images/empty_page.svg" alt="playlist">
+                        <img src="./assets/images/empty_page.svg" alt="Empty playlist">
                         <h3 class="ellipsis">{{NowPlaying.playListStrings.emptyPlaylist}}</h3>
                     </div>
                 </div>
@@ -155,11 +164,11 @@
         <div class="overlay-content" style="position:absolute; top:0; left:0; height:100%; width: 100%; overflow:auto;">
             <div class="media-player-more-info">
                 <div class="media-holder margin-top-thirty">
-                    <div class="media-inner text-center">
-                        <img ng-if="(NowPlaying.currentTrack.image || NowPlaying.currentTrack.topImage) && NowPlaying.isOnline"
+                    <div class="media-inner text-center" aria-hidden="true">
+                        <img ng-if="(NowPlaying.currentTrack.image || NowPlaying.currentTrack.topImage) && NowPlaying.isOnline" aria-hidden="true"
                             ng-src="{{(NowPlaying.currentTrack.image ? NowPlaying.currentTrack.image : NowPlaying.currentTrack.topImage) | resizeImage : 400:400 }}" alt="{{NowPlaying.currentTrack.title}} top image">
-                        <img ng-if="(NowPlaying.currentTrack.image || NowPlaying.currentTrack.topImage) && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.image ? NowPlaying.currentTrack.image : NowPlaying.currentTrack.topImage}}" alt="{{NowPlaying.currentTrack.title}} top image">
-                        <img ng-if="!NowPlaying.currentTrack.topImage && !NowPlaying.currentTrack.image" src="./assets/images/now-playing.png" alt="top image">
+                        <img ng-if="(NowPlaying.currentTrack.image || NowPlaying.currentTrack.topImage) && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.image ? NowPlaying.currentTrack.image : NowPlaying.currentTrack.topImage}}" alt="{{NowPlaying.currentTrack.title}} top image" aria-hidden="true">
+                        <img ng-if="!NowPlaying.currentTrack.topImage && !NowPlaying.currentTrack.image" src="./assets/images/now-playing.png" alt="top image" aria-hidden="true">
                     </div>
                 </div>
                 <hr class="none">
@@ -200,7 +209,8 @@
                         <div class="col-md-2 pull-right text-right">
                             <div class="checkbox checkbox-primary checked no-label margin-zero">
                                 <input type="checkbox" id="playnext" ng-model="NowPlaying.settings.autoPlayNext"
-                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)">
+                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)"
+                                    aria-label="{{NowPlaying.settingsStrings.automaticallyPlayNextTrack}}">
                                 <label for="playnext"></label>
                             </div>
                         </div>
@@ -212,7 +222,8 @@
                         <div class="col-md-2 pull-right text-right">
                             <div class="checkbox checkbox-primary checked no-label margin-zero">
                                 <input type="checkbox" id="loop" ng-model="NowPlaying.settings.loopPlaylist"
-                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)">
+                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)"
+                                    aria-label="{{NowPlaying.settingsStrings.loopPlaylist}}">
                                 <label for="loop"></label>
                             </div>
                         </div>
@@ -224,7 +235,8 @@
                         <div class="col-md-2 pull-right text-right">
                             <div class="checkbox checkbox-primary no-label margin-zero">
                                 <input type="checkbox" id="repeat" ng-model="NowPlaying.settings.autoJumpToLastPosition"
-                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)">
+                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)"
+                                    aria-label="{{NowPlaying.settingsStrings.autoJumpToLastPositon}}">
                                 <label for="repeat"></label>
                             </div>
                         </div>
@@ -236,7 +248,8 @@
                         <div class="col-md-2 pull-right text-right">
                             <div class="checkbox checkbox-primary checked no-label margin-zero">
                                 <input type="checkbox" id="playfromLast" ng-model="NowPlaying.settings.shufflePlaylist"
-                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)" ng-click="NowPlaying.showShufflePlaylistToast()">
+                                    ng-change="NowPlaying.setSettings(NowPlaying.settings)" ng-click="NowPlaying.showShufflePlaylistToast()"
+                                    aria-label="{{NowPlaying.settingsStrings.shufflePlaylist}}">
                                 <label for="playfromLast"></label>
                             </div>
                         </div>
@@ -244,7 +257,7 @@
                 </div>
             </div>
             <div class="margin-bottom-ten">
-                <a ng-click="NowPlaying.closeSettingsOverlay()" class="whiteTheme">{{NowPlaying.settingsStrings.settingsDone}}</a>
+                <a ng-click="NowPlaying.closeSettingsOverlay()" class="whiteTheme" role="button" tabindex="0">{{NowPlaying.settingsStrings.settingsDone}}</a>
             </div>
         </div>
     </div>

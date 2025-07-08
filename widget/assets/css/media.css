@@ -614,3 +614,13 @@ button.btn-icon.btn-lg {
 .plugin_blured_image span img {
     width: 100% !important;
 }
+
+.audio-actions-container {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 10px;
+}
+
+.media-player-action-btns:focus-within ~ .media-player-btns {
+    pointer-events: none;
+}
