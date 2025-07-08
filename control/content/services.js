@@ -204,24 +204,34 @@
                 return deferred.promise;
             };
 
-            SearchEngine.prototype.delete = function (id) {
+            SearchEngine.prototype.delete = function (key, callback) {
                 var that = this;
                 var deferred = $q.defer();
-                if (typeof id == 'undefined') {
-                    return deferred.reject(new Error(MESSAGES.ERROR.ID_NOT_DEFINED));
+
+                if (typeof key === 'undefined') {
+                    var error = new Error(MESSAGES.ERROR.ID_NOT_DEFINED);
+                    deferred.reject(error);
+                    callback(error, null);
+                    return deferred.promise;
                 }
                 var data = {
-                    id: id,
+                    key,
                     tag: that._tagName
-                }
+                };
+
                 Buildfire.services.searchEngine.delete(data, function (err, result) {
                     if (err) {
-                        return deferred.reject(err);
-                    }
-                    else if (result) {
-                        return deferred.resolve(result);
-                    } else {
-                        return deferred.reject(new Error(MESSAGES.ERROR.NOT_FOUND));
+                        if (err.errorMessage && err.errorMessage === 'Not Found'){
+                            deferred.resolve(true);
+                            callback(null, true);
+                        }
+                        else {
+                            deferred.reject(err);
+                            callback(err, null);
+                        }
+                    } else if (result) {
+                        deferred.resolve(result);
+                        callback(null, result);
                     }
                 });
                 return deferred.promise;
