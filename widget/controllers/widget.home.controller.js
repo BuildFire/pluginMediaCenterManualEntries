@@ -1673,8 +1673,6 @@
                 $rootScope.loadMore = () => WidgetHome.loadMore();
 
                 WidgetHome.goToFilterScreen = function () {
-                    document.body.focus();
-
                     $rootScope.showFeed = false;
                     Location.go('#/filters', true);
                 };

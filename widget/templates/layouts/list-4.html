@@ -51,7 +51,7 @@
         </div>
         <div class="padded padding-top-zero text-overlay">
             <div class="list-layout" infinite-scroll="WidgetHome.addMore()">
-                <div ng-repeat="item in WidgetHome.items track by $index" ng-if="$index % 2 == 0" class="row text-overlay">
+                <div ng-repeat="item in WidgetHome.items track by $index" ng-if="$index % 2 == 0" class="row text-overlay widget-home-items-container">
                     <div class="list-item-odd col-xs-6 pull-left clickable " ng-click="WidgetHome.goToMedia($index)">
                         <div class="list-item-media text-center overflow-hidden text-overlay">
                             <div class="li-actions-item">

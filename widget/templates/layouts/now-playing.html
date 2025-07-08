@@ -50,7 +50,9 @@
                 <span class="playback-speed whiteTheme" ng-click="NowPlaying.openPlaybackDrawer()" role="button" tabindex="0" aria-label="Playback speed {{NowPlaying.settings.playbackSpeed || 1 | number:'1'}} x">{{NowPlaying.settings.playbackSpeed || 1 | number:'1'}}x</span>
                 <span  ng-style="{'visibility': allowAddingNotes !== false ? 'visible' : 'hidden'}"  class="glyphicon glyphicon-edit whiteTheme" ng-click="NowPlaying.addNote()" role="button" tabindex="0" aria-label="Add notes"></span>
                 <span ng-if="!globalPlaylist" class="btn btn-icon" ng-click="NowPlaying.showPlaylistPage()">
-                    <button class="playList-icon"  role="button" tabindex="0" aria-label="Playlist">P</button>
+                    <span ng-if="!globalPlaylist" class="btn btn-icon" ng-click="NowPlaying.showPlaylistPage()">
+                        <img class="playList-icon" src="assets/css/icons/ic_playlist.svg" alt="playlist" role="button" tabindex="0" aria-label="Playlist">
+                    </span>
                 </span>
                 <span ng-if="!globalPlaylist" class="glyphicon glyphicon-option-horizontal whiteTheme"
                     ng-click="NowPlaying.openMoreInfoOverlay()" role="button" tabindex="0" aria-label="Media item options"></span>
