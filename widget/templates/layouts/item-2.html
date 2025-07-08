@@ -14,7 +14,7 @@
                                              crop-width="161" crop-height="91" crop-type="crop"
                                              data-final-src="{{WidgetMedia.item.data.topImage}}" alt="{{WidgetMedia.item.data.title}} top image">
                                         <img ng-if="!WidgetMedia.item.data.topImage" style="width: 161px;height: 91px;"
-                                             crop-width="161" crop-height="91" crop-type="crop"
+                                             crop-width="161" crop-height="91" crop-type="crop" aria-hidden="true"
                                              src="../../../styles/media/holder-16x9.png" alt="top image">
                                     </div>
                                     <div class="people-info text-center col-xs-12">
@@ -43,22 +43,22 @@
                     <div class="link-list">
                         <a class="media-action video" ng-click="WidgetMedia.toggleShowVideo(!WidgetMedia.showVideo);"
                             ng-if="WidgetMedia.item.data.videoUrl && !skipMediaPage">
-                            <i ng-class="WidgetMedia.showVideo ? 'glyphicon glyphicon-info-sign':'glyphicon glyphicon-film'" class="btn btn-success"></i>
+                            <i ng-class="WidgetMedia.showVideo ? 'glyphicon glyphicon-info-sign':'glyphicon glyphicon-film'" class="btn btn-success" role="button"  aria-label="{{WidgetMedia.showVideo ? 'Hide' : 'Show'}} {{WidgetMedia.item.data.title}} video button"></i>
                         </a>
                         <a class="media-action" ng-click="WidgetMedia.playAudio();" ng-if="WidgetMedia.item.data.audioUrl && !skipMediaPage">
-                            <i class="btn btn-success glyphicon glyphicon-volume-up"></i>
+                            <i class="btn btn-success glyphicon glyphicon-volume-up" role="button" aria-label="Show {{WidgetMedia.item.data.title}} audio button"></i>
                         </a>
                         <a ng-if="(WidgetMedia.item.data.srcUrl || WidgetMedia.item.data.audioUrl || WidgetMedia.item.data.videoUrl) && allowSource && online" ng-click="WidgetMedia.openLink(WidgetMedia.item)"
                             target="_blank">
-                            <i class="glyphicon share glyphicon-screenshot"></i>
+                            <i class="glyphicon share glyphicon-screenshot" role="button" aria-label="{{WidgetMedia.item.data.title}} source button"></i>
                         </a>
                     </div>
                     <div class="li-actions">
                         <div style="float: none; display: inline-block;" data-ng-if="WidgetMedia.isDownloading(WidgetMedia.item)" class="lds-ring-small"><div></div><div></div><div></div><div></div></div>
                         <i class="glyphicon icon bookmark" style="font-family: 'Glyphicons Halflings' !important;"
                         ng-class="{ 'glyphicon-star-empty' : !WidgetMedia.item.data.bookmarked, 'glyphicon-star' : WidgetMedia.item.data.bookmarked }"
-                        ng-click="WidgetMedia.bookmark($event)" role="button"></i>
-                        <i class="glyphicon glyphicon-option-horizontal" ng-click="WidgetMedia.showDrawer()" role="button"></i>
+                        ng-click="WidgetMedia.bookmark($event)" role="button" aria-label="Bookmark {{WidgetMedia.item.data.title}} button"></i>
+                        <i class="glyphicon glyphicon-option-horizontal" ng-click="WidgetMedia.showDrawer()" role="button" aria-label="{{WidgetMedia.item.data.title}} media item options"></i>
                     </div>
                 </div>
                 <p class="wysiwyg" ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>

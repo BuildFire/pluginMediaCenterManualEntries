@@ -92,7 +92,7 @@
                 };
 
                 init();
-             
+
                 WidgetFilters.saving = false;
 
                 var _skip = 0,
@@ -204,6 +204,11 @@
                     if (subCont) {
                         if (chev.classList) {
                             chev.classList.toggle('bottom');
+                            if (chev.classList.contains('bottom')) {
+                                chev.setAttribute('aria-label', `Collapse ${WidgetFilters.allCategories[$index].data.name} category`);
+                            } else {
+                                chev.setAttribute('aria-label', `Expand ${WidgetFilters.allCategories[$index].data.name} category`);
+                            }
                         }
                         if (subCont.classList && subCont.classList.contains("expand")) {
                             subCont.classList.remove("expand");

@@ -1313,7 +1313,7 @@ img.done-icon {
 }
 
 .category-container .subcategories-container {
-    display: flex;
+    display: none;
     flex-direction: row;
     flex-wrap: wrap;
     max-height: 0;
@@ -1322,6 +1322,7 @@ img.done-icon {
 }
 
 .category-container .subcategories-container.expand {
+	display: flex;
     max-height: none;
     transition: max-height 0.2s ease-out;
 }

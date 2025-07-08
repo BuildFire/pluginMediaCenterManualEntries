@@ -35,7 +35,7 @@
                 style="position: absolute;right:2em; top: 2em; cursor: pointer;"
                 ng-click="WidgetHome.goToFilterScreen()">
                 <div style=" position: relative;">
-                    <i class="glyphicon glyphicon-filter filter-funnel"></i>
+                    <i class="glyphicon glyphicon-filter filter-funnel" role="button" aria-label="Filter items"></i>
                     <div data-ng-if="WidgetHome.activeFilters" id="activeFilterIndicator"></div>
                 </div>
             </div>
@@ -44,7 +44,7 @@
             ng-if="!loadingData && WidgetHome.media.data.content.enableFiltering && WidgetHome.items && WidgetHome.items.length > 0">
             <div style="padding: 20px; padding-right: 30px; cursor: pointer;" ng-click="WidgetHome.goToFilterScreen()">
                 <div style=" position: relative;">
-                    <i class="glyphicon glyphicon-filter filter-funnel"></i>
+                    <i class="glyphicon glyphicon-filter filter-funnel" role="button" aria-label="Filter items"></i>
                     <div data-ng-if="WidgetHome.activeFilters" id="activeFilterIndicator"></div>
                 </div>
             </div>
@@ -57,16 +57,16 @@
                             <div class="li-actions-item">
                                 <i class="glyphicon glyphicon-option-horizontal" style="right: 0;"
                                     ng-click="WidgetHome.showDrawer($event, WidgetHome.items[$index])"
-                                    role="button"></i>
+                                    role="button" aria-label="{{WidgetHome.items[$index].data.title}} media item options"></i>
                             </div>
                             <div class="list-media-holder text-overlay"
                                 play-btn="{{WidgetHome.items[$index].data.videoUrl.length > 0 || WidgetHome.items[$index].data.audioUrl.length > 0 }}">
                                 <img ng-if="WidgetHome.items[$index].data.topImage" load-image="1x1" crop-width="200"
-                                    crop-height="200" crop-type="crop"
+                                    crop-height="200" crop-type="crop" alt="{{WidgetHome.items[$index].data.title}}"
                                     data-final-src="{{WidgetHome.items[$index].data.topImage}}"
                                     style="width: 200px;">
                                 <img ng-if="!WidgetHome.items[$index].data.topImage"
-                                    src="../../../styles/media/holder-1x1.png">
+                                    src="../../../styles/media/holder-1x1.png" alt="{{WidgetHome.items[$index].data.title}}" aria-hidden="true">
                             </div>
                         </div>
                         <div class="list-item-copy text-left text-overlay">
@@ -75,9 +75,9 @@
                                     <a
                                         class="ellipsis margin-zero text-primary ">{{WidgetHome.items[$index].data.title}}</a>
                                 </p>
-                                <svg data-ng-if="WidgetHome.items[$index].hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload" 
+                                <svg data-ng-if="WidgetHome.items[$index].hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
                                     xmlns="http://www.w3.org/2000/svg" width="15" height="16" viewBox="0 0 15 16" fill="none">
-                                    <path d="M7.49996 0.916992C3.59704 0.916992 0.416626 4.09741 0.416626 8.00033C0.416626 11.9032 3.59704 15.0837 7.49996 15.0837C11.4029 15.0837 14.5833 11.9032 14.5833 8.00033C14.5833 4.09741 11.4029 0.916992 7.49996 0.916992ZM6.79163 6.58366V3.75033H8.20829V6.58366H10.3333L7.49996 9.41699L4.66663 6.58366H6.79163ZM11.0416 11.542H3.95829V10.1253H11.0416V11.542Z" 
+                                    <path d="M7.49996 0.916992C3.59704 0.916992 0.416626 4.09741 0.416626 8.00033C0.416626 11.9032 3.59704 15.0837 7.49996 15.0837C11.4029 15.0837 14.5833 11.9032 14.5833 8.00033C14.5833 4.09741 11.4029 0.916992 7.49996 0.916992ZM6.79163 6.58366V3.75033H8.20829V6.58366H10.3333L7.49996 9.41699L4.66663 6.58366H6.79163ZM11.0416 11.542H3.95829V10.1253H11.0416V11.542Z"
                                         fill="var(--bf-theme-success)"/>
                                 </svg>
                                 <!-- <div data-ng-if="currentlyDownloading.indexOf(WidgetHome.items[$index + 1].id) > -1" role="button" class="loader"> -->
@@ -90,7 +90,7 @@
                                 </div>
                             </div>
                             <p id="summary" class="summary ellipsis margin-zero">{{WidgetHome.items[$index].data.summary}}</p>
-                            <p ng-if="WidgetHome.media.data.content.showViewCount" id="views" class="ellipsis margin-zero">{{WidgetHome.items[$index].data.count}} 
+                            <p ng-if="WidgetHome.media.data.content.showViewCount" id="views" class="ellipsis margin-zero">{{WidgetHome.items[$index].data.count}}
                                 <span id="iconView" style="float: left;margin-right: 5px;">
                                     <i class="glyphicon glyphicon-eye-open"></i>
                                 </span>
@@ -114,7 +114,7 @@
                             <div class="li-actions-item">
                                 <i style="right: 0;" class="glyphicon glyphicon-option-horizontal"
                                     ng-click="WidgetHome.showDrawer($event, WidgetHome.items[$index + 1])"
-                                    role="button"></i>
+                                    role="button" aria-label="{{WidgetHome.items[$index+1].data.title}} media item options"></i>
 
                             </div>
                             <div class="list-media-holder text-overlay"
@@ -133,9 +133,9 @@
                                     <a class="ellipsis margin-zero text-primary ">{{WidgetHome.items[$index +
                                         1].data.title}}</a>
                                 </p>
-                                <svg data-ng-if="WidgetHome.items[$index + 1].hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload" 
+                                <svg data-ng-if="WidgetHome.items[$index + 1].hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload"
                                     xmlns="http://www.w3.org/2000/svg" width="15" height="16" viewBox="0 0 15 16" fill="none">
-                                    <path d="M7.49996 0.916992C3.59704 0.916992 0.416626 4.09741 0.416626 8.00033C0.416626 11.9032 3.59704 15.0837 7.49996 15.0837C11.4029 15.0837 14.5833 11.9032 14.5833 8.00033C14.5833 4.09741 11.4029 0.916992 7.49996 0.916992ZM6.79163 6.58366V3.75033H8.20829V6.58366H10.3333L7.49996 9.41699L4.66663 6.58366H6.79163ZM11.0416 11.542H3.95829V10.1253H11.0416V11.542Z" 
+                                    <path d="M7.49996 0.916992C3.59704 0.916992 0.416626 4.09741 0.416626 8.00033C0.416626 11.9032 3.59704 15.0837 7.49996 15.0837C11.4029 15.0837 14.5833 11.9032 14.5833 8.00033C14.5833 4.09741 11.4029 0.916992 7.49996 0.916992ZM6.79163 6.58366V3.75033H8.20829V6.58366H10.3333L7.49996 9.41699L4.66663 6.58366H6.79163ZM11.0416 11.542H3.95829V10.1253H11.0416V11.542Z"
                                         fill="var(--bf-theme-success)"/>
                                 </svg>
                                 <!-- <div data-ng-if="currentlyDownloading.indexOf(WidgetHome.items[$index + 1].id) > -1" role="button" class="loader"> -->
@@ -148,7 +148,7 @@
                                 </div>
                             </div>
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.summary}}</p>
-                            <p ng-if="WidgetHome.media.data.content.showViewCount" id="views2" class="ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.count}} 
+                            <p ng-if="WidgetHome.media.data.content.showViewCount" id="views2" class="ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.count}}
                                 <span id="iconView2" style="float: left;margin-right: 5px;">
                                     <i class="glyphicon glyphicon-eye-open"></i>
                                 </span>
