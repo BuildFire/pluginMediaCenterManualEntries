@@ -59,7 +59,7 @@
                                     ng-click="WidgetHome.showDrawer($event, WidgetHome.items[$index])"
                                     role="button" aria-label="{{WidgetHome.items[$index].data.title}} media item options" tabindex="0"></i>
                             </div>
-                            <div class="list-media-holder text-overlay"
+                            <div class="list-media-holder text-overlay" aria-hidden="true"
                                 play-btn="{{WidgetHome.items[$index].data.videoUrl.length > 0 || WidgetHome.items[$index].data.audioUrl.length > 0 }}">
                                 <img ng-if="WidgetHome.items[$index].data.topImage" load-image="1x1" crop-width="200"
                                     crop-height="200" crop-type="crop" alt="{{WidgetHome.items[$index].data.title}}"
@@ -90,8 +90,8 @@
                                 </div>
                             </div>
                             <p id="summary" class="summary ellipsis margin-zero">{{WidgetHome.items[$index].data.summary}}</p>
-                            <p ng-if="WidgetHome.media.data.content.showViewCount" id="views" class="ellipsis margin-zero">{{WidgetHome.items[$index].data.count}}
-                                <span id="iconView" style="float: left;margin-right: 5px;">
+                            <p ng-if="WidgetHome.media.data.content.showViewCount" id="views" class="ellipsis margin-zero" role="text" tabindex="0" aria-label="{{WidgetHome.items[$index].data.title}} view count {{WidgetHome.items[$index].data.count ? WidgetHome.items[$index].data.count : 0}}">{{WidgetHome.items[$index].data.count}}
+                                <span id="iconView" style="float: left;margin-right: 5px;" aria-hidden="true">
                                     <i class="glyphicon glyphicon-eye-open"></i>
                                 </span>
                             </p>
@@ -117,7 +117,7 @@
                                     role="button" aria-label="{{WidgetHome.items[$index+1].data.title}} media item options" tabindex="0"></i>
 
                             </div>
-                            <div class="list-media-holder text-overlay"
+                            <div class="list-media-holder text-overlay" aria-hidden="true"
                                 play-btn="{{WidgetHome.items[$index+1].data.videoUrl.length > 0 || WidgetHome.items[$index+1].data.audioUrl.length > 0 }}">
                                 <img ng-if="WidgetHome.items[$index + 1].data.topImage" load-image="1x1"
                                     crop-width="200" crop-height="200" crop-type="crop" aria-hidden="true"
@@ -148,8 +148,10 @@
                                 </div>
                             </div>
                             <p class="summary ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.summary}}</p>
-                            <p ng-if="WidgetHome.media.data.content.showViewCount" id="views2" class="ellipsis margin-zero">{{WidgetHome.items[$index + 1].data.count}}
-                                <span id="iconView2" style="float: left;margin-right: 5px;">
+                            <p ng-if="WidgetHome.media.data.content.showViewCount" id="views2" class="ellipsis margin-zero"
+                                role="text" tabindex="0" aria-label="{{WidgetHome.items[$index + 1].data.title}} view count {{WidgetHome.items[$index + 1].data.count ? WidgetHome.items[$index + 1].data.count : 0}}">
+                                {{WidgetHome.items[$index + 1].data.count}}
+                                <span id="iconView2" style="float: left;margin-right: 5px;" aria-hidden="true">
                                     <i class="glyphicon glyphicon-eye-open"></i>
                                 </span>
                             </p>

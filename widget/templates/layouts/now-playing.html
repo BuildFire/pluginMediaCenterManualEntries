@@ -6,8 +6,8 @@
         <div class="media-holder">
             <div class="media-inner text-center">
                 <img ng-if="(NowPlaying.currentTrack.image || NowPlaying.currentTrack.topImage) && NowPlaying.isOnline"
-                    ng-src="{{(NowPlaying.currentTrack.image ? NowPlaying.currentTrack.image : NowPlaying.currentTrack.topImage) | resizeImage : 400:400 }}" alt="{{NowPlaying.currentTrack.title}} top image">
-                <img ng-if="(NowPlaying.currentTrack.image || NowPlaying.currentTrack.topImage) && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.image ? NowPlaying.currentTrack.image : NowPlaying.currentTrack.topImage}}" alt="{{NowPlaying.currentTrack.title}} top image">
+                    ng-src="{{(NowPlaying.currentTrack.image ? NowPlaying.currentTrack.image : NowPlaying.currentTrack.topImage) | resizeImage : 400:400 }}" alt="{{NowPlaying.currentTrack.title}} top image" aria-label="{{NowPlaying.currentTrack.title}} top image" title="{{NowPlaying.currentTrack.title}} top image">
+                <img ng-if="(NowPlaying.currentTrack.image || NowPlaying.currentTrack.topImage) && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.image ? NowPlaying.currentTrack.image : NowPlaying.currentTrack.topImage}}" alt="{{NowPlaying.currentTrack.title}} top image" aria-label="{{NowPlaying.currentTrack.title}} top image" title="{{NowPlaying.currentTrack.title}} top image">
                 <img ng-if="!NowPlaying.currentTrack.topImage && !NowPlaying.currentTrack.image" src="./assets/images/now-playing.png" alt="top image" aria-hidden="true">
             </div>
         </div>
@@ -50,9 +50,7 @@
                 <span class="playback-speed whiteTheme" ng-click="NowPlaying.openPlaybackDrawer()" role="button" tabindex="0" aria-label="Playback speed {{NowPlaying.settings.playbackSpeed || 1 | number:'1'}} x">{{NowPlaying.settings.playbackSpeed || 1 | number:'1'}}x</span>
                 <span  ng-style="{'visibility': allowAddingNotes !== false ? 'visible' : 'hidden'}"  class="glyphicon glyphicon-edit whiteTheme" ng-click="NowPlaying.addNote()" role="button" tabindex="0" aria-label="Add notes"></span>
                 <span ng-if="!globalPlaylist" class="btn btn-icon" ng-click="NowPlaying.showPlaylistPage()">
-                    <span ng-if="!globalPlaylist" class="btn btn-icon" ng-click="NowPlaying.showPlaylistPage()">
-                        <img class="playList-icon" src="assets/css/icons/ic_playlist.svg" alt="playlist" role="button" tabindex="0" aria-label="Playlist">
-                    </span>
+                    <img class="playList-icon" src="assets/css/icons/ic_playlist.svg" alt="playlist" role="button" tabindex="0" aria-label="Playlist">
                 </span>
                 <span ng-if="!globalPlaylist" class="glyphicon glyphicon-option-horizontal whiteTheme"
                     ng-click="NowPlaying.openMoreInfoOverlay()" role="button" tabindex="0" aria-label="Media item options"></span>
@@ -82,22 +80,21 @@
 
                 <div class="player-btns">
                     <span ng-if="!autoPlay" class="btn btn-icon" ng-click="NowPlaying.backward()"><img
-                            src="assets/css/icons/ic_fast_rewind.svg" alt="Backward 5 seconds"></span>
+                            src="assets/css/icons/ic_fast_rewind.svg" alt="Backward 5 seconds" title="Backward 5 seconds" aria-label="Backward 5 seconds"></span>
                     <span ng-if="autoPlay" class="btn btn-icon" ng-click="NowPlaying.prev()" role="button" tabindex="0" aria-label="Previous item">
                         <i style="font-size: 18px; color: #D7D7D8;" class="glyphicon glyphicon-step-backward"></i>
                     </span>
-                    <button class="btn btn-icon btn-lg btn-primary" role="button" tabindex="0" aria-label="{{NowPlaying.playing ? 'Pause track' : 'Play track'}}">
+                    <button ng-click="NowPlaying.playing?NowPlaying.pauseTrack():NowPlaying.playTrack()" class="btn btn-icon btn-lg btn-primary" role="button" tabindex="0" aria-label="{{NowPlaying.playing ? 'Pause track' : 'Play track'}}">
                         <span ng-if="!NowPlaying.playing" class="icon icon-main whiteTheme play-pause-icon" aria-hidden="{{!NowPlaying.isAudioInitialized ? true : false}}"
-                            ng-click="NowPlaying.playTrack()" ng-class="!NowPlaying.isAudioInitialized && 'disabled'">
-                            <img src="assets/css/icons/ic_play2.svg" alt="">
+                            ng-class="!NowPlaying.isAudioInitialized && 'disabled'">
+                            <img src="assets/css/icons/ic_play2.svg" alt="" aria-hidden="true">
                         </span>
-                        <span ng-if="NowPlaying.playing" class="icon icon-main whiteTheme play-pause-icon"
-                            ng-click="NowPlaying.pauseTrack()">
-                            <img src="assets/css/icons/ic_pause_2.svg" alt="">
+                        <span ng-if="NowPlaying.playing" class="icon icon-main whiteTheme play-pause-icon">
+                            <img src="assets/css/icons/ic_pause_2.svg" alt="" aria-hidden="true">
                         </span>
                     </button>
                     <span ng-if="!autoPlay" class="btn btn-icon" ng-click="NowPlaying.forward()"><img
-                            src="assets/css/icons/ic_fast_forward.svg" alt="Forward 5 seconds"></span>
+                            src="assets/css/icons/ic_fast_forward.svg" alt="Forward 5 seconds" title="Forward 5 seconds" aria-label="Forward 5 seconds"></span>
                     <span ng-if="autoPlay" class="btn btn-icon" ng-click="NowPlaying.next()" role="button" tabindex="0" aria-label="Next item">
                         <i style="font-size: 18px; color: #D7D7D8;" class="glyphicon glyphicon-step-forward"></i>
                     </span>
@@ -132,7 +129,7 @@
                         ng-repeat="track in playListItems">
                         <div class="list-item-media text-left" ng-class="{'edit' : track.swiped}">
                             <div class="list-media-holder square-icon pull-left">
-                                <img ng-if="track.image || track.topImage" ng-src="{{(track.topImage ? track.topImage : track.image) | resizeImage : 60:60}}" alt="{{track.title}}">
+                                <img ng-if="track.image || track.topImage" ng-src="{{(track.topImage ? track.topImage : track.image) | resizeImage : 60:60}}" alt="{{track.title}}" aria-label="{{track.title}}" title="{{track.title}}">
                                 <img ng-if="!track.image && !track.topImage" src="../../../styles/media/holder-16x9.png" style="width:100%;" aria-hidden="true">
                             </div>
                             <div class="list-item-copy text-left padding-left-ten padding-right-ten flex flex-align-center">
@@ -149,7 +146,7 @@
                         </div>
                     </div>
                     <div class="playlist-empty-container" ng-if="!playListItems.length">
-                        <img src="./assets/images/empty_page.svg" alt="Empty playlist">
+                        <img src="./assets/images/empty_page.svg" alt="Empty playlist" aria-label="Empty playlist" title="Empty playlist">
                         <h3 class="ellipsis">{{NowPlaying.playListStrings.emptyPlaylist}}</h3>
                     </div>
                 </div>
@@ -168,7 +165,7 @@
                 <div class="media-holder margin-top-thirty">
                     <div class="media-inner text-center" aria-hidden="true">
                         <img ng-if="(NowPlaying.currentTrack.image || NowPlaying.currentTrack.topImage) && NowPlaying.isOnline" aria-hidden="true"
-                            ng-src="{{(NowPlaying.currentTrack.image ? NowPlaying.currentTrack.image : NowPlaying.currentTrack.topImage) | resizeImage : 400:400 }}" alt="{{NowPlaying.currentTrack.title}} top image">
+                            ng-src="{{(NowPlaying.currentTrack.image ? NowPlaying.currentTrack.image : NowPlaying.currentTrack.topImage) | resizeImage : 400:400 }}" alt="{{NowPlaying.currentTrack.title}} top image" aria-label="{{NowPlaying.currentTrack.title}} top image" title="{{NowPlaying.currentTrack.title}} top image">
                         <img ng-if="(NowPlaying.currentTrack.image || NowPlaying.currentTrack.topImage) && !NowPlaying.isOnline" ng-src="{{NowPlaying.currentTrack.image ? NowPlaying.currentTrack.image : NowPlaying.currentTrack.topImage}}" alt="{{NowPlaying.currentTrack.title}} top image" aria-hidden="true">
                         <img ng-if="!NowPlaying.currentTrack.topImage && !NowPlaying.currentTrack.image" src="./assets/images/now-playing.png" alt="top image" aria-hidden="true">
                     </div>

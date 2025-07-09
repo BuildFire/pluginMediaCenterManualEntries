@@ -11,8 +11,8 @@
                                     <div class="people-media text-center padding-top-fifteen"
                                          ng-hide="WidgetMedia.showVideo">
                                         <img ng-if="WidgetMedia.item.data.topImage" ng-hide="skipMediaPage && WidgetMedia.item.data.videoUrl" load-image="16x9" style="width: 161px;height: 91px;"
-                                             crop-width="161" crop-height="91" crop-type="crop"
-                                             data-final-src="{{WidgetMedia.item.data.topImage}}" alt="{{WidgetMedia.item.data.title}} top image">
+                                             crop-width="161" crop-height="91" crop-type="crop" aria-label="{{WidgetMedia.item.data.title}} top image"
+                                             data-final-src="{{WidgetMedia.item.data.topImage}}" title="{{WidgetMedia.item.data.title}} top image" alt="{{WidgetMedia.item.data.title}} top image">
                                         <img ng-if="!WidgetMedia.item.data.topImage" style="width: 161px;height: 91px;"
                                              crop-width="161" crop-height="91" crop-type="crop" aria-hidden="true"
                                              src="../../../styles/media/holder-16x9.png" alt="top image">
@@ -24,8 +24,10 @@
                                         <h5 class="margin-bottom-zero whiteTheme">
                                             {{WidgetMedia.item.data.summary}}</h5>
                                         <span ng-if="showViewCount" style="display:flex; justify-content: center; align-items:center">
-                                            <i id="iconViewg" class="glyphicon glyphicon-eye-open" style="margin-right: 5px;"></i>
-                                            <p class="ellipsis margin-zero" id="viewsg">{{WidgetMedia.count ? WidgetMedia.count : 0}} </p>
+                                            <span aria-hidden="true">
+                                                <i id="iconViewg" class="glyphicon glyphicon-eye-open" style="margin-right: 5px;"></i>
+                                            </span>
+                                            <p class="ellipsis margin-zero" id="viewsg" role="text" tabindex="0" aria-label="{{WidgetMedia.item.data.title}} view count {{WidgetMedia.count ? WidgetMedia.count : 0}}">{{WidgetMedia.count ? WidgetMedia.count : 0}} </p>
                                         </span>
 
 

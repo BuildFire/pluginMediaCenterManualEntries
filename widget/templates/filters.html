@@ -8,7 +8,7 @@
             <div ng-if="WidgetFilters.allCategories && WidgetFilters.allCategories.length > 0">
                 <div class="category-container" ng-repeat="category in WidgetFilters.allCategories">
                     <div class="top-row">
-                        <div class="category-image-container">
+                        <div class="category-image-container" aria-hidden="true">
                             <img class="categoryScreenIcon" crop-width="30" load-image="1x1" crop-height="30"
                                 crop-type="crop" ng-if="category.data.icon && !WidgetFilters.isIcon(category.data.icon)"
                                 data-final-src="{{category.data.icon }}">
