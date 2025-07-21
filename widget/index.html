@@ -3,19 +3,19 @@
 <head lang="en">
     <meta name="buildfire" content="enablePluginJsonLoad">
     <meta charset="UTF-8">
-    
+
     <!-- CSS -->
     <link href="../../../styles/helper.css" rel="stylesheet">
     <link href="../../../styles/siteIcons.css" rel="stylesheet">
     <link href="../../../scripts/owlCarousel/owlCarousel.css" rel="stylesheet">
     <link href="../../../styles/transitionAnimation.css" rel="stylesheet">
-    
+
     <!-- build:bundleCSSFiles  -->
     <link href="assets/css/widget.app.css" rel="stylesheet">
     <link href="assets/css/videojs/videojs.css" rel="stylesheet">
     <link href="assets/css/media.css" rel="stylesheet">
     <!-- endbuild -->
-    
+
     <!--SDK js-->
     <script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
     <script src="../../../scripts/smartcrop.js"></script>
@@ -28,7 +28,7 @@
     <script src="../../../scripts/angular/ui-bootstrap.min.js"></script>
     <script src="../../../scripts/owlCarousel/owlCarousel.js"></script>
     <script src="../../../scripts/angular/ng-infinite-scroll.custom.js"></script>
-    
+
     <!-- build:bundleSharedJSFiles  -->
     <script src="js/shared/analytics.js"></script>
     <script src="js/data/offlineMedia.js"></script>
@@ -41,7 +41,7 @@
     <!-- <script src="https://player.vimeo.com/api/player.js"></script> -->
     <script src="js/shared/vimeo.js"></script>
     <!-- endbuild -->
-    
+
     <!-- build:bundleJSFiles  -->
     <script src="app.js"></script>
     <script src="enums.js"></script>
@@ -59,11 +59,11 @@
     <script src="utils/stringsKeys.js"></script>
     <script src="utils/strings.js"></script>
     <!-- endbuild -->
-    
-    
+
+
     <!--carousel-->
     <script src="../../../scripts/buildfire/components/carousel/carousel.js"></script>
-    
+
     <script src="assets/js/angular-sanitize.min.js"></script>
     <script src="assets/lib/videojs/videojs.min.js"></script>
     <script src="assets/lib/videojs/videojs-landscape-fullscreen.min.js"></script>
@@ -71,7 +71,7 @@
     <script src="assets/lib/videojs/videojs-vimeo.min.js"></script>
     <script src="../../../scripts/angular/angular-touch.js"></script>
     <script src="../../../scripts/buildfire/components/toast/toast.js"></script>
-    
+
     <!-- Audio player-->
     <script src="../../../scripts/buildfire/services/media/audioPlayer.js"></script>
     <script src="../../../scripts/buildfire/services/notifications/localNotifications.js"></script>
@@ -83,7 +83,7 @@
          scrolly="loadMore()"
     >
         <div ng-controller="WidgetHomeCtrl as WidgetHome">
-            <div ng-include="'templates/home.html'">
+            <div ng-include="'templates/home.html'" aria-hidden="{{!showFeed ? true : false}}">
             </div>
         </div>
     </div>
@@ -93,7 +93,7 @@
          ng-if="!showFeed">
         <div ng-view=""></div>
     </div>
-    
+
     <div class="ng-hide" ng-click="showFeed = true;" id="showFeedBtn"></div>
 </div>
 

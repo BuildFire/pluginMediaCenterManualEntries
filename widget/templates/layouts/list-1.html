@@ -27,7 +27,7 @@
         <div id="emptyContainer"  class="padded" ng-if="!loadingData && !WidgetHome.items.length">
             <div ng-if="WidgetHome.media.data.content.enableFiltering" style="position: absolute;right:2em; top: 2em; cursor: pointer;" ng-click="WidgetHome.goToFilterScreen()">
                 <div style=" position: relative;">
-                    <i class="glyphicon glyphicon-filter filter-funnel"></i>
+                    <i class="glyphicon glyphicon-filter filter-funnel" role="button" aria-label="Filter items" ng-if="showFeed"></i>
                     <div data-ng-if="WidgetHome.activeFilters" id="activeFilterIndicator"></div>
                 </div>
             </div>
@@ -35,22 +35,23 @@
         <div class="padded padding-top-zero text-overlay">
             <div ng-if="!loadingData && WidgetHome.media.data.content.enableFiltering && WidgetHome.items && WidgetHome.items.length > 0" style="float: right; padding: 10px; cursor: pointer;" ng-click="WidgetHome.goToFilterScreen()">
                 <div style=" position: relative;">
-                    <i class="glyphicon glyphicon-filter filter-funnel"></i>
+                    <i class="glyphicon glyphicon-filter filter-funnel" role="button" aria-label="Filter items" ng-if="showFeed"></i>
                     <div data-ng-if="WidgetHome.activeFilters" id="activeFilterIndicator"></div>
                 </div>
             </div>
             <div class="list-layout">
-                <div class="row layout-1"
-                        >
+                <div class="row layout-1 widget-home-items-container">
                     <div class="clickable col-xs-6 pull-left text-overlay" ng-repeat="item in WidgetHome.items track by $index"
                          ng-click="WidgetHome.goToMedia($index)" class="list-item-odd">
                         <div class="list-item-media text-center border-radius-three overflow-hidden text-overlay">
-                            <div play-btn="{{item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0 }}" class="list-media-holder text-overlay">
+                            <div class="list-media-holder text-overlay">
                                 <div class="li-actions-item">
-                                    <i id="drawericon" style="right: 0;" class="glyphicon glyphicon-option-horizontal" ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
+                                    <i id="drawericon" tabindex="0" style="right: 0;" class="glyphicon glyphicon-option-horizontal" ng-click="WidgetHome.showDrawer($event, item)" role="button" aria-label="{{item.data.title}} media item options"></i>
                                 </div>
-                                <img ng-if="item.data.topImage" load-image="16x9" crop-width="240" crop-height="135" crop-type="crop" data-final-src="{{item.data.topImage}}">
-                                <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png" style="max-width:100%">
+                                <div play-btn="{{item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0 }}" aria-hidden="true">
+                                    <img tabindex="0" alt="{{item.data.title}}" aria-hidden="true" ng-if="item.data.topImage" load-image="16x9" crop-width="240" crop-height="135" crop-type="crop" data-final-src="{{item.data.topImage}}">
+                                    <img tabindex="0" alt="{{item.data.title}}" aria-hidden="true" ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png" style="max-width:100%">
+                                </div>
                             </div>
                         </div>
                         <div class="list-item-copy text-left">
@@ -64,8 +65,8 @@
 
                             <p data-ng-if="item.data.summary" id="summary" class="ellipsis margin-zero">{{item.data.summary}}</p>
 
-                            <p id="views" ng-if="WidgetHome.media.data.content.showViewCount" class="ellipsis margin-zero">{{item.data.count ? item.data.count : 0}}
-                                <span id="iconView" style="float: left;margin-right: 5px;">
+                            <p id="views" ng-if="WidgetHome.media.data.content.showViewCount" class="ellipsis margin-zero" role="text" tabindex="0" aria-label="{{item.data.title}} view count {{item.data.count ? item.data.count : 0}}">{{item.data.count ? item.data.count : 0}}
+                                <span id="iconView" style="float: left;margin-right: 5px;" aria-hidden="true">
                                     <i class="glyphicon glyphicon-eye-open"></i>
                                 </span>
                             </p>

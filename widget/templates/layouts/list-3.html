@@ -27,7 +27,7 @@
                 style="position: absolute;right:2em; top: 2em; cursor: pointer;"
                 ng-click="WidgetHome.goToFilterScreen()">
                 <div style=" position: relative;">
-                    <i class="glyphicon glyphicon-filter filter-funnel"></i>
+                    <i class="glyphicon glyphicon-filter filter-funnel" role="button" aria-label="Filter items" ng-if="showFeed"></i>
                     <div data-ng-if="WidgetHome.activeFilters" id="activeFilterIndicator"></div>
                 </div>
             </div>
@@ -36,21 +36,21 @@
             ng-if="!loadingData && WidgetHome.media.data.content.enableFiltering && WidgetHome.items && WidgetHome.items.length > 0">
             <div style="padding: 20px; padding-right: 30px; cursor: pointer;" ng-click="WidgetHome.goToFilterScreen()">
                 <div style=" position: relative;">
-                    <i class="glyphicon glyphicon-filter filter-funnel"></i>
+                    <i class="glyphicon glyphicon-filter filter-funnel" role="button" aria-label="Filter items" ng-if="showFeed"></i>
                     <div data-ng-if="WidgetHome.activeFilters" id="activeFilterIndicator"></div>
                 </div>
             </div>
         </div>
-        <div>
+        <div class="widget-home-items-container">
             <div class="clickable text-overlay" ng-repeat="item in WidgetHome.items track by $index"
                 ng-click="WidgetHome.goToMedia($index)">
                 <div class="plugin-banner clearfix text-overlay">
-                    <div class="text-overlay"
+                    <div class="text-overlay" aria-hidden="true"
                         play-btn="{{item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0 }}">
-                        <img ng-if="item.data.topImage" load-image="16x9" style="width:100%;" crop-width="340"
-                            crop-height="190" crop-type="crop"
-                            data-final-src="{{item.data.topImage}}">
-                        <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png"
+                        <img alt="{{item.data.title}}" ng-if="item.data.topImage" load-image="16x9" style="width:100%;" crop-width="340"
+                            crop-height="190" crop-type="crop" aria-hidden="true"
+                            data-final-src="{{item.data.topImage}}" tabindex="0">
+                        <img alt="{{item.data.title}}" aria-hidden="true" ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png"
                             style="width:100%;">
                     </div>
                 </div>
@@ -61,9 +61,9 @@
                         </p>
                         <div class="action" style="display: flex; flex-direction: row;">
                             <div class="li-actions-item" style="align-items: center;">
-                                <svg data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload "  
+                                <svg data-ng-if="item.hasDownloadedMedia && WidgetHome.media.data.content.allowOfflineDownload "
                                     xmlns="http://www.w3.org/2000/svg" width="15" height="16" viewBox="0 0 15 16" fill="none">
-                                    <path d="M7.49996 0.916992C3.59704 0.916992 0.416626 4.09741 0.416626 8.00033C0.416626 11.9032 3.59704 15.0837 7.49996 15.0837C11.4029 15.0837 14.5833 11.9032 14.5833 8.00033C14.5833 4.09741 11.4029 0.916992 7.49996 0.916992ZM6.79163 6.58366V3.75033H8.20829V6.58366H10.3333L7.49996 9.41699L4.66663 6.58366H6.79163ZM11.0416 11.542H3.95829V10.1253H11.0416V11.542Z" 
+                                    <path d="M7.49996 0.916992C3.59704 0.916992 0.416626 4.09741 0.416626 8.00033C0.416626 11.9032 3.59704 15.0837 7.49996 15.0837C11.4029 15.0837 14.5833 11.9032 14.5833 8.00033C14.5833 4.09741 11.4029 0.916992 7.49996 0.916992ZM6.79163 6.58366V3.75033H8.20829V6.58366H10.3333L7.49996 9.41699L4.66663 6.58366H6.79163ZM11.0416 11.542H3.95829V10.1253H11.0416V11.542Z"
                                         fill="var(--bf-theme-success)"/>
                                 </svg>
                                 <div data-ng-if="currentlyDownloading.indexOf(item.id) > -1" class="lds-ring-small">
@@ -77,8 +77,8 @@
                                 <!-- <i class="share glyphicon glyphicon-share-alt star" ng-if="allowShare" ng-click="WidgetHome.share($event, item)" role="button"></i>
                             <i class="glyphicon bookmark star" ng-class="{ 'glyphicon-star-empty' : !item.data.bookmarked, 'glyphicon-star' : item.data.bookmarked }" ng-click="WidgetHome.bookmark($event, item)" role="button"></i>
                             <i ng-if="globalPlaylist" class="glyphicon star" style="font-size: 17px;top: 1px; margin-left: 20px;" ng-class="{ 'glyphicon-plus' : !isInGlobalPlaylist(item.id), 'glyphicon-minus' : isInGlobalPlaylist(item.id) }" ng-click="toggleGlobalPlaylistItem($event, item)" role="button"></i> -->
-                                <i class="glyphicon glyphicon-option-horizontal"
-                                    ng-click="WidgetHome.showDrawer($event, item)" role="button"></i>
+                                <i class="glyphicon glyphicon-option-horizontal" aria-label="{{item.data.title}} media item options"
+                                    ng-click="WidgetHome.showDrawer($event, item)" role="button" tabindex="0"></i>
                             </div>
 
                         </div>
@@ -86,8 +86,8 @@
                     <div data-ng-if="item.data.summary" class="summary">
                         <p class="margin-bottom-zero" id="summary">{{item.data.summary}}</p>
                     </div>
-                    <p id="views" ng-if="WidgetHome.media.data.content.showViewCount" class="ellipsis margin-zero">{{item.data.count ? item.data.count : 0}}
-                        <span id="iconView" style="float: left;margin-right: 5px;">
+                    <p id="views" ng-if="WidgetHome.media.data.content.showViewCount" class="ellipsis margin-zero" role="text" tabindex="0" aria-label="{{item.data.title}} view count {{item.data.count ? item.data.count : 0}}">{{item.data.count ? item.data.count : 0}}
+                        <span id="iconView" style="float: left;margin-right: 5px;" aria-hidden="true">
                             <i class="glyphicon glyphicon-eye-open"></i>
                         </span>
                     </p>

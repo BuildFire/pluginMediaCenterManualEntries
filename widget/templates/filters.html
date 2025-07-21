@@ -8,7 +8,7 @@
             <div ng-if="WidgetFilters.allCategories && WidgetFilters.allCategories.length > 0">
                 <div class="category-container" ng-repeat="category in WidgetFilters.allCategories">
                     <div class="top-row">
-                        <div class="category-image-container">
+                        <div class="category-image-container" aria-hidden="true">
                             <img class="categoryScreenIcon" crop-width="30" load-image="1x1" crop-height="30"
                                 crop-type="crop" ng-if="category.data.icon && !WidgetFilters.isIcon(category.data.icon)"
                                 data-final-src="{{category.data.icon }}">
@@ -21,21 +21,17 @@
                         </div>
                         <div class="input-container">
                             <div class="box-item"  ng-click="WidgetFilters.pickCategory(category)">
-                                <div class="checkbox checkbox-primary no-label" style="margin-top:3px;">
-                                    <input type="checkbox" ng-checked="WidgetFilters.isCategoryPicked(category.id)"
-                                        class="ng-pristine ng-untouched ng-valid">
-                                </div>
                                 <!-- <input type="checkbox" id="subcategory.id" name="subcategory.name" ng-click="WidgetFilters.pickSubcategory(category.id, subcategory.id)" value="subcategory.checked"> -->
                                 <div class="checkbox checkbox-primary no-label" style="margin: 0; z-index: -1;">
                                     <input type="checkbox" id="{{category.id}}" ng-disabled="config.requireLogin"
-                                        ng-checked="WidgetFilters.isCategoryPicked(category.id)"
+                                        ng-checked="WidgetFilters.isCategoryPicked(category.id)" aria-label="{{category.data.name}} category"
                                         class="ng-pristine ng-untouched ng-valid" disabled="disabled">
                                     <label ng-class="WidgetFilters.getCategoryIconState(category)"
                                         class="subcategory-label" for="{{category.id}}"></label>
                                 </div>
                             </div>
                             <span ng-class="!category.data.subcategories || !category.data.subcategories.length ? 'hidden-category-arrow' : ''" ng-click="WidgetFilters.expand($index)"
-                                class="expand-collapse chevron top chev drop-control"></span>
+                                class="expand-collapse chevron top chev drop-control" role="button" aria-label="Expand {{category.data.name}} category"></span>
 
                         </div>
                     </div>
@@ -69,10 +65,10 @@
                 let subCategory= document.querySelector('.subcategory-bubble p');
                 let categoryIcon= document.querySelector('.cat-icon-widget');
                 let categoryArrow= document.querySelector('.expand-collapse');
-                    
+
                 document.documentElement.style.setProperty('--bodyText', appTheme.colors.bodyText);
                 document.documentElement.style.setProperty('--primaryTheme', appTheme.colors.primaryTheme);
-                
+
                 // link category name color with app theme
                 categoryName.style.setProperty('color', appTheme.colors.headerText);
 
@@ -84,7 +80,7 @@
                 categoryArrow.style.setProperty('color', appTheme.colors.icons, 'important');
 
 
- 
+
 
        });
 </script>

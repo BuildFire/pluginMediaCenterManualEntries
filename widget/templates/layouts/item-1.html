@@ -9,9 +9,9 @@
                     <img ng-if="!WidgetMedia.fullScreen"
                         ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage || ( skipMediaPage && WidgetMedia.item.data.videoUrl )"
                         load-image="16x9" style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
-                        crop-width="1280" crop-height="720" crop-type="crop"
+                        crop-width="1280" crop-height="720" crop-type="crop" title="{{WidgetMedia.item.data.title}} top image" aria-label="{{WidgetMedia.item.data.title}} top image"
                         data-final-src="{{WidgetMedia.item.data.topImage }}" alt="{{WidgetMedia.item.data.title}} top image"/>
-                        <img ng-if="!WidgetMedia.item.data.topImage && !WidgetMedia.showVideo" src="../../../styles/media/holder-16x9.png" style="width:100%;">
+                        <img ng-if="!WidgetMedia.item.data.topImage && !WidgetMedia.showVideo" aria-hidden="true" src="../../../styles/media/holder-16x9.png" style="width:100%;">
                     <div id="myVideo" ng-include="'templates/layouts/video-player.html'"></div>
                 </div>
             </div>
@@ -22,8 +22,8 @@
                 <p data-ng-if="WidgetMedia.item.data.hasDownloadedVideo" class="margin-bottom-zero word-break">Downloaded</p>
                 <p class="margin-bottom-zero word-break">{{WidgetMedia.item.data.summary}}</p>
 
-                <p id="viewsg" ng-if="showViewCount" class="ellipsis margin-zero">{{WidgetMedia.count ? WidgetMedia.count : 0}}
-                    <span  style="float: left;margin-right: 5px;">
+                <p id="viewsg" ng-if="showViewCount" class="ellipsis margin-zero" role="text" tabindex="0" aria-label="{{WidgetMedia.item.data.title}} view count {{WidgetMedia.count ? WidgetMedia.count : 0}}">{{WidgetMedia.count ? WidgetMedia.count : 0}}
+                    <span  style="float: left;margin-right: 5px;" aria-hidden="true">
                         <i id="iconViewg" class="glyphicon glyphicon-eye-open"></i>
                     </span>
                 </p>
@@ -34,22 +34,22 @@
                 <div class="link-list">
                     <a class="media-action video" ng-click="WidgetMedia.toggleShowVideo(!WidgetMedia.showVideo);"
                         ng-if="WidgetMedia.item.data.videoUrl && !skipMediaPage">
-                        <i ng-class="WidgetMedia.showVideo ? 'glyphicon glyphicon-info-sign':'glyphicon glyphicon-film'" class="btn btn-success"></i>
+                        <i ng-class="WidgetMedia.showVideo ? 'glyphicon glyphicon-info-sign':'glyphicon glyphicon-film'" class="btn btn-success" role="button" aria-label="{{WidgetMedia.showVideo ? 'Hide' : 'Show'}} {{WidgetMedia.item.data.title}} video button"></i>
                     </a>
                     <a class="media-action" ng-click="WidgetMedia.playAudio();"
                         ng-if="WidgetMedia.item.data.audioUrl && !skipMediaPage">
-                        <i class="btn btn-success glyphicon glyphicon-headphones"></i>
+                        <i class="btn btn-success glyphicon glyphicon-headphones" role="button" aria-label="Show {{WidgetMedia.item.data.title}} audio button"></i>
                     </a>
                     <a ng-if="(WidgetMedia.item.data.srcUrl || WidgetMedia.item.data.audioUrl || WidgetMedia.item.data.videoUrl) && allowSource && WidgetMedia.online"
                         ng-click="WidgetMedia.openLink(WidgetMedia.item)" target="_blank">
-                        <i class="glyphicon share glyphicon-link"></i>
+                        <i class="glyphicon share glyphicon-link" role="button" aria-label="{{WidgetMedia.item.data.title}} source button"></i>
                     </a>
                 </div>
                 <div class="li-actions">
                         <i class="glyphicon icon bookmark" style="font-family: 'Glyphicons Halflings' !important;"
                         ng-class="{ 'glyphicon-star-empty' : !WidgetMedia.item.data.bookmarked, 'glyphicon-star' : WidgetMedia.item.data.bookmarked }"
-                        ng-click="WidgetMedia.bookmark($event)" role="button"></i>
-                        <i class="glyphicon glyphicon-option-horizontal" ng-click="WidgetMedia.showDrawer()" role="button"></i>
+                        ng-click="WidgetMedia.bookmark($event)" role="button" aria-label="Bookmark {{WidgetMedia.item.data.title}} button"></i>
+                        <i class="glyphicon glyphicon-option-horizontal" ng-click="WidgetMedia.showDrawer()" role="button" aria-label="{{WidgetMedia.item.data.title}} media item options"></i>
                 </div>
             </div>
             <p class="wysiwyg" ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml">
