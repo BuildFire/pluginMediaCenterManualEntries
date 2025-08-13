@@ -608,13 +608,21 @@
                     title="${item.title}"
                 ></video>`;
 
-                vidPlayer = videojs(videoId, {
+                // Detect if the video is a YouTube URL
+                const isYouTube = /^(?:https?:\/\/)?(?:www\.)?(youtube\.com|youtu\.be)(\/|$)/i.test(item.videoUrl);
+                const videoJsOptions = {
                     muted: false,
                     playsinline: true,
-                    controls: true,
+                    controls: !isYouTube,
                     techOrder: ["html5", "youtube", "vimeo"],
-                    enableDocumentPictureInPicture: true,
-                });
+                    enableDocumentPictureInPicture: true
+                };
+                if (isYouTube) {
+                    videoJsOptions.youtube = {
+                        ytControls: 1,
+                    };
+                }
+                vidPlayer = videojs(videoId, videoJsOptions);
 
                 addNextPreviousButtons();
                 addOverlayPlayButton();
