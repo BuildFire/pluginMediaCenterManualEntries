@@ -609,7 +609,7 @@
                 ></video>`;
 
                 // Detect if the video is a YouTube URL
-                const isYouTube = /^(https?:)?\/\/(www\.)?(youtube\.com|youtu\.be)\//i.test(item.videoUrl);
+                const isYouTube = /^(?:https?:\/\/)?(?:www\.)?(youtube\.com|youtu\.be)(\/|$)/i.test(item.videoUrl);
                 const videoJsOptions = {
                     muted: false,
                     playsinline: true,
