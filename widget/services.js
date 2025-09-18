@@ -726,11 +726,6 @@
                     vidPlayer.currentTime(currentTime);
                     playOverlay.classList.remove('hidden');
 
-                    if (buildfire.getContext().device.platform === 'Android') {
-                        const fullScreenIcon = document.querySelector('.vjs-fullscreen-control');
-                        fullScreenIcon.classList.add('hidden');
-                    }
-
                     callback();
                 });
             }
