@@ -18,6 +18,27 @@
                 $rootScope.backgroundColor = buildfire.getContext().appTheme.colors.backgroundColor ? { "background-color": buildfire.getContext().appTheme.colors.backgroundColor } : { "background-color": '#ffffff' };
                 buildfire.spinner.hide();
 
+                let skeletonComponent = null;
+                const startSkeleton = () => {
+                    if (!buildfire.components || !buildfire.components.skeleton) return;
+                    if (!skeletonComponent) {
+                        skeletonComponent = new buildfire.components.skeleton('body', {
+                            type: 'card',
+                        });
+                    }
+                    if (typeof skeletonComponent.start === 'function') {
+                        skeletonComponent.start();
+                    }
+                };
+
+                const stopSkeleton = () => {
+                    if (skeletonComponent && typeof skeletonComponent.stop === 'function') {
+                        skeletonComponent.stop();
+                    }
+                };
+
+                startSkeleton();
+
 
                 const isLauncher = window.location.href.includes('launcherPlugin');
                 const slideElement = document.querySelector(".slide");
@@ -911,6 +932,7 @@
                         WidgetHome.skip = 0;
                         WidgetHome.displayItems = [];
                         setTimeout(() => {
+                            stopSkeleton();
                             buildfire.spinner.hide();
                             WidgetHome.isBusy = false;
                             $rootScope.loadingData = false;
@@ -922,12 +944,14 @@
 
                     CachedMediaContent.get((err, res) => {
                         if (WidgetHome.noMore) {
+                            stopSkeleton();
                             buildfire.spinner.hide();
                             $rootScope.loadingData = false;
                             return;
                         }
                         let cachedItems = [];
                         if (err) {
+                            stopSkeleton();
                             return callback(err);
                         }
                         if (res) {
@@ -977,6 +1001,7 @@
                             WidgetHome.noMore = true;
                             WidgetHome.displayItems = WidgetHome.items;
                             setTimeout(() => {
+                                stopSkeleton();
                                 buildfire.spinner.hide();
                                 WidgetHome.isBusy = false;
                                 $rootScope.loadingData = false;
@@ -1045,6 +1070,9 @@
 
 
                 WidgetHome.loadMore = () => {
+                    if (!WidgetHome.items.length) {
+                        startSkeleton();
+                    }
                     localOpenedItems();
                     updateGetOptions();
                     const getRecords = () => {
@@ -1097,6 +1125,7 @@
                                 WidgetHome.stopScroll = false;
                                 WidgetHome.currentlyLoading = false;
                                 bookmarks.sync($scope);
+                                stopSkeleton();
                                 buildfire.spinner.hide();
                                 if (!WidgetHome.items.length) {
                                     angular.element('#emptyContainer').css('display', 'block');
@@ -1111,8 +1140,14 @@
                             }
 
                             WidgetHome.syncWithOfflineData((error, done) => {
-                                if (error) console.error(error);
-                                else if (done) {
+                                if (error) {
+                                    console.error(error);
+                                    WidgetHome.stopScroll = false;
+                                    WidgetHome.currentlyLoading = false;
+                                    stopSkeleton();
+                                    buildfire.spinner.hide();
+                                    $rootScope.loadingData = false;
+                                } else if (done) {
                                     finish();
                                 }
                             });
@@ -1550,6 +1585,7 @@
                     WidgetHome.displayItems = []
                     WidgetHome.noMore = false;
                     WidgetHome.globalPlaylistLoaded = false;
+                    startSkeleton();
                     if ($rootScope.globalPlaylist) $rootScope.globalPlaylistItems = { playlist: {} };
                     if (!$scope.$$phase) $scope.$apply();
                     WidgetHome.loadMore();
