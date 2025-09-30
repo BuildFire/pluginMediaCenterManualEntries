@@ -71,6 +71,27 @@
     background: none;
 }
 
+/* Load image skeleton states */
+img.load-image {
+    display: block;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+img.load-image.load-image--loading {
+    background-color: #f1f1f1;
+}
+
+img.load-image.load-image--loading[data-placeholder-type="16x9"] {
+    background-image: url("../../../styles/media/holder-16x9.gif");
+}
+
+img.load-image.load-image--loading[data-placeholder-type="1x1"] {
+    background-image: url("../../../styles/media/holder-1x1.gif");
+}
+
 .media-layout .media-item:nth-child(odd) {
     padding-left: 15px !important;
     padding-right: 7.5px !important;

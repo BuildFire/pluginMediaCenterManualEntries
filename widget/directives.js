@@ -24,13 +24,17 @@
                 restrict: 'A',
                 link: function (scope, element, attrs) {
                     var placeholderType = attrs.loadImage || '16x9';
-                    var skeletonSrc = "../../../styles/media/holder-" + placeholderType + ".gif";
-                    var fallbackSrc = "../../../styles/media/holder-" + placeholderType + ".png";
+                    var sanitizedPlaceholder = (placeholderType || '').toString().replace(/[^a-zA-Z0-9_-]/g, '');
+                    var placeholderAttr = sanitizedPlaceholder || '16x9';
+                    var fallbackSrc = "../../../styles/media/holder-" + placeholderAttr + ".png";
+                    var transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 
-                    setSkeleton();
+                    initializeSkeleton();
+                    showSkeleton();
 
                     attrs.$observe('finalSrc', function (value) {
                         if (!value) return;
+                        showSkeleton();
                         var _img = value;
                         if (attrs.cropType == 'resize') {
                             Buildfire.imageLib.local.resizeImage(_img, {
@@ -53,16 +57,27 @@
                         }
                     });
 
-                    function setSkeleton() {
-                        element.attr("src", skeletonSrc);
+                    function initializeSkeleton() {
+                        element.addClass('load-image');
+                        element.attr('data-placeholder-type', placeholderAttr);
+                    }
+
+                    function showSkeleton() {
+                        element.addClass('load-image--loading');
+                        element.attr('src', transparentPixel);
                         element.off("error.skeleton").on("error.skeleton", function () {
                             applyFallback();
                         });
                     }
 
+                    function hideSkeleton() {
+                        element.removeClass('load-image--loading');
+                    }
+
                     function applyFallback() {
                         element.off("error.skeleton");
                         element.attr("src", fallbackSrc);
+                        hideSkeleton();
                     }
 
                     function replaceImg(finalSrc) {
@@ -70,6 +85,7 @@
                         elem[0].onload = function () {
                             element.off("error.skeleton");
                             element.attr("src", finalSrc);
+                            hideSkeleton();
                             elem.remove();
                         };
                         elem[0].onerror = function () {
