@@ -23,37 +23,117 @@
             return {
                 restrict: 'A',
                 link: function (scope, element, attrs) {
-                    element.attr("src", "../../../styles/media/holder-" + attrs.loadImage + ".gif");
+                    var parent = element.parent();
+                    var container;
+                    if (parent && parent.hasClass('load-image-container')) {
+                        container = parent;
+                    } else {
+                        container = angular.element('<div class="load-image-container"></div>');
+                        if (parent && parent[0]) {
+                            parent[0].insertBefore(container[0], element[0]);
+                        }
+                        container.append(element);
+                    }
+
+                    var loaderElement = container[0] && container[0].querySelector ? container[0].querySelector('.load-image-spinner') : null;
+                    var loader = loaderElement ? angular.element(loaderElement) : angular.element('<div class="load-image-spinner" aria-hidden="true"></div>');
+                    if (!loaderElement) {
+                        container.append(loader);
+                    }
+
+                    element.addClass('load-image-img load-image-hidden');
+
+                    if (element[0] && element[0].style && element[0].style.width) {
+                        container.css('width', element[0].style.width);
+                    }
+
+                    var minHeight = null;
+                    if (element[0] && element[0].style && element[0].style.height) {
+                        minHeight = element[0].style.height;
+                    } else if (attrs.cropHeight) {
+                        minHeight = attrs.cropHeight + 'px';
+                    }
+
+                    function applyMinHeight() {
+                        if (minHeight) {
+                            container.css('min-height', minHeight);
+                        }
+                    }
+
+                    function clearMinHeight() {
+                        if (minHeight) {
+                            container.css('min-height', '');
+                        }
+                    }
+
+                    function showLoader() {
+                        applyMinHeight();
+                        container.removeClass('load-image-ready');
+                        loader.removeClass('ng-hide');
+                        element.removeClass('load-image-visible');
+                        element.addClass('load-image-hidden');
+                    }
+
+                    function hideLoader() {
+                        clearMinHeight();
+                        container.addClass('load-image-ready');
+                        loader.addClass('ng-hide');
+                        element.removeClass('load-image-hidden');
+                        element.addClass('load-image-visible');
+                    }
+
+                    function setImage(finalSrc) {
+                        if (!finalSrc) {
+                            hideLoader();
+                            return;
+                        }
+
+                        var img = new Image();
+                        img.onload = function () {
+                            scope.$evalAsync(function () {
+                                element.attr('src', finalSrc);
+                                hideLoader();
+                            });
+                        };
+                        img.onerror = function () {
+                            scope.$evalAsync(function () {
+                                hideLoader();
+                            });
+                        };
+                        img.src = finalSrc;
+                    }
 
                     attrs.$observe('finalSrc', function () {
                         var _img = attrs.finalSrc;
+                        if (!_img) {
+                            element.removeAttr('src');
+                            container.removeClass('load-image-ready');
+                            loader.addClass('ng-hide');
+                            element.removeClass('load-image-visible');
+                            element.addClass('load-image-hidden');
+                            return;
+                        }
+
+                        showLoader();
+
+                        var options = {};
+                        if (attrs.cropWidth) {
+                            options.width = attrs.cropWidth;
+                        }
+                        if (attrs.cropHeight) {
+                            options.height = attrs.cropHeight;
+                        }
+
                         if (attrs.cropType == 'resize') {
-                            Buildfire.imageLib.local.resizeImage(_img, {
-                                width: attrs.cropWidth,
-                                height: attrs.cropHeight
-                            }, function (err, imgUrl) {
-                                _img = imgUrl;
-                                replaceImg(_img);
+                            Buildfire.imageLib.local.resizeImage(_img, options, function (err, imgUrl) {
+                                setImage(err ? _img : imgUrl);
                             });
                         } else {
-                            Buildfire.imageLib.local.cropImage(_img, {
-                                width: attrs.cropWidth,
-                                height: attrs.cropHeight
-                            }, function (err, imgUrl) {
-                                _img = imgUrl;
-                                replaceImg(_img);
+                            Buildfire.imageLib.local.cropImage(_img, options, function (err, imgUrl) {
+                                setImage(err ? _img : imgUrl);
                             });
                         }
                     });
-
-                    function replaceImg(finalSrc) {
-                        var elem = $("<img>");
-                        elem[0].onload = function () {
-                            element.attr("src", finalSrc);
-                            elem.remove();
-                        };
-                        elem.attr("src", finalSrc);
-                    }
                 }
             };
         }])
