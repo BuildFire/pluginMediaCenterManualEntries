@@ -23,15 +23,21 @@
             return {
                 restrict: 'A',
                 link: function (scope, element, attrs) {
-                    element.attr("src", "../../../styles/media/holder-" + attrs.loadImage + ".gif");
+                    var placeholderType = attrs.loadImage || '16x9';
+                    var skeletonSrc = "../../../styles/media/holder-" + placeholderType + ".gif";
+                    var fallbackSrc = "../../../styles/media/holder-" + placeholderType + ".png";
 
-                    attrs.$observe('finalSrc', function () {
-                        var _img = attrs.finalSrc;
+                    setSkeleton();
+
+                    attrs.$observe('finalSrc', function (value) {
+                        if (!value) return;
+                        var _img = value;
                         if (attrs.cropType == 'resize') {
                             Buildfire.imageLib.local.resizeImage(_img, {
                                 width: attrs.cropWidth,
                                 height: attrs.cropHeight
                             }, function (err, imgUrl) {
+                                if (err) return applyFallback();
                                 _img = imgUrl;
                                 replaceImg(_img);
                             });
@@ -40,16 +46,34 @@
                                 width: attrs.cropWidth,
                                 height: attrs.cropHeight
                             }, function (err, imgUrl) {
+                                if (err) return applyFallback();
                                 _img = imgUrl;
                                 replaceImg(_img);
                             });
                         }
                     });
 
+                    function setSkeleton() {
+                        element.attr("src", skeletonSrc);
+                        element.off("error.skeleton").on("error.skeleton", function () {
+                            applyFallback();
+                        });
+                    }
+
+                    function applyFallback() {
+                        element.off("error.skeleton");
+                        element.attr("src", fallbackSrc);
+                    }
+
                     function replaceImg(finalSrc) {
                         var elem = $("<img>");
                         elem[0].onload = function () {
+                            element.off("error.skeleton");
                             element.attr("src", finalSrc);
+                            elem.remove();
+                        };
+                        elem[0].onerror = function () {
+                            applyFallback();
                             elem.remove();
                         };
                         elem.attr("src", finalSrc);
