@@ -19,45 +19,44 @@
                 }
             };
         }])
-        .directive("loadImage", ['Buildfire', function (Buildfire) {
-            return {
-                restrict: 'A',
-                link: function (scope, element, attrs) {
-                    element.attr("src", "../../../styles/media/holder-" + attrs.loadImage + ".gif");
-
-                    attrs.$observe('finalSrc', function () {
-                        var _img = attrs.finalSrc;
-                        if (attrs.cropType == 'resize') {
-                            Buildfire.imageLib.local.resizeImage(_img, {
-                                width: attrs.cropWidth,
-                                height: attrs.cropHeight
-                            }, function (err, imgUrl) {
-                                _img = imgUrl;
-                                replaceImg(_img);
-                            });
-                        } else {
-                            Buildfire.imageLib.local.cropImage(_img, {
-                                width: attrs.cropWidth,
-                                height: attrs.cropHeight
-                            }, function (err, imgUrl) {
-                                _img = imgUrl;
-                                replaceImg(_img);
-                            });
-                        }
-                    });
-
-                    function replaceImg(finalSrc) {
-                        var elem = $("<img>");
-                        elem[0].onload = function () {
-                            element.attr("src", finalSrc);
-                            elem.remove();
-                        };
-                        elem.attr("src", finalSrc);
-                    }
-                }
-            };
-        }])
-        .directive('scrolly', function () {
+      .directive("loadImage", ['Buildfire', function (Buildfire) {
+          return {
+              restrict: 'A',
+              link: function (scope, element, attrs) {
+                  
+                  attrs.$observe('finalSrc', function (_img) {
+                      if (!_img) return;
+                      
+                      var options = {};
+                      if (attrs.cropWidth) options.width = attrs.cropWidth;
+                      if (attrs.cropHeight) options.height = attrs.cropHeight;
+                      
+                      var processImage = attrs.cropType === 'resize' ? Buildfire.imageLib.local.resizeImage : Buildfire.imageLib.local.cropImage;
+                      
+                      processImage(_img, options, function (err, imgUrl) {
+                          var finalSrc = err ? _img : imgUrl;
+                          
+                          var img = new Image();
+                          img.onload = function () {
+                              scope.$evalAsync(function () {
+                                  element.attr("src", finalSrc);
+                                  element.removeClass('load-image-hidden');
+                                  element.addClass('load-image-visible');
+                                  console.log("image loaded");
+                                  
+                                  if (scope.item) {
+                                      scope.item.imageLoaded = true;
+                                  }
+                              });
+                          };
+                          img.src = finalSrc;
+                      });
+                  });
+              }
+          };
+      }])
+      
+      .directive('scrolly', function () {
             return {
                 restrict: 'A',
                 link: function (scope, element, attrs) {
