@@ -19,19 +19,42 @@
                 }
             };
         }])
-      .directive("loadImage", ['Buildfire', function (Buildfire) {
+      .directive("loadImage", ['Buildfire', '$parse', function (Buildfire, $parse) {
           return {
               restrict: 'A',
               link: function (scope, element, attrs) {
+                  var getImageItem = attrs.imageItem ? $parse(attrs.imageItem) : null;
+                  
+                  function updateImageLoadedState(isLoaded) {
+                      if (isLoaded) {
+                          element.removeClass('load-image-hidden');
+                          element.addClass('load-image-visible');
+                      } else {
+                          element.addClass('load-image-hidden');
+                          element.removeClass('load-image-visible');
+                      }
+                      
+                      scope.$evalAsync(function () {
+                          var target = getImageItem ? getImageItem(scope) : scope.item;
+                          if (target) {
+                              target.imageLoaded = isLoaded;
+                          }
+                      });
+                  }
                   
                   attrs.$observe('finalSrc', function (_img) {
-                      if (!_img) return;
+                      if (!_img) {
+                          updateImageLoadedState(false);
+                          return;
+                      }
                       
                       var options = {};
                       if (attrs.cropWidth) options.width = attrs.cropWidth;
                       if (attrs.cropHeight) options.height = attrs.cropHeight;
                       
                       var processImage = attrs.cropType === 'resize' ? Buildfire.imageLib.local.resizeImage : Buildfire.imageLib.local.cropImage;
+                      
+                      updateImageLoadedState(false);
                       
                       processImage(_img, options, function (err, imgUrl) {
                           var finalSrc = err ? _img : imgUrl;
@@ -40,13 +63,13 @@
                           img.onload = function () {
                               scope.$evalAsync(function () {
                                   element.attr("src", finalSrc);
-                                  element.removeClass('load-image-hidden');
-                                  element.addClass('load-image-visible');
-                                  console.log("image loaded");
-                                  
-                                  if (scope.item) {
-                                      scope.item.imageLoaded = true;
-                                  }
+                                  updateImageLoadedState(true);
+                              });
+                          };
+                          img.onerror = function () {
+                              scope.$evalAsync(function () {
+                                  element.attr("src", _img);
+                                  updateImageLoadedState(true);
                               });
                           };
                           img.src = finalSrc;

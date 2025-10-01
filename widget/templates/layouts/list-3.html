@@ -47,9 +47,22 @@
                 <div class="plugin-banner clearfix text-overlay">
                     <div class="text-overlay" aria-hidden="true"
                         play-btn="{{item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0 }}">
-                        <img alt="{{item.data.title}}" ng-if="item.data.topImage" load-image="16x9" style="width:100%;" crop-width="340"
-                            crop-height="190" crop-type="crop" aria-hidden="true"
-                            data-final-src="{{item.data.topImage}}" tabindex="0">
+                        <div
+                                ng-if="item.data.topImage && !item.imageLoaded"
+                                class="image-placeholder"
+                                ng-style="{'padding-top': ((190 / 340) * 100) + '%'}">
+                        </div>
+                        <img ng-show="item.data.topImage && item.imageLoaded" alt="{{item.data.title}}"
+                             class="load-image-hidden"
+                             aria-hidden="true"
+                             load-image="16x9"
+                             style="width:100%;"
+                             crop-width="340"
+                             crop-height="190"
+                             crop-type="crop"
+                             image-item="item"
+                             data-final-src="{{item.data.topImage}}"
+                             tabindex="0">
                         <img alt="{{item.data.title}}" aria-hidden="true" ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png"
                             style="width:100%;">
                     </div>

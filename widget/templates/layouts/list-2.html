@@ -47,28 +47,15 @@
             <div class="clickable list-item text-overlay" ng-repeat="item in WidgetHome.items track by $index"
                 ng-click="WidgetHome.goToMedia($index)">
                 <div class="list-item-media text-left overflow-hidden">
-<<<<<<< Updated upstream
                     <div class="list-media-holder pull-left text-overlay" aria-hidden="true"
                         play-btn="{{item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0 }}">
                         <!-- <div class="li-actions-item">
                             <i class="share glyphicon glyphicon-share-alt" style="color: white !important;" ng-if="allowShare" ng-click="WidgetHome.share($event, item)" role="button"></i>
                         </div> -->
-                        <img alt="{{item.data.title}}" ng-if="item.data.topImage" load-image="16x9" crop-width="110" crop-height="60"
-                            crop-type="crop" aria-hidden="true" data-final-src="{{item.data.topImage}}" tabindex="0">
+                        <div ng-if="item.data.topImage && !item.imageLoaded" class="image-placeholder"></div>
+                        <img ng-if="item.data.topImage" class="load-image-hidden" alt="{{item.data.title}}" aria-hidden="true"
+                             load-image="16x9" crop-width="110" crop-height="60" crop-type="crop" image-item="item" tabindex="0" data-final-src="{{item.data.topImage}}">
                         <img alt="{{item.data.title}}" aria-hidden="true" ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png">
-=======
-                    <div class="list-media-holder pull-left text-overlay"
-                         play-btn="{{item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0 }}">
-
-                        <div ng-if="!item.imageLoaded" class="image-placeholder"></div>
-                        <img load-image="16x9"
-                             crop-width="110"
-                             crop-height="60"
-                             crop-type="crop"
-                             data-final-src="{{item.data.topImage}}"
-                             image-item="item">
-                        <img ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png">
->>>>>>> Stashed changes
                     </div>
 
                     <div class="list-item-copy text-left padding-left-ten padding-right-ten text-overlay"
