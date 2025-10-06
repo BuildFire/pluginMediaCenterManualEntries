@@ -64,9 +64,14 @@
 
                                 <div ng-if="WidgetHome.items[$index].data.topImage && !WidgetHome.items[$index].imageLoaded" class="image-placeholder"
                                      ng-style="{'width': '200px', 'padding-top': '100%'}">
+                                    <div class="image-placeholder__dots">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
                                 </div>
 
-                                <img ng-if="WidgetHome.items[$index].data.topImage"
+                                <img ng-show="WidgetHome.items[$index].data.topImage && WidgetHome.items[$index].imageLoaded"
                                      class="load-image-hidden"
                                      load-image="1x1" crop-width="200"
                                      crop-height="200" crop-type="crop" alt="{{WidgetHome.items[$index].data.title}}"
@@ -128,12 +133,14 @@
                             </div>
                             <div class="list-media-holder text-overlay" aria-hidden="true"
                                 play-btn="{{WidgetHome.items[$index+1].data.videoUrl.length > 0 || WidgetHome.items[$index+1].data.audioUrl.length > 0 }}">
-                                <div
-                                        ng-if="WidgetHome.items[$index + 1].data.topImage && !WidgetHome.items[$index + 1].imageLoaded"
-                                        class="image-placeholder"
-                                        ng-style="{'width': '200px', 'padding-top': '100%'}">
+                                <div ng-if="WidgetHome.items[$index + 1].data.topImage && !WidgetHome.items[$index + 1].imageLoaded" class="image-placeholder" ng-style="{'width': '200px', 'padding-top': '100%'}">
+                                    <div class="image-placeholder__dots">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
                                 </div>
-                                <img ng-if="WidgetHome.items[$index + 1].data.topImage"
+                                <img ng-show="WidgetHome.items[$index + 1].data.topImage && WidgetHome.items[$index + 1].imageLoaded"
                                      class="load-image-hidden"
                                      load-image="1x1"
                                      crop-width="200" crop-height="200" crop-type="crop" aria-hidden="true"

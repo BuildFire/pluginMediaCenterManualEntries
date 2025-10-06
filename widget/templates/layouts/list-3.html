@@ -51,6 +51,11 @@
                                 ng-if="item.data.topImage && !item.imageLoaded"
                                 class="image-placeholder"
                                 ng-style="{'padding-top': ((190 / 340) * 100) + '%'}">
+                            <div class="image-placeholder__dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
                         </div>
                         <img ng-show="item.data.topImage && item.imageLoaded" alt="{{item.data.title}}"
                              class="load-image-hidden"

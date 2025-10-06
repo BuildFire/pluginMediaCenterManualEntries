@@ -49,7 +49,13 @@
                                     <i id="drawericon" tabindex="0" style="right: 0;" class="glyphicon glyphicon-option-horizontal" ng-click="WidgetHome.showDrawer($event, item)" role="button" aria-label="{{item.data.title}} media item options"></i>
                                 </div>
                                 <div play-btn="{{item.data.videoUrl.length > 0 || item.data.audioUrl.length > 0 }}" aria-hidden="true">
-                                    <div ng-if="item.data.topImage && !item.imageLoaded" class="image-placeholder" ng-style="{'padding-top': ((135 / 240) * 100) + '%'}"></div>
+                                    <div ng-if="item.data.topImage && !item.imageLoaded" class="image-placeholder" ng-style="{'padding-top': ((135 / 240) * 100) + '%'}">
+                                        <div class="image-placeholder__dots">
+                                            <span></span>
+                                            <span></span>
+                                            <span></span>
+                                        </div>
+                                    </div>
                                     <img ng-show="item.imageLoaded && item.data.topImage" tabindex="0"
                                          alt="{{item.data.title}}"
                                          aria-hidden="true"
