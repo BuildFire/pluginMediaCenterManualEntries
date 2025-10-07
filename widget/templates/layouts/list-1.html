@@ -56,16 +56,9 @@
                                             <span></span>
                                         </div>
                                     </div>
-                                    <img ng-show="item.imageLoaded && item.data.topImage" tabindex="0"
-                                         alt="{{item.data.title}}"
-                                         aria-hidden="true"
-                                         class="load-image-hidden"
-                                         load-image="16x9"
-                                         crop-width="240"
-                                         crop-height="135"
-                                         crop-type="crop"
-                                         image-item="item"
-                                         data-final-src="{{item.data.topImage}}">
+                                    <img ng-show="item.imageLoaded && item.data.topImage" tabindex="0" alt="{{item.data.title}}"
+                                         aria-hidden="true" class="load-image-hidden" load-image="16x9" crop-width="240"
+                                         crop-height="135" crop-type="crop" image-item="item" data-final-src="{{item.data.topImage}}">
                                     <img tabindex="0" alt="{{item.data.title}}" aria-hidden="true" ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png" style="max-width:100%">
                                 </div>
                             </div>

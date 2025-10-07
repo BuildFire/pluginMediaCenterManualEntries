@@ -71,12 +71,9 @@
                                     </div>
                                 </div>
 
-                                <img ng-show="WidgetHome.items[$index].data.topImage && WidgetHome.items[$index].imageLoaded"
-                                     class="load-image-hidden"
-                                     load-image="1x1" crop-width="200"
-                                     crop-height="200" crop-type="crop" alt="{{WidgetHome.items[$index].data.title}}"
-                                     image-item="WidgetHome.items[$index]"
-                                     data-final-src="{{WidgetHome.items[$index].data.topImage}}"
+                                <img ng-show="WidgetHome.items[$index].data.topImage && WidgetHome.items[$index].imageLoaded" class="load-image-hidden"
+                                     load-image="1x1" crop-width="200" crop-height="200" crop-type="crop" alt="{{WidgetHome.items[$index].data.title}}"
+                                     image-item="WidgetHome.items[$index]" data-final-src="{{WidgetHome.items[$index].data.topImage}}"
                                      style="width: 200px;" tabindex="0" aria-hidden="true">
 
                                 <img ng-if="!WidgetHome.items[$index].data.topImage"
@@ -140,12 +137,9 @@
                                         <span></span>
                                     </div>
                                 </div>
-                                <img ng-show="WidgetHome.items[$index + 1].data.topImage && WidgetHome.items[$index + 1].imageLoaded"
-                                     class="load-image-hidden"
-                                     load-image="1x1"
-                                     crop-width="200" crop-height="200" crop-type="crop" aria-hidden="true"
-                                     image-item="WidgetHome.items[$index + 1]"
-                                     data-final-src="{{WidgetHome.items[$index + 1].data.topImage}}"
+                                <img ng-show="WidgetHome.items[$index + 1].data.topImage && WidgetHome.items[$index + 1].imageLoaded" class="load-image-hidden"
+                                     load-image="1x1" crop-width="200" crop-height="200" crop-type="crop" aria-hidden="true"
+                                     image-item="WidgetHome.items[$index + 1]" data-final-src="{{WidgetHome.items[$index + 1].data.topImage}}"
                                      style="width: 200px;" tabindex="0" alt="{{WidgetHome.items[$index + 1].data.title}}">
 
                                 <img ng-if="!WidgetHome.items[$index + 1].data.topImage"

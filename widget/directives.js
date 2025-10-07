@@ -26,14 +26,6 @@
                   var getImageItem = attrs.imageItem ? $parse(attrs.imageItem) : null;
                   
                   function updateImageLoadedState(isLoaded) {
-                      if (isLoaded) {
-                          element.removeClass('load-image-hidden');
-                          element.addClass('load-image-visible');
-                      } else {
-                          element.addClass('load-image-hidden');
-                          element.removeClass('load-image-visible');
-                      }
-                      
                       scope.$evalAsync(function () {
                           var target = getImageItem ? getImageItem(scope) : scope.item;
                           if (target) {
