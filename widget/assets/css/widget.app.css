@@ -1588,7 +1588,9 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
     margin: 0 auto;
     background-color: #efefef;
     overflow: hidden;
+    position: relative;
 }
+
 
 .image-placeholder__dots {
     position: absolute;
@@ -1610,7 +1612,8 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
     animation: image-placeholder-bounce 1.2s infinite ease-in-out;
 }
 
-#listLayout2 .image-placeholder__dots span {
+
+#listLayout2 .image-placeholder__dots span, .list-layout-1 .image-placeholder__dots span, .people-media .image-placeholder__dots span {
     width: 2vw !important;
     height: 2vw !important;
 }

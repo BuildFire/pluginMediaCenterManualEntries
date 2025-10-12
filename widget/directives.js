@@ -53,10 +53,10 @@
                           
                           var img = new Image();
                           img.onload = function () {
-                              scope.$evalAsync(function () {
-                                  element.attr("src", finalSrc);
-                                  updateImageLoadedState(true);
-                              });
+                                 scope.$evalAsync(function () {
+                                     element.attr("src", finalSrc);
+                                     updateImageLoadedState(true);
+                                 });
                           };
                           img.onerror = function () {
                               scope.$evalAsync(function () {

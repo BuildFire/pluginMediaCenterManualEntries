@@ -10,9 +10,18 @@
                                 <div class="people-holder clearfix">
                                     <div class="people-media text-center padding-top-fifteen"
                                          ng-hide="WidgetMedia.showVideo">
-                                        <img ng-if="WidgetMedia.item.data.topImage" ng-hide="skipMediaPage && WidgetMedia.item.data.videoUrl" load-image="16x9" style="width: 161px;height: 91px;"
+                                        <div ng-if="WidgetMedia.item.data.topImage && !WidgetMedia.item.imageLoaded && !(skipMediaPage && WidgetMedia.item.data.videoUrl)"
+                                             class="image-placeholder"
+                                             ng-style="{'width': '161px', 'height': '91px'}">
+                                            <div class="image-placeholder__dots">
+                                                <span></span>
+                                                <span></span>
+                                                <span></span>
+                                            </div>
+                                        </div>
+                                        <img ng-show="WidgetMedia.item.imageLoaded && WidgetMedia.item.data.topImage" ng-hide="skipMediaPage && WidgetMedia.item.data.videoUrl" load-image="16x9" style="width: 161px;height: 91px;"
                                              crop-width="161" crop-height="91" crop-type="crop" aria-label="{{WidgetMedia.item.data.title}} top image"
-                                             data-final-src="{{WidgetMedia.item.data.topImage}}" title="{{WidgetMedia.item.data.title}} top image" alt="{{WidgetMedia.item.data.title}} top image">
+                                             data-final-src="{{WidgetMedia.item.data.topImage}}" title="{{WidgetMedia.item.data.title}} top image" image-item="WidgetMedia.item" alt="{{WidgetMedia.item.data.title}} top image">
                                         <img ng-if="!WidgetMedia.item.data.topImage" style="width: 161px;height: 91px;"
                                              crop-width="161" crop-height="91" crop-type="crop" aria-hidden="true"
                                              src="../../../styles/media/holder-16x9.png" alt="top image">
