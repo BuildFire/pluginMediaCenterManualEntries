@@ -52,8 +52,15 @@
                         <!-- <div class="li-actions-item">
                             <i class="share glyphicon glyphicon-share-alt" style="color: white !important;" ng-if="allowShare" ng-click="WidgetHome.share($event, item)" role="button"></i>
                         </div> -->
-                        <img alt="{{item.data.title}}" ng-if="item.data.topImage" load-image="16x9" crop-width="110" crop-height="60"
-                            crop-type="crop" aria-hidden="true" data-final-src="{{item.data.topImage}}" tabindex="0">
+                        <div ng-if="item.data.topImage && !item.imageLoaded" class="image-placeholder">
+                            <div class="image-placeholder__dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                        <img ng-if="item.data.topImage" class="load-image-hidden" alt="{{item.data.title}}" aria-hidden="true"
+                             load-image="16x9" crop-width="110" crop-height="60" crop-type="crop" image-item="item" tabindex="0" data-final-src="{{item.data.topImage}}">
                         <img alt="{{item.data.title}}" aria-hidden="true" ng-if="!item.data.topImage" src="../../../styles/media/holder-16x9.png">
                     </div>
 

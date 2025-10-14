@@ -61,10 +61,21 @@
                             </div>
                             <div class="list-media-holder text-overlay" aria-hidden="true"
                                 play-btn="{{WidgetHome.items[$index].data.videoUrl.length > 0 || WidgetHome.items[$index].data.audioUrl.length > 0 }}">
-                                <img ng-if="WidgetHome.items[$index].data.topImage" load-image="1x1" crop-width="200"
-                                    crop-height="200" crop-type="crop" alt="{{WidgetHome.items[$index].data.title}}"
-                                    data-final-src="{{WidgetHome.items[$index].data.topImage}}"
-                                    style="width: 200px;" tabindex="0" aria-hidden="true">
+
+                                <div ng-if="WidgetHome.items[$index].data.topImage && !WidgetHome.items[$index].imageLoaded" class="image-placeholder"
+                                     ng-style="{'width': '200px', 'padding-top': '100%'}">
+                                    <div class="image-placeholder__dots">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
+                                </div>
+
+                                <img ng-show="WidgetHome.items[$index].data.topImage && WidgetHome.items[$index].imageLoaded" class="load-image-hidden"
+                                     load-image="1x1" crop-width="200" crop-height="200" crop-type="crop" alt="{{WidgetHome.items[$index].data.title}}"
+                                     image-item="WidgetHome.items[$index]" data-final-src="{{WidgetHome.items[$index].data.topImage}}"
+                                     style="width: 200px;" tabindex="0" aria-hidden="true">
+
                                 <img ng-if="!WidgetHome.items[$index].data.topImage"
                                     src="../../../styles/media/holder-1x1.png" alt="{{WidgetHome.items[$index].data.title}}" aria-hidden="true">
                             </div>
@@ -119,10 +130,18 @@
                             </div>
                             <div class="list-media-holder text-overlay" aria-hidden="true"
                                 play-btn="{{WidgetHome.items[$index+1].data.videoUrl.length > 0 || WidgetHome.items[$index+1].data.audioUrl.length > 0 }}">
-                                <img ng-if="WidgetHome.items[$index + 1].data.topImage" load-image="1x1"
-                                    crop-width="200" crop-height="200" crop-type="crop" aria-hidden="true"
-                                    data-final-src="{{WidgetHome.items[$index + 1].data.topImage}}"
-                                    style="width: 200px;" tabindex="0" alt="{{WidgetHome.items[$index + 1].data.title}}">
+                                <div ng-if="WidgetHome.items[$index + 1].data.topImage && !WidgetHome.items[$index + 1].imageLoaded" class="image-placeholder" ng-style="{'width': '200px', 'padding-top': '100%'}">
+                                    <div class="image-placeholder__dots">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
+                                </div>
+                                <img ng-show="WidgetHome.items[$index + 1].data.topImage && WidgetHome.items[$index + 1].imageLoaded" class="load-image-hidden"
+                                     load-image="1x1" crop-width="200" crop-height="200" crop-type="crop" aria-hidden="true"
+                                     image-item="WidgetHome.items[$index + 1]" data-final-src="{{WidgetHome.items[$index + 1].data.topImage}}"
+                                     style="width: 200px;" tabindex="0" alt="{{WidgetHome.items[$index + 1].data.title}}">
+
                                 <img ng-if="!WidgetHome.items[$index + 1].data.topImage"
                                     src="../../../styles/media/holder-1x1.png" aria-hidden="true">
                             </div>
