@@ -59,8 +59,8 @@
                 <span class="glyphicon glyphicon-cog whiteTheme" ng-click="NowPlaying.getSettings()" role="button" tabindex="0" aria-label="Audio player settings"></span>
             </div>
             <div class="media-player-btns">
-                <span class="icon" ng-class="(((NowPlaying.currentTrack.isAudioFromPluginList && !shuffleAudioListItems) || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist)) || !NowPlaying.isAudioInitialized) && 'disabled'" ng-click="NowPlaying.shufflePlaylist()" role="button" tabindex="0" aria-label="Shuffle items"
-                    aria-hidden="{{(((NowPlaying.currentTrack.isAudioFromPluginList && !shuffleAudioListItems) || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist)) || !NowPlaying.isAudioInitialized) ? true : false}}">
+                <span ng-style="{'visibility': ((NowPlaying.currentTrack.isAudioFromPluginList && !shuffleAudioListItems) || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist) || !NowPlaying.isAudioInitialized) ? 'hidden' : 'visible'}"  class="icon" ng-click="NowPlaying.shufflePlaylist()" role="button" tabindex="0" aria-label="Shuffle items"
+                    aria-hidden="{{ ((NowPlaying.currentTrack.isAudioFromPluginList && !shuffleAudioListItems) || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist) || !NowPlaying.isAudioInitialized) ? true : false}}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <g opacity="0.9" clip-path="url(#clip0_1431_2874)">
                             <path d="M10.59 9.17L5.41 4L4 5.41L9.17 10.58L10.59 9.17ZM14.5 4L16.54 6.04L4 18.59L5.41 20L17.96 7.46L20 9.5V4H14.5ZM14.83 13.41L13.42 14.82L16.55 17.95L14.5 20H20V14.5L17.96 16.54L14.83 13.41Z"
@@ -95,7 +95,7 @@
                         <i style="font-size: 18px; color: #D7D7D8;" class="glyphicon glyphicon-step-forward"></i>
                     </span>
                 </div>
-                <span ng-class="((NowPlaying.currentTrack.isAudioFromPluginList || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist)) || !NowPlaying.isAudioInitialized) && 'disabled'" class="icon icon-sm" ng-click="NowPlaying.loopPlaylist()" role="button" tabindex="0" aria-label="Loop items"
+                <span ng-style="{'visibility': ((NowPlaying.currentTrack.isAudioFromPluginList || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist)) || !NowPlaying.isAudioInitialized) ? 'hidden' : 'visible'}" class="icon icon-sm" ng-click="NowPlaying.loopPlaylist()" role="button" tabindex="0" aria-label="Loop items"
                     aria-hidden="{{((NowPlaying.currentTrack.isAudioFromPluginList || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist)) || !NowPlaying.isAudioInitialized) ? true : false}}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <g opacity="0.9" clip-path="url(#clip0_1431_2881)">

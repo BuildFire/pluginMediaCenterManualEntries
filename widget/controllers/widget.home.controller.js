@@ -706,6 +706,8 @@
                     // audio should go to audios, video should go to videos
                     const availableItems = getItemsWithSameType();
 
+                    let newIndex;
+
                     const currentIndex = availableItems.findIndex(item => item.id === WidgetHome.items[$rootScope.currentIndex].id);
                     if (currentIndex === 0) {
                         newIndex = WidgetHome.items.findIndex(item => item.id === availableItems[availableItems.length - 1].id);
