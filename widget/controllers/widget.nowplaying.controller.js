@@ -187,7 +187,7 @@
 							return updatePlaylistUI();
 						} else if ($rootScope.autoPlay) {
 							audioPlayer.pause();
-							$rootScope.playNextItem(false, NowPlaying.settings.shufflePluginList);
+							$rootScope.playNextItem({ userInput: false, shufflePluginList: NowPlaying.settings.shufflePluginList, skipInfoPage: true });
 						}
 						break;
 					case 'pause':
@@ -475,7 +475,7 @@
 					if (!NowPlaying.currentTrack.isAudioFromPluginList) {
 						audioPlayer.next();
 					} else {
-						$rootScope.playNextItem(true, NowPlaying.settings.shufflePluginList);
+						$rootScope.playNextItem({ userInput: true, shufflePluginList: NowPlaying.settings.shufflePluginList, skipInfoPage: true });
 					}
 				};
 
@@ -483,7 +483,7 @@
 					if (!NowPlaying.currentTrack.isAudioFromPluginList) {
 						audioPlayer.previous();
 					} else {
-						$rootScope.playPrevItem();
+						$rootScope.playPrevItem({ skipInfoPage: true });
 					}
 				};
 

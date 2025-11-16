@@ -671,7 +671,7 @@
                         this.addClass('vjs-icon-placeholder');
                     },
                     handleClick: function () {
-                        $rootScope.playNextItem(true);
+                        $rootScope.playNextItem({ userInput: true });
                     }
                 });
 

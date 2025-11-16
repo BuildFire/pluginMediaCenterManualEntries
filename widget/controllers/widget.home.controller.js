@@ -695,7 +695,7 @@
                     return WidgetHome.items.filter(item => (currentItemType === 'audio' && item.data.audioUrl) || (currentItemType === 'video' && item.data.videoUrl));
                 }
 
-                $rootScope.playPrevItem = () => {
+                $rootScope.playPrevItem = ({ skipInfoPage = false } = {}) => {
                     if (typeof $rootScope.currentIndex !== 'number' || $rootScope.currentIndex < 0) {
                         $rootScope.currentIndex = WidgetHome.items.findIndex(item => item.id === $rootScope.itemFromDeeplink.id);
                         if ($rootScope.currentIndex < 0) {
@@ -715,11 +715,11 @@
                         newIndex = WidgetHome.items.findIndex(item => item.id === availableItems[currentIndex - 1].id);
                     }
 
-                    WidgetHome.goToMedia(newIndex, false);
+                    WidgetHome.goToMedia(newIndex, false, skipInfoPage);
                 }
 
                 let delayInterval;
-                $rootScope.playNextItem = (userInput, shufflePluginList) => {
+                $rootScope.playNextItem = ({ userInput = undefined, shufflePluginList = undefined, skipInfoPage = false } = {}) => {
                     if (typeof $rootScope.currentIndex !== 'number' || $rootScope.currentIndex < 0) {
                         $rootScope.currentIndex = WidgetHome.items.findIndex(item => item.id === $rootScope.itemFromDeeplink.id);
                         if ($rootScope.currentIndex < 0) {
@@ -742,12 +742,12 @@
                         } while (newIndex === currentIndex && availableItems.length > 1);
                     }
                     newIndex = WidgetHome.items.findIndex(item => item.id === availableItems[newIndex].id);
-                    if (userInput) return WidgetHome.goToMedia(newIndex, false);
+                    if (userInput) return WidgetHome.goToMedia(newIndex, false, skipInfoPage);
 
                     if ($rootScope.autoPlay) {
                         let delay = $rootScope.autoPlayDelay.value;
                         if (!delay) {
-                            WidgetHome.goToMedia(newIndex, false);
+                            WidgetHome.goToMedia(newIndex, false, skipInfoPage);
                         } else {
                             $rootScope.showCountdown = true;
 
@@ -762,7 +762,7 @@
                                 if (!$scope.$$phase) $scope.$apply();
                                 if (delay === 0) {
                                     $rootScope.clearCountdown();
-                                    WidgetHome.goToMedia(newIndex, false);
+                                    WidgetHome.goToMedia(newIndex, false, skipInfoPage);
                                 }
                             }, 1000);
                         }
@@ -1561,7 +1561,7 @@
                     WidgetHome.loadMore();
                 };
 
-                WidgetHome.goToMedia = function (ind, pushToHistory = true) {
+                WidgetHome.goToMedia = function (ind, pushToHistory = true, skipInfoPage = false) {
                     const documentFocused = WidgetHome.isDocumentFocused();
                     // stop the autoplay if shared via PWA to prevent video freeze
                     if(documentFocused) $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
@@ -1583,7 +1583,7 @@
 
                         $rootScope.currentIndex = ind;
 
-                        if ($rootScope.skipMediaPage && WidgetHome.items[ind].data.audioUrl) {
+                        if (($rootScope.skipMediaPage && WidgetHome.items[ind].data.audioUrl) || skipInfoPage) {
                             $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                             Location.go('#/nowplaying/' + WidgetHome.items[ind].id, pushToHistory);
                         } else {
