@@ -675,7 +675,7 @@
 					this.loopPlaylist = settings.loopPlaylist || initialSettings.loopPlaylist; // once the end of the playlist has been reached start over again
 					this.autoJumpToLastPosition = settings.autoJumpToLastPosition || initialSettings.autoJumpToLastPosition; //If a track has [lastPosition] use it to start playing the audio from there
 					this.shufflePlaylist = settings.shufflePlaylist || initialSettings.shufflePlaylist;// shuffle the playlist
-					this.shufflePluginList = (settings.shufflePluginList && $rootScope.autoPlay);
+					this.shufflePluginList = (settings.shufflePluginList && $rootScope.shuffleAudioListItems);
 					this.playbackSpeed = settings.playbackSpeed || initialSettings.playbackSpeed;// Track playback speed rate
 				}
 

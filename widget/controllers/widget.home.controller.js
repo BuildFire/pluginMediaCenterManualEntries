@@ -44,6 +44,7 @@
                             allowSource: true,
                             forceAutoPlay: false,
                             autoPlay: false,
+                            shuffleAudioListItems: false,
                             autoPlayDelay: { label: "Off", value: 0 },
                             globalPlaylist: false,
                             dateIndexed: true,
@@ -117,6 +118,7 @@
                         $rootScope.skipMediaPage = MediaCenterInfo.data.design.skipMediaPage
 
                         $rootScope.autoPlay = MediaCenterInfo.data.content.autoPlay;
+                        $rootScope.shuffleAudioListItems = MediaCenterInfo.data.content.shuffleAudioListItems;
                         $rootScope.autoPlayDelay = MediaCenterInfo.data.content.autoPlayDelay;
                         $rootScope.globalPlaylist = MediaCenterInfo.data.content.globalPlaylist;
                         $rootScope.globalPlaylistPlugin = MediaCenterInfo.data.content.globalPlaylistPlugin;
@@ -173,6 +175,7 @@
                             $rootScope.skipMediaPage = WidgetHome.media.data.design.skipMediaPage
 
                             $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
+                            $rootScope.shuffleAudioListItems = WidgetHome.media.data.content.shuffleAudioListItems;
                             $rootScope.autoPlayDelay = WidgetHome.media.data.content.autoPlayDelay;
                             $rootScope.globalPlaylist = WidgetHome.media.data.content.globalPlaylist;
                             $rootScope.globalPlaylistPlugin = WidgetHome.media.data.content.globalPlaylistPlugin;
@@ -333,6 +336,7 @@
                             $rootScope.skipMediaPage = WidgetHome.media.data.design.skipMediaPage;
 
                             $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
+                            $rootScope.shuffleAudioListItems = WidgetHome.media.data.content.shuffleAudioListItems;
                             $rootScope.autoPlayDelay = WidgetHome.media.data.content.autoPlayDelay;
                             $rootScope.globalPlaylist = WidgetHome.media.data.content.globalPlaylist;
                             $rootScope.globalPlaylistPlugin = WidgetHome.media.data.content.globalPlaylistPlugin;

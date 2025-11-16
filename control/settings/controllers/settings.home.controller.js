@@ -33,6 +33,8 @@
 					Settings.data.design.skipMediaPage = false;
 				if (typeof (Settings.data.content.autoPlay) == 'undefined')
 					Settings.data.content.autoPlay = false;
+				if (typeof (Settings.data.content.shuffleAudioListItems) == 'undefined')
+					Settings.data.content.shuffleAudioListItems = false;
 				if (typeof (Settings.data.content.autoPlayDelay) == 'undefined')
 					Settings.data.content.autoPlayDelay = { label: 'Off', value: 0 };
 				if (typeof (Settings.data.content.globalPlaylist) == 'undefined')
@@ -124,7 +126,7 @@
 
 			Settings.deleteActionItem = () => {
 				Settings.data.content.globalPlaylistPlugin = null;
-				
+
 				if (!$scope.$$phase) {
 					$scope.$apply();
 					$scope.$digest();
@@ -134,17 +136,21 @@
 			$scope.saveTimer = null;
 			$scope.formatSettingsAndSave = () => {
 				if (!Settings.data || !Settings.data.content) return;
-                
+
+				if (!Settings.data.content.autoPlay) {
+					Settings.data.content.shuffleAudioListItems = false;
+				}
+
 				if (Settings.data.content.forceAutoPlay) {
 					Settings.data.content.autoPlay = false;
+					Settings.data.content.shuffleAudioListItems = false;
 					Settings.data.content.globalPlaylist = false;
 				} else {
 					Settings.data.content.startWithAutoJumpByDefault = false;
 				}
 
-				if (Settings.data.content.autoPlay) {
-					Settings.data.design.skipMediaPage = true;
-				}
+
+
 
 				const actionItemAddBtn = document.getElementById('actionItemAddBtn');
 				const actionItemAddRow = document.getElementById('actionItemAddRow');
@@ -159,7 +165,7 @@
 					actionItemAddRow.classList.add('hidden');
 					actionItemAddBtn.classList.remove('hidden');
 				}
-				
+
 				if (Settings.data.content.enableFiltering && !Settings.data.content.filterPageDeeplink) {
 					const instanceId = buildfire.getContext().instanceId;
 					Settings.data.content.filterPageDeeplink = `${instanceId}_filterScreen`;

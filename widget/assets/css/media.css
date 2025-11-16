@@ -241,19 +241,6 @@ h5 {
     display: flex;
     align-items: center;
 }
-.holder.now-playing .media-player-btns .icon .shuffle-indicator {
-    width: 12px;
-    height: 12px;
-    background: hsl(0deg 0% 100% / 70%);
-}
-
-.holder.now-playing .media-player-btns .icon .shuffle-indicator .shuffle-indicator-text {
-    font-size: 10px;
-    width: 100%;
-    height: 100%;
-    font-weight: 700;
-    color: var(--bf-theme-primary);
-}
 
 .holder.now-playing .media-player-action-btns span,
 .holder.now-playing .media-player-btns span,
@@ -287,10 +274,6 @@ h5 {
 .holder.now-playing .media-player-btns .icon.disabled path,
 .holder.now-playing .media-player-btns .icon .not-active {
     fill: #fff;
-}
-
-.holder.now-playing .media-player-btns .icon.disabled .shuffle-indicator {
-    display: none;
 }
 
 .btn.btn-icon {
