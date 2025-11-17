@@ -301,11 +301,6 @@ h5 {
     padding: 0 4px;
 }
 
-@media (max-height: 600px) {
-    .holder.now-playing .media-player-btns .icon.icon-sm {
-        top: -5px;
-    }
-}
 
 .holder.now-playing .media-player-btns .icon.icon-sm {
     font-size: 22px;
@@ -484,12 +479,6 @@ h5 {
     margin: 0 6px;
 }
 
-@media (max-height: 600px) {
-    .holder.now-playing .media-player-btns .icon.icon-sm {
-        top: -5px;
-    }
-}
-
 .holder.now-playing .media-player-btns .player-btns .btn-primary {
     margin: 0 16px;
 }
@@ -606,4 +595,12 @@ button.btn-icon.btn-lg {
 
 .media-player-action-btns:focus-within ~ .media-player-btns {
     pointer-events: none;
+}
+
+.visibility-hidden {
+    visibility: hidden;
+}
+
+.d-none {
+    display: none;
 }

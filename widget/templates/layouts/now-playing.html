@@ -3,6 +3,24 @@
     ng-style="{'background-image': 'url(' + NowPlaying.currentTrack.backgroundImage + ')'}"
     class="now-playing-backgroundImage"></div>
     <div class="media-center-plugin" ng-if="!(NowPlaying.openMoreInfo || NowPlaying.openSettings)">
+    <span ng-show="NowPlaying.isAudioInitialized && (!NowPlaying.currentTrack.isAudioFromPluginList || globalPlaylist)" style="z-index: 1;position: absolute; top: -12px; right: -12px;" class="whiteTheme btn btn-icon " ng-click="NowPlaying.onPlaylistBadgeClick()"
+          aria-hidden="{{ (!NowPlaying.currentTrack.isAudioFromPluginList || globalPlaylist) ? true : false}}" role="button" tabindex="0" aria-label="Playlist Info">
+
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#clip0_1597_8513)">
+            <path d="M15.2 7.4C14.0976 7.4 13.2 6.5024 13.2 5.4C13.2 5.1792 13.0208 5 12.8 5C12.5792 5 12.4 5.1792 12.4 5.4V15.3192C12.2912 15.2456 12.1712 15.176 12.0416 15.1112C11.3824 14.7816 10.516 14.6 9.6 14.6C8.684 14.6 7.8176 14.7816 7.1584 15.1112C6.4112 15.4848 6 16.0136 6 16.6C6 17.1864 6.4112 17.716 7.1584 18.0888C7.8176 18.4184 8.684 18.6 9.6 18.6C10.516 18.6 11.3824 18.4184 12.0416 18.0888C12.7888 17.7152 13.2 17.1864 13.2 16.6V7.3576C13.7088 7.8768 14.4176 8.2 15.2 8.2C16.3024 8.2 17.2 9.0976 17.2 10.2C17.2 10.4208 17.3792 10.6 17.6 10.6C17.8208 10.6 18 10.4208 18 10.2C18 8.656 16.744 7.4 15.2 7.4ZM9.6 17.8C7.9976 17.8 6.8 17.1664 6.8 16.6C6.8 16.0336 7.9976 15.4 9.6 15.4C11.2024 15.4 12.4 16.0336 12.4 16.6C12.4 17.1664 11.2024 17.8 9.6 17.8Z" fill="white"/>
+            <path d="M12.2002 16.5996C12.2001 16.5304 12.1624 16.4325 12.0459 16.3145C11.9306 16.1977 11.7529 16.0777 11.5176 15.9697C11.0478 15.7542 10.3764 15.5996 9.59961 15.5996C8.82296 15.5997 8.15236 15.7543 7.68262 15.9697C7.44722 16.0777 7.26964 16.1977 7.1543 16.3145C7.03774 16.4326 7.00014 16.5304 7 16.5996C7 16.6689 7.03744 16.7674 7.1543 16.8857C7.26964 17.0025 7.44721 17.1225 7.68262 17.2305C8.15235 17.4459 8.82299 17.5996 9.59961 17.5996L9.6 17.8C7.9976 17.8 6.8 17.1664 6.8 16.6C6.8 16.0336 7.9976 15.4 9.6 15.4L9.89551 15.4072C11.3471 15.4789 12.3995 16.0691 12.4 16.6L12.3857 16.707C12.2479 17.2432 11.102 17.8 9.6 17.8L9.59961 17.5996C10.3764 17.5996 11.0478 17.446 11.5176 17.2305C11.7529 17.1225 11.9306 17.0025 12.0459 16.8857C12.1627 16.7674 12.2002 16.6688 12.2002 16.5996ZM13.2 5.4C13.2 5.1792 13.0208 5 12.8 5C12.5792 5 12.4 5.1792 12.4 5.4V15.3192C12.3456 15.2824 12.2883 15.2466 12.2285 15.2119L12.0416 15.1112C11.3824 14.7816 10.516 14.6 9.6 14.6C8.684 14.6 7.8176 14.7816 7.1584 15.1112L6.89453 15.2588C6.31532 15.6182 6.00016 16.087 6 16.6C6 17.1864 6.4112 17.716 7.1584 18.0888C7.8176 18.4184 8.684 18.6 9.6 18.6C10.4016 18.6 11.1651 18.4607 11.7852 18.2051L12.0416 18.0888C12.742 17.7385 13.1475 17.2517 13.1953 16.709L13.2 16.6V7.3576C13.7088 7.8768 14.4176 8.2 15.2 8.2C16.3024 8.2 17.2 9.0976 17.2 10.2L17.208 10.2803C17.2452 10.4625 17.4069 10.5998 17.6 10.6C17.7933 10.6 17.955 10.4627 17.9922 10.2803L18 10.2C18 8.75263 16.8963 7.55789 15.4863 7.41406L15.2 7.4C14.1666 7.4 13.3128 6.6113 13.21 5.60449L13.2 5.4ZM13.4004 5.40039C13.4006 6.39216 14.2084 7.2002 15.2002 7.2002C16.8546 7.2003 18.2002 8.5458 18.2002 10.2002C18.2001 10.5314 17.9308 10.7998 17.5996 10.7998C17.2686 10.7996 17.0001 10.5312 17 10.2002C17 9.20832 16.192 8.4005 15.2002 8.40039C14.5246 8.40039 13.9024 8.17201 13.4004 7.79395V16.5996C13.4004 17.2925 12.9131 17.8765 12.1309 18.2676C11.438 18.614 10.5393 18.7998 9.59961 18.7998C8.66015 18.7998 7.76206 18.6139 7.06934 18.2676C6.28684 17.8772 5.7998 17.2924 5.7998 16.5996C5.79999 15.9069 6.28725 15.3237 7.06934 14.9326C7.76207 14.5863 8.66011 14.4004 9.59961 14.4004C10.5393 14.4004 11.438 14.5862 12.1309 14.9326C12.1544 14.9444 12.1771 14.9576 12.2002 14.9697V5.40039C12.2002 5.0692 12.4686 4.79991 12.7998 4.7998C13.1311 4.7998 13.4004 5.06913 13.4004 5.40039Z" fill="white"/>
+            <path d="M23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23V24C5.37258 24 0 18.6274 0 12C0 5.37258 5.37258 0 12 0C18.6274 0 24 5.37258 24 12C24 18.6274 18.6274 24 12 24V23C18.0751 23 23 18.0751 23 12Z" fill="white"/>
+        </g>
+        <defs>
+            <clipPath id="clip0_1597_8513">
+                <rect width="24" height="24" fill="white"/>
+            </clipPath>
+        </defs>
+    </svg>
+
+    </span>
+
         <div class="media-holder">
             <div class="media-inner text-center">
                 <img ng-if="(NowPlaying.currentTrack.image || NowPlaying.currentTrack.topImage) && NowPlaying.isOnline"
@@ -59,8 +77,8 @@
                 <span class="glyphicon glyphicon-cog whiteTheme" ng-click="NowPlaying.getSettings()" role="button" tabindex="0" aria-label="Audio player settings"></span>
             </div>
             <div class="media-player-btns">
-                <span ng-style="{'visibility': ((NowPlaying.currentTrack.isAudioFromPluginList && !shuffleAudioListItems) || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist) || !NowPlaying.isAudioInitialized) ? 'hidden' : 'visible'}"  class="icon" ng-click="NowPlaying.shufflePlaylist()" role="button" tabindex="0" aria-label="Shuffle items"
-                    aria-hidden="{{ ((NowPlaying.currentTrack.isAudioFromPluginList && !shuffleAudioListItems) || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist) || !NowPlaying.isAudioInitialized) ? true : false}}">
+                <span ng-style="{'visibility': ((NowPlaying.currentTrack.isAudioFromPluginList && !shuffleAudioListItems) || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist)) ? 'hidden' : 'visible'}"  class="icon" ng-click="NowPlaying.shufflePlaylist()" role="button" tabindex="0" aria-label="Shuffle items"
+                    aria-hidden="{{ ((NowPlaying.currentTrack.isAudioFromPluginList && !shuffleAudioListItems) || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist)) ? true : false}}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <g opacity="0.9" clip-path="url(#clip0_1431_2874)">
                             <path d="M10.59 9.17L5.41 4L4 5.41L9.17 10.58L10.59 9.17ZM14.5 4L16.54 6.04L4 18.59L5.41 20L17.96 7.46L20 9.5V4H14.5ZM14.83 13.41L13.42 14.82L16.55 17.95L14.5 20H20V14.5L17.96 16.54L14.83 13.41Z"
@@ -95,7 +113,7 @@
                         <i style="font-size: 18px; color: #D7D7D8;" class="glyphicon glyphicon-step-forward"></i>
                     </span>
                 </div>
-                <span ng-style="{'visibility': ((NowPlaying.currentTrack.isAudioFromPluginList || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist)) || !NowPlaying.isAudioInitialized) ? 'hidden' : 'visible'}" class="icon icon-sm" ng-click="NowPlaying.loopPlaylist()" role="button" tabindex="0" aria-label="Loop items"
+                <span ng-style="{'visibility': ((NowPlaying.currentTrack.isAudioFromPluginList || !NowPlaying.isAudioInitialized || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist))) ? 'hidden' : 'visible'}" class="icon icon-sm visibility-hidden" ng-click="NowPlaying.loopPlaylist()" role="button" tabindex="0" aria-label="Loop items"
                     aria-hidden="{{((NowPlaying.currentTrack.isAudioFromPluginList || (!NowPlaying.currentTrack.isAudioFromPluginList && globalPlaylist)) || !NowPlaying.isAudioInitialized) ? true : false}}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <g opacity="0.9" clip-path="url(#clip0_1431_2881)">

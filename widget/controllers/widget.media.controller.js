@@ -694,7 +694,7 @@
                         WidgetMedia.media.data.content = event.message.itemUpdatedData;
                     }
 
-                    if ($rootScope.autoPlay || $rootScope.skipMediaPage) {
+                    if ($rootScope.skipMediaPage) {
                         if (WidgetMedia.item.data.videoUrl) {
                             WidgetMedia.toggleShowVideo(true);
                             if (VideoJSController.currentSource !== DropboxLinksManager.convertDropbox(WidgetMedia.item.data.videoUrl)) {

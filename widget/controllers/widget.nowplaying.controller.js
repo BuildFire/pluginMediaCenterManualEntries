@@ -109,6 +109,10 @@
 					buildfire.notes.openDialog(options, callback);
 				};
 
+				NowPlaying.onPlaylistBadgeClick = function () {
+					buildfire.dialog.toast({ message: getString('mediaPlayer.currentItemFromPlaylistToast'), type: 'info' });
+				}
+
 				NowPlaying.share = function ($event) {
 					$event.stopImmediatePropagation();
 

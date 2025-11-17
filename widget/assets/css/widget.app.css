@@ -201,10 +201,6 @@
     .holder.now-playing .media-player-btns .icon.icon-main {
         font-size: 52px;
     }
-
-    .holder.now-playing .media-player-btns .icon.icon-sm {
-        top: -5px;
-    }
 }
 
 @media(max-height: 470px) {
