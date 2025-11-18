@@ -604,3 +604,10 @@ button.btn-icon.btn-lg {
 .d-none {
     display: none;
 }
+
+.item-from-playlist-indicator {
+    z-index: 1;
+    position: absolute;
+    top: -12px;
+    right: -12px;
+}

@@ -3,7 +3,7 @@
     ng-style="{'background-image': 'url(' + NowPlaying.currentTrack.backgroundImage + ')'}"
     class="now-playing-backgroundImage"></div>
     <div class="media-center-plugin" ng-if="!(NowPlaying.openMoreInfo || NowPlaying.openSettings)">
-    <span ng-show="NowPlaying.isAudioInitialized && (!NowPlaying.currentTrack.isAudioFromPluginList || globalPlaylist)" style="z-index: 1;position: absolute; top: -12px; right: -12px;" class="whiteTheme btn btn-icon " ng-click="NowPlaying.onPlaylistBadgeClick()"
+    <span ng-show="NowPlaying.isAudioInitialized && (!NowPlaying.currentTrack.isAudioFromPluginList || globalPlaylist)" class="whiteTheme btn btn-icon item-from-playlist-indicator" ng-click="NowPlaying.onPlaylistBadgeClick()"
           aria-hidden="{{ (!NowPlaying.currentTrack.isAudioFromPluginList || globalPlaylist) ? true : false}}" role="button" tabindex="0" aria-label="Playlist Info">
 
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
