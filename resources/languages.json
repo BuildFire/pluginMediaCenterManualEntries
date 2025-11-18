@@ -4,41 +4,33 @@
         "mediaPlayer": {
             "title": "Media Player",
             "labels": {
-                "shuffleAllItemsIndicator": {
-                    "title": "Shuffle All Items Indicator",
-                    "placeholder": "A",
-                    "maxLength": 1,
-                    "defaultValue": "A"
-                },
-                "shufflePlaylistItemsIndicator": {
-                    "title": "Shuffle Playlist Items Indicator",
-                    "placeholder": "P",
-                    "maxLength": 1,
-                    "defaultValue": "P"
-                },
                 "shuffleAllItemsConfirmation": {
                     "title": "Shuffle All Items Confirmation",
                     "placeholder": "Shuffle all items",
                     "maxLength": 50,
-                    "defaultValue": "Shuffle all items"
+                    "defaultValue": "Shuffle all items",
+                    "toolTip": "If left empty, the toast will be disabled and will not appear."
                 },
                 "shufflePlaylistItemsConfirmation": {
                     "title": "Shuffle Playlist Items Confirmation",
                     "placeholder": "Shuffle items in your playlist only",
                     "maxLength": 50,
-                    "defaultValue": "Shuffle items in your playlist only"
+                    "defaultValue": "Shuffle items in your playlist only",
+                    "toolTip": "If left empty, the toast will be disabled and will not appear."
                 },
                 "currentItemFromPlaylistToast": {
                     "title": "Current Item From Playlist Toast",
                     "placeholder": "Item is from playlist",
                     "maxLength": 40,
-                    "defaultValue": "Item is from playlist"
+                    "defaultValue": "Item is from playlist",
+                    "toolTip": "If left empty, the toast will be disabled and will not appear."
                 },
                 "shuffleOffConfirmation": {
                     "title": "Shuffle Off Confirmation",
                     "placeholder": "Shuffle off",
                     "maxLength": 50,
-                    "defaultValue": "Shuffle off"
+                    "defaultValue": "Shuffle off",
+                    "toolTip": "If left empty, the toast will be disabled and will not appear."
                 },
                 "unknownTrack": {
                     "title": "Unknown Track",

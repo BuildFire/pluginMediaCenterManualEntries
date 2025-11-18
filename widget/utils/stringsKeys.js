@@ -3,8 +3,6 @@ let stringsKeys = {
     'mediaPlayer.shufflePlaylistItemsConfirmation': '',
     'mediaPlayer.currentItemFromPlaylistToast': '',
     'mediaPlayer.shuffleOffConfirmation': '',
-    'mediaPlayer.shuffleAllItemsIndicator': '',
-    'mediaPlayer.shufflePlaylistItemsIndicator': '',
     'mediaPlayer.unknownTrack': '',
     'playlist.goToPlaylist': '',
     'playlist.addToPlaylist': '',

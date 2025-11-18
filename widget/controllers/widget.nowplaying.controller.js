@@ -845,8 +845,6 @@
 						NowPlaying.currentTrack = new Track({ ...media.data, id: media.id }, 0);
 						setTrackImages();
 					}
-					NowPlaying.shuffleAllItemsIndicator = getString('mediaPlayer.shuffleAllItemsIndicator') ? getString('mediaPlayer.shuffleAllItemsIndicator') : 'A';
-					NowPlaying.shufflePlaylistItemsIndicator = getString('mediaPlayer.shufflePlaylistItemsIndicator') ? getString('mediaPlayer.shufflePlaylistItemsIndicator') : 'P';
 
 					buildfire.appearance.navbar.hide();
 					initStrings();
