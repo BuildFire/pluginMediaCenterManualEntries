@@ -61,6 +61,12 @@
 				if (typeof (Settings.data.content.startWithAutoJumpByDefault  ) === 'undefined') {
 					Settings.data.content.startWithAutoJumpByDefault   = false;
 				}
+				if (typeof (Settings.data.content.comment) === 'undefined') {
+					Settings.data.content.comment = {
+						enabled: false,
+						showCount: false
+					};
+				}
 
 				if (!$scope.$$phase) {
 					$scope.$apply();
@@ -149,7 +155,10 @@
 					Settings.data.content.startWithAutoJumpByDefault = false;
 				}
 
-
+				if (Settings.data.design.skipMediaPage) {
+					Settings.data.content.comment.enabled = false;
+					Settings.data.content.comment.showCount = false;
+				}
 
 
 				const actionItemAddBtn = document.getElementById('actionItemAddBtn');

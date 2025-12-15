@@ -57,6 +57,34 @@
 </div>
 
 <div class="row margin-bottom-twenty flex flex-align-center">
+    <label class="tooltip-container col-md-4">Enable Comments
+        <span class="btn-info-icon btn-primary">
+            <span class="cp-tooltip">
+                Allow users to comment on media items.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch col-md-9 flex flex-justify-end">
+        <input id="commentsSwitch" type="checkbox" ng-model="Settings.data.content.comment.enabled" ng-disabled="Settings.data.design.skipMediaPage">
+        <label for="commentsSwitch" class="label-success" ng-class="{'disabled': Settings.data.design.skipMediaPage}"></label>
+    </div>
+</div>
+
+<div class="row margin-bottom-twenty flex flex-align-center">
+    <label class="tooltip-container col-md-4">Show Comments Count
+        <span class="btn-info-icon btn-primary">
+            <span class="cp-tooltip">
+                Display the number of comments on each media item.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch col-md-9 flex flex-justify-end">
+        <input id="commentsCountSwitch" type="checkbox" ng-model="Settings.data.content.comment.showCount" ng-disabled="Settings.data.design.skipMediaPage || !Settings.data.content.comment.enabled">
+        <label for="commentsCountSwitch" class="label-success" ng-class="{'disabled': Settings.data.design.skipMediaPage || !Settings.data.content.comment.enabled}"></label>
+    </div>
+</div>
+
+<div class="row margin-bottom-twenty flex flex-align-center">
     <label class="tooltip-container col-md-4">Auto-Add All Audio to Playlist
         <span class="btn-info-icon btn-primary">
             <span class="cp-tooltip">
