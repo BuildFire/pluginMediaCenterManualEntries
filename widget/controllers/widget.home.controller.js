@@ -129,6 +129,13 @@
                         $rootScope.showViewCount = MediaCenterInfo.data.content.showViewCount;
                         $rootScope.indicatePlayedItems = MediaCenterInfo.data.content.indicatePlayedItems;
                         $rootScope.autoJumpToLastPosition = MediaCenterInfo.data.content.startWithAutoJumpByDefault;
+						$rootScope.comment = MediaCenterInfo.data.content.comment;
+						if (typeof ($rootScope.comment  ) === 'undefined') {
+							$rootScope.comment = {
+								enabled: false,
+								showCount: false
+							}
+						}
 
                         if (isLauncher && MediaCenterInfo.data.content.enableFiltering) {
                             slideElement.classList.add("launcher-with-filter");
@@ -346,6 +353,14 @@
                             $rootScope.enableFiltering = WidgetHome.media.data.content.enableFiltering;
                             $rootScope.indicatePlayedItems = WidgetHome.media.data.content.indicatePlayedItems;
                             $rootScope.autoJumpToLastPosition = WidgetHome.media.data.content.startWithAutoJumpByDefault ;
+
+							$rootScope.comment = WidgetHome.media.data.content.comment;
+							if (typeof ($rootScope.comment  ) === 'undefined') {
+								$rootScope.comment = {
+									enabled: false,
+									showCount: false
+								}
+							}
 
                             if (isLauncher && WidgetHome.media.data.content.enableFiltering) {
                                 slideElement.classList.add("launcher-with-filter");
