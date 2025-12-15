@@ -56,31 +56,80 @@
     </div>
 </div>
 
-<div class="row margin-bottom-twenty flex flex-align-center">
-    <label class="tooltip-container col-md-4">Enable Comments
+<div class="flex flex-align-start input-control margin-bottom-twenty side-label">
+    <label class="tooltip-container col-md-5 padding-zero">Allow Reactions
         <span class="btn-info-icon btn-primary">
             <span class="cp-tooltip">
-                Allow users to comment on media items.
+                Reactions let users quickly express feedback. Choose who can use them, and if enabled, select which
+                reaction set applies.
             </span>
         </span>
     </label>
-    <div class="button-switch col-md-9 flex flex-justify-end">
-        <input id="commentsSwitch" type="checkbox" ng-model="Settings.data.content.comment.enabled" ng-disabled="Settings.data.design.skipMediaPage">
-        <label for="commentsSwitch" class="label-success" ng-class="{'disabled': Settings.data.design.skipMediaPage}"></label>
+    <div class="col-md-8 text-left padding-zero">
+        <div class="col-md-12 padding-zero margin-bottom-fifteen">
+            <div class="col-md-4 margin-top-zero radio radio-primary">
+                <input type="radio" ng-disabled="Settings.data.design.skipMediaPage" name="reactionsHandling" id="reactionsHandlingNoUser" value="none"
+                    ng-model="Settings.data.content.reactions.value"
+                    ng-checked="Settings.data.content.reactions.value==='none'" />
+                <label for="reactionsHandlingNoUser">No Users</label>
+            </div>
+            <div class="col-md-4 margin-top-zero radio radio-primary">
+                <input type="radio" ng-disabled="Settings.data.design.skipMediaPage" name="reactionsHandling" id="reactionsHandlingUser" value="tags"
+                    ng-model="Settings.data.content.reactions.value"
+                    ng-checked="Settings.data.content.reactions.value==='tags'" />
+                <label for="reactionsHandlingUser">Users With</label>
+            </div>
+            <div class="col-md-4 margin-top-zero radio radio-primary">
+                <input type="radio" ng-disabled="Settings.data.design.skipMediaPage" name="reactionsHandling" id="reactionsHandlingAll" value="all"
+                    ng-model="Settings.data.content.reactions.value"
+                    ng-checked="Settings.data.content.reactions.value==='all'" />
+                <label for="reactionsHandlingAll">All Users</label>
+            </div>
+        </div>
+        <div id="reactionsHandlingTagsInput" class="padding-right-zero"
+            ng-show="Settings.data.content.reactions.value==='tags'"></div>
     </div>
 </div>
 
-<div class="row margin-bottom-twenty flex flex-align-center">
-    <label class="tooltip-container col-md-4">Show Comments Count
+<div class="flex flex-align-start input-control margin-bottom-twenty side-label" ng-show="Settings.data.content.reactions.value!=='none'">
+    <label class="tooltip-container col-md-5 padding-zero">Reactions</label>
+    <div class="col-md-8 text-left padding-zero">
+        <div id="reactionsGroupPicker"></div>
+	</div>
+</div>
+
+
+<div class="flex flex-align-start input-control margin-bottom-twenty side-label">
+    <label class="tooltip-container col-md-5 padding-zero">Allow Comments
         <span class="btn-info-icon btn-primary">
             <span class="cp-tooltip">
-                Display the number of comments on each media item.
+                Comments let users share thoughts and feedback. Choose who can use them.
             </span>
         </span>
     </label>
-    <div class="button-switch col-md-9 flex flex-justify-end">
-        <input id="commentsCountSwitch" type="checkbox" ng-model="Settings.data.content.comment.showCount" ng-disabled="Settings.data.design.skipMediaPage || !Settings.data.content.comment.enabled">
-        <label for="commentsCountSwitch" class="label-success" ng-class="{'disabled': Settings.data.design.skipMediaPage || !Settings.data.content.comment.enabled}"></label>
+    <div class="col-md-8 text-left padding-zero">
+        <div class="col-md-12 padding-zero margin-bottom-fifteen">
+            <div class="col-md-4 margin-top-zero radio radio-primary">
+                <input type="radio" ng-disabled="Settings.data.design.skipMediaPage" name="commentsHandling" id="commentsHandlingNoUser" value="none"
+                    ng-model="Settings.data.content.comments.value"
+                    ng-checked="Settings.data.content.comments.value==='none'" />
+                <label for="commentsHandlingNoUser">No Users</label>
+            </div>
+            <div class="col-md-4 margin-top-zero radio radio-primary">
+                <input type="radio" ng-disabled="Settings.data.design.skipMediaPage" name="commentsHandling" id="commentsHandlingUser" value="tags"
+                    ng-model="Settings.data.content.comments.value"
+                    ng-checked="Settings.data.content.comments.value==='tags'" />
+                <label for="commentsHandlingUser">Users With</label>
+            </div>
+            <div class="col-md-4 margin-top-zero radio radio-primary">
+                <input type="radio" ng-disabled="Settings.data.design.skipMediaPage" name="commentsHandling" id="commentsHandlingAll" value="all"
+                    ng-model="Settings.data.content.comments.value"
+                    ng-checked="Settings.data.content.comments.value==='all'" />
+                <label for="commentsHandlingAll">All Users</label>
+            </div>
+        </div>
+        <div id="commentsHandlingTagsInput" class="padding-right-zero"
+            ng-show="Settings.data.content.comments.value==='tags'"></div>
     </div>
 </div>
 

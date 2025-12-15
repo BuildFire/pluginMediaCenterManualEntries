@@ -55,16 +55,23 @@
 				if (typeof (Settings.data.content.showViewCount) == 'undefined') {
 					Settings.data.content.showViewCount = false;
 				}
-				if (typeof (Settings.data.content.indicatePlayedItems ) === 'undefined') {
-					Settings.data.content.indicatePlayedItems  = false;
+				if (typeof (Settings.data.content.indicatePlayedItems) === 'undefined') {
+					Settings.data.content.indicatePlayedItems = false;
 				}
-				if (typeof (Settings.data.content.startWithAutoJumpByDefault  ) === 'undefined') {
-					Settings.data.content.startWithAutoJumpByDefault   = false;
+				if (typeof (Settings.data.content.startWithAutoJumpByDefault) === 'undefined') {
+					Settings.data.content.startWithAutoJumpByDefault = false;
 				}
-				if (typeof (Settings.data.content.comment) === 'undefined') {
-					Settings.data.content.comment = {
-						enabled: false,
-						showCount: false
+				if (typeof (Settings.data.content.comments) === 'undefined') {
+					Settings.data.content.comments = {
+						value: 'none',
+						tags: [],
+					};
+				}
+				if (typeof (Settings.data.content.reactions) === 'undefined') {
+					Settings.data.content.reactions = {
+						value: 'none',
+						tags: [],
+						groupName: ''
 					};
 				}
 
@@ -74,6 +81,19 @@
 				}
 
 				$scope.setupSettingsWatch();
+
+				$scope.initTagsSelectors('#reactionsHandlingTagsInput', 'content.reactions');
+				$scope.initTagsSelectors('#commentsHandlingTagsInput', 'content.comments');
+
+				const reactionsSelector = new buildfire.components.control.reactionGroupPicker('#reactionsGroupPicker', {
+					placeholder: 'Select Reactions',
+					groupName: Settings.data.content.reactions.groupName
+				});
+				reactionsSelector.onUpdate = (group) => {
+					if (group && group.name) {
+						Settings.data.content.reactions.groupName = group.name;
+					}
+				};
 			}, (err) => {
 				console.error(err);
 			});
@@ -156,8 +176,8 @@
 				}
 
 				if (Settings.data.design.skipMediaPage) {
-					Settings.data.content.comment.enabled = false;
-					Settings.data.content.comment.showCount = false;
+					Settings.data.content.comments.value = 'none';
+					Settings.data.content.reactions.value = 'none';
 				}
 
 
@@ -215,6 +235,41 @@
 					return Settings.data;
 				}, $scope.formatSettingsAndSave, true);
 			};
+
+			function getDeepSettingValue(settingKey) {
+				const keys = settingKey.split('.');
+				let settingValue = Settings.data;
+				for (let key of keys) {
+					if (settingValue[key] !== undefined) {
+						settingValue = settingValue[key];
+					} else {
+						break;
+					}
+				}
+				return settingValue;
+			}
+
+			$scope.initTagsSelectors = (selector, settingKey) => {
+				const settingValue = getDeepSettingValue(settingKey);
+
+
+				const tagsInput = new buildfire.components.control.userTagsInput(selector, {
+					languageSettings: {
+						placeholder: 'User Tags',
+					},
+				});
+
+				tagsInput.onUpdate = (data) => {
+					const updatedTags = data.tags.map((tag) => ({
+						tagName: tag.tagName,
+						value: tag.value,
+					}));
+					this.updateDeepSettingValue(`${settingKey}.tags`, updatedTags);
+				};
+				if (settingValue.tags && settingValue.tags.length) {
+					tagsInput.set(settingValue.tags);
+				}
+			}
 		}])
 		.filter('cropImg', function () {
 			return function (url) {
