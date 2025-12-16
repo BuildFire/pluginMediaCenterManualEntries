@@ -217,6 +217,19 @@
                     );
                 };
 
+                WidgetMedia.openMediaComments = function () {
+                    buildfire.spinner.show();
+                    buildfire.components.comments.open({
+                        itemId: WidgetMedia.item.id,
+                        translations: {/* read texts from language tab */ },
+                    }, (error) => {
+                        buildfire.spinner.hide();
+                        if (!error) {
+                            console.log('Comments drawer opened');
+                        }
+                    });
+                };
+
                 const sendAnalytics = (WidgetMedia) => {
                     Analytics.trackAction(`${WidgetMedia.item.id}_videoPlayCount`);
                     Analytics.trackAction("allVideos_count");
