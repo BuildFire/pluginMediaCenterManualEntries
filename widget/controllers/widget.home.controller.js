@@ -129,9 +129,9 @@
                         $rootScope.showViewCount = MediaCenterInfo.data.content.showViewCount;
                         $rootScope.indicatePlayedItems = MediaCenterInfo.data.content.indicatePlayedItems;
                         $rootScope.autoJumpToLastPosition = MediaCenterInfo.data.content.startWithAutoJumpByDefault;
-						$rootScope.comment = MediaCenterInfo.data.content.comment;
-						if (typeof ($rootScope.comment  ) === 'undefined') {
-							$rootScope.comment = {
+						$rootScope.comments = MediaCenterInfo.data.content.comments;
+						if (typeof ($rootScope.comments  ) === 'undefined') {
+							$rootScope.comments = {
 								enabled: false,
 								showCount: false
 							}
@@ -354,9 +354,9 @@
                             $rootScope.indicatePlayedItems = WidgetHome.media.data.content.indicatePlayedItems;
                             $rootScope.autoJumpToLastPosition = WidgetHome.media.data.content.startWithAutoJumpByDefault ;
 
-							$rootScope.comment = WidgetHome.media.data.content.comment;
-							if (typeof ($rootScope.comment  ) === 'undefined') {
-								$rootScope.comment = {
+							$rootScope.comments = WidgetHome.media.data.content.comments;
+							if (typeof ($rootScope.comments  ) === 'undefined') {
+								$rootScope.comments = {
 									enabled: false,
 									showCount: false
 								}

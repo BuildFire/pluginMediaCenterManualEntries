@@ -230,6 +230,29 @@
                     });
                 };
 
+				WidgetMedia.allowUserComment = () => {
+					let allowToComment = false;
+
+					if ($rootScope.comments && $rootScope.comments.value) {
+						if ($rootScope.comments.value === 'none') allowToComment = false;
+						else if ($rootScope.comments.value === 'all') allowToComment = true;
+						else if ($rootScope.comments.value === 'tags') {
+							const appId = buildfire.getContext().appId;
+							const userTags = $rootScope.user.tags[appId];
+							const commentTags = $rootScope.comments.tags;
+
+							for (let i=0; i<commentTags.length; i++) {
+								if (userTags.some(_tag => _tag.tagName === commentTags[i].tagName)) {
+									allowToComment = true;
+									break;
+								}
+							}
+							return allowToComment;
+						}
+					}
+					return allowToComment;
+				};
+
                 const sendAnalytics = (WidgetMedia) => {
                     Analytics.trackAction(`${WidgetMedia.item.id}_videoPlayCount`);
                     Analytics.trackAction("allVideos_count");

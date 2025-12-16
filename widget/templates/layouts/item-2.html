@@ -74,7 +74,7 @@
                 </div>
                 <p class="wysiwyg" ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
                 <div class="media-item-actions">
-                    <div class="comments-action-section" ng-show="comment.enabled">
+                    <div class="comments-action-section" ng-show="WidgetMedia.allowUserComment()">
                         <span class="cursor-pointer" ng-click="WidgetMedia.openMediaComments()">
                             Comment
                         </span>
