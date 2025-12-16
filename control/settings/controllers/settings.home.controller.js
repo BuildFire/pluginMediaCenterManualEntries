@@ -67,13 +67,6 @@
 						tags: [],
 					};
 				}
-				if (typeof (Settings.data.content.reactions) === 'undefined') {
-					Settings.data.content.reactions = {
-						value: 'none',
-						tags: [],
-						groupName: ''
-					};
-				}
 
 				if (!$scope.$$phase) {
 					$scope.$apply();
@@ -82,18 +75,7 @@
 
 				$scope.setupSettingsWatch();
 
-				$scope.initTagsSelectors('#reactionsHandlingTagsInput', 'content.reactions');
 				$scope.initTagsSelectors('#commentsHandlingTagsInput', 'content.comments');
-
-				const reactionsSelector = new buildfire.components.control.reactionGroupPicker('#reactionsGroupPicker', {
-					placeholder: 'Select Reactions',
-					groupName: Settings.data.content.reactions.groupName
-				});
-				reactionsSelector.onUpdate = (group) => {
-					if (group && group.name) {
-						Settings.data.content.reactions.groupName = group.name;
-					}
-				};
 			}, (err) => {
 				console.error(err);
 			});
@@ -177,7 +159,6 @@
 
 				if (Settings.data.design.skipMediaPage) {
 					Settings.data.content.comments.value = 'none';
-					Settings.data.content.reactions.value = 'none';
 				}
 
 
