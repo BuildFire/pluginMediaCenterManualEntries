@@ -222,7 +222,21 @@
 
                     const commentOptions = {
                         itemId: WidgetMedia.item.id,
-                        translations: {/* read texts from language tab */ },
+                        translations: {
+                          you: getString('comments.you'),
+                          someone: getString('comments.someone'),
+                          report: getString('comments.report'),
+                          delete: getString('comments.delete'),
+                          readMore: getString('comments.readMore'),
+                          readLess: getString('comments.readLess'),
+                          commentsHeader: getString('comments.commentsHeader'),
+                          emptyStateTitle: getString('comments.emptyStateTitle'),
+                          emptyStateMessage: getString('comments.emptyStateMessage'),
+                          addCommentPlaceholder: getString('comments.addCommentPlaceholder'),
+                          commentReported: getString('comments.commentReported'),
+                          commentDeleted: '',
+                          commentAdded: '',
+                        }
                     };
 
                     if (commentIds && commentIds.length) {
@@ -231,7 +245,13 @@
 
                     buildfire.components.comments.open(commentOptions, (error) => {
                         buildfire.spinner.hide();
-                        if (error) console.error(error);
+                        if (error) {
+                            buildfire.dialog.toast({
+                                message: getLanguageValue('comments.openCommentError'),
+                                type: 'danger'
+                            });
+                            console.error(error);
+                        }
 
                         if (commentIds && commentIds.length) {
                             buildfire.services.reportAbuse.triggerWidgetReadyForAdminResponse();

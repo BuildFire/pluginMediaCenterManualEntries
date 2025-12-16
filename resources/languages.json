@@ -40,6 +40,83 @@
                 }
             }
         },
+        "comments": {
+            "title": "Comments",
+            "labels": {
+                "you": {
+                    "title": "You",
+                    "placeholder": "You",
+                    "maxLength": 20,
+                    "defaultValue": "You"
+                },
+                "someone": {
+                    "title": "Someone",
+                    "placeholder": "Someone",
+                    "maxLength": 20,
+                    "defaultValue": "Someone"
+                },
+                "report": {
+                    "title": "Report",
+                    "placeholder": "Report",
+                    "maxLength": 20,
+                    "defaultValue": "Report"
+                },
+                "delete": {
+                    "title": "Delete",
+                    "placeholder": "Delete",
+                    "maxLength": 20,
+                    "defaultValue": "Delete"
+                },
+                "readMore": {
+                    "title": "Read More",
+                    "placeholder": "Read More",
+                    "maxLength": 20,
+                    "defaultValue": "Read More"
+                },
+                "readLess": {
+                    "title": "Read Less",
+                    "placeholder": "Read Less",
+                    "maxLength": 20,
+                    "defaultValue": "Read Less"
+                },
+                "commentsHeader": {
+                    "title": "Comments Header",
+                    "placeholder": "Comments",
+                    "maxLength": 20,
+                    "defaultValue": "Comments"
+                },
+                "emptyStateTitle": {
+                    "title": "Empty State Title",
+                    "placeholder": "No comments yet.",
+                    "maxLength": 25,
+                    "defaultValue": "No comments yet."
+                },
+                "emptyStateMessage": {
+                    "title": "Empty State Message",
+                    "placeholder": "Be the first one to comment.",
+                    "maxLength": 50,
+                    "defaultValue": "Be the first one to comment."
+                },
+                "addCommentPlaceholder": {
+                    "title": "Add Comment Placeholder",
+                    "placeholder": "Add comment",
+                    "maxLength": 20,
+                    "defaultValue": "Add comment"
+                },
+                "commentReported": {
+                    "title": "Comment Reported Toast",
+                    "placeholder": "Comment reported successfully.",
+                    "maxLength": 50,
+                    "defaultValue": "Comment reported successfully."
+                },
+                "openCommentError": {
+                    "title": "Open Comments Error",
+                    "placeholder": "Something went wrong, please try again.",
+                    "maxLength": 50,
+                    "defaultValue": "Something went wrong, please try again."
+                }
+            }
+        },
         "playlist": {
             "title": "Audio Playlist",
             "labels": {
