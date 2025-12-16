@@ -249,7 +249,7 @@
                 }
 
                 WidgetHome.goTo = function (options) {
-                    const {itemId, pushToHistory, type} = options;
+                    const {itemId, commentId, pushToHistory, type} = options;
 
                     const documentFocused = WidgetHome.isDocumentFocused();
                     // stop the autoplay if shared media via PWA to prevent video freeze
@@ -271,10 +271,10 @@
                                 $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                                 Location.go('#/nowplaying/' + item.id, pushToHistory);
                             } else {
-                                Location.go('#/media/' + item.id, pushToHistory);
+                                Location.go('#/media/' + item.id + `?commentId=${commentId}`, pushToHistory);
                             }
                         } else {
-                            Location.go('#/media/' + item.id, pushToHistory);
+                            Location.go('#/media/' + item.id + `?commentId=${commentId}`, pushToHistory);
                         }
                         if (!$rootScope.$$phase) $rootScope.$digest();
                     }
@@ -821,7 +821,7 @@
                     if (!$window.deeplinkingDone) {
                         buildfire.deeplink.getData((data) => {
                             if (!data) return WidgetHome.startWatch();
-                            let itemId = null;
+                            let itemId = null, commentId = null;
                             if (data.id) itemId = data.id;
                             else if (data.mediaId) itemId = data.mediaId;
                             else if (data.deepLinkUrl) {
@@ -835,6 +835,7 @@
                                     $rootScope.seekTime = data.timeIndex;
                                 }
                                 itemId = data.link ? data.link : data.itemId;
+                                if (data.commentId) commentId = data.commentId;
                             }
                             else if (data.screen) {
                                 if (WidgetHome.media && WidgetHome.media.data && WidgetHome.media.data.content) {
@@ -848,7 +849,7 @@
                             $rootScope.fromSearch = true;
                             $window.deeplinkingDone = true;
 
-                            const options = { itemId, pushToHistory: false };
+                            const options = { itemId, commentId, pushToHistory: false };
                             if(itemId && data.type === 'audio') {
                                 options.type = data.type;
                             }

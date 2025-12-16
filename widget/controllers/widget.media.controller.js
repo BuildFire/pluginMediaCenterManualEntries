@@ -1,8 +1,8 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope', 'Location', 'OFSTORAGE', 'openedMediaHandler', 'DropboxLinksManager', 'VideoJSController',
-            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope, Location, OFSTORAGE, openedMediaHandler, DropboxLinksManager, VideoJSController) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope', 'Location', 'OFSTORAGE', 'openedMediaHandler', 'DropboxLinksManager', 'VideoJSController', '$location',
+            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope, Location, OFSTORAGE, openedMediaHandler, DropboxLinksManager, VideoJSController, $location) {
                 var WidgetMedia = this;
                 $rootScope.online = $window.navigator.onLine;
                 WidgetMedia.online = $window.navigator.onLine;
@@ -217,15 +217,43 @@
                     );
                 };
 
-                WidgetMedia.openMediaComments = function () {
+                WidgetMedia.openMediaComments = function (commentIds = []) {
                     buildfire.spinner.show();
-                    buildfire.components.comments.open({
+
+                    const commentOptions = {
                         itemId: WidgetMedia.item.id,
                         translations: {/* read texts from language tab */ },
-                    }, (error) => {
+                    };
+
+                    if (commentIds && commentIds.length) {
+                        commentOptions.filter = { commentIds };
+                    }
+
+                    buildfire.components.comments.open(commentOptions, (error) => {
                         buildfire.spinner.hide();
-                        if (!error) {
-                            console.log('Comments drawer opened');
+                        if (error) console.error(error);
+
+                        if (commentIds && commentIds.length) {
+                            buildfire.services.reportAbuse.triggerWidgetReadyForAdminResponse();
+
+                            buildfire.services.reportAbuse.onAdminResponse((event) => {
+                                if (event.action === "markSafe") { // keep the comment
+                                    buildfire.services.reportAbuse.triggerOnAdminResponseHandled({ reportId: event.report.id });
+                                    buildfire.components.comments.close()
+                                } else if (event.action === "markAbuse") { // delete the comment
+                                    buildfire.components.comments.deleteComment({
+                                        itemId: WidgetMedia.item.id,
+                                        commentId: commentIds[0]
+                                    }, (error) => {
+                                        if (error) {
+                                            console.error(error);
+                                        } else {
+                                            buildfire.services.reportAbuse.triggerOnAdminResponseHandled({ reportId: event.report.id });
+                                            buildfire.components.comments.close()
+                                        }
+                                    });
+                                }
+                            });
                         }
                     });
                 };
@@ -310,6 +338,11 @@
                             data: data.data
                         };
                         $rootScope.backgroundImage = WidgetMedia.media && WidgetMedia.media.data && WidgetMedia.media.data.design && WidgetMedia.media.data.design.backgroundImage;
+
+                        const params = $location.search();
+                        if (params.commentId) {
+                            WidgetMedia.openMediaComments([params.commentId]);
+                        }
                     }, function (err) {
                         WidgetMedia.media = {
                             data: {}
@@ -740,7 +773,8 @@
                             WidgetMedia.toggleShowVideo(false);
                             VideoJSController.pause();
 
-                            if (!WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl) {
+                            const params = $location.search();
+                            if (!WidgetMedia.item.data.videoUrl && WidgetMedia.item.data.audioUrl && !params.commentId) {
                                 WidgetMedia.playAudio();
                             }
                         }
@@ -760,7 +794,10 @@
                     });
                 }
                 if (media.data.audioUrl && $rootScope.skipMediaPage && WidgetMedia) {
-                    WidgetMedia.playAudio();
+                    const params = $location.search();
+                    if (!params.commentId) {
+                        WidgetMedia.playAudio();
+                    }
                 }
 
                 var initializing = true;
