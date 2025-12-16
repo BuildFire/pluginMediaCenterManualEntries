@@ -3,7 +3,7 @@
 	'use strict';
 	angular
 		.module('mediaCenterDesign')
-		.controller('SettingsCtrl', ['$scope', 'COLLECTIONS', 'EVENTS', 'PLAYLISTINSTANCES', 'DB', 'Messaging', function ($scope, COLLECTIONS, EVENTS, PLAYLISTINSTANCES, DB, Messaging) {
+		.controller('SettingsCtrl', ['$scope', 'COLLECTIONS', 'EVENTS', 'PLAYLISTINSTANCES', 'DB', 'Messaging', 'utils', function ($scope, COLLECTIONS, EVENTS, PLAYLISTINSTANCES, DB, Messaging, utils) {
 			const Settings = this;
 			Settings.data = {};
 			Settings.lastSavedContent = {};
@@ -75,7 +75,7 @@
 
 				$scope.setupSettingsWatch();
 
-				$scope.initTagsSelectors('#commentsHandlingTagsInput', 'content.comments');
+				initTagsSelectors('#commentsHandlingTagsInput', 'content.comments');
 			}, (err) => {
 				console.error(err);
 			});
@@ -230,9 +230,24 @@
 				return settingValue;
 			}
 
-			$scope.initTagsSelectors = (selector, settingKey) => {
-				const settingValue = getDeepSettingValue(settingKey);
+			function updateDeepSettingValue(settingKey, value) {
+				const keys = settingKey.split('.');
+				let current = Settings.data;
 
+				for (let i = 0; i < keys.length - 1; i++) {
+					const key = keys[i];
+					current = current[key];
+				}
+
+				const isEquals = utils.checkEquality(current[keys[keys.length - 1]], value);
+				if (!isEquals) {
+					current[keys[keys.length - 1]] = value;
+					$scope.formatSettingsAndSave();
+				}
+			}
+
+			function initTagsSelectors(selector, settingKey) {
+				const settingValue = getDeepSettingValue(settingKey);
 
 				const tagsInput = new buildfire.components.control.userTagsInput(selector, {
 					languageSettings: {
@@ -245,7 +260,7 @@
 						tagName: tag.tagName,
 						value: tag.value,
 					}));
-					this.updateDeepSettingValue(`${settingKey}.tags`, updatedTags);
+					updateDeepSettingValue(`${settingKey}.tags`, updatedTags);
 				};
 				if (settingValue.tags && settingValue.tags.length) {
 					tagsInput.set(settingValue.tags);
