@@ -52,6 +52,10 @@ h5 {
     flex: 1;
 }
 
+.media-action-icons .glyphicon {
+    font-size: 18px;
+}
+
 .second-layout .media-action-icons {
     grid-template-columns: 1.25fr 1.25fr 1fr 1fr;
     margin: 0;

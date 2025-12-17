@@ -129,13 +129,13 @@
                         $rootScope.showViewCount = MediaCenterInfo.data.content.showViewCount;
                         $rootScope.indicatePlayedItems = MediaCenterInfo.data.content.indicatePlayedItems;
                         $rootScope.autoJumpToLastPosition = MediaCenterInfo.data.content.startWithAutoJumpByDefault;
-						$rootScope.comments = MediaCenterInfo.data.content.comments;
-						if (typeof ($rootScope.comments  ) === 'undefined') {
-							$rootScope.comments = {
-								enabled: false,
-								showCount: false
-							}
-						}
+                        $rootScope.comments = MediaCenterInfo.data.content.comments;
+                        if (typeof ($rootScope.comments  ) === 'undefined') {
+                            $rootScope.comments = {
+                                value: 'none',
+                                tags: [],
+                            }
+                        }
 
                         if (isLauncher && MediaCenterInfo.data.content.enableFiltering) {
                             slideElement.classList.add("launcher-with-filter");
@@ -354,13 +354,13 @@
                             $rootScope.indicatePlayedItems = WidgetHome.media.data.content.indicatePlayedItems;
                             $rootScope.autoJumpToLastPosition = WidgetHome.media.data.content.startWithAutoJumpByDefault ;
 
-							$rootScope.comments = WidgetHome.media.data.content.comments;
-							if (typeof ($rootScope.comments  ) === 'undefined') {
-								$rootScope.comments = {
-									enabled: false,
-									showCount: false
-								}
-							}
+                            $rootScope.comments = WidgetHome.media.data.content.comments;
+                            if (typeof ($rootScope.comments  ) === 'undefined') {
+                                $rootScope.comments = {
+                                    value: 'none',
+                                    tags: [],
+                                }
+                            }
 
                             if (isLauncher && WidgetHome.media.data.content.enableFiltering) {
                                 slideElement.classList.add("launcher-with-filter");
@@ -662,7 +662,7 @@
                     }
                 }
 
-                $rootScope.toggleGlobalPlaylistItem = (item) => {
+                $rootScope.toggleGlobalPlaylistItem = (item, callback) => {
                     if ($rootScope.isInGlobalPlaylist(item.id)) {
                         GlobalPlaylist.delete(item.id).then(() => {
                             delete $rootScope.globalPlaylistItems.playlist[item.id];
@@ -671,6 +671,7 @@
                                 type: 'success',
                                 duration: 2000
                             });
+                            if (callback) callback();
                         });
                     } else {
                         if (typeof $rootScope.globalPlaylistLimit === 'number' && Object.keys($rootScope.globalPlaylistItems.playlist).length >= $rootScope.globalPlaylistLimit) {
@@ -688,6 +689,7 @@
                                     type: 'success',
                                     duration: 2000
                                 });
+                                if (callback) callback();
                             });
                         }
                     }
