@@ -823,6 +823,7 @@ input[type=range]::-ms-track {
     justify-content: space-between;
     align-items: center;
     position: relative;
+    gap: 8px;
 }
 
 .item-actions,
@@ -1322,7 +1323,7 @@ img.done-icon {
 }
 
 .category-container .subcategories-container.expand {
-	display: flex;
+    display: flex;
     max-height: none;
     transition: max-height 0.2s ease-out;
 }

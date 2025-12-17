@@ -6,7 +6,7 @@
                     <div class="people-media text-center">
                         <div ng-if="!WidgetMedia.fullScreen" class="people-banner" ng-hide="WidgetMedia.showVideo"
                         style="background:url('{{WidgetMedia.item.data.topImage ? resizeImg(WidgetMedia.item.data.topImage) : WidgetMedia.emptyBG}}') no-repeat; background-position:center center; background-size:cover !important;height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
-                            <div class="people-bg padding-bottom-fifteen clearfix" style="height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
+                            <div class="people-bg clearfix">
                                 <div class="people-holder clearfix">
                                     <div class="people-media text-center padding-top-fifteen"
                                          ng-hide="WidgetMedia.showVideo">
@@ -26,20 +26,12 @@
                                              crop-width="161" crop-height="91" crop-type="crop" aria-hidden="true"
                                              src="../../../styles/media/holder-16x9.png" alt="top image">
                                     </div>
-                                    <div class="people-info text-center col-xs-12">
-                                        <h5 class="ellipsis margin-top-fifteen whiteTheme" style="font-size: 16px;">
+                                    <div class="people-info text-center col-xs-12 margin-bottom-fifteen">
+                                        <h5 class="ellipsis margin-top-fifteen whiteTheme media-title" style="font-size: 16px;">
                                             {{WidgetMedia.item.data.title}}</h5>
                                             <h5 data-ng-if="WidgetMedia.item.data.hasDownloadedVideo" class="margin-bottom-zero whiteTheme">Downloaded</h5>
-                                        <h5 class="margin-bottom-zero whiteTheme">
+                                        <h5 class="whiteTheme media-summary">
                                             {{WidgetMedia.item.data.summary}}</h5>
-                                        <span ng-if="showViewCount" style="display:flex; justify-content: center; align-items:center">
-                                            <span aria-hidden="true">
-                                                <i id="iconViewg" class="glyphicon glyphicon-eye-open" style="margin-right: 5px;"></i>
-                                            </span>
-                                            <p class="ellipsis margin-zero" id="viewsg" role="text" tabindex="0" aria-label="{{WidgetMedia.item.data.title}} view count {{WidgetMedia.count ? WidgetMedia.count : 0}}">{{WidgetMedia.count ? WidgetMedia.count : 0}} </p>
-                                        </span>
-
-
                                     </div>
                                 </div>
                             </div>
@@ -50,7 +42,7 @@
                 </div>
             </div>
             <div class="padded" ng-if="!WidgetMedia.fullScreen">
-                <div class="item-actions">
+                <div class="item-actions margin-bottom-thirty">
                     <div class="link-list">
                         <a class="media-action video" ng-click="WidgetMedia.toggleShowVideo(!WidgetMedia.showVideo);"
                             ng-if="WidgetMedia.item.data.videoUrl && !skipMediaPage">
@@ -59,39 +51,11 @@
                         <a class="media-action" ng-click="WidgetMedia.playAudio();" ng-if="WidgetMedia.item.data.audioUrl && !skipMediaPage">
                             <i class="btn btn-success glyphicon glyphicon-volume-up" role="button" aria-label="Show {{WidgetMedia.item.data.title}} audio button"></i>
                         </a>
-                        <a ng-if="(WidgetMedia.item.data.srcUrl || WidgetMedia.item.data.audioUrl || WidgetMedia.item.data.videoUrl) && allowSource && online" ng-click="WidgetMedia.openLink(WidgetMedia.item)"
-                            target="_blank">
-                            <i class="glyphicon share glyphicon-screenshot" role="button" aria-label="{{WidgetMedia.item.data.title}} source button"></i>
-                        </a>
                     </div>
-                    <div class="li-actions">
-                        <div style="float: none; display: inline-block;" data-ng-if="WidgetMedia.isDownloading(WidgetMedia.item)" class="lds-ring-small"><div></div><div></div><div></div><div></div></div>
-                        <i class="glyphicon icon bookmark" style="font-family: 'Glyphicons Halflings' !important;"
-                        ng-class="{ 'glyphicon-star-empty' : !WidgetMedia.item.data.bookmarked, 'glyphicon-star' : WidgetMedia.item.data.bookmarked }"
-                        ng-click="WidgetMedia.bookmark($event)" role="button" aria-label="Bookmark {{WidgetMedia.item.data.title}} button"></i>
-                        <i class="glyphicon glyphicon-option-horizontal" ng-click="WidgetMedia.showDrawer()" role="button" aria-label="{{WidgetMedia.item.data.title}} media item options"></i>
-                    </div>
+                    <div id="mediaActionIcons" class="media-action-icons" ng-init="WidgetMedia.initMediaActionIcons()"></div>
                 </div>
                 <p class="wysiwyg" ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
-                <div class="media-item-actions">
-                    <div class="comments-action-section" ng-show="WidgetMedia.allowUserComment()">
-                        <span class="cursor-pointer" ng-click="WidgetMedia.openMediaComments()">
-                            Comment
-                        </span>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 </div>
-<script>
-    buildfire.appearance.getAppTheme((err, appTheme) => {
-             if (err) return console.error(err);
-             let viewsg = document.getElementById("viewsg")
-             let iconViewg = document.getElementById("iconViewg")
-
-             viewsg.style.color =  appTheme.colors.bodyText;
-             iconViewg.style.color =  appTheme.colors.icons;
-
-    });
-</script>

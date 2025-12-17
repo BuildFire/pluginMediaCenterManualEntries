@@ -44,18 +44,30 @@ h5 {
     overflow: hidden;
 }
 
-.first-layout .media-action-icons {
+.media-action-icons {
     display: grid;
     grid-template-columns: 1.25fr 1.25fr 1fr 1fr 1fr;
     gap: 8px;
     margin-bottom: 8px;
+    flex: 1;
 }
 
-.first-layout .media-action-icons path,
-.first-layout .media-action-icons .material-icons,
-.first-layout .media-action-icons .material-icons-outlined {
+.second-layout .media-action-icons {
+    grid-template-columns: 1.25fr 1.25fr 1fr 1fr;
+    margin: 0;
+}
+
+.first-layout .media-center-banner .plugin-slider img {
+    width: 100% !important;
+    object-fit: cover;
+}
+
+.media-action-icons path,
+.media-action-icons .material-icons,
+.media-action-icons .material-icons-outlined {
     fill: var(--bf-theme-icons);
     color: var(--bf-theme-icons);
+    cursor: pointer;
 }
 
 .first-layout .count-container {
