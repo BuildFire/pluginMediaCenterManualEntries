@@ -1626,6 +1626,10 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
     animation-delay: 0.4s;
 }
 
+.flip-horizontal {
+    transform: scaleX(-1);
+}
+
 @keyframes image-placeholder-bounce {
     0%,
     80%,

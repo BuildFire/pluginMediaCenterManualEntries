@@ -29,6 +29,39 @@ h5 {
     padding-top: 0;
 }
 
+.first-layout .media-center-banner {
+    padding: 15px 15px 0 15px;
+}
+
+.first-layout .media-center-banner .media-title {
+    color: var(--bf-theme-header-text);
+    font-weight: 500;
+    line-height: 24px;
+}
+
+.first-layout .media-center-banner .plugin-slider {
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.first-layout .media-action-icons {
+    display: grid;
+    grid-template-columns: 1.25fr 1.25fr 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.first-layout .media-action-icons path,
+.first-layout .media-action-icons .material-icons,
+.first-layout .media-action-icons .material-icons-outlined {
+    fill: var(--bf-theme-icons);
+    color: var(--bf-theme-icons);
+}
+
+.first-layout .count-container {
+    min-width: fit-content;
+}
+
 #listLayout2::after,
 #listLayout2::before {
     border-top: none !important ;
@@ -84,8 +117,8 @@ h5 {
 .word-break {
     word-break: break-word;
 }
-.item-main-header {
-    box-shadow: 0 2px 4px rgb(98 98 98 / 30%);
+.first-layout .item-main-header {
+    box-shadow: 0 4px 6px -4px #00000040;
 }
 /* End Global Styles ////////////////////////////////////////////////////////////////////////////// */
 

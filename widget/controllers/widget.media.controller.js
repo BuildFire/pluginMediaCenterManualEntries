@@ -36,15 +36,6 @@
                     recordCount: true
                 };
 
-                buildfire.publicData.search(allCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
-                    if (err) console.error(err);
-
-                    if (res && res.totalRecord && WidgetMedia) {
-                        WidgetMedia.count = res.totalRecord;
-                        if (!$scope.$$phase) $scope.$apply();
-                    }
-                })
-
                 let MediaCenter = new DB(COLLECTIONS.MediaCenter),
                     GlobalPlaylist = new AppDB(),
                     CachedMediaCenter = new OFSTORAGE({
@@ -278,28 +269,43 @@
                     });
                 };
 
-				WidgetMedia.allowUserComment = () => {
-					let allowToComment = false;
+                WidgetMedia.allowUserComment = () => {
+                    let allowToComment = false;
 
-					if ($rootScope.comments && $rootScope.comments.value) {
-						if ($rootScope.comments.value === 'none') allowToComment = false;
-						else if ($rootScope.comments.value === 'all') allowToComment = true;
-						else if ($rootScope.comments.value === 'tags') {
-							const appId = buildfire.getContext().appId;
-							const userTags = $rootScope.user.tags[appId];
-							const commentTags = $rootScope.comments.tags;
+                    if ($rootScope.comments && $rootScope.comments.value) {
+                        if ($rootScope.comments.value === 'none') allowToComment = false;
+                        else if ($rootScope.comments.value === 'all') allowToComment = true;
+                        else if ($rootScope.comments.value === 'tags') {
+                            const appId = buildfire.getContext().appId;
+                            const userTags = $rootScope.user.tags[appId];
+                            const commentTags = $rootScope.comments.tags;
 
-							for (let i=0; i<commentTags.length; i++) {
-								if (userTags.some(_tag => _tag.tagName === commentTags[i].tagName)) {
-									allowToComment = true;
-									break;
-								}
-							}
-							return allowToComment;
-						}
-					}
-					return allowToComment;
-				};
+                            for (let i=0; i<commentTags.length; i++) {
+                                if (userTags.some(_tag => _tag.tagName === commentTags[i].tagName)) {
+                                    allowToComment = true;
+                                    break;
+                                }
+                            }
+                            return allowToComment;
+                        }
+                    }
+                    return allowToComment;
+                };
+
+                const getCommentsCount = () => {
+                    return new Promise((resolve, reject) => {
+                        buildfire.components.comments.getSummaries({
+                            itemIds: [WidgetMedia.item.id]
+                        },
+                        (error, result) => {
+                            if (error) {
+                                reject(error);
+                            } else {
+                                resolve(result[0].count);
+                            }
+                        })
+                    });
+                }
 
                 const sendAnalytics = (WidgetMedia) => {
                     Analytics.trackAction(`${WidgetMedia.item.id}_videoPlayCount`);
@@ -352,6 +358,111 @@
                     }
                 };
 
+                WidgetMedia.initMediaActionIcons = () => {
+                    let icons = [
+                        {iconText: `Views`, id: 'views', iconName: 'visibility'},
+                        {iconText: 'Comments', id: 'comments', iconName: 'chat_bubble_outline'},
+                        {iconText: 'Share', id: 'share', iconName: 'share'},
+                        {iconText: 'Favorites', id: 'favorite', iconName: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">\n<path d="M22 9.62105L14.81 8.96842L12 2L9.19 8.97895L2 9.62105L7.46 14.6L5.82 22L12 18.0737L18.18 22L16.55 14.6L22 9.62105ZM12 16.1053L8.24 18.4947L9.24 13.9895L5.92 10.9579L10.3 10.5579L12 6.31579L13.71 10.5684L18.09 10.9684L14.77 14L15.77 18.5053L12 16.1053Z" fill="#46BFE6"/>\n</svg>'},
+                        {iconText: 'Add Note', id: 'note', iconName: 'note_add'},
+                        {iconText: 'Download Video', id: 'downloadVideo', iconName: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">\n<g clip-path="url(#clip0_1664_11661)">\n<path d="M3 5H21V10H23V5C23 3.9 22.1 3 21 3H3C1.9 3 1 3.9 1 5V17C1 18.1 1.9 19 3 19H12V17H3V5Z" fill="#46BFE6"/>\n<path d="M15 11L9 7V15L15 11Z" fill="#46BFE6"/>\n<path d="M24 18.4167L22.59 17.1242L20 19.4892L20 12L18 12L18 19.4892L15.41 17.1242L14 18.4167L19 23L24 18.4167Z" fill="#46BFE6"/>\n</g>\n<defs>\n<clipPath id="clip0_1664_11661">\n<rect width="24" height="24" fill="white"/>\n</clipPath>\n</defs>\n</svg>'},
+                        {iconText: 'Download Audio', id: 'downloadAudio', iconName: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">\n<g clip-path="url(#clip0_1664_11652)">\n<path d="M8 3L8.01 13.55C7.41 13.21 6.73 13 6.01 13C3.79 13 2 14.79 2 17C2 19.21 3.79 21 6.01 21C8.23 21 10 19.21 10 17V7H14V3H8Z" fill="#46BFE6"/>\n<path d="M22 16L20.59 14.59L18 17.17L18 9L16 9L16 17.17L13.41 14.59L12 16L17 21L22 16Z" fill="#46BFE6"/>\n</g>\n<defs>\n<clipPath id="clip0_1664_11652">\n<rect width="24" height="24" fill="white"/>\n</clipPath>\n</defs>\n</svg>'},
+                        {iconText: 'Source Link', id: 'sourceLink', iconName: '<i class="glyphicon share glyphicon-link" role="button" aria-label="Audio Item source button"></i>'},
+                    ];
+
+                    if (!WidgetMedia.media.data.content.showViewCount) {
+                        icons = icons.filter(_icon => _icon.id !== 'views');
+                    }
+                    if (!WidgetMedia.allowUserComment()) {
+                        icons = icons.filter(_icon => _icon.id !== 'comments');
+                    }
+                    if (!WidgetMedia.media.data.content.allowShare) {
+                        icons = icons.filter(_icon => _icon.id !== 'share');
+                    }
+                    if (!WidgetMedia.media.data.content.allowAddingNotes) {
+                        icons = icons.filter(_icon => _icon.id !== 'note');
+                    }
+                    if (!WidgetMedia.media.data.content.allowOfflineDownload) {
+                        icons = icons.filter(_icon => _icon.id !== 'downloadVideo' && _icon.id !== 'downloadAudio');
+                    } else {
+                        if (!WidgetMedia.item.data || !WidgetMedia.item.data.audioUrl || WidgetMedia.item.data.audioUrl === '') icons = icons.filter(_icon => _icon.id !== 'downloadAudio');
+                        if (!WidgetMedia.item.data || !WidgetMedia.item.data.videoUrl || WidgetMedia.item.data.videoUrl === '') icons = icons.filter(_icon => _icon.id !== 'downloadVideo');
+                    }
+                    if (!WidgetMedia.media.data.content.allowSource || !WidgetMedia.item.data || (!WidgetMedia.item.data.srcUrl && !WidgetMedia.item.data.videoUrl && !WidgetMedia.item.data.audioUrl)) {
+                        icons = icons.filter(_icon => _icon.id !== 'sourceLink');
+                    }
+
+                    const mediaActionIconsContainer = document.getElementById('mediaActionIcons');
+                    if (!mediaActionIconsContainer) return;
+                    mediaActionIconsContainer.innerHTML = '';
+
+                    const visibleIcons = icons.slice(0, 5);
+                    const hiddenIcons = icons.slice(5);
+
+                    visibleIcons.forEach((icon, index) => {
+                        if (index === 4 && hiddenIcons.length > 0) {
+                            const moreIcon = document.createElement('div');
+                            moreIcon.classList.add('flex');
+                            moreIcon.classList.add('flex-align-center');
+                            moreIcon.classList.add('flex-justify-end');
+                            moreIcon.innerHTML = '<i class="material-icons-outlined">more_horiz</i>';
+                            moreIcon.onclick = () => {
+                                const drawerItems = hiddenIcons.concat([icon]).map(i => ({id: i.id, text: i.iconText}));
+                                buildfire.components.drawer.open({listItems: drawerItems}, (err, result) => {
+                                    if (result) handleIconAction(result.id);
+                                });
+                            };
+                            mediaActionIconsContainer.appendChild(moreIcon);
+                        } else {
+                            const iconEl = document.createElement('div');
+                            iconEl.classList.add('flex');
+                            iconEl.classList.add('flex-align-center');
+                            if (index > 0 && icon.id !== 'views' && icon.id !== 'comments') {
+                                let newClass = 'flex-justify-center';
+                                if (index === (visibleIcons.length - 1)) newClass = 'flex-justify-end';
+                                iconEl.classList.add(newClass);
+                            }
+                            iconEl.innerHTML = icon.iconName.includes('<') ? icon.iconName : `<i class="material-icons-outlined">${icon.iconName}</i>`;
+                            iconEl.onclick = () => handleIconAction(icon.id);
+                            if (icon.id === 'comments') {
+                                iconEl.querySelector('.material-icons-outlined').classList.add('flip-horizontal')
+                                iconEl.innerHTML += '<span class="margin-left-five count-container">0</span>';
+                                getCommentsCount().then(count => {
+                                    iconEl.querySelector('.count-container').innerHTML = count.toLocaleString('en-US');
+                                }).catch((err) => {
+                                    console.error(err);
+                                });
+                            } else if (icon.id === 'views') {
+                                iconEl.innerHTML += '<span class="margin-left-five count-container">0</span>';
+                                buildfire.publicData.search(allCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
+                                    if (err) console.error(err);
+
+                                    if (res && res.totalRecord && WidgetMedia) {
+                                        WidgetMedia.count = res.totalRecord;
+                                        if (!$scope.$$phase) $scope.$apply();
+                                        iconEl.querySelector('.count-container').innerHTML = WidgetMedia.count.toLocaleString('en-US');
+                                    }
+                                })
+                            }
+                            mediaActionIconsContainer.appendChild(iconEl);
+                        }
+                    });
+
+                    const handleIconAction = (actionId) => {
+                        switch(actionId) {
+                            case 'views': break;
+                            case 'comments': WidgetMedia.openMediaComments(); break;
+                            case 'share': WidgetMedia.share(); break;
+                            case 'favorite': WidgetMedia.bookmark(); break;
+                            case 'note': WidgetMedia.addNote(); break;
+                            case 'downloadVideo': $rootScope.download(WidgetMedia.item, 'video'); break;
+                            case 'downloadAudio': $rootScope.download(WidgetMedia.item, 'audio'); break;
+                            case 'sourceLink': WidgetMedia.openLink(WidgetMedia.item); break;
+                        }
+                    };
+
+                };
+
                 if ($rootScope.online) {
                     MediaCenter.get().then(function (data) {
                         WidgetMedia.media = {
@@ -363,6 +474,8 @@
                         if (params.commentId) {
                             WidgetMedia.openMediaComments([params.commentId]);
                         }
+
+                        WidgetMedia.initMediaActionIcons();
                     }, function (err) {
                         WidgetMedia.media = {
                             data: {}
@@ -799,6 +912,7 @@
                             }
                         }
                     }
+                    WidgetMedia.initMediaActionIcons();
                     if (!$scope.$$phase) {
                         $scope.$apply();
                         $scope.$digest();
