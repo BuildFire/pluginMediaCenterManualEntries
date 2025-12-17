@@ -442,6 +442,12 @@
                     "maxLength": 50,
                     "defaultValue": "Open Links"
                 },
+                "mediaSource": {
+                    "title": "Open Media Source",
+                    "placeholder": "Open Media Source",
+                    "maxLength": 50,
+                    "defaultValue": "Open Media Source"
+                },
                 "downloadVideo": {
                     "title": "Download Video",
                     "placeholder": "Download Video",

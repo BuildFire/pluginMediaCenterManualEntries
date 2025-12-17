@@ -70,6 +70,10 @@ h5 {
     cursor: pointer;
 }
 
+.material-icons-outlined {
+    font-family: 'Material Icons Outlined' !important;
+}
+
 .first-layout .count-container {
     min-width: fit-content;
 }

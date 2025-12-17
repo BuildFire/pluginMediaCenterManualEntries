@@ -157,6 +157,26 @@
                             });
                         }
                     });
+                    buildfire.components.comments.onAdd = () => {
+                        const commentsContainer = document.getElementById('comments');
+                        if (commentsContainer) {
+                            getCommentsCount().then(count => {
+                                commentsContainer.querySelector('.count-container').innerHTML = count.toLocaleString('en-US');
+                            }).catch((err) => {
+                                console.error(err);
+                            });
+                        }
+                    }
+                    buildfire.components.comments.onDelete = () => {
+                        const commentsContainer = document.getElementById('comments');
+                        if (commentsContainer) {
+                            getCommentsCount().then(count => {
+                                commentsContainer.querySelector('.count-container').innerHTML = count.toLocaleString('en-US');
+                            }).catch((err) => {
+                                console.error(err);
+                            });
+                        }
+                    }
                 };
 
                 WidgetMedia.allowUserComment = () => {
@@ -191,7 +211,9 @@
                             if (error) {
                                 reject(error);
                             } else {
-                                resolve(result[0].count);
+                                let count = 0;
+                                if (result && result[0] && result[0].count) count = result[0].count;
+                                resolve(count);
                             }
                         })
                     });
@@ -272,9 +294,9 @@
                         return getString("homeDrawer.downloadAudio");
                     }
 
-                    if (iconId === 'share') getString("itemDrawer.share");
-                    if (iconId === 'sourceLink') getString("itemDrawer.openLinks");
-                    if (iconId === 'openActionLinks') getString("itemDrawer.openLinks");
+                    if (iconId === 'share') return getString("itemDrawer.share");
+                    if (iconId === 'sourceLink') return getString("itemDrawer.mediaSource");
+                    if (iconId === 'openActionLinks') return getString("itemDrawer.openLinks");
 
                     if (iconId === 'favorite') {
                         if (WidgetMedia.item.data.bookmarked) return getString("itemDrawer.removeFromFavorites");
@@ -402,13 +424,13 @@
                             case 'favorite': WidgetMedia.bookmark(); break;
                             case 'note': WidgetMedia.addNote(); break;
                             case 'downloadVideo':
-								if (WidgetMedia.item.data.hasDownloadedVideo) $rootScope.removeDownload(WidgetMedia.item, "video");
-								else $rootScope.download(WidgetMedia.item, "video");
-								break;
+                                if (WidgetMedia.item.data.hasDownloadedVideo) $rootScope.removeDownload(WidgetMedia.item, "video");
+                                else $rootScope.download(WidgetMedia.item, "video");
+                                break;
                             case 'downloadAudio':
-								if (WidgetMedia.item.data.hasDownloadedAudio) $rootScope.removeDownload(WidgetMedia.item, "audio");
-								else $rootScope.download(WidgetMedia.item, "audio");
-								break;
+                                if (WidgetMedia.item.data.hasDownloadedAudio) $rootScope.removeDownload(WidgetMedia.item, "audio");
+                                else $rootScope.download(WidgetMedia.item, "audio");
+                                break;
                             case 'sourceLink': WidgetMedia.openLink(WidgetMedia.item); break;
                             case 'openActionLinks': WidgetMedia.openLinks(WidgetMedia.item.data.links); break;
                             case 'playlist': $rootScope.toggleGlobalPlaylistItem(WidgetMedia.item); break;

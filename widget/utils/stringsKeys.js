@@ -62,6 +62,7 @@ let stringsKeys = {
     'homeDrawer.removeFromFavorites': '',
     'itemDrawer.share': '',
     'itemDrawer.addNote': '',
+    'itemDrawer.mediaSource': '',
     'itemDrawer.openLinks': '',
     'itemDrawer.downloadVideo': '',
     'itemDrawer.removeDownloadedVideo': '',
