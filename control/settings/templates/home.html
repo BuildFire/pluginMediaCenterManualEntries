@@ -67,19 +67,19 @@
     <div class="col-md-9 text-left">
         <div class="col-md-12 padding-zero margin-bottom-fifteen">
             <div class="col-md-4 margin-top-zero radio radio-primary">
-                <input type="radio" ng-disabled="Settings.data.design.skipMediaPage" name="commentsHandling" id="commentsHandlingNoUser" value="none"
+                <input type="radio" name="commentsHandling" id="commentsHandlingNoUser" value="none"
                     ng-model="Settings.data.content.comments.value"
                     ng-checked="Settings.data.content.comments.value==='none'" />
                 <label for="commentsHandlingNoUser">No Users</label>
             </div>
             <div class="col-md-4 margin-top-zero radio radio-primary">
-                <input type="radio" ng-disabled="Settings.data.design.skipMediaPage" name="commentsHandling" id="commentsHandlingUser" value="tags"
+                <input type="radio" name="commentsHandling" id="commentsHandlingUser" value="tags"
                     ng-model="Settings.data.content.comments.value"
                     ng-checked="Settings.data.content.comments.value==='tags'" />
                 <label for="commentsHandlingUser">Users With</label>
             </div>
             <div class="col-md-4 margin-top-zero radio radio-primary">
-                <input type="radio" ng-disabled="Settings.data.design.skipMediaPage" name="commentsHandling" id="commentsHandlingAll" value="all"
+                <input type="radio" name="commentsHandling" id="commentsHandlingAll" value="all"
                     ng-model="Settings.data.content.comments.value"
                     ng-checked="Settings.data.content.comments.value==='all'" />
                 <label for="commentsHandlingAll">All Users</label>

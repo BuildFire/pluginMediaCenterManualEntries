@@ -157,11 +157,6 @@
 					Settings.data.content.startWithAutoJumpByDefault = false;
 				}
 
-				if (Settings.data.design.skipMediaPage) {
-					Settings.data.content.comments.value = 'none';
-				}
-
-
 				const actionItemAddBtn = document.getElementById('actionItemAddBtn');
 				const actionItemAddRow = document.getElementById('actionItemAddRow');
 
