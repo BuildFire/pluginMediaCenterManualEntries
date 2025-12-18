@@ -5,28 +5,10 @@
                 <div class="people-holder clearfix">
                     <div class="people-media text-center">
                         <div ng-if="!WidgetMedia.fullScreen" class="people-banner" ng-hide="WidgetMedia.showVideo"
-                        style="background:url('{{WidgetMedia.item.data.topImage ? resizeImg(WidgetMedia.item.data.topImage) : WidgetMedia.emptyBG}}') no-repeat; background-position:center center; background-size:cover !important;height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
+                        style="background:url('{{WidgetMedia.item.data.topImage ? WidgetMedia.resizeImage(WidgetMedia.item.data.topImage) : WidgetMedia.emptyBG}}') no-repeat; background-position:center center; background-size:cover !important;height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
                             <div class="people-bg clearfix">
                                 <div class="people-holder clearfix">
-                                    <div class="people-media text-center padding-top-fifteen"
-                                         ng-hide="WidgetMedia.showVideo">
-                                        <div ng-if="WidgetMedia.item.data.topImage && !WidgetMedia.item.imageLoaded && !(skipMediaPage && WidgetMedia.item.data.videoUrl)"
-                                             class="image-placeholder"
-                                             ng-style="{'width': '161px', 'height': '91px'}">
-                                            <div class="image-placeholder__dots">
-                                                <span></span>
-                                                <span></span>
-                                                <span></span>
-                                            </div>
-                                        </div>
-                                        <img ng-show="WidgetMedia.item.imageLoaded && WidgetMedia.item.data.topImage" ng-hide="skipMediaPage && WidgetMedia.item.data.videoUrl" load-image="16x9" style="width: 161px;height: 91px;"
-                                             crop-width="161" crop-height="91" crop-type="crop" aria-label="{{WidgetMedia.item.data.title}} top image"
-                                             data-final-src="{{WidgetMedia.item.data.topImage}}" title="{{WidgetMedia.item.data.title}} top image" image-item="WidgetMedia.item" alt="{{WidgetMedia.item.data.title}} top image">
-                                        <img ng-if="!WidgetMedia.item.data.topImage" style="width: 161px;height: 91px;"
-                                             crop-width="161" crop-height="91" crop-type="crop" aria-hidden="true"
-                                             src="../../../styles/media/holder-16x9.png" alt="top image">
-                                    </div>
-                                    <div class="people-info text-center col-xs-12 margin-bottom-fifteen">
+                                    <div class="people-info text-center col-xs-12">
                                         <h5 class="ellipsis margin-top-fifteen whiteTheme media-title" style="font-size: 16px;">
                                             {{WidgetMedia.item.data.title}}</h5>
                                             <h5 data-ng-if="WidgetMedia.item.data.hasDownloadedVideo" class="margin-bottom-zero whiteTheme">Downloaded</h5>
@@ -49,7 +31,7 @@
                             <i ng-class="WidgetMedia.showVideo ? 'glyphicon glyphicon-info-sign':'glyphicon glyphicon-film'" class="btn btn-success" role="button"  aria-label="{{WidgetMedia.showVideo ? 'Hide' : 'Show'}} {{WidgetMedia.item.data.title}} video button"></i>
                         </a>
                         <a class="media-action" ng-click="WidgetMedia.playAudio();" ng-if="WidgetMedia.item.data.audioUrl && !skipMediaPage">
-                            <i class="btn btn-success glyphicon glyphicon-volume-up" role="button" aria-label="Show {{WidgetMedia.item.data.title}} audio button"></i>
+                            <i class="btn btn-success material-icons" role="button" aria-label="Show {{WidgetMedia.item.data.title}} audio button">headphones</i>
                         </a>
                     </div>
                     <div id="mediaActionIcons" class="media-action-icons" ng-init="WidgetMedia.initMediaActionIcons()"></div>

@@ -1,7 +1,6 @@
 <div class="holder padding-zero text-overlay">
     <div class="media-center-plugin first-layout" id="backgroundImage">
         <div class="media-center-banner clearfix">
-            <h5 class="margin-top-zero word-break media-title">{{WidgetMedia.item.data.title}} <div data-ng-if="WidgetMedia.isDownloading(WidgetMedia.item)" class="lds-ring-small"></div></h5>
             <div ng-class="WidgetMedia.showVideo == false ? '' : 'video-container-background'"
                 style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
                 class="plugin-slider text-center">
@@ -30,9 +29,10 @@
             <div class="text-left padded word-break">
                 <p data-ng-if="WidgetMedia.item.data.hasDownloadedVideo" class="margin-bottom-zero word-break">Downloaded</p>
 
-                <div id="mediaActionIcons" class="media-action-icons" ng-init="WidgetMedia.initMediaActionIcons()"></div>
+                <h5 class="margin-top-zero word-break media-title">{{WidgetMedia.item.data.title}} <div data-ng-if="WidgetMedia.isDownloading(WidgetMedia.item)" class="lds-ring-small"></div></h5>
+                <p class="margin-bottom-fifteen word-break media-summary">{{WidgetMedia.item.data.summary}}</p>
 
-                <p class="margin-bottom-zero word-break media-summary">{{WidgetMedia.item.data.summary}}</p>
+                <div id="mediaActionIcons" class="media-action-icons" ng-init="WidgetMedia.initMediaActionIcons()"></div>
             </div>
         </div>
         <div class="padded padding-top-zero" ng-if="!WidgetMedia.fullScreen">
@@ -44,7 +44,7 @@
                     </a>
                     <a class="media-action" ng-click="WidgetMedia.playAudio();"
                         ng-if="WidgetMedia.item.data.audioUrl && !skipMediaPage">
-                        <i class="btn btn-success glyphicon glyphicon-headphones" role="button" aria-label="Show {{WidgetMedia.item.data.title}} audio button"></i>
+                        <i class="btn btn-success material-icons" role="button" aria-label="Show {{WidgetMedia.item.data.title}} audio button">headphones</i>
                     </a>
                 </div>
             </div>

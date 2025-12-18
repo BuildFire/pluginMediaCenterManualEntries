@@ -60,7 +60,11 @@
 }
 
 .media-center-plugin.second-layout .people-banner .people-bg {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.5);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .media-center-plugin.second-layout .people-banner .people-info {
@@ -732,9 +736,17 @@ html[browser="Firefox"] .third-layout .list-layout .list-item-media .list-media-
 }
 
 .link-list i {
-    font-size: 1.25rem;
-    display: inline-block;
-    padding: .75rem;
+    font-size: 1.75rem;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+	top: unset;
+}
+
+.link-list i.glyphicon {
+    font-size: 1.5rem;
 }
 
 .link-list a+a {
@@ -1629,6 +1641,10 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
 
 .flip-horizontal {
     transform: scaleX(-1);
+}
+
+.justify-content-start {
+    justify-content: flex-start !important;
 }
 
 @keyframes image-placeholder-bounce {
