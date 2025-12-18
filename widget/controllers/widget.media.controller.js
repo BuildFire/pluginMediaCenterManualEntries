@@ -1,8 +1,8 @@
 (function (angular, window) {
     angular
         .module('mediaCenterWidget')
-        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope', 'Location', 'OFSTORAGE', 'openedMediaHandler', 'DropboxLinksManager', 'VideoJSController', '$location',
-            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope, Location, OFSTORAGE, openedMediaHandler, DropboxLinksManager, VideoJSController, $location) {
+        .controller('WidgetMediaCtrl', ['$scope', '$window', 'Messaging', 'Buildfire', 'COLLECTIONS', 'media', 'EVENTS', '$timeout', "$sce", "DB", 'AppDB', 'PATHS', '$rootScope', 'Location', 'OFSTORAGE', 'openedMediaHandler', 'DropboxLinksManager', 'VideoJSController', '$location', 'CommentsService',
+            function ($scope, $window, Messaging, Buildfire, COLLECTIONS, media, EVENTS, $timeout, $sce, DB, AppDB, PATHS, $rootScope, Location, OFSTORAGE, openedMediaHandler, DropboxLinksManager, VideoJSController, $location, CommentsService) {
                 var WidgetMedia = this;
                 $rootScope.online = $window.navigator.onLine;
                 WidgetMedia.online = $window.navigator.onLine;
@@ -99,84 +99,7 @@
                 }
 
                 WidgetMedia.openMediaComments = function (commentIds = []) {
-                    buildfire.spinner.show();
-
-                    const commentOptions = {
-                        itemId: WidgetMedia.item.id,
-                        translations: {
-                          you: getString('comments.you'),
-                          someone: getString('comments.someone'),
-                          report: getString('comments.report'),
-                          delete: getString('comments.delete'),
-                          readMore: getString('comments.readMore'),
-                          readLess: getString('comments.readLess'),
-                          commentsHeader: getString('comments.commentsHeader'),
-                          emptyStateTitle: getString('comments.emptyStateTitle'),
-                          emptyStateMessage: getString('comments.emptyStateMessage'),
-                          addCommentPlaceholder: getString('comments.addCommentPlaceholder'),
-                          commentReported: getString('comments.commentReported'),
-                          commentDeleted: '',
-                          commentAdded: '',
-                        }
-                    };
-
-                    if (commentIds && commentIds.length) {
-                        commentOptions.filter = { commentIds };
-                    }
-
-                    buildfire.components.comments.open(commentOptions, (error) => {
-                        buildfire.spinner.hide();
-                        if (error) {
-                            buildfire.dialog.toast({
-                                message: getString('comments.openCommentError'),
-                                type: 'danger'
-                            });
-                            console.error(error);
-                        }
-
-                        if (commentIds && commentIds.length) {
-                            buildfire.services.reportAbuse.triggerWidgetReadyForAdminResponse();
-
-                            buildfire.services.reportAbuse.onAdminResponse((event) => {
-                                if (event.action === "markSafe") { // keep the comment
-                                    buildfire.services.reportAbuse.triggerOnAdminResponseHandled({ reportId: event.report.id });
-                                    buildfire.components.comments.close()
-                                } else if (event.action === "markAbuse") { // delete the comment
-                                    buildfire.components.comments.deleteComment({
-                                        itemId: WidgetMedia.item.id,
-                                        commentId: commentIds[0]
-                                    }, (error) => {
-                                        if (error) {
-                                            console.error(error);
-                                        } else {
-                                            buildfire.services.reportAbuse.triggerOnAdminResponseHandled({ reportId: event.report.id });
-                                            buildfire.components.comments.close()
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
-                    buildfire.components.comments.onAdd = () => {
-                        const commentsContainer = document.getElementById('comments');
-                        if (commentsContainer) {
-                            getCommentsCount().then(count => {
-                                commentsContainer.querySelector('.count-container').innerHTML = count.toLocaleString('en-US');
-                            }).catch((err) => {
-                                console.error(err);
-                            });
-                        }
-                    }
-                    buildfire.components.comments.onDelete = () => {
-                        const commentsContainer = document.getElementById('comments');
-                        if (commentsContainer) {
-                            getCommentsCount().then(count => {
-                                commentsContainer.querySelector('.count-container').innerHTML = count.toLocaleString('en-US');
-                            }).catch((err) => {
-                                console.error(err);
-                            });
-                        }
-                    }
+                    CommentsService.openComments(WidgetMedia.item.id, commentIds);
                 };
 
                 WidgetMedia.allowUserComment = () => {
@@ -201,23 +124,6 @@
                     }
                     return allowToComment;
                 };
-
-                const getCommentsCount = () => {
-                    return new Promise((resolve, reject) => {
-                        buildfire.components.comments.getSummaries({
-                            itemIds: [WidgetMedia.item.id]
-                        },
-                        (error, result) => {
-                            if (error) {
-                                reject(error);
-                            } else {
-                                let count = 0;
-                                if (result && result[0] && result[0].count) count = result[0].count;
-                                resolve(count);
-                            }
-                        })
-                    });
-                }
 
                 const sendAnalytics = (WidgetMedia) => {
                     Analytics.trackAction(`${WidgetMedia.item.id}_videoPlayCount`);

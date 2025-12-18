@@ -121,7 +121,7 @@
                 });
             };
         }])
-        .directive('mediaActionIcons', ['MEDIA_ACTION_ICONS', '$rootScope', 'COLLECTIONS', '$injector', function (MEDIA_ACTION_ICONS, $rootScope, COLLECTIONS, $injector) {
+        .directive('mediaActionIcons', ['MEDIA_ACTION_ICONS', '$rootScope', 'COLLECTIONS', '$injector', 'CommentsService', function (MEDIA_ACTION_ICONS, $rootScope, COLLECTIONS, $injector, CommentsService) {
             return {
                 restrict: 'E',
                 scope: {
@@ -174,6 +174,11 @@
                         scope.renderIcons(icons, WidgetMedia);
                         scope.loadCommentsCount(WidgetMedia);
                         scope.loadViewsCount(WidgetMedia);
+
+                        CommentsService.setCommentCallbacks(
+                            () => scope.loadCommentsCount(WidgetMedia),
+                            () => scope.loadCommentsCount(WidgetMedia)
+                        );
                     };
 
                     scope.renderIcons = function (icons, WidgetMedia) {
@@ -223,11 +228,9 @@
                     };
 
                     scope.loadCommentsCount = function (WidgetMedia) {
-                        buildfire.components.comments.getSummaries({
-                            itemIds: [WidgetMedia.item.id]
-                        }, (error, result) => {
-                            if (!error && result && result[0] && result[0].count) {
-                                scope.commentsCount = result[0].count;
+                        CommentsService.getCommentsCount(WidgetMedia.item.id, (error, count) => {
+                            if (!error) {
+                                scope.commentsCount = count;
                                 const commentsEl = element[0].querySelector('#comments span');
                                 if (commentsEl) commentsEl.textContent = scope.commentsCount.toLocaleString('en-US');
                                 scope.$apply();
@@ -284,7 +287,6 @@
                         return getString(textMap[iconId] || iconId);
                     };
 
-                    // scope.$watch('widgetMedia.item.data.bookmarked', scope.initMediaActionIcons);
                     scope.$watch('widgetMedia.media', scope.initMediaActionIcons);
                     scope.$watch('widgetMedia.iconRefresh', scope.initMediaActionIcons);
                     scope.initMediaActionIcons();
