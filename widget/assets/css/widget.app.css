@@ -835,7 +835,7 @@ input[type=range]::-ms-track {
     justify-content: space-between;
     align-items: center;
     position: relative;
-    gap: 8px;
+    gap: 16px;
 }
 
 .item-actions,
