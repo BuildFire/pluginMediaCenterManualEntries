@@ -79,7 +79,7 @@ h5 {
 }
 
 .media-action-icons .action-icons-holder {
-    gap: 24px;
+    gap: 14px;
 }
 
 .media-action-icons .glyphicon {
@@ -606,9 +606,15 @@ button.btn-icon.btn-lg {
         padding: 8px 0;
     }
 }
-@media (max-width: 360px) {
-    .media-action-icons .action-icons-holder {
-        gap: 12px;
+@media (max-width: 310px) {
+    .second-layout .media-action-icons .action-icons-holder {
+        gap: 0px;
+    }
+    .second-layout .item-actions {
+        gap: 6px;
+    }
+    .second-layout .link-list a+a {
+        margin-left: 6px;
     }
 }
 
