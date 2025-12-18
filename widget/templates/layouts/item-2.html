@@ -34,7 +34,7 @@
                             <i class="btn btn-success material-icons" role="button" aria-label="Show {{WidgetMedia.item.data.title}} audio button">headphones</i>
                         </a>
                     </div>
-                    <div id="mediaActionIcons" class="media-action-icons" ng-init="WidgetMedia.initMediaActionIcons()"></div>
+                    <media-action-icons widget-media="WidgetMedia" on-icon-action="WidgetMedia.handleIconAction(actionId)" class="media-action-icons"></media-action-icons>
                 </div>
                 <p class="wysiwyg" ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
             </div>

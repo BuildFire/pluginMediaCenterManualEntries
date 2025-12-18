@@ -32,7 +32,7 @@
                 <h5 class="margin-top-zero word-break media-title">{{WidgetMedia.item.data.title}} <div data-ng-if="WidgetMedia.isDownloading(WidgetMedia.item)" class="lds-ring-small"></div></h5>
                 <p class="margin-bottom-fifteen word-break media-summary">{{WidgetMedia.item.data.summary}}</p>
 
-                <div id="mediaActionIcons" class="media-action-icons" ng-init="WidgetMedia.initMediaActionIcons()"></div>
+                <media-action-icons widget-media="WidgetMedia" on-icon-action="WidgetMedia.handleIconAction(actionId)" class="media-action-icons"></media-action-icons>
             </div>
         </div>
         <div class="padded padding-top-zero" ng-if="!WidgetMedia.fullScreen">

@@ -283,173 +283,33 @@
                     return {id: 'playlist', iconName: 'playlist_add'};
                 }
 
-                function getIconText(iconId) {
-                    if (iconId === 'note') return getString("itemDrawer.addNote")
-                    if (iconId === 'downloadVideo') {
-                        if (WidgetMedia.item.data.hasDownloadedVideo) return getString("itemDrawer.removeDownloadedVideo");
-                        return getString("itemDrawer.downloadVideo");
+                WidgetMedia.handleIconAction = (actionId) => {
+                    switch(actionId) {
+                        case 'views': break;
+                        case 'comments': WidgetMedia.openMediaComments(); break;
+                        case 'share': WidgetMedia.share(); break;
+                        case 'favorite': WidgetMedia.bookmark(); break;
+                        case 'note': WidgetMedia.addNote(); break;
+                        case 'downloadVideo':
+                            if (WidgetMedia.item.data.hasDownloadedVideo) $rootScope.removeDownload(WidgetMedia.item, "video");
+                            else $rootScope.download(WidgetMedia.item, "video");
+                            break;
+                        case 'downloadAudio':
+                            if (WidgetMedia.item.data.hasDownloadedAudio) $rootScope.removeDownload(WidgetMedia.item, "audio");
+                            else $rootScope.download(WidgetMedia.item, "audio");
+                            break;
+                        case 'sourceLink': WidgetMedia.openLink(WidgetMedia.item); break;
+                        case 'openActionLinks': WidgetMedia.openLinks(WidgetMedia.item.data.links); break;
+                        case 'playlist':
+                            $rootScope.toggleGlobalPlaylistItem(WidgetMedia.item, () => {
+                                const playlistIcon = document.getElementById('playlist');
+                                if (playlistIcon) {
+                                    const playlistOptions = getPlaylistIcon();
+                                    playlistIcon.querySelector('.material-icons-outlined').innerHTML = playlistOptions.iconName;
+                                }
+                            });
+                            break;
                     }
-                    if (iconId === 'downloadAudio') {
-                        if (WidgetMedia.item.data.hasDownloadedAudio) return getString("itemDrawer.removeDownloadedAudio");
-                        return getString("homeDrawer.downloadAudio");
-                    }
-
-                    if (iconId === 'share') return getString("itemDrawer.share");
-                    if (iconId === 'sourceLink') return getString("itemDrawer.mediaSource");
-                    if (iconId === 'openActionLinks') return getString("itemDrawer.openLinks");
-
-                    if (iconId === 'favorite') {
-                        if (WidgetMedia.item.data.bookmarked) return getString("itemDrawer.removeFromFavorites");
-                        return getString("itemDrawer.favorite");
-                    }
-
-                    if (iconId === 'playlist') {
-                        if ($rootScope.isInGlobalPlaylist(WidgetMedia.item.id)) return getString("itemDrawer.removeFromPlaylist");
-                        return getString("itemDrawer.addToPlaylist");
-                    }
-                }
-
-                WidgetMedia.initMediaActionIcons = () => {
-                    let icons = [
-                        {id: 'views', iconName: 'visibility', filled: true},
-                        {id: 'comments', iconName: 'chat_bubble_outline'},
-                        {id: 'share', iconName: 'share'},
-                        { ...getFavoriteIcon() }, // favorite icon
-                        {id: 'note', iconName: 'note_add'},
-                        {id: 'downloadVideo', iconName: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">\n<g clip-path="url(#clip0_1664_11661)">\n<path d="M3 5H21V10H23V5C23 3.9 22.1 3 21 3H3C1.9 3 1 3.9 1 5V17C1 18.1 1.9 19 3 19H12V17H3V5Z" fill="#46BFE6"/>\n<path d="M15 11L9 7V15L15 11Z" fill="#46BFE6"/>\n<path d="M24 18.4167L22.59 17.1242L20 19.4892L20 12L18 12L18 19.4892L15.41 17.1242L14 18.4167L19 23L24 18.4167Z" fill="#46BFE6"/>\n</g>\n<defs>\n<clipPath id="clip0_1664_11661">\n<rect width="24" height="24" fill="white"/>\n</clipPath>\n</defs>\n</svg>'},
-                        {id: 'downloadAudio', iconName: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">\n<g clip-path="url(#clip0_1664_11652)">\n<path d="M8 3L8.01 13.55C7.41 13.21 6.73 13 6.01 13C3.79 13 2 14.79 2 17C2 19.21 3.79 21 6.01 21C8.23 21 10 19.21 10 17V7H14V3H8Z" fill="#46BFE6"/>\n<path d="M22 16L20.59 14.59L18 17.17L18 9L16 9L16 17.17L13.41 14.59L12 16L17 21L22 16Z" fill="#46BFE6"/>\n</g>\n<defs>\n<clipPath id="clip0_1664_11652">\n<rect width="24" height="24" fill="white"/>\n</clipPath>\n</defs>\n</svg>'},
-                        {id: 'sourceLink', iconName: '<i class="glyphicon share glyphicon-link" role="button" aria-label="Audio Item source button"></i>'},
-                        {id: 'openActionLinks', iconName: 'open_in_new'},
-                        { ...getPlaylistIcon() }, // playlist icon
-                    ];
-
-                    if (!WidgetMedia.media.data.content.showViewCount) {
-                        icons = icons.filter(_icon => _icon.id !== 'views');
-                    }
-                    if (!WidgetMedia.allowUserComment()) {
-                        icons = icons.filter(_icon => _icon.id !== 'comments');
-                    }
-                    if (!WidgetMedia.media.data.content.allowShare) {
-                        icons = icons.filter(_icon => _icon.id !== 'share');
-                    }
-                    if (!WidgetMedia.media.data.content.allowAddingNotes) {
-                        icons = icons.filter(_icon => _icon.id !== 'note');
-                    }
-                    if (!WidgetMedia.item.data.links || !WidgetMedia.item.data.links.length || !$rootScope.online) {
-                        icons = icons.filter(_icon => _icon.id !== 'openActionLinks');
-                    }
-                    if (!WidgetMedia.media.data.content.allowOfflineDownload) {
-                        icons = icons.filter(_icon => _icon.id !== 'downloadVideo' && _icon.id !== 'downloadAudio');
-                    } else {
-                        if (!WidgetMedia.item.data || !WidgetMedia.item.data.audioUrl || WidgetMedia.item.data.audioUrl === '') icons = icons.filter(_icon => _icon.id !== 'downloadAudio');
-                        if (!WidgetMedia.item.data || !WidgetMedia.item.data.videoUrl || WidgetMedia.item.data.videoUrl === '') icons = icons.filter(_icon => _icon.id !== 'downloadVideo');
-                    }
-                    if (!WidgetMedia.media.data.content.allowSource || !WidgetMedia.item.data || (!WidgetMedia.item.data.srcUrl && !WidgetMedia.item.data.videoUrl && !WidgetMedia.item.data.audioUrl)) {
-                        icons = icons.filter(_icon => _icon.id !== 'sourceLink');
-                    }
-                    if (!WidgetMedia.media.data.content.globalPlaylist || !$rootScope.online || !WidgetMedia.item.data.audioUrl || !WidgetMedia.item.data.videoUrl) {
-                        icons = icons.filter(_icon => _icon.id !== 'playlist');
-                    }
-
-                    const mediaActionIconsContainer = document.getElementById('mediaActionIcons');
-                    if (!mediaActionIconsContainer) return;
-                    mediaActionIconsContainer.innerHTML = '';
-                    mediaActionIconsContainer.classList.remove('justify-content-start');
-
-                    let maxIconsCount = 5;
-                    if (WidgetMedia.media.data && WidgetMedia.media.data.design && WidgetMedia.media.data.design.itemLayout === "item-2") {
-                        maxIconsCount = 4;
-                    }
-
-                    const visibleIcons = icons.slice(0, maxIconsCount);
-                    const hiddenIcons = icons.slice(maxIconsCount);
-
-                    for (let index = 0; index < maxIconsCount; index++) {
-                        const icon = visibleIcons[index];
-
-                        if (!icon) {
-                            mediaActionIconsContainer.classList.add('justify-content-start');
-                        } else if (index === maxIconsCount-1 && hiddenIcons.length > 0) {
-                            const moreIcon = document.createElement('div');
-                            moreIcon.classList.add('flex');
-                            moreIcon.classList.add('flex-align-center');
-                            moreIcon.classList.add('flex-justify-end');
-                            moreIcon.innerHTML = '<i class="material-icons-outlined">more_horiz</i>';
-                            moreIcon.onclick = () => {
-                                const drawerItems = [icon].concat(hiddenIcons).map(i => ({id: i.id, text: getIconText(i.id)}));
-                                buildfire.components.drawer.open({listItems: drawerItems}, (err, result) => {
-                                    if (err) console.error(err);
-                                    if (result) handleIconAction(result.id);
-                                    buildfire.components.drawer.closeDrawer();
-                                });
-                            };
-                            mediaActionIconsContainer.appendChild(moreIcon);
-                        } else {
-                            const iconEl = document.createElement('div');
-                            iconEl.id = icon.id;
-                            iconEl.classList.add('flex');
-                            iconEl.classList.add('flex-align-center');
-                            iconEl.classList.add('cursor-pointer');
-                            if (index > 0 && icon.id !== 'views' && icon.id !== 'comments') {
-                                let newClass = 'flex-justify-center';
-                                if (index === (maxIconsCount - 1)) newClass = 'flex-justify-end';
-                                iconEl.classList.add(newClass);
-                            }
-                            iconEl.innerHTML = icon.iconName.includes('<') ? icon.iconName : `<i class="${icon.filled ? 'material-icons' : 'material-icons-outlined'}">${icon.iconName}</i>`;
-                            iconEl.onclick = () => handleIconAction(icon.id);
-                            if (icon.id === 'comments') {
-                                iconEl.querySelector('.material-icons-outlined').classList.add('flip-horizontal')
-                                iconEl.innerHTML += '<span class="margin-left-five count-container">0</span>';
-                                getCommentsCount().then(count => {
-                                    iconEl.querySelector('.count-container').innerHTML = count.toLocaleString('en-US');
-                                }).catch((err) => {
-                                    console.error(err);
-                                });
-                            } else if (icon.id === 'views') {
-                                iconEl.innerHTML += '<span class="margin-left-five count-container">0</span>';
-                                buildfire.publicData.search(allCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
-                                    if (err) console.error(err);
-
-                                    if (res && WidgetMedia) {
-                                        WidgetMedia.count = res.totalRecord;
-                                        if (!$scope.$$phase) $scope.$apply();
-                                        iconEl.querySelector('.count-container').innerHTML = WidgetMedia.count.toLocaleString('en-US');
-                                    }
-                                })
-                            }
-                            mediaActionIconsContainer.appendChild(iconEl);
-                        }
-                    }
-
-                    const handleIconAction = (actionId) => {
-                        switch(actionId) {
-                            case 'views': break;
-                            case 'comments': WidgetMedia.openMediaComments(); break;
-                            case 'share': WidgetMedia.share(); break;
-                            case 'favorite': WidgetMedia.bookmark(); break;
-                            case 'note': WidgetMedia.addNote(); break;
-                            case 'downloadVideo':
-                                if (WidgetMedia.item.data.hasDownloadedVideo) $rootScope.removeDownload(WidgetMedia.item, "video");
-                                else $rootScope.download(WidgetMedia.item, "video");
-                                break;
-                            case 'downloadAudio':
-                                if (WidgetMedia.item.data.hasDownloadedAudio) $rootScope.removeDownload(WidgetMedia.item, "audio");
-                                else $rootScope.download(WidgetMedia.item, "audio");
-                                break;
-                            case 'sourceLink': WidgetMedia.openLink(WidgetMedia.item); break;
-                            case 'openActionLinks': WidgetMedia.openLinks(WidgetMedia.item.data.links); break;
-                            case 'playlist':
-                                $rootScope.toggleGlobalPlaylistItem(WidgetMedia.item, () => {
-                                    const playlistIcon = document.getElementById('playlist');
-                                    if (playlistIcon) {
-                                        const playlistOptions = getPlaylistIcon();
-                                        playlistIcon.querySelector('.material-icons-outlined').innerHTML = playlistOptions.iconName;
-                                    }
-                                });
-                                break;
-                        }
-                    };
-
                 };
 
                 if ($rootScope.online) {
@@ -463,8 +323,6 @@
                         if (params.commentId) {
                             WidgetMedia.openMediaComments([params.commentId]);
                         }
-
-                        WidgetMedia.initMediaActionIcons();
                     }, function (err) {
                         WidgetMedia.media = {
                             data: {}
@@ -901,7 +759,7 @@
                             }
                         }
                     }
-                    WidgetMedia.initMediaActionIcons();
+                    WidgetMedia.iconRefresh = Date.now();
                     if (!$scope.$$phase) {
                         $scope.$apply();
                         $scope.$digest();

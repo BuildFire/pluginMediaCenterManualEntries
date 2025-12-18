@@ -120,5 +120,175 @@
                     }
                 });
             };
+        }])
+        .directive('mediaActionIcons', ['MEDIA_ACTION_ICONS', '$rootScope', 'COLLECTIONS', '$injector', function (MEDIA_ACTION_ICONS, $rootScope, COLLECTIONS, $injector) {
+            return {
+                restrict: 'E',
+                scope: {
+                    widgetMedia: '=',
+                    onIconAction: '&'
+                },
+                template: '<div ng-repeat="icon in visibleIcons" class="flex flex-align-center cursor-pointer" ng-class="getIconClasses(icon, $index)" ng-click="onIconAction({actionId: icon.id})" ng-bind-html="getIconHtml(icon) | safeHtml"></div><div ng-if="hasMoreIcons" class="flex flex-align-center flex-justify-end" ng-click="openMoreDrawer()"><i class="material-icons-outlined">more_horiz</i></div>',
+                link: function (scope, element) {
+                    scope.visibleIcons = [];
+                    scope.hiddenIcons = [];
+                    scope.hasMoreIcons = false;
+                    scope.commentsCount = 0;
+                    scope.viewsCount = 0;
+                    scope.initMediaActionIcons = function () {
+                        const WidgetMedia = scope.widgetMedia;
+                        if (!WidgetMedia || !WidgetMedia.media) return;
+
+                        let icons = [
+                            MEDIA_ACTION_ICONS.VIEWS,
+                            MEDIA_ACTION_ICONS.COMMENTS,
+                            MEDIA_ACTION_ICONS.SHARE,
+                            WidgetMedia.item?.data?.bookmarked ? MEDIA_ACTION_ICONS.FAVORITE_FILLED : MEDIA_ACTION_ICONS.FAVORITE,
+                            MEDIA_ACTION_ICONS.NOTE,
+                            MEDIA_ACTION_ICONS.DOWNLOAD_VIDEO,
+                            MEDIA_ACTION_ICONS.DOWNLOAD_AUDIO,
+                            MEDIA_ACTION_ICONS.SOURCE_LINK,
+                            MEDIA_ACTION_ICONS.OPEN_ACTION_LINKS,
+                            $rootScope.isInGlobalPlaylist?.(WidgetMedia.item?.id) ? MEDIA_ACTION_ICONS.PLAYLIST_REMOVE : MEDIA_ACTION_ICONS.PLAYLIST_ADD
+                        ];
+
+                        // Filter icons based on settings
+                        if (!WidgetMedia.media.data.content.showViewCount) icons = icons.filter(i => i.id !== 'views');
+                        if (!WidgetMedia.allowUserComment?.()) icons = icons.filter(i => i.id !== 'comments');
+                        if (!WidgetMedia.media.data.content.allowShare) icons = icons.filter(i => i.id !== 'share');
+                        if (!WidgetMedia.media.data.content.allowAddingNotes) icons = icons.filter(i => i.id !== 'note');
+                        if (!WidgetMedia.item?.data?.links?.length || !$rootScope.online) icons = icons.filter(i => i.id !== 'openActionLinks');
+                        if (!WidgetMedia.media.data.content.allowOfflineDownload) {
+                            icons = icons.filter(i => i.id !== 'downloadVideo' && i.id !== 'downloadAudio');
+                        } else {
+                            if (!WidgetMedia.item?.data?.audioUrl) icons = icons.filter(i => i.id !== 'downloadAudio');
+                            if (!WidgetMedia.item?.data?.videoUrl) icons = icons.filter(i => i.id !== 'downloadVideo');
+                        }
+                        if (!WidgetMedia.media.data.content.allowSource || !WidgetMedia.item?.data || (!WidgetMedia.item.data.srcUrl && !WidgetMedia.item.data.videoUrl && !WidgetMedia.item.data.audioUrl)) {
+                            icons = icons.filter(i => i.id !== 'sourceLink');
+                        }
+                        if (!WidgetMedia.media.data.content.globalPlaylist || !$rootScope.online || !WidgetMedia.item?.data?.audioUrl || !WidgetMedia.item?.data?.videoUrl) {
+                            icons = icons.filter(i => i.id !== 'playlist');
+                        }
+
+                        scope.renderIcons(icons, WidgetMedia);
+                        scope.loadCommentsCount(WidgetMedia);
+                        scope.loadViewsCount(WidgetMedia);
+                    };
+
+                    scope.renderIcons = function (icons, WidgetMedia) {
+                        element[0].innerHTML = '';
+                        element[0].classList.remove('justify-content-start');
+
+                        let maxIconsCount = WidgetMedia.media?.data?.design?.itemLayout === "item-2" ? 4 : 5;
+                        const visibleIcons = icons.slice(0, maxIconsCount);
+                        const hiddenIcons = icons.slice(maxIconsCount);
+
+                        for (let index = 0; index < maxIconsCount; index++) {
+                            const icon = visibleIcons[index];
+                            if (!icon) {
+                                element[0].classList.add('justify-content-start');
+                            } else if (index === maxIconsCount - 1 && hiddenIcons.length > 0) {
+                                scope.createMoreIcon([icon].concat(hiddenIcons));
+                            } else {
+                                scope.createIcon(icon, index, maxIconsCount, WidgetMedia);
+                            }
+                        }
+                    };
+
+                    scope.createIcon = function (icon, index, maxIconsCount, WidgetMedia) {
+                        const iconEl = document.createElement('div');
+                        iconEl.id = icon.id;
+                        iconEl.classList.add('flex', 'flex-align-center', 'cursor-pointer');
+                        if (index > 0 && icon.id !== 'views' && icon.id !== 'comments') {
+                            iconEl.classList.add(index === maxIconsCount - 1 ? 'flex-justify-end' : 'flex-justify-center');
+                        }
+                        iconEl.innerHTML = icon.iconName.includes('<') ? icon.iconName : `<i class="${icon.filled ? 'material-icons' : 'material-icons-outlined'}">${icon.iconName}</i>`;
+                        iconEl.onclick = () => scope.onIconAction({actionId: icon.id});
+
+                        if (icon.id === 'comments') {
+                            iconEl.querySelector('.material-icons-outlined').classList.add('flip-horizontal');
+                            const commentsSpan = document.createElement('span');
+                            commentsSpan.classList.add('margin-left-five');
+                            commentsSpan.textContent = (scope.commentsCount || 0).toLocaleString('en-US');
+                            iconEl.appendChild(commentsSpan);
+                        } else if (icon.id === 'views') {
+                            const viewsSpan = document.createElement('span');
+                            viewsSpan.classList.add('margin-left-five');
+                            viewsSpan.textContent = (scope.viewsCount || 0).toLocaleString('en-US');
+                            iconEl.appendChild(viewsSpan);
+                        }
+
+                        element[0].appendChild(iconEl);
+                    };
+
+                    scope.loadCommentsCount = function (WidgetMedia) {
+                        buildfire.components.comments.getSummaries({
+                            itemIds: [WidgetMedia.item.id]
+                        }, (error, result) => {
+                            if (!error && result && result[0] && result[0].count) {
+                                scope.commentsCount = result[0].count;
+                                const commentsEl = element[0].querySelector('#comments span');
+                                if (commentsEl) commentsEl.textContent = scope.commentsCount.toLocaleString('en-US');
+                                scope.$apply();
+                            }
+                        });
+                    };
+
+                    scope.loadViewsCount = function (WidgetMedia) {
+                        const allCheckViewFilter = {
+                            filter: {
+                                "_buildfire.index.string1": WidgetMedia.item.id + "-true"
+                            },
+                            skip: 0,
+                            limit: 1,
+                            recordCount: true
+                        };
+                        buildfire.publicData.search(allCheckViewFilter, COLLECTIONS.MediaCount, function (err, res) {
+                            if (!err && res && WidgetMedia) {
+                                WidgetMedia.count = res.totalRecord;
+                                scope.viewsCount = WidgetMedia.count;
+                                const viewsEl = element[0].querySelector('#views span');
+                                if (viewsEl) viewsEl.textContent = scope.viewsCount.toLocaleString('en-US');
+                                scope.$apply();
+                            }
+                        });
+                    };
+
+                    scope.createMoreIcon = function (allIcons) {
+                        const moreIcon = document.createElement('div');
+                        moreIcon.classList.add('flex', 'flex-align-center', 'flex-justify-end');
+                        moreIcon.innerHTML = '<i class="material-icons-outlined">more_horiz</i>';
+                        moreIcon.onclick = () => {
+                            const drawerItems = allIcons.map(i => ({id: i.id, text: scope.getIconText(i.id)}));
+                            buildfire.components.drawer.open({listItems: drawerItems}, (err, result) => {
+                                if (result) scope.onIconAction({actionId: result.id});
+                                buildfire.components.drawer.closeDrawer();
+                            });
+                        };
+                        element[0].appendChild(moreIcon);
+                    };
+
+                    scope.getIconText = function (iconId) {
+                        const WidgetMedia = scope.widgetMedia;
+                        const textMap = {
+                            note: "itemDrawer.addNote",
+                            downloadVideo: WidgetMedia.item?.data?.hasDownloadedVideo ? "itemDrawer.removeDownloadedVideo" : "itemDrawer.downloadVideo",
+                            downloadAudio: WidgetMedia.item?.data?.hasDownloadedAudio ? "itemDrawer.removeDownloadedAudio" : "homeDrawer.downloadAudio",
+                            share: "itemDrawer.share",
+                            sourceLink: "itemDrawer.mediaSource",
+                            openActionLinks: "itemDrawer.openLinks",
+                            favorite: WidgetMedia.item?.data?.bookmarked ? "itemDrawer.removeFromFavorites" : "itemDrawer.favorite",
+                            playlist: $rootScope.isInGlobalPlaylist?.(WidgetMedia.item?.id) ? "itemDrawer.removeFromPlaylist" : "itemDrawer.addToPlaylist"
+                        };
+                        return getString(textMap[iconId] || iconId);
+                    };
+
+                    // scope.$watch('widgetMedia.item.data.bookmarked', scope.initMediaActionIcons);
+                    scope.$watch('widgetMedia.media', scope.initMediaActionIcons);
+                    scope.$watch('widgetMedia.iconRefresh', scope.initMediaActionIcons);
+                    scope.initMediaActionIcons();
+                }
+            };
         }]);
 })(window.angular, window.buildfire);
