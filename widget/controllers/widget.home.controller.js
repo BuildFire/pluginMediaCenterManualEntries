@@ -868,16 +868,25 @@
                     }
 
                     buildfire.deeplink.onUpdate((deeplinkData) => {
-                        if (deeplinkData && deeplinkData.id) {
-                            $window.deeplinkingDone = true;
-                            $rootScope.showFeed = false;
-
-                            const options = { itemId: deeplinkData.id, pushToHistory: true };
-                            if( deeplinkData.id &&  deeplinkData.type === 'audio') {
-                                options.type = deeplinkData.type;
+                        if (deeplinkData) {
+                            let itemId = null, commentId = null;
+                            if (deeplinkData.id) itemId = deeplinkData.id;
+                            else if (deeplinkData.mediaId) itemId = deeplinkData.mediaId;
+                            else if (deeplinkData.link || deeplinkData.itemId) {
+                                itemId = deeplinkData.link ? deeplinkData.link : deeplinkData.itemId;
+                                if (deeplinkData.commentId) commentId = deeplinkData.commentId;
                             }
-                            WidgetHome.goTo(options);
+                            
+                            if (itemId) {
+                                $window.deeplinkingDone = true;
+                                $rootScope.showFeed = false;
 
+                                const options = { itemId, commentId, pushToHistory: true };
+                                if (itemId && deeplinkData.type === 'audio') {
+                                    options.type = deeplinkData.type;
+                                }
+                                WidgetHome.goTo(options);
+                            }
                         }
                     });
                 }

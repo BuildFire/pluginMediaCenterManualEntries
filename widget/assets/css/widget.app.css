@@ -1660,20 +1660,6 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
     }
 }
 
-/* Rotating animation for download spinner */
-.rotating {
-    animation: rotate 1s linear infinite;
-}
-
-@keyframes rotate {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(-360deg);
-    }
-}
-
 /* Check mark for downloaded items */
 .download-check {
     font-size: 12px !important;

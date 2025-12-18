@@ -145,8 +145,8 @@
                             MEDIA_ACTION_ICONS.SHARE,
                             WidgetMedia.item?.data?.bookmarked ? MEDIA_ACTION_ICONS.FAVORITE_FILLED : MEDIA_ACTION_ICONS.FAVORITE,
                             MEDIA_ACTION_ICONS.NOTE,
-                            MEDIA_ACTION_ICONS.DOWNLOAD_VIDEO,
-                            MEDIA_ACTION_ICONS.DOWNLOAD_AUDIO,
+                            WidgetMedia.item?.data?.hasDownloadedVideo ? MEDIA_ACTION_ICONS.REMOVE_DOWNLOAD_VIDEO : MEDIA_ACTION_ICONS.DOWNLOAD_VIDEO,
+                            WidgetMedia.item?.data?.hasDownloadedAudio ? MEDIA_ACTION_ICONS.REMOVE_DOWNLOAD_AUDIO : MEDIA_ACTION_ICONS.DOWNLOAD_AUDIO,
                             MEDIA_ACTION_ICONS.SOURCE_LINK,
                             MEDIA_ACTION_ICONS.OPEN_ACTION_LINKS,
                             $rootScope.isInGlobalPlaylist?.(WidgetMedia.item?.id) ? MEDIA_ACTION_ICONS.PLAYLIST_REMOVE : MEDIA_ACTION_ICONS.PLAYLIST_ADD
@@ -209,28 +209,33 @@
                             iconEl.classList.add(index === maxIconsCount - 1 ? 'flex-justify-end' : 'flex-justify-center');
                         }
 
+                        // Add aria-label for accessibility
+                        const ariaLabels = {
+                            views: 'View count',
+                            comments: 'Comments',
+                            share: 'Share',
+                            favorite: WidgetMedia.item?.data?.bookmarked ? 'Remove from favorites' : 'Add to favorites',
+                            note: 'Add note',
+                            downloadVideo: WidgetMedia.item?.data?.hasDownloadedVideo ? 'Remove downloaded video' : 'Download video',
+                            downloadAudio: WidgetMedia.item?.data?.hasDownloadedAudio ? 'Remove downloaded audio' : 'Download audio',
+                            sourceLink: 'Source link',
+                            openActionLinks: 'Open action links',
+                            playlist: $rootScope.isInGlobalPlaylist?.(WidgetMedia.item?.id) ? 'Remove from playlist' : 'Add to playlist'
+                        };
+                        iconEl.setAttribute('aria-label', ariaLabels[icon.id] || icon.id);
+                        iconEl.setAttribute('role', 'button');
+                        iconEl.setAttribute('tabindex', '0');
+
                         // Check if this is a download icon and item is currently downloading
                         const isDownloadIcon = icon.id === 'downloadVideo' || icon.id === 'downloadAudio';
                         const isDownloading = isDownloadIcon && $rootScope.currentlyDownloading && $rootScope.currentlyDownloading.indexOf(WidgetMedia.item.id) > -1;
 
                         if (isDownloading) {
-                            // Show spinner instead of icon when downloading
-                            iconEl.innerHTML = '<i class="material-icons-outlined rotating">sync</i>';
                             iconEl.style.pointerEvents = 'none'; // Disable clicks while downloading
-                        } else {
-                            iconEl.innerHTML = icon.iconName.includes('<') ? icon.iconName : `<i class="${icon.filled ? 'material-icons' : 'material-icons-outlined'}">${icon.iconName}</i>`;
-
-                            // Add check mark for downloaded items
-                            const isDownloaded = (icon.id === 'downloadVideo' && WidgetMedia.item?.data?.hasDownloadedVideo) ||
-                                               (icon.id === 'downloadAudio' && WidgetMedia.item?.data?.hasDownloadedAudio);
-                            if (isDownloaded) {
-                                const checkMark = document.createElement('i');
-                                checkMark.className = 'material-icons-outlined download-check';
-                                checkMark.textContent = 'check_circle';
-                                iconEl.appendChild(checkMark);
-                            }
+                            iconEl.setAttribute('aria-label', 'Downloading');
                         }
 
+                        iconEl.innerHTML = icon.iconName.includes('<') ? icon.iconName : `<i class="${icon.filled ? 'material-icons' : 'material-icons-outlined'}">${icon.iconName}</i>`;
                         iconEl.onclick = () => scope.onIconAction({actionId: icon.id});
 
                         if (icon.id === 'comments') {
@@ -286,21 +291,10 @@
                         const moreIcon = document.createElement('div');
                         moreIcon.classList.add('flex', 'flex-align-center', 'flex-justify-end');
                         moreIcon.innerHTML = '<i class="material-icons-outlined">more_horiz</i>';
-                        
-                        // Check if any download icons in drawer are currently downloading
-                        const WidgetMedia = scope.widgetMedia;
-                        const hasDownloadingInDrawer = allIcons.some(icon => {
-                            const isDownloadIcon = icon.id === 'downloadVideo' || icon.id === 'downloadAudio';
-                            return isDownloadIcon && $rootScope.currentlyDownloading && $rootScope.currentlyDownloading.indexOf(WidgetMedia.item.id) > -1;
-                        });
-                        
-                        if (hasDownloadingInDrawer) {
-                            const spinner = document.createElement('i');
-                            spinner.className = 'material-icons-outlined rotating drawer-spinner';
-                            spinner.textContent = 'sync';
-                            moreIcon.appendChild(spinner);
-                        }
-                        
+                        moreIcon.setAttribute('aria-label', 'More options');
+                        moreIcon.setAttribute('role', 'button');
+                        moreIcon.setAttribute('tabindex', '0');
+
                         moreIcon.onclick = () => {
                             const drawerItems = allIcons.map(i => ({id: i.id, text: scope.getIconText(i.id)}));
                             buildfire.components.drawer.open({listItems: drawerItems}, (err, result) => {
@@ -329,6 +323,8 @@
                     scope.$watch('widgetMedia.media', scope.initMediaActionIcons);
                     scope.$watch('widgetMedia.iconRefresh', scope.initMediaActionIcons);
                     scope.$watch(() => $rootScope.currentlyDownloading, scope.initMediaActionIcons, true);
+                    scope.$watch('widgetMedia.item.data.hasDownloadedVideo', scope.initMediaActionIcons);
+                    scope.$watch('widgetMedia.item.data.hasDownloadedAudio', scope.initMediaActionIcons);
                     scope.initMediaActionIcons();
                 }
             };

@@ -9,8 +9,13 @@
                             <div class="people-bg clearfix">
                                 <div class="people-holder clearfix">
                                     <div class="people-info text-center col-xs-12">
-                                        <h5 class="ellipsis margin-top-fifteen whiteTheme media-title" style="font-size: 16px;">
-                                            {{WidgetMedia.item.data.title}}</h5>
+                                        <h5 class="margin-top-fifteen whiteTheme media-title" style="font-size: 16px;">
+                                            {{WidgetMedia.item.data.title}}
+                                            <svg data-ng-if="(WidgetMedia.item.data.hasDownloadedVideo || WidgetMedia.item.data.hasDownloadedAudio) && allowOfflineDownload && !WidgetMedia.isDownloading(WidgetMedia.item)" xmlns="http://www.w3.org/2000/svg" width="15" height="16" viewBox="0 0 15 16" fill="none">
+                                                <path d="M7.49996 0.916992C3.59704 0.916992 0.416626 4.09741 0.416626 8.00033C0.416626 11.9032 3.59704 15.0837 7.49996 15.0837C11.4029 15.0837 14.5833 11.9032 14.5833 8.00033C14.5833 4.09741 11.4029 0.916992 7.49996 0.916992ZM6.79163 6.58366V3.75033H8.20829V6.58366H10.3333L7.49996 9.41699L4.66663 6.58366H6.79163ZM11.0416 11.542H3.95829V10.1253H11.0416V11.542Z" fill="#fff"/>
+                                            </svg>
+                                            <span data-ng-if="WidgetMedia.isDownloading(WidgetMedia.item)" class="lds-ring-small"><div></div><div></div><div></div><div></div></span>
+                                        </h5>
                                         <h5 class="whiteTheme media-summary">{{WidgetMedia.item.data.summary}}</h5>
                                     </div>
                                 </div>

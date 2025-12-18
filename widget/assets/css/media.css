@@ -29,18 +29,16 @@ h5 {
     padding-top: 0;
 }
 
-.first-layout .media-center-banner {
-    padding: 15px 15px 0 15px;
-}
-
 .first-layout .media-title {
     color: var(--bf-theme-header-text);
     font-weight: 500;
     line-height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .first-layout .media-center-banner .plugin-slider {
-    border-radius: 4px;
     overflow: hidden;
 }
 
@@ -48,6 +46,18 @@ h5 {
     font-weight: 500;
     line-height: 24px;
     font-size: 16px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.second-layout .lds-ring-small {
+    margin: unset;
+}
+
+.second-layout .lds-ring-small div {
+    border-color: #fff transparent transparent transparent;
 }
 
 .second-layout .people-info .media-summary {
@@ -60,9 +70,12 @@ h5 {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 24px;
     margin-bottom: 8px;
     flex: 1;
+}
+
+.media-action-icons.justify-content-start {
+    gap: 24px;
 }
 
 .media-action-icons .glyphicon {
