@@ -128,7 +128,7 @@
                         buildfire.spinner.hide();
                         if (error) {
                             buildfire.dialog.toast({
-                                message: getLanguageValue('comments.openCommentError'),
+                                message: getString('comments.openCommentError'),
                                 type: 'danger'
                             });
                             console.error(error);
