@@ -24,7 +24,7 @@
               restrict: 'A',
               link: function (scope, element, attrs) {
                   var getImageItem = attrs.imageItem ? $parse(attrs.imageItem) : null;
-                  
+
                   function updateImageLoadedState(isLoaded) {
                       scope.$evalAsync(function () {
                           var target = getImageItem ? getImageItem(scope) : scope.item;
@@ -33,24 +33,24 @@
                           }
                       });
                   }
-                  
+
                   attrs.$observe('finalSrc', function (_img) {
                       if (!_img) {
                           updateImageLoadedState(false);
                           return;
                       }
-                      
+
                       var options = {};
                       if (attrs.cropWidth) options.width = attrs.cropWidth;
                       if (attrs.cropHeight) options.height = attrs.cropHeight;
-                      
+
                       var processImage = attrs.cropType === 'resize' ? Buildfire.imageLib.local.resizeImage : Buildfire.imageLib.local.cropImage;
-                      
+
                       updateImageLoadedState(false);
-                      
+
                       processImage(_img, options, function (err, imgUrl) {
                           var finalSrc = err ? _img : imgUrl;
-                          
+
                           var img = new Image();
                           img.onload = function () {
                                  scope.$evalAsync(function () {
@@ -70,7 +70,7 @@
               }
           };
       }])
-      
+
       .directive('scrolly', function () {
             return {
                 restrict: 'A',
@@ -208,18 +208,42 @@
                         if (index > 0 && icon.id !== 'views' && icon.id !== 'comments') {
                             iconEl.classList.add(index === maxIconsCount - 1 ? 'flex-justify-end' : 'flex-justify-center');
                         }
-                        iconEl.innerHTML = icon.iconName.includes('<') ? icon.iconName : `<i class="${icon.filled ? 'material-icons' : 'material-icons-outlined'}">${icon.iconName}</i>`;
+
+                        // Check if this is a download icon and item is currently downloading
+                        const isDownloadIcon = icon.id === 'downloadVideo' || icon.id === 'downloadAudio';
+                        const isDownloading = isDownloadIcon && $rootScope.currentlyDownloading && $rootScope.currentlyDownloading.indexOf(WidgetMedia.item.id) > -1;
+
+                        if (isDownloading) {
+                            // Show spinner instead of icon when downloading
+                            iconEl.innerHTML = '<i class="material-icons-outlined rotating">sync</i>';
+                            iconEl.style.pointerEvents = 'none'; // Disable clicks while downloading
+                        } else {
+                            iconEl.innerHTML = icon.iconName.includes('<') ? icon.iconName : `<i class="${icon.filled ? 'material-icons' : 'material-icons-outlined'}">${icon.iconName}</i>`;
+
+                            // Add check mark for downloaded items
+                            const isDownloaded = (icon.id === 'downloadVideo' && WidgetMedia.item?.data?.hasDownloadedVideo) ||
+                                               (icon.id === 'downloadAudio' && WidgetMedia.item?.data?.hasDownloadedAudio);
+                            if (isDownloaded) {
+                                const checkMark = document.createElement('i');
+                                checkMark.className = 'material-icons-outlined download-check';
+                                checkMark.textContent = 'check_circle';
+                                iconEl.appendChild(checkMark);
+                            }
+                        }
+
                         iconEl.onclick = () => scope.onIconAction({actionId: icon.id});
 
                         if (icon.id === 'comments') {
                             iconEl.querySelector('.material-icons-outlined').classList.add('flip-horizontal');
                             const commentsSpan = document.createElement('span');
                             commentsSpan.classList.add('margin-left-five');
+                            commentsSpan.classList.add('count-container');
                             commentsSpan.textContent = (scope.commentsCount || 0).toLocaleString('en-US');
                             iconEl.appendChild(commentsSpan);
                         } else if (icon.id === 'views') {
                             const viewsSpan = document.createElement('span');
                             viewsSpan.classList.add('margin-left-five');
+                            viewsSpan.classList.add('count-container');
                             viewsSpan.textContent = (scope.viewsCount || 0).toLocaleString('en-US');
                             iconEl.appendChild(viewsSpan);
                         }
@@ -262,6 +286,21 @@
                         const moreIcon = document.createElement('div');
                         moreIcon.classList.add('flex', 'flex-align-center', 'flex-justify-end');
                         moreIcon.innerHTML = '<i class="material-icons-outlined">more_horiz</i>';
+                        
+                        // Check if any download icons in drawer are currently downloading
+                        const WidgetMedia = scope.widgetMedia;
+                        const hasDownloadingInDrawer = allIcons.some(icon => {
+                            const isDownloadIcon = icon.id === 'downloadVideo' || icon.id === 'downloadAudio';
+                            return isDownloadIcon && $rootScope.currentlyDownloading && $rootScope.currentlyDownloading.indexOf(WidgetMedia.item.id) > -1;
+                        });
+                        
+                        if (hasDownloadingInDrawer) {
+                            const spinner = document.createElement('i');
+                            spinner.className = 'material-icons-outlined rotating drawer-spinner';
+                            spinner.textContent = 'sync';
+                            moreIcon.appendChild(spinner);
+                        }
+                        
                         moreIcon.onclick = () => {
                             const drawerItems = allIcons.map(i => ({id: i.id, text: scope.getIconText(i.id)}));
                             buildfire.components.drawer.open({listItems: drawerItems}, (err, result) => {
@@ -277,7 +316,7 @@
                         const textMap = {
                             note: "itemDrawer.addNote",
                             downloadVideo: WidgetMedia.item?.data?.hasDownloadedVideo ? "itemDrawer.removeDownloadedVideo" : "itemDrawer.downloadVideo",
-                            downloadAudio: WidgetMedia.item?.data?.hasDownloadedAudio ? "itemDrawer.removeDownloadedAudio" : "homeDrawer.downloadAudio",
+                            downloadAudio: WidgetMedia.item?.data?.hasDownloadedAudio ? "homeDrawer.removeDownloadedAudio" : "homeDrawer.downloadAudio",
                             share: "itemDrawer.share",
                             sourceLink: "itemDrawer.mediaSource",
                             openActionLinks: "itemDrawer.openLinks",
@@ -289,6 +328,7 @@
 
                     scope.$watch('widgetMedia.media', scope.initMediaActionIcons);
                     scope.$watch('widgetMedia.iconRefresh', scope.initMediaActionIcons);
+                    scope.$watch(() => $rootScope.currentlyDownloading, scope.initMediaActionIcons, true);
                     scope.initMediaActionIcons();
                 }
             };

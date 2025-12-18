@@ -82,17 +82,20 @@ h5 {
 .media-action-icons .material-icons,
 .media-action-icons .material-icons-outlined,
 .media-action-icons .material-icons-outlined {
-    fill: var(--bf-theme-icons);
-    color: var(--bf-theme-icons);
+    fill: var(--bf-theme-icons) !important;
+    color: var(--bf-theme-icons) !important;
     cursor: pointer;
     font-size: 22px;
 }
 
+.material-icons {
+    font-family: 'Material Icons' !important;
+}
 .material-icons-outlined {
     font-family: 'Material Icons Outlined' !important;
 }
 
-.first-layout .count-container {
+.count-container {
     min-width: fit-content;
     font-size: 12px;
     color: var(--bf-theme-body-text);

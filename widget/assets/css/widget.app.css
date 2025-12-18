@@ -1659,3 +1659,33 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
         opacity: 1;
     }
 }
+
+/* Rotating animation for download spinner */
+.rotating {
+    animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(-360deg);
+    }
+}
+
+/* Check mark for downloaded items */
+.download-check {
+    font-size: 12px !important;
+    color: #4CAF50 !important;
+    margin-left: 2px;
+    position: relative;
+    top: -2px;
+}
+
+/* Spinner next to more icon when downloads in drawer */
+.drawer-spinner {
+    font-size: 14px !important;
+    margin-left: 4px;
+    color: #666 !important;
+}
