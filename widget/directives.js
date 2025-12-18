@@ -183,7 +183,6 @@
 
                     scope.renderIcons = function (icons, WidgetMedia) {
                         element[0].innerHTML = '';
-                        element[0].classList.remove('justify-content-start');
 
                         let maxIconsCount = WidgetMedia.media?.data?.design?.itemLayout === "item-2" ? 4 : 5;
                         const visibleIcons = icons.slice(0, maxIconsCount);
@@ -191,11 +190,9 @@
 
                         for (let index = 0; index < maxIconsCount; index++) {
                             const icon = visibleIcons[index];
-                            if (!icon) {
-                                element[0].classList.add('justify-content-start');
-                            } else if (index === maxIconsCount - 1 && hiddenIcons.length > 0) {
+                            if (icon && index === maxIconsCount - 1 && hiddenIcons.length > 0) {
                                 scope.createMoreIcon([icon].concat(hiddenIcons));
-                            } else {
+                            } else if (icon) {
                                 scope.createIcon(icon, index, maxIconsCount, WidgetMedia);
                             }
                         }
@@ -204,7 +201,7 @@
                     scope.createIcon = function (icon, index, maxIconsCount, WidgetMedia) {
                         const iconEl = document.createElement('div');
                         iconEl.id = icon.id;
-                        iconEl.classList.add('flex', 'flex-align-center', 'cursor-pointer');
+                        iconEl.classList.add('flex', 'flex-align-center', 'cursor-pointer', 'flex-justify-center', 'media-action-icon-element');
                         if (index > 0 && icon.id !== 'views' && icon.id !== 'comments') {
                             iconEl.classList.add(index === maxIconsCount - 1 ? 'flex-justify-end' : 'flex-justify-center');
                         }
@@ -253,7 +250,13 @@
                             iconEl.appendChild(viewsSpan);
                         }
 
-                        element[0].appendChild(iconEl);
+                        let iconsHolder = element[0].querySelector('.action-icons-holder');
+                        if (!iconsHolder) {
+                            iconsHolder = document.createElement('div');
+                            iconsHolder.classList.add('action-icons-holder', 'flex', 'flex-align-start');
+                            element[0].appendChild(iconsHolder);
+                        }
+                        iconsHolder.appendChild(iconEl);
                     };
 
                     scope.loadCommentsCount = function (WidgetMedia) {
@@ -289,7 +292,7 @@
 
                     scope.createMoreIcon = function (allIcons) {
                         const moreIcon = document.createElement('div');
-                        moreIcon.classList.add('flex', 'flex-align-center', 'flex-justify-end');
+                        moreIcon.classList.add('flex', 'flex-align-center', 'flex-justify-center', 'media-action-icon-element', 'cursor-pointer');
                         moreIcon.innerHTML = '<i class="material-icons-outlined">more_horiz</i>';
                         moreIcon.setAttribute('aria-label', 'More options');
                         moreIcon.setAttribute('role', 'button');

@@ -73,8 +73,12 @@ h5 {
     margin-bottom: 8px;
     flex: 1;
 }
+.media-action-icons .media-action-icon-element {
+    width: 40px;
+    height: 40px;
+}
 
-.media-action-icons.justify-content-start {
+.media-action-icons .action-icons-holder {
     gap: 24px;
 }
 
@@ -600,6 +604,11 @@ button.btn-icon.btn-lg {
     }
     .media-player-btns{
         padding: 8px 0;
+    }
+}
+@media (max-width: 360px) {
+    .media-action-icons .action-icons-holder {
+        gap: 12px;
     }
 }
 
