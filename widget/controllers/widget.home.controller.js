@@ -271,10 +271,10 @@
                                 $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                                 Location.go('#/nowplaying/' + item.id, pushToHistory);
                             } else {
-                                Location.go('#/media/' + item.id + `?commentId=${commentId}`, pushToHistory);
+                                Location.go('#/media/' + item.id + `?commentId=${commentId? commentId : ''}`, pushToHistory);
                             }
                         } else {
-                            Location.go('#/media/' + item.id + `?commentId=${commentId}`, pushToHistory);
+                            Location.go('#/media/' + item.id + `?commentId=${commentId? commentId : ''}`, pushToHistory);
                         }
                         if (!$rootScope.$$phase) $rootScope.$digest();
                     }
