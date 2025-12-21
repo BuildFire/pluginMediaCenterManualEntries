@@ -83,11 +83,11 @@
 			Settings.setSettings = () => {
 				const isUnchanged = angular.equals(Settings.lastSavedContent, Settings.data);
 				if (isUnchanged) return;
+				Settings.lastSavedContent = angular.copy(Settings.data);
 
 				$scope.syncWithWidget();
 
 				MediaCenter.save(Settings.data).then(() => {
-					Settings.lastSavedContent = angular.copy(Settings.data);
 					Messaging.sendMessageToWidget({ cmd: 'settings', data: Settings.data });
 				}).catch((err) => {
 					console.error(err);

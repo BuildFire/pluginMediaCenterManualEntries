@@ -2,7 +2,7 @@
     angular
         .module('mediaCenterWidget')
         .service('CommentsService', function () {
-            var service = this;
+            let service = this;
 
             service.openComments = function (itemId, commentIds, callback) {
                 buildfire.spinner.show();
@@ -63,7 +63,7 @@
                             }
                         });
                     }
-
+                    if (service.onOpen) service.onOpen();
                     if (callback) callback(error);
                 });
             };
@@ -80,9 +80,11 @@
                 });
             };
 
-            service.setCommentCallbacks = function (onAdd, onDelete) {
+            service.setCommentCallbacks = function (onAdd, onDelete, onOpen, onClose) {
                 buildfire.components.comments.onAdd = onAdd;
                 buildfire.components.comments.onDelete = onDelete;
+                buildfire.components.comments.onClose = onClose;
+                service.onOpen = onOpen;
             };
 
             return service;

@@ -61,10 +61,15 @@
 
 .media-center-plugin.second-layout .people-banner .people-bg {
     background: rgba(0, 0, 0, 0.5);
-    height: 100%;
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+
+.media-center-plugin.second-layout .people-banner.image-holder {
+    display: flex;
+    align-items: stretch;
 }
 
 .media-center-plugin.second-layout .people-banner .people-info {

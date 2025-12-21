@@ -4,8 +4,8 @@
             <div class="people-bg clearfix">
                 <div class="people-holder clearfix">
                     <div class="people-media text-center">
-                        <div ng-if="!WidgetMedia.fullScreen" class="people-banner" ng-hide="WidgetMedia.showVideo"
-                        style="background:url('{{WidgetMedia.item.data.topImage ? WidgetMedia.resizeImage(WidgetMedia.item.data.topImage) : WidgetMedia.emptyBG}}') no-repeat; background-position:center center; background-size:cover !important;height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
+                        <div ng-if="!WidgetMedia.fullScreen" class="people-banner image-holder" ng-hide="WidgetMedia.showVideo"
+                        style="background:url('{{WidgetMedia.item.data.topImage ? WidgetMedia.resizeImage(WidgetMedia.item.data.topImage) : WidgetMedia.emptyBG}}') no-repeat; background-position:center center; background-size:cover !important;min-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
                             <div class="people-bg clearfix">
                                 <div class="people-holder clearfix">
                                     <div class="people-info text-center col-xs-12">

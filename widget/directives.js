@@ -177,6 +177,8 @@
 
                         CommentsService.setCommentCallbacks(
                             () => scope.loadCommentsCount(WidgetMedia),
+                            () => scope.loadCommentsCount(WidgetMedia),
+                            () => scope.loadCommentsCount(WidgetMedia),
                             () => scope.loadCommentsCount(WidgetMedia)
                         );
                     };

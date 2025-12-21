@@ -190,6 +190,10 @@
                 }
 
                 WidgetMedia.handleIconAction = (actionId) => {
+                    if (WidgetMedia.item.id === 'mockId' && actionId !== 'views') {
+                        return buildfire.dialog.toast({ message: "The action can't be triggered before saving the media" });
+                    }
+
                     switch(actionId) {
                         case 'views': break;
                         case 'comments': WidgetMedia.openMediaComments(); break;
