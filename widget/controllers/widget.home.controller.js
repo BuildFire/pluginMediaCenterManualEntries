@@ -876,7 +876,7 @@
                                 itemId = deeplinkData.link ? deeplinkData.link : deeplinkData.itemId;
                                 if (deeplinkData.commentId) commentId = deeplinkData.commentId;
                             }
-                            
+
                             if (itemId) {
                                 $window.deeplinkingDone = true;
                                 $rootScope.showFeed = false;
@@ -1148,6 +1148,7 @@
                                 else if (done) {
                                     finish();
                                 }
+                                buildfire.spinner.hide();
                             });
                         });
                     };
@@ -1531,6 +1532,7 @@
                                     mediaId: item.id,
                                     mediaType: mediaType,
                                 }, (err, res) => {
+                                    buildfire.spinner.hide();
                                     if (err) {
                                         console.error(err);
                                         return;
@@ -1621,21 +1623,19 @@
                 };
 
                 buildfire.auth.onLogin(function (user) {
-                    buildfire.spinner.show();
                     bookmarks.sync($scope);
                     if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
                     $rootScope.user = user;
                     $rootScope.refreshItems(true);
-                });
+                }, true);
 
                 buildfire.auth.onLogout(function () {
-                    buildfire.spinner.show();
                     bookmarks.sync($scope);
                     openedMediaHandler.reset();
                     if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
                     $rootScope.user = null;
                     $rootScope.refreshItems();
-                });
+                }, true);
 
                 WidgetHome.bookmark = function (item) {
                     var isBookmarked = item.data.bookmarked ? true : false;
