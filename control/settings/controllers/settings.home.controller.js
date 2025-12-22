@@ -3,7 +3,7 @@
 	'use strict';
 	angular
 		.module('mediaCenterDesign')
-		.controller('SettingsCtrl', ['$scope', 'COLLECTIONS', 'EVENTS', 'PLAYLISTINSTANCES', 'DB', 'Messaging', function ($scope, COLLECTIONS, EVENTS, PLAYLISTINSTANCES, DB, Messaging) {
+		.controller('SettingsCtrl', ['$scope', 'COLLECTIONS', 'EVENTS', 'PLAYLISTINSTANCES', 'DB', 'Messaging', 'utils', function ($scope, COLLECTIONS, EVENTS, PLAYLISTINSTANCES, DB, Messaging, utils) {
 			const Settings = this;
 			Settings.data = {};
 			Settings.lastSavedContent = {};
@@ -55,11 +55,17 @@
 				if (typeof (Settings.data.content.showViewCount) == 'undefined') {
 					Settings.data.content.showViewCount = false;
 				}
-				if (typeof (Settings.data.content.indicatePlayedItems ) === 'undefined') {
-					Settings.data.content.indicatePlayedItems  = false;
+				if (typeof (Settings.data.content.indicatePlayedItems) === 'undefined') {
+					Settings.data.content.indicatePlayedItems = false;
 				}
-				if (typeof (Settings.data.content.startWithAutoJumpByDefault  ) === 'undefined') {
-					Settings.data.content.startWithAutoJumpByDefault   = false;
+				if (typeof (Settings.data.content.startWithAutoJumpByDefault) === 'undefined') {
+					Settings.data.content.startWithAutoJumpByDefault = false;
+				}
+				if (typeof (Settings.data.content.comments) === 'undefined') {
+					Settings.data.content.comments = {
+						value: 'none',
+						tags: [],
+					};
 				}
 
 				if (!$scope.$$phase) {
@@ -68,6 +74,8 @@
 				}
 
 				$scope.setupSettingsWatch();
+
+				initTagsSelectors('#commentsHandlingTagsInput', 'content.comments');
 			}, (err) => {
 				console.error(err);
 			});
@@ -75,11 +83,11 @@
 			Settings.setSettings = () => {
 				const isUnchanged = angular.equals(Settings.lastSavedContent, Settings.data);
 				if (isUnchanged) return;
+				Settings.lastSavedContent = angular.copy(Settings.data);
 
 				$scope.syncWithWidget();
 
 				MediaCenter.save(Settings.data).then(() => {
-					Settings.lastSavedContent = angular.copy(Settings.data);
 					Messaging.sendMessageToWidget({ cmd: 'settings', data: Settings.data });
 				}).catch((err) => {
 					console.error(err);
@@ -149,9 +157,6 @@
 					Settings.data.content.startWithAutoJumpByDefault = false;
 				}
 
-
-
-
 				const actionItemAddBtn = document.getElementById('actionItemAddBtn');
 				const actionItemAddRow = document.getElementById('actionItemAddRow');
 
@@ -206,6 +211,56 @@
 					return Settings.data;
 				}, $scope.formatSettingsAndSave, true);
 			};
+
+			function getDeepSettingValue(settingKey) {
+				const keys = settingKey.split('.');
+				let settingValue = Settings.data;
+				for (let key of keys) {
+					if (settingValue[key] !== undefined) {
+						settingValue = settingValue[key];
+					} else {
+						break;
+					}
+				}
+				return settingValue;
+			}
+
+			function updateDeepSettingValue(settingKey, value) {
+				const keys = settingKey.split('.');
+				let current = Settings.data;
+
+				for (let i = 0; i < keys.length - 1; i++) {
+					const key = keys[i];
+					current = current[key];
+				}
+
+				const isEquals = utils.checkEquality(current[keys[keys.length - 1]], value);
+				if (!isEquals) {
+					current[keys[keys.length - 1]] = value;
+					$scope.formatSettingsAndSave();
+				}
+			}
+
+			function initTagsSelectors(selector, settingKey) {
+				const settingValue = getDeepSettingValue(settingKey);
+
+				const tagsInput = new buildfire.components.control.userTagsInput(selector, {
+					languageSettings: {
+						placeholder: 'User Tags',
+					},
+				});
+
+				tagsInput.onUpdate = (data) => {
+					const updatedTags = data.tags.map((tag) => ({
+						tagName: tag.tagName,
+						value: tag.value,
+					}));
+					updateDeepSettingValue(`${settingKey}.tags`, updatedTags);
+				};
+				if (settingValue.tags && settingValue.tags.length) {
+					tagsInput.set(settingValue.tags);
+				}
+			}
 		}])
 		.filter('cropImg', function () {
 			return function (url) {

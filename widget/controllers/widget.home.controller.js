@@ -129,6 +129,13 @@
                         $rootScope.showViewCount = MediaCenterInfo.data.content.showViewCount;
                         $rootScope.indicatePlayedItems = MediaCenterInfo.data.content.indicatePlayedItems;
                         $rootScope.autoJumpToLastPosition = MediaCenterInfo.data.content.startWithAutoJumpByDefault;
+                        $rootScope.comments = MediaCenterInfo.data.content.comments;
+                        if (typeof ($rootScope.comments  ) === 'undefined') {
+                            $rootScope.comments = {
+                                value: 'none',
+                                tags: [],
+                            }
+                        }
 
                         if (isLauncher && MediaCenterInfo.data.content.enableFiltering) {
                             slideElement.classList.add("launcher-with-filter");
@@ -242,7 +249,7 @@
                 }
 
                 WidgetHome.goTo = function (options) {
-                    const {itemId, pushToHistory, type} = options;
+                    const {itemId, commentId, pushToHistory, type} = options;
 
                     const documentFocused = WidgetHome.isDocumentFocused();
                     // stop the autoplay if shared media via PWA to prevent video freeze
@@ -264,10 +271,10 @@
                                 $rootScope.autoPlay = WidgetHome.media.data.content.autoPlay;
                                 Location.go('#/nowplaying/' + item.id, pushToHistory);
                             } else {
-                                Location.go('#/media/' + item.id, pushToHistory);
+                                Location.go('#/media/' + item.id + `?commentId=${commentId? commentId : ''}`, pushToHistory);
                             }
                         } else {
-                            Location.go('#/media/' + item.id, pushToHistory);
+                            Location.go('#/media/' + item.id + `?commentId=${commentId? commentId : ''}`, pushToHistory);
                         }
                         if (!$rootScope.$$phase) $rootScope.$digest();
                     }
@@ -346,6 +353,14 @@
                             $rootScope.enableFiltering = WidgetHome.media.data.content.enableFiltering;
                             $rootScope.indicatePlayedItems = WidgetHome.media.data.content.indicatePlayedItems;
                             $rootScope.autoJumpToLastPosition = WidgetHome.media.data.content.startWithAutoJumpByDefault ;
+
+                            $rootScope.comments = WidgetHome.media.data.content.comments;
+                            if (typeof ($rootScope.comments  ) === 'undefined') {
+                                $rootScope.comments = {
+                                    value: 'none',
+                                    tags: [],
+                                }
+                            }
 
                             if (isLauncher && WidgetHome.media.data.content.enableFiltering) {
                                 slideElement.classList.add("launcher-with-filter");
@@ -647,7 +662,7 @@
                     }
                 }
 
-                $rootScope.toggleGlobalPlaylistItem = (item) => {
+                $rootScope.toggleGlobalPlaylistItem = (item, callback) => {
                     if ($rootScope.isInGlobalPlaylist(item.id)) {
                         GlobalPlaylist.delete(item.id).then(() => {
                             delete $rootScope.globalPlaylistItems.playlist[item.id];
@@ -656,6 +671,7 @@
                                 type: 'success',
                                 duration: 2000
                             });
+                            if (callback) callback();
                         });
                     } else {
                         if (typeof $rootScope.globalPlaylistLimit === 'number' && Object.keys($rootScope.globalPlaylistItems.playlist).length >= $rootScope.globalPlaylistLimit) {
@@ -673,6 +689,7 @@
                                     type: 'success',
                                     duration: 2000
                                 });
+                                if (callback) callback();
                             });
                         }
                     }
@@ -806,7 +823,7 @@
                     if (!$window.deeplinkingDone) {
                         buildfire.deeplink.getData((data) => {
                             if (!data) return WidgetHome.startWatch();
-                            let itemId = null;
+                            let itemId = null, commentId = null;
                             if (data.id) itemId = data.id;
                             else if (data.mediaId) itemId = data.mediaId;
                             else if (data.deepLinkUrl) {
@@ -820,6 +837,7 @@
                                     $rootScope.seekTime = data.timeIndex;
                                 }
                                 itemId = data.link ? data.link : data.itemId;
+                                if (data.commentId) commentId = data.commentId;
                             }
                             else if (data.screen) {
                                 if (WidgetHome.media && WidgetHome.media.data && WidgetHome.media.data.content) {
@@ -833,7 +851,7 @@
                             $rootScope.fromSearch = true;
                             $window.deeplinkingDone = true;
 
-                            const options = { itemId, pushToHistory: false };
+                            const options = { itemId, commentId, pushToHistory: false };
                             if(itemId && data.type === 'audio') {
                                 options.type = data.type;
                             }
@@ -850,16 +868,25 @@
                     }
 
                     buildfire.deeplink.onUpdate((deeplinkData) => {
-                        if (deeplinkData && deeplinkData.id) {
-                            $window.deeplinkingDone = true;
-                            $rootScope.showFeed = false;
-
-                            const options = { itemId: deeplinkData.id, pushToHistory: true };
-                            if( deeplinkData.id &&  deeplinkData.type === 'audio') {
-                                options.type = deeplinkData.type;
+                        if (deeplinkData) {
+                            let itemId = null, commentId = null;
+                            if (deeplinkData.id) itemId = deeplinkData.id;
+                            else if (deeplinkData.mediaId) itemId = deeplinkData.mediaId;
+                            else if (deeplinkData.link || deeplinkData.itemId) {
+                                itemId = deeplinkData.link ? deeplinkData.link : deeplinkData.itemId;
+                                if (deeplinkData.commentId) commentId = deeplinkData.commentId;
                             }
-                            WidgetHome.goTo(options);
 
+                            if (itemId) {
+                                $window.deeplinkingDone = true;
+                                $rootScope.showFeed = false;
+
+                                const options = { itemId, commentId, pushToHistory: true };
+                                if (itemId && deeplinkData.type === 'audio') {
+                                    options.type = deeplinkData.type;
+                                }
+                                WidgetHome.goTo(options);
+                            }
                         }
                     });
                 }
@@ -1121,6 +1148,7 @@
                                 else if (done) {
                                     finish();
                                 }
+                                buildfire.spinner.hide();
                             });
                         });
                     };
@@ -1504,6 +1532,7 @@
                                     mediaId: item.id,
                                     mediaType: mediaType,
                                 }, (err, res) => {
+                                    buildfire.spinner.hide();
                                     if (err) {
                                         console.error(err);
                                         return;
@@ -1594,21 +1623,19 @@
                 };
 
                 buildfire.auth.onLogin(function (user) {
-                    buildfire.spinner.show();
                     bookmarks.sync($scope);
                     if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
                     $rootScope.user = user;
                     $rootScope.refreshItems(true);
-                });
+                }, true);
 
                 buildfire.auth.onLogout(function () {
-                    buildfire.spinner.show();
                     bookmarks.sync($scope);
                     openedMediaHandler.reset();
                     if (!WidgetHome.isWeb) downloads.sync($scope, DownloadedMedia);
                     $rootScope.user = null;
                     $rootScope.refreshItems();
-                });
+                }, true);
 
                 WidgetHome.bookmark = function (item) {
                     var isBookmarked = item.data.bookmarked ? true : false;

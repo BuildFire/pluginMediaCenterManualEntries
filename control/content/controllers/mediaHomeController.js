@@ -258,6 +258,13 @@
 										}
 
 										MediaContent.delete(item.id).then(() => {
+											buildfire.components.comments.deleteSummary({
+											    itemId: item.id,
+											    deleteComments: true
+											}, (error) => {
+											    if (error) console.error(error);
+											});
+
 											$scope.isBusy = false;
 											$scope.items = $scope.items.filter((_item) => _item.id !== item.id);
 											$scope.buildList();

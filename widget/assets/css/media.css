@@ -29,6 +29,95 @@ h5 {
     padding-top: 0;
 }
 
+.first-layout .media-title {
+    color: var(--bf-theme-header-text);
+    font-weight: 500;
+    line-height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.first-layout .media-center-banner .plugin-slider {
+    overflow: hidden;
+}
+
+.second-layout .media-title {
+    font-weight: 500;
+    line-height: 24px;
+    font-size: 16px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.second-layout .lds-ring-small {
+    margin: unset;
+}
+
+.second-layout .lds-ring-small div {
+    border-color: #fff transparent transparent transparent;
+}
+
+.second-layout .people-info .media-summary {
+    font-weight: 500;
+    line-height: 20px;
+    font-size: 14px !important;
+}
+
+.media-action-icons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    flex: 1;
+}
+.media-action-icons .media-action-icon-element {
+    width: 40px;
+    height: 40px;
+}
+
+.media-action-icons .action-icons-holder {
+    gap: 14px;
+}
+
+.media-action-icons .glyphicon {
+    font-size: 18px;
+}
+
+.second-layout .media-action-icons {
+    margin: 0;
+}
+
+.first-layout .media-center-banner .plugin-slider img {
+    width: 100% !important;
+    object-fit: cover;
+}
+
+.media-action-icons path,
+.media-action-icons .material-icons,
+.media-action-icons .material-icons-outlined,
+.media-action-icons .material-icons-outlined {
+    fill: var(--bf-theme-icons) !important;
+    color: var(--bf-theme-icons) !important;
+    cursor: pointer;
+    font-size: 22px;
+}
+
+.material-icons {
+    font-family: 'Material Icons' !important;
+}
+.material-icons-outlined {
+    font-family: 'Material Icons Outlined' !important;
+}
+
+.count-container {
+    min-width: fit-content;
+    font-size: 12px;
+    color: var(--bf-theme-body-text);
+}
+
 #listLayout2::after,
 #listLayout2::before {
     border-top: none !important ;
@@ -84,8 +173,8 @@ h5 {
 .word-break {
     word-break: break-word;
 }
-.item-main-header {
-    box-shadow: 0 2px 4px rgb(98 98 98 / 30%);
+.first-layout .item-main-header {
+    box-shadow: 0 4px 6px -4px #00000040;
 }
 /* End Global Styles ////////////////////////////////////////////////////////////////////////////// */
 
@@ -287,10 +376,6 @@ h5 {
     flex-shrink: 0;
     font-size: 20px;
     padding: 0;
-}
-
-.holder.now-playing .media-player-info .media-title {
-    margin: 0 12px;
 }
 
 .ellipsis {
@@ -519,6 +604,17 @@ button.btn-icon.btn-lg {
     }
     .media-player-btns{
         padding: 8px 0;
+    }
+}
+@media (max-width: 310px) {
+    .second-layout .media-action-icons .action-icons-holder {
+        gap: 0px;
+    }
+    .second-layout .item-actions {
+        gap: 6px;
+    }
+    .second-layout .link-list a+a {
+        margin-left: 6px;
     }
 }
 

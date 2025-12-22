@@ -891,7 +891,7 @@
             Messaging.sendMessageToWidget({
               name: EVENTS.ITEMS_CHANGE,
               message: {
-                itemUpdatedData: ContentMedia.item
+                itemUpdatedData: {...ContentMedia.item, id: ContentMedia.item.id ? ContentMedia.item.id : 'mockId'}
               }
             });
           }

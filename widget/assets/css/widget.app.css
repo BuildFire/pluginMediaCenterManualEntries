@@ -60,7 +60,16 @@
 }
 
 .media-center-plugin.second-layout .people-banner .people-bg {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.5);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.media-center-plugin.second-layout .people-banner.image-holder {
+    display: flex;
+    align-items: stretch;
 }
 
 .media-center-plugin.second-layout .people-banner .people-info {
@@ -732,9 +741,17 @@ html[browser="Firefox"] .third-layout .list-layout .list-item-media .list-media-
 }
 
 .link-list i {
-    font-size: 1.25rem;
-    display: inline-block;
-    padding: .75rem;
+    font-size: 1.75rem;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+	top: unset;
+}
+
+.link-list i.glyphicon {
+    font-size: 1.5rem;
 }
 
 .link-list a+a {
@@ -823,6 +840,7 @@ input[type=range]::-ms-track {
     justify-content: space-between;
     align-items: center;
     position: relative;
+    gap: 16px;
 }
 
 .item-actions,
@@ -1322,7 +1340,7 @@ img.done-icon {
 }
 
 .category-container .subcategories-container.expand {
-	display: flex;
+    display: flex;
     max-height: none;
     transition: max-height 0.2s ease-out;
 }
@@ -1626,6 +1644,14 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
     animation-delay: 0.4s;
 }
 
+.flip-horizontal {
+    transform: scaleX(-1);
+}
+
+.justify-content-start {
+    justify-content: flex-start !important;
+}
+
 @keyframes image-placeholder-bounce {
     0%,
     80%,
@@ -1637,4 +1663,20 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
         transform: scale(1);
         opacity: 1;
     }
+}
+
+/* Check mark for downloaded items */
+.download-check {
+    font-size: 12px !important;
+    color: #4CAF50 !important;
+    margin-left: 2px;
+    position: relative;
+    top: -2px;
+}
+
+/* Spinner next to more icon when downloads in drawer */
+.drawer-spinner {
+    font-size: 14px !important;
+    margin-left: 4px;
+    color: #666 !important;
 }

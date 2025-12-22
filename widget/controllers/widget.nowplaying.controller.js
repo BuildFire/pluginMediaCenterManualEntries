@@ -5,6 +5,7 @@
 		.module('mediaCenterWidget')
 		.controller('NowPlayingCtrl', ['$scope', 'Messaging', 'EVENTS', 'PATHS', 'media', 'Location', 'Buildfire', 'Modals', 'COLLECTIONS', '$rootScope', 'openedMediaHandler', 'DropboxLinksManager',
 			function ($scope, Messaging, EVENTS, PATHS, media, Location, Buildfire, Modals, COLLECTIONS, $rootScope, openedMediaHandler, DropboxLinksManager) {
+				buildfire.components.comments.close();
 
 				$rootScope.blackBackground = true;
 				$rootScope.showFeed = false;

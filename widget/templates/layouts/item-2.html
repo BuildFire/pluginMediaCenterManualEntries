@@ -4,42 +4,19 @@
             <div class="people-bg clearfix">
                 <div class="people-holder clearfix">
                     <div class="people-media text-center">
-                        <div ng-if="!WidgetMedia.fullScreen" class="people-banner" ng-hide="WidgetMedia.showVideo"
-                        style="background:url('{{WidgetMedia.item.data.topImage ? resizeImg(WidgetMedia.item.data.topImage) : WidgetMedia.emptyBG}}') no-repeat; background-position:center center; background-size:cover !important;height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
-                            <div class="people-bg padding-bottom-fifteen clearfix" style="height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
+                        <div ng-if="!WidgetMedia.fullScreen" class="people-banner image-holder" ng-hide="WidgetMedia.showVideo"
+                        style="background:url('{{WidgetMedia.item.data.topImage ? WidgetMedia.resizeImage(WidgetMedia.item.data.topImage) : WidgetMedia.emptyBG}}') no-repeat; background-position:center center; background-size:cover !important;min-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;">
+                            <div class="people-bg clearfix">
                                 <div class="people-holder clearfix">
-                                    <div class="people-media text-center padding-top-fifteen"
-                                         ng-hide="WidgetMedia.showVideo">
-                                        <div ng-if="WidgetMedia.item.data.topImage && !WidgetMedia.item.imageLoaded && !(skipMediaPage && WidgetMedia.item.data.videoUrl)"
-                                             class="image-placeholder"
-                                             ng-style="{'width': '161px', 'height': '91px'}">
-                                            <div class="image-placeholder__dots">
-                                                <span></span>
-                                                <span></span>
-                                                <span></span>
-                                            </div>
-                                        </div>
-                                        <img ng-show="WidgetMedia.item.imageLoaded && WidgetMedia.item.data.topImage" ng-hide="skipMediaPage && WidgetMedia.item.data.videoUrl" load-image="16x9" style="width: 161px;height: 91px;"
-                                             crop-width="161" crop-height="91" crop-type="crop" aria-label="{{WidgetMedia.item.data.title}} top image"
-                                             data-final-src="{{WidgetMedia.item.data.topImage}}" title="{{WidgetMedia.item.data.title}} top image" image-item="WidgetMedia.item" alt="{{WidgetMedia.item.data.title}} top image">
-                                        <img ng-if="!WidgetMedia.item.data.topImage" style="width: 161px;height: 91px;"
-                                             crop-width="161" crop-height="91" crop-type="crop" aria-hidden="true"
-                                             src="../../../styles/media/holder-16x9.png" alt="top image">
-                                    </div>
                                     <div class="people-info text-center col-xs-12">
-                                        <h5 class="ellipsis margin-top-fifteen whiteTheme" style="font-size: 16px;">
-                                            {{WidgetMedia.item.data.title}}</h5>
-                                            <h5 data-ng-if="WidgetMedia.item.data.hasDownloadedVideo" class="margin-bottom-zero whiteTheme">Downloaded</h5>
-                                        <h5 class="margin-bottom-zero whiteTheme">
-                                            {{WidgetMedia.item.data.summary}}</h5>
-                                        <span ng-if="showViewCount" style="display:flex; justify-content: center; align-items:center">
-                                            <span aria-hidden="true">
-                                                <i id="iconViewg" class="glyphicon glyphicon-eye-open" style="margin-right: 5px;"></i>
-                                            </span>
-                                            <p class="ellipsis margin-zero" id="viewsg" role="text" tabindex="0" aria-label="{{WidgetMedia.item.data.title}} view count {{WidgetMedia.count ? WidgetMedia.count : 0}}">{{WidgetMedia.count ? WidgetMedia.count : 0}} </p>
-                                        </span>
-
-
+                                        <h5 class="margin-top-fifteen whiteTheme media-title" style="font-size: 16px;">
+                                            {{WidgetMedia.item.data.title}}
+                                            <svg data-ng-if="(WidgetMedia.item.data.hasDownloadedVideo || WidgetMedia.item.data.hasDownloadedAudio) && allowOfflineDownload && !WidgetMedia.isDownloading(WidgetMedia.item)" xmlns="http://www.w3.org/2000/svg" width="15" height="16" viewBox="0 0 15 16" fill="none">
+                                                <path d="M7.49996 0.916992C3.59704 0.916992 0.416626 4.09741 0.416626 8.00033C0.416626 11.9032 3.59704 15.0837 7.49996 15.0837C11.4029 15.0837 14.5833 11.9032 14.5833 8.00033C14.5833 4.09741 11.4029 0.916992 7.49996 0.916992ZM6.79163 6.58366V3.75033H8.20829V6.58366H10.3333L7.49996 9.41699L4.66663 6.58366H6.79163ZM11.0416 11.542H3.95829V10.1253H11.0416V11.542Z" fill="#fff"/>
+                                            </svg>
+                                            <span data-ng-if="WidgetMedia.isDownloading(WidgetMedia.item)" class="lds-ring-small"><div></div><div></div><div></div><div></div></span>
+                                        </h5>
+                                        <h5 class="whiteTheme media-summary">{{WidgetMedia.item.data.summary}}</h5>
                                     </div>
                                 </div>
                             </div>
@@ -50,41 +27,20 @@
                 </div>
             </div>
             <div class="padded" ng-if="!WidgetMedia.fullScreen">
-                <div class="item-actions">
+                <div class="item-actions margin-bottom-thirty">
                     <div class="link-list">
                         <a class="media-action video" ng-click="WidgetMedia.toggleShowVideo(!WidgetMedia.showVideo);"
                             ng-if="WidgetMedia.item.data.videoUrl && !skipMediaPage">
                             <i ng-class="WidgetMedia.showVideo ? 'glyphicon glyphicon-info-sign':'glyphicon glyphicon-film'" class="btn btn-success" role="button"  aria-label="{{WidgetMedia.showVideo ? 'Hide' : 'Show'}} {{WidgetMedia.item.data.title}} video button"></i>
                         </a>
                         <a class="media-action" ng-click="WidgetMedia.playAudio();" ng-if="WidgetMedia.item.data.audioUrl && !skipMediaPage">
-                            <i class="btn btn-success glyphicon glyphicon-volume-up" role="button" aria-label="Show {{WidgetMedia.item.data.title}} audio button"></i>
-                        </a>
-                        <a ng-if="(WidgetMedia.item.data.srcUrl || WidgetMedia.item.data.audioUrl || WidgetMedia.item.data.videoUrl) && allowSource && online" ng-click="WidgetMedia.openLink(WidgetMedia.item)"
-                            target="_blank">
-                            <i class="glyphicon share glyphicon-screenshot" role="button" aria-label="{{WidgetMedia.item.data.title}} source button"></i>
+                            <i class="btn btn-success material-icons" role="button" aria-label="Show {{WidgetMedia.item.data.title}} audio button">headphones</i>
                         </a>
                     </div>
-                    <div class="li-actions">
-                        <div style="float: none; display: inline-block;" data-ng-if="WidgetMedia.isDownloading(WidgetMedia.item)" class="lds-ring-small"><div></div><div></div><div></div><div></div></div>
-                        <i class="glyphicon icon bookmark" style="font-family: 'Glyphicons Halflings' !important;"
-                        ng-class="{ 'glyphicon-star-empty' : !WidgetMedia.item.data.bookmarked, 'glyphicon-star' : WidgetMedia.item.data.bookmarked }"
-                        ng-click="WidgetMedia.bookmark($event)" role="button" aria-label="Bookmark {{WidgetMedia.item.data.title}} button"></i>
-                        <i class="glyphicon glyphicon-option-horizontal" ng-click="WidgetMedia.showDrawer()" role="button" aria-label="{{WidgetMedia.item.data.title}} media item options"></i>
-                    </div>
+                    <media-action-icons widget-media="WidgetMedia" on-icon-action="WidgetMedia.handleIconAction(actionId)" class="media-action-icons"></media-action-icons>
                 </div>
                 <p class="wysiwyg" ng-if="WidgetMedia.item.data.body" ng-bind-html="WidgetMedia.item.data.body | safeHtml"></p>
             </div>
         </div>
     </div>
 </div>
-<script>
-    buildfire.appearance.getAppTheme((err, appTheme) => {
-             if (err) return console.error(err);
-             let viewsg = document.getElementById("viewsg")
-             let iconViewg = document.getElementById("iconViewg")
-
-             viewsg.style.color =  appTheme.colors.bodyText;
-             iconViewg.style.color =  appTheme.colors.icons;
-
-    });
-</script>
