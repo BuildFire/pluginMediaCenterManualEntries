@@ -145,3 +145,29 @@
   transform: scale(1);
 }
 /* End: Tooltip */
+
+.modal .modal-dialog {
+  border-radius: 15px !important;
+  overflow: hidden !important;
+}
+
+.modal .modal-content .tag-search-dialog {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal .modal-content .header.clearfix {
+  background-color: unset;
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
+}
+.modal .modal-content .padded.clearfix {
+  flex: 1;
+}
+
+button.btn.btn-success.pull-right.margin-left-fifteen.save-modal {
+  background-color: var(--c-info);
+}
+button.btn.btn-success.pull-right.margin-left-fifteen.save-modal:hover {
+  background-color: #333;
+}
