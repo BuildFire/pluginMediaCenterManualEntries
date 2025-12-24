@@ -57,6 +57,47 @@
 </div>
 
 <div class="row flex flex-align-start input-control margin-bottom-twenty side-label">
+    <label class="tooltip-container col-md-4">Enable Reactions
+        <span class="btn-info-icon btn-primary">
+            <span class="cp-tooltip">
+                Reactions let users quickly express feedback. Choose who can use them, and if enabled, select which reaction set applies. If reactions are enabled for users with specific tags, only those users can see reactions and react to the media item.
+            </span>
+        </span>
+    </label>
+    <div class="col-md-9 text-left">
+        <div class="col-md-12 padding-zero margin-bottom-fifteen">
+            <div class="col-md-4 margin-top-zero radio radio-primary">
+                <input type="radio" name="reactionsHandling" id="reactionsHandlingNoUser" value="none"
+                    ng-model="Settings.data.content.reactions.value"
+                    ng-checked="Settings.data.content.reactions.value==='none'" />
+                <label for="reactionsHandlingNoUser">No Users</label>
+            </div>
+            <div class="col-md-4 margin-top-zero radio radio-primary">
+                <input type="radio" name="reactionsHandling" id="reactionsHandlingUser" value="tags"
+                    ng-model="Settings.data.content.reactions.value"
+                    ng-checked="Settings.data.content.reactions.value==='tags'" />
+                <label for="reactionsHandlingUser">Users With</label>
+            </div>
+            <div class="col-md-4 margin-top-zero radio radio-primary">
+                <input type="radio" name="reactionsHandling" id="reactionsHandlingAll" value="all"
+                    ng-model="Settings.data.content.reactions.value"
+                    ng-checked="Settings.data.content.reactions.value==='all'" />
+                <label for="reactionsHandlingAll">All Users</label>
+            </div>
+        </div>
+        <div id="reactionsHandlingTagsInput" class="padding-right-zero"
+            ng-show="Settings.data.content.reactions.value==='tags'"></div>
+    </div>
+</div>
+
+<div class="row flex flex-align-start input-control margin-bottom-twenty side-label" ng-show="Settings.data.content.reactions.value!=='none'">
+    <label class="tooltip-container col-md-4">Reaction Set</label>
+    <div class="col-md-9 text-left">
+        <div id="reactionsGroupPicker" class="padding-right-zero"></div>
+    </div>
+</div>
+
+<div class="row flex flex-align-start input-control margin-bottom-twenty side-label">
     <label class="tooltip-container col-md-4">Enable Comments
         <span class="btn-info-icon btn-primary">
             <span class="cp-tooltip">
