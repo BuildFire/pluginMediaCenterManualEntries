@@ -89,10 +89,8 @@
 					groupName: Settings.data.content.reactions.groupName
 				});
 				reactionsSelector.onUpdate = (group) => {
-					if (group && group.name) {
-						Settings.data.content.reactions.groupName = group.name;
-						$scope.formatSettingsAndSave();
-					}
+					Settings.data.content.reactions.groupName = group?.name || '';
+					$scope.formatSettingsAndSave();
 				};
 
 			}, (err) => {
