@@ -39,6 +39,7 @@
         })
         .constant('MEDIA_ACTION_ICONS', {
             VIEWS: {id: 'views', iconName: 'visibility', filled: true},
+            REACTIONS: {id: 'reactions', iconName: ''},
             COMMENTS: {id: 'comments', iconName: 'chat_bubble_outline'},
             SHARE: {id: 'share', iconName: 'share'},
             FAVORITE: {id: 'favorite', iconName: 'star_outline'},

@@ -141,6 +141,7 @@
 
                         let icons = [
                             MEDIA_ACTION_ICONS.VIEWS,
+                            MEDIA_ACTION_ICONS.REACTIONS,
                             MEDIA_ACTION_ICONS.COMMENTS,
                             MEDIA_ACTION_ICONS.SHARE,
                             WidgetMedia.item?.data?.bookmarked ? MEDIA_ACTION_ICONS.FAVORITE_FILLED : MEDIA_ACTION_ICONS.FAVORITE,
@@ -154,6 +155,7 @@
 
                         // Filter icons based on settings
                         if (!WidgetMedia.media.data.content.showViewCount) icons = icons.filter(i => i.id !== 'views');
+                        if (!WidgetMedia.allowUserReactions?.()) icons = icons.filter(i => i.id !== 'reactions');
                         if (!WidgetMedia.allowUserComment?.()) icons = icons.filter(i => i.id !== 'comments');
                         if (!WidgetMedia.media.data.content.allowShare) icons = icons.filter(i => i.id !== 'share');
                         if (!WidgetMedia.media.data.content.allowAddingNotes) icons = icons.filter(i => i.id !== 'note');
@@ -174,6 +176,7 @@
                         scope.renderIcons(icons, WidgetMedia);
                         scope.loadCommentsCount(WidgetMedia);
                         scope.loadViewsCount(WidgetMedia);
+                        if (WidgetMedia.allowUserReactions?.()) buildfire.components.reactions.injectReactions('#reactionsContainer');
 
                         CommentsService.setCommentCallbacks(
                             () => scope.loadCommentsCount(WidgetMedia),
@@ -234,8 +237,21 @@
                             iconEl.setAttribute('aria-label', 'Downloading');
                         }
 
-                        iconEl.innerHTML = icon.iconName.includes('<') ? icon.iconName : `<i class="${icon.filled ? 'material-icons' : 'material-icons-outlined'}">${icon.iconName}</i>`;
-                        iconEl.onclick = () => scope.onIconAction({actionId: icon.id});
+                        if (icon.id === 'reactions') {
+                            iconEl.innerHTML = `
+                            <div id="reactionsContainer">
+                              <div
+                                  bf-reactions-item-id="${WidgetMedia.item.id}"
+                                  bf-reactions-item-type="${WidgetMedia.mediaType}"
+                                  bf-reactions-group-name="${$rootScope.reactions.groupName}"
+                                  bf-reactions-show-count="true"
+                                  bf-reactions-show-users-reactions="true">
+                              </div>
+                            </div>`;
+                        } else {
+                            iconEl.innerHTML = icon.iconName.includes('<') ? icon.iconName : `<i class="${icon.filled ? 'material-icons' : 'material-icons-outlined'}">${icon.iconName}</i>`;
+                            iconEl.onclick = () => scope.onIconAction({actionId: icon.id});
+                        }
 
                         if (icon.id === 'comments') {
                             iconEl.querySelector('.material-icons-outlined').classList.add('flip-horizontal');

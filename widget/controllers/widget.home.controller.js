@@ -136,6 +136,14 @@
                                 tags: [],
                             }
                         }
+                        $rootScope.reactions = MediaCenterInfo.data.content.reactions;
+                        if (typeof ($rootScope.reactions  ) === 'undefined') {
+                            $rootScope.reactions = {
+                                value: 'none',
+                                tags: [],
+                                groupName: ''
+                            }
+                        }
 
                         if (isLauncher && MediaCenterInfo.data.content.enableFiltering) {
                             slideElement.classList.add("launcher-with-filter");
@@ -359,6 +367,14 @@
                                 $rootScope.comments = {
                                     value: 'none',
                                     tags: [],
+                                }
+                            }
+                            $rootScope.reactions = WidgetHome.media.data.content.reactions;
+                            if (typeof ($rootScope.reactions  ) === 'undefined') {
+                                $rootScope.reactions = {
+                                    value: 'none',
+                                    tags: [],
+                                    groupName: ''
                                 }
                             }
 

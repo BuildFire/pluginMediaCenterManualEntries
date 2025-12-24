@@ -78,6 +78,15 @@ h5 {
     height: 40px;
 }
 
+.media-action-icons .media-action-icon-element#reactions {
+    width: fit-content;
+    min-width: 40px;
+}
+.media-action-icons .media-action-icon-element#reactions .reactions-total-count {
+    width: fit-content;
+    min-width: 1.5rem;
+}
+
 .media-action-icons .action-icons-holder {
     gap: 14px;
 }
