@@ -55,6 +55,7 @@
                                     sortBy: 'Newest',
                                     rankOfLastItem: 0,
                                     allowShare: true,
+                                    allowFavorites: true,
                                     allowAddingNotes: true,
                                     allowSource: true,
                                     allowOfflineDownload: false,

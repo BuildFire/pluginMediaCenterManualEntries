@@ -155,6 +155,7 @@
 
                         // Filter icons based on settings
                         if (!WidgetMedia.media.data.content.showViewCount) icons = icons.filter(i => i.id !== 'views');
+                        if (!WidgetMedia.media.data.content.allowFavorites) icons = icons.filter(i => i.id !== 'favorite');
                         if (!WidgetMedia.allowUserReactions?.()) icons = icons.filter(i => i.id !== 'reactions');
                         if (!WidgetMedia.allowUserComment?.()) icons = icons.filter(i => i.id !== 'comments');
                         if (!WidgetMedia.media.data.content.allowShare) icons = icons.filter(i => i.id !== 'share');

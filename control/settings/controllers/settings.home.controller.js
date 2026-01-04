@@ -23,6 +23,8 @@
 
 				if (typeof (Settings.data.content.allowShare) == 'undefined')
 					Settings.data.content.allowShare = true;
+				if (typeof (Settings.data.content.allowFavorites) == 'undefined')
+					Settings.data.content.allowFavorites = true;
 				if (typeof (Settings.data.content.allowAddingNotes) == 'undefined')
 					Settings.data.content.allowAddingNotes = true;
 				if (typeof (Settings.data.content.allowSource) == 'undefined')
