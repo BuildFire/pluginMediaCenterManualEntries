@@ -7,9 +7,6 @@ html {
     font-size: 16px !important;
 }
 
-.slide.safe-area {
-    padding-top: env(safe-area-inset-top) !important;
-}
 
 .caption {
     font-size: 0.75rem;
@@ -165,10 +162,7 @@ h5 {
         transform: scale(1);
         opacity: 1;
     }
-}
-.bottom.fixed-bottom.primaryBackgroundTheme {
-    padding-bottom: env(safe-area-inset-bottom);
-}
+}}
 
 .word-break {
     word-break: break-word;
@@ -189,7 +183,6 @@ h5 {
 .holder.now-playing .media-center-plugin {
     position: relative;
     height: 100%;
-    padding-bottom: calc(20px + env(safe-area-inset-bottom));
     max-width: 660px;
     margin: 0 auto;
     display: flex;
