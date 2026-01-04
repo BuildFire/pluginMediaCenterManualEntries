@@ -7,7 +7,7 @@
                 <div ng-class="WidgetMedia.showVideo == false ? '' : 'video-container-background'"
                     style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;" class="plugin-slide">
 
-                    <div ng-if="!WidgetMedia.fullScreen && WidgetMedia.item.data.topImage && !WidgetMedia.item.imageLoaded && !WidgetMedia.showVideo && !(skipMediaPage && WidgetMedia.item.data.videoUrl)"
+                    <div ng-show="!WidgetMedia.showVideo && WidgetMedia.item.data.topImage && !WidgetMedia.imageLoaded"
                          class="image-placeholder" ng-style="{'padding-top': ((9 / 16) * 100) + '%'}">
                         <div class="image-placeholder__dots">
                             <span></span>
@@ -15,12 +15,11 @@
                             <span></span>
                         </div>
                     </div>
-                    <img ng-show="!WidgetMedia.fullScreen && WidgetMedia.item.imageLoaded"
-                        ng-hide="WidgetMedia.showVideo || !WidgetMedia.item.data.topImage || ( skipMediaPage && WidgetMedia.item.data.videoUrl )"
+                    <img ng-show="!WidgetMedia.showVideo && WidgetMedia.item.data.topImage && WidgetMedia.imageLoaded"
                         load-image="16x9" style="max-height: {{(WidgetMedia.deviceWidth*9)/16+'px'}} !important;"
                         crop-width="1280" crop-height="720" crop-type="crop" title="{{WidgetMedia.item.data.title}} top image" aria-label="{{WidgetMedia.item.data.title}} top image"
-                        data-final-src="{{WidgetMedia.item.data.topImage }}" image-item="WidgetMedia.item" alt="{{WidgetMedia.item.data.title}} top image"/>
-                        <img ng-if="!WidgetMedia.item.data.topImage && !WidgetMedia.showVideo" aria-hidden="true" src="../../../styles/media/holder-16x9.png" style="width:100%;">
+                        data-final-src="{{WidgetMedia.item.data.topImage }}" image-item="WidgetMedia" alt="{{WidgetMedia.item.data.title}} top image"/>
+                    <img ng-if="!WidgetMedia.item.data.topImage && !WidgetMedia.showVideo" aria-hidden="true" src="../../../styles/media/holder-16x9.png" style="width:100%;">
                     <div id="myVideo" ng-include="'templates/layouts/video-player.html'"></div>
                 </div>
             </div>
