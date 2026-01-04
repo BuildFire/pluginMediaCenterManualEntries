@@ -197,7 +197,7 @@
     </div>
 </div>
 
-<div class="row margin-bottom-twenty flex flex-align-center">
+<div class="row margin-bottom-twenty" ng-class="{'flex flex-align-center': Settings.data.content.globalPlaylistPlugin}">
     <label class="tooltip-container col-md-4">Connect Playlist Feature
         <span class="btn-info-icon btn-primary">
             <span class="cp-tooltip">
@@ -205,9 +205,11 @@
             </span>
         </span>
     </label>
-    <div class='col-md-9 pull-left'>
-        <button id="actionItemAddBtn" ng-class="{'disabled': !Settings.data.content.globalPlaylist}"
-            class="btn btn-primary btn-outlined btn-primary-add pull-right" ng-click="Settings.showPluginsDialog()">Add Feature</button>
+    <div ng-class="{'col-md-9 pull-left': Settings.data.content.globalPlaylistPlugin}">
+        <div class="padding-left-fifteen padding-right-fifteen padding-top-ten carousel-editor">
+            <button id="actionItemAddBtn" ng-class="{'disabled': !Settings.data.content.globalPlaylist}"
+                class="btn btn-plus-icon-with-text margin-zero" ng-click="Settings.showPluginsDialog()">+ Add Feature</button>
+        </div>
         <div id="actionItemAddRow" ng-class="{'disabled': !Settings.data.content.globalPlaylist}"
             class="hidden flex-auto flex border-grey border-radius-four padding-bottom-five padding-top-five padding-left-ten padding-right-ten">
             <div class="flex flex-auto flex-align-center">
@@ -267,6 +269,28 @@
 <div class="row margin-bottom-twenty flex flex-align-center">
     <div class="button-switch col-md-12 flex flex-justify-end">
         <p class="info-note w-100">Enabling this will disable 'Auto-Add All Audio to Playlist'</p>
+    </div>
+</div>
+
+<div class="row margin-bottom-twenty flex flex-align-center">
+    <label class="tooltip-container col-md-4">Autoplay Delay
+        <span class="btn-info-icon btn-primary">
+            <span class="cp-tooltip">
+                Configure a delay before automatically playing the next item.
+            </span>
+        </span>
+    </label>
+
+    <div class="col-md-9 flex flex-justify-end" dropdown is-open="status.isOpen">
+        <button class="btn btn-default text-left dropdown-toggle w-100" dropdown-toggle aria-expanded="true" ng-class="{'disabled': !Settings.data.content.autoPlay}">
+            <span class="pull-left">{{Settings.data.content.autoPlayDelay.label || 'Off'}}</span>
+            <span class="chevron icon-chevron-down pull-right"></span>
+        </button>
+        <ul class="dropdown-menu delay-dropdown-menu extended margin-left-fifteen" role="menu">
+            <li ng-repeat="option in Settings.autoPlayDelayOptions" ng-click="Settings.setAutoPlayDelay(option)">
+                <a class="transition-third">{{option.label}}</a>
+            </li>
+        </ul>
     </div>
 </div>
 
@@ -335,24 +359,3 @@
     </div>
 </div>
 
-<div class="row margin-bottom-twenty flex flex-align-center">
-    <label class="tooltip-container col-md-4">Autoplay Delay
-        <span class="btn-info-icon btn-primary">
-            <span class="cp-tooltip">
-                Configure a delay before automatically playing the next item.
-            </span>
-        </span>
-    </label>
-
-    <div class="col-md-9 flex flex-justify-end" dropdown is-open="status.isOpen">
-        <button class="btn btn-default text-left dropdown-toggle w-100" dropdown-toggle aria-expanded="true" ng-class="{'disabled': !Settings.data.content.autoPlay}">
-            <span class="pull-left">{{Settings.data.content.autoPlayDelay.label || 'Off'}}</span>
-            <span class="chevron icon-chevron-down pull-right"></span>
-        </button>
-        <ul class="dropdown-menu delay-dropdown-menu extended margin-left-fifteen" role="menu">
-            <li ng-repeat="option in Settings.autoPlayDelayOptions" ng-click="Settings.setAutoPlayDelay(option)">
-                <a class="transition-third">{{option.label}}</a>
-            </li>
-        </ul>
-    </div>
-</div>
