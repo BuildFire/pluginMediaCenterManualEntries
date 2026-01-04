@@ -50,22 +50,6 @@
 </div>
 
 <div class="row margin-bottom-twenty flex flex-align-center">
-    <label class="tooltip-container col-md-4">Resume Playback from Last Position
-        <span class="btn-info-icon btn-primary">
-            <span class="cp-tooltip">
-                Automatically resume media playback from where the user left off upon returning to the app. Applies
-                across all Media Center instances.
-            </span>
-        </span>
-    </label>
-    <div class="button-switch col-md-9 flex flex-justify-end">
-        <input id="enableStartWithAutoJumpByDefault" type="checkbox"
-            ng-model="Settings.data.content.startWithAutoJumpByDefault">
-        <label for="enableStartWithAutoJumpByDefault" class="label-success" ng-class="{'disabled': !Settings.data.content.forceAutoPlay}"></label>
-    </div>
-</div>
-
-<div class="row margin-bottom-twenty flex flex-align-center">
     <label class="tooltip-container col-md-4">Enable Offline Access
         <span class="btn-info-icon btn-primary">
             <span class="cp-tooltip">
@@ -90,20 +74,6 @@
     <div class="button-switch col-md-9 flex flex-justify-end">
         <input id="enableFilterSwitch" type="checkbox" ng-model="Settings.data.content.enableFiltering">
         <label for="enableFilterSwitch" class="label-success"></label>
-    </div>
-</div>
-
-<div class="row margin-bottom-twenty flex flex-align-center">
-    <label class="tooltip-container col-md-4">Enable List Shuffle
-        <span class="btn-info-icon btn-primary">
-            <span class="cp-tooltip">
-                Enable the shuffle feature in the player. Users can turn shuffle on/off in the app. Shuffle affects only the items currently loaded in the list, with more added as the user scrolls.
-            </span>
-        </span>
-    </label>
-    <div class="button-switch col-md-9 flex flex-justify-end">
-        <input id="shuffleAudioListItemsSwitch" type="checkbox" ng-model="Settings.data.content.shuffleAudioListItems" ng-class="{'disabled': !Settings.data.content.autoPlay}">
-        <label for="shuffleAudioListItemsSwitch" class="label-success" ng-class="{'disabled': !Settings.data.content.autoPlay}"></label>
     </div>
 </div>
 
@@ -280,27 +250,6 @@
 <hr />
 
 <div class="row margin-bottom-twenty flex flex-align-center">
-    <label class="tooltip-container col-md-4">Auto-Add All Audio to Playlist
-        <span class="btn-info-icon btn-primary">
-            <span class="cp-tooltip">
-                Automatically add all audio files to the playlist, disabling individual playlist management. Disable
-                settings like Autoplay, Add to Playlist, and Remove from Playlist.
-            </span>
-        </span>
-    </label>
-    <div class="button-switch col-md-9 flex flex-justify-end">
-        <input id="playAllAudioSwitch" type="checkbox" ng-model="Settings.data.content.forceAutoPlay" ng-class="{'disabled': Settings.data.content.autoPlay || Settings.data.content.globalPlaylist}">
-        <label for="playAllAudioSwitch" class="label-success" ng-class="{'disabled': Settings.data.content.autoPlay || Settings.data.content.globalPlaylist}"></label>
-    </div>
-</div>
-<div class="row margin-bottom-twenty flex flex-align-center">
-    <label class="tooltip-container col-md-4"></label>
-    <div class="button-switch col-md-9 flex flex-justify-end">
-        <p class="info-note w-100">Enabling this setting will automatically add all available audio files to the playlist, overriding manual playlist controls.</p>
-    </div>
-</div>
-
-<div class="row margin-bottom-twenty flex flex-align-center">
     <label class="tooltip-container col-md-4">Continuous Playback
         <span class="btn-info-icon btn-primary">
             <span class="cp-tooltip">
@@ -316,6 +265,62 @@
 </div>
 
 <div class="row margin-bottom-twenty flex flex-align-center">
+    <div class="button-switch col-md-12 flex flex-justify-end">
+        <p class="info-note w-100">Enabling this will disable 'Auto-Add All Audio to Playlist'</p>
+    </div>
+</div>
+
+<div class="row margin-bottom-twenty flex flex-align-center">
+    <label class="tooltip-container col-md-4">Enable List Shuffle
+        <span class="btn-info-icon btn-primary">
+            <span class="cp-tooltip">
+                Enable the shuffle feature in the player. Users can turn shuffle on/off in the app. Shuffle affects only the items currently loaded in the list, with more added as the user scrolls.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch col-md-9 flex flex-justify-end">
+        <input id="shuffleAudioListItemsSwitch" type="checkbox" ng-model="Settings.data.content.shuffleAudioListItems" ng-class="{'disabled': !Settings.data.content.autoPlay}">
+        <label for="shuffleAudioListItemsSwitch" class="label-success" ng-class="{'disabled': !Settings.data.content.autoPlay}"></label>
+    </div>
+</div>
+
+<div class="row margin-bottom-twenty flex flex-align-center">
+    <label class="tooltip-container col-md-4">Auto-Add All Audio to Playlist
+        <span class="btn-info-icon btn-primary">
+            <span class="cp-tooltip">
+                Automatically add all audio files to the playlist, disabling individual playlist management. Disable
+                settings like Autoplay, Add to Playlist, and Remove from Playlist.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch col-md-9 flex flex-justify-end">
+        <input id="playAllAudioSwitch" type="checkbox" ng-model="Settings.data.content.forceAutoPlay" ng-class="{'disabled': Settings.data.content.autoPlay || Settings.data.content.globalPlaylist}">
+        <label for="playAllAudioSwitch" class="label-success" ng-class="{'disabled': Settings.data.content.autoPlay || Settings.data.content.globalPlaylist}"></label>
+    </div>
+</div>
+<div class="row margin-bottom-twenty flex flex-align-center">
+    <div class="button-switch col-md-12 flex flex-justify-end">
+        <p class="info-note w-100">Enabling this setting will automatically add all available audio files to the playlist, overriding manual playlist controls.</p>
+    </div>
+</div>
+
+<div class="row margin-bottom-twenty flex flex-align-center">
+    <label class="tooltip-container col-md-4">Resume Playback from Last Position
+        <span class="btn-info-icon btn-primary">
+            <span class="cp-tooltip">
+                Automatically resume media playback from where the user left off upon returning to the app. Applies
+                across all Media Center instances.
+            </span>
+        </span>
+    </label>
+    <div class="button-switch col-md-9 flex flex-justify-end">
+        <input id="enableStartWithAutoJumpByDefault" type="checkbox"
+            ng-model="Settings.data.content.startWithAutoJumpByDefault">
+        <label for="enableStartWithAutoJumpByDefault" class="label-success" ng-class="{'disabled': !Settings.data.content.forceAutoPlay}"></label>
+    </div>
+</div>
+
+<div class="row margin-bottom-twenty flex flex-align-center">
     <label class="tooltip-container col-md-4">Bypass Info Page
         <span class="btn-info-icon btn-primary">
             <span class="cp-tooltip">
@@ -327,13 +332,6 @@
     <div class="button-switch col-md-9 flex flex-justify-end">
         <input id="skipInfoSwitch" type="checkbox" ng-model="Settings.data.design.skipMediaPage">
         <label for="skipInfoSwitch" class="label-success"></label>
-    </div>
-</div>
-
-<div class="row margin-bottom-twenty flex flex-align-center">
-    <label class="tooltip-container col-md-4"></label>
-    <div class="button-switch col-md-9 flex flex-justify-end">
-        <p class="info-note w-100">Enabling this will disable 'Auto-Add All Audio to Playlist'</p>
     </div>
 </div>
 

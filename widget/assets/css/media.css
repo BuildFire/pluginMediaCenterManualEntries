@@ -86,8 +86,10 @@ h5 {
     min-width: 40px;
 }
 .media-action-icons .media-action-icon-element#reactions .reactions-total-count {
-    width: fit-content;
-    min-width: 1.5rem;
+    width: unset;
+    min-width: unset;
+    font-size: 12px;
+    padding-right: 5px;
 }
 
 .media-action-icons .action-icons-holder {
@@ -629,10 +631,6 @@ button.btn-icon.btn-lg {
     .second-layout .media-action-icons .media-action-icon-element#reactions {
         width: fit-content;
         min-width: 30px;
-    }
-    .second-layout .media-action-icons .media-action-icon-element#reactions .reactions-total-count {
-        width: fit-content;
-        min-width: 1.25rem;
     }
     .second-layout .item-actions {
         gap: 6px;

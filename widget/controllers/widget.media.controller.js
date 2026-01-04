@@ -102,7 +102,7 @@
                     CommentsService.openComments(WidgetMedia.item.id, commentIds);
                 };
 
-                WidgetMedia.allowUserReactions = () => {
+                WidgetMedia.isReactionsAllowed = () => {
                     let allowToReact = false;
 
                     if ($rootScope.reactions && $rootScope.reactions.value) {
@@ -125,7 +125,7 @@
                     return allowToReact;
                 };
 
-                WidgetMedia.allowUserComment = () => {
+                WidgetMedia.isCommentsAllowed = () => {
                     let allowToComment = false;
 
                     if ($rootScope.comments && $rootScope.comments.value) {
