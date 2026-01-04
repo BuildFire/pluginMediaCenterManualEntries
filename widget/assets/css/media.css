@@ -685,7 +685,6 @@ button.btn-icon.btn-lg {
 .media-player-action-btns:focus-within ~ .media-player-btns {
     pointer-events: none;
 }
-<<<<<<< Updated upstream
 
 .visibility-hidden {
     visibility: hidden;
@@ -701,5 +700,3 @@ button.btn-icon.btn-lg {
     top: -12px;
     right: -12px;
 }
-=======
->>>>>>> Stashed changes
