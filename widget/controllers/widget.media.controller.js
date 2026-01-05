@@ -102,7 +102,30 @@
                     CommentsService.openComments(WidgetMedia.item.id, commentIds);
                 };
 
-                WidgetMedia.allowUserComment = () => {
+                WidgetMedia.isReactionsAllowed = () => {
+                    let allowToReact = false;
+
+                    if ($rootScope.reactions && $rootScope.reactions.value) {
+                        if ($rootScope.reactions.value === 'none') allowToReact = false;
+                        else if ($rootScope.reactions.value === 'all') allowToReact = true;
+                        else if ($rootScope.reactions.value === 'tags') {
+                            const appId = buildfire.getContext().appId;
+                            const userTags = $rootScope.user.tags[appId];
+                            const commentTags = $rootScope.reactions.tags;
+
+                            for (let i=0; i<commentTags.length; i++) {
+                                if (userTags.some(_tag => _tag.tagName === commentTags[i].tagName)) {
+                                    allowToReact = true;
+                                    break;
+                                }
+                            }
+                            return allowToReact;
+                        }
+                    }
+                    return allowToReact;
+                };
+
+                WidgetMedia.isCommentsAllowed = () => {
                     let allowToComment = false;
 
                     if ($rootScope.comments && $rootScope.comments.value) {
@@ -248,6 +271,7 @@
                                 sortBy: 'Newest',
                                 rankOfLastItem: 0,
                                 allowShare: true,
+                                allowFavorites: true,
                                 allowAddingNotes: true,
                                 allowSource: true,
                                 allowOfflineDownload: false,

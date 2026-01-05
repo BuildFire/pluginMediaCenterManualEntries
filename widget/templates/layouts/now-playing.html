@@ -37,7 +37,7 @@
                 <p class="margin-zero whiteTheme ellipsis">
                     {{NowPlaying.currentTrack.user.username}}{{NowPlaying.currentTrack.artists}}</p>
             </div>
-            <span class="glyphicon whiteTheme btn btn-icon"
+            <span class="glyphicon whiteTheme btn btn-icon" ng-style="{'visibility': allowFavorites ? 'visible' : 'hidden'}" aria-hidden="{{!allowFavorites}}"
                 ng-class="{ 'glyphicon-star-empty' : !NowPlaying.item.data.bookmarked, 'glyphicon-star' : NowPlaying.item.data.bookmarked }"
                 ng-click="NowPlaying.bookmark($event)" role="button" tabindex="0" aria-label="{{NowPlaying.item.data.bookmarked ? 'Un-bookmark' : 'Bookmark'}} {{NowPlaying.currentTrack.title}} button"></span>
         </div>

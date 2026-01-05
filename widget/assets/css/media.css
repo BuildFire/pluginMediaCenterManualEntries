@@ -75,6 +75,24 @@ h5 {
     height: 40px;
 }
 
+.media-action-icons .media-action-icon-element#reactions img {
+    filter: unset !important;
+}
+.media-action-icons .media-action-icon-element#reactions {
+    width: fit-content;
+    min-width: 40px;
+}
+.media-action-icons .media-action-icon-element#reactions .reactions-total-count {
+    width: unset;
+    min-width: fit-content;
+    font-size: 12px;
+    padding: 5px;
+}
+
+.media-action-icons .media-action-icon-element#reactions .reactions-main-icon-container {
+    overflow: hidden;
+}
+
 .media-action-icons .action-icons-holder {
     gap: 14px;
 }
@@ -599,15 +617,36 @@ button.btn-icon.btn-lg {
         padding: 8px 0;
     }
 }
-@media (max-width: 310px) {
+@media (max-width: 325px) {
     .second-layout .media-action-icons .action-icons-holder {
-        gap: 0px;
+        gap: 10px;
+    }
+    .second-layout .media-action-icons .media-action-icon-element {
+        width: 30px;
+        height: 30px;
+    }
+    .second-layout .media-action-icons .media-action-icon-element#reactions {
+        width: fit-content;
+        min-width: 30px;
     }
     .second-layout .item-actions {
         gap: 6px;
     }
     .second-layout .link-list a+a {
         margin-left: 6px;
+    }
+}
+@media (max-width: 310px) {
+    .first-layout .media-action-icons .action-icons-holder {
+        gap: 10px;
+    }
+    .first-layout .media-action-icons .media-action-icon-element {
+        width: 30px;
+        height: 30px;
+    }
+    .first-layout .media-action-icons .media-action-icon-element#reactions {
+        width: fit-content;
+        min-width: 30px;
     }
 }
 

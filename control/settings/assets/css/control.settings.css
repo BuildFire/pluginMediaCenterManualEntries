@@ -145,3 +145,8 @@
   transform: scale(1);
 }
 /* End: Tooltip */
+
+.modal .modal-content .tag-search-dialog {
+  display: flex;
+  flex-direction: column;
+}

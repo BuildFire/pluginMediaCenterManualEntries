@@ -141,6 +141,7 @@
 
                         let icons = [
                             MEDIA_ACTION_ICONS.VIEWS,
+                            MEDIA_ACTION_ICONS.REACTIONS,
                             MEDIA_ACTION_ICONS.COMMENTS,
                             MEDIA_ACTION_ICONS.SHARE,
                             WidgetMedia.item?.data?.bookmarked ? MEDIA_ACTION_ICONS.FAVORITE_FILLED : MEDIA_ACTION_ICONS.FAVORITE,
@@ -154,7 +155,9 @@
 
                         // Filter icons based on settings
                         if (!WidgetMedia.media.data.content.showViewCount) icons = icons.filter(i => i.id !== 'views');
-                        if (!WidgetMedia.allowUserComment?.()) icons = icons.filter(i => i.id !== 'comments');
+                        if (!WidgetMedia.media.data.content.allowFavorites) icons = icons.filter(i => i.id !== 'favorite');
+                        if (!WidgetMedia.isReactionsAllowed?.()) icons = icons.filter(i => i.id !== 'reactions');
+                        if (!WidgetMedia.isCommentsAllowed?.()) icons = icons.filter(i => i.id !== 'comments');
                         if (!WidgetMedia.media.data.content.allowShare) icons = icons.filter(i => i.id !== 'share');
                         if (!WidgetMedia.media.data.content.allowAddingNotes) icons = icons.filter(i => i.id !== 'note');
                         if (!WidgetMedia.item?.data?.links?.length || !$rootScope.online) icons = icons.filter(i => i.id !== 'openActionLinks');
@@ -174,6 +177,15 @@
                         scope.renderIcons(icons, WidgetMedia);
                         scope.loadCommentsCount(WidgetMedia);
                         scope.loadViewsCount(WidgetMedia);
+                        if (WidgetMedia.isReactionsAllowed?.()) {
+                            new buildfire.components.reactions('#reactionsContainer', {
+                                itemId: WidgetMedia.item.id,
+                                itemType: WidgetMedia.mediaType,
+                                groupName: $rootScope.reactions.groupName || '',
+                                showCount: true,
+                                showUsersReactions: true
+                            });
+                        }
 
                         CommentsService.setCommentCallbacks(
                             () => scope.loadCommentsCount(WidgetMedia),
@@ -234,8 +246,12 @@
                             iconEl.setAttribute('aria-label', 'Downloading');
                         }
 
-                        iconEl.innerHTML = icon.iconName.includes('<') ? icon.iconName : `<i class="${icon.filled ? 'material-icons' : 'material-icons-outlined'}">${icon.iconName}</i>`;
-                        iconEl.onclick = () => scope.onIconAction({actionId: icon.id});
+                        if (icon.id === 'reactions') {
+                            iconEl.innerHTML = `<div id="reactionsContainer"></div>`;
+                        } else {
+                            iconEl.innerHTML = icon.iconName.includes('<') ? icon.iconName : `<i class="${icon.filled ? 'material-icons' : 'material-icons-outlined'}">${icon.iconName}</i>`;
+                            iconEl.onclick = () => scope.onIconAction({actionId: icon.id});
+                        }
 
                         if (icon.id === 'comments') {
                             iconEl.querySelector('.material-icons-outlined').classList.add('flip-horizontal');

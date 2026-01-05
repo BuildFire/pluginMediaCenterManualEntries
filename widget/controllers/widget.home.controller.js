@@ -40,6 +40,7 @@
                             sortBy: Orders.ordersMap.Newest,
                             rankOfLastItem: 0,
                             allowShare: true,
+							allowFavorites: true,
                             allowAddingNotes: true,
                             allowSource: true,
                             forceAutoPlay: false,
@@ -112,6 +113,10 @@
                         WidgetHome.media = MediaCenterInfo;
                         $rootScope.backgroundImage = MediaCenterInfo.data.design.backgroundImage;
                         $rootScope.allowShare = MediaCenterInfo.data.content.allowShare;
+                        $rootScope.allowFavorites = MediaCenterInfo.data.content.allowFavorites;
+                        if (typeof $rootScope.allowFavorites === 'undefined')
+                            $rootScope.allowFavorites = true;
+
                         $rootScope.allowAddingNotes = MediaCenterInfo.data.content.allowAddingNotes;
                         $rootScope.allowSource = MediaCenterInfo.data.content.allowSource;
                         $rootScope.forceAutoPlay = MediaCenterInfo.data.content.forceAutoPlay;
@@ -134,6 +139,14 @@
                             $rootScope.comments = {
                                 value: 'none',
                                 tags: [],
+                            }
+                        }
+                        $rootScope.reactions = MediaCenterInfo.data.content.reactions;
+                        if (typeof ($rootScope.reactions  ) === 'undefined') {
+                            $rootScope.reactions = {
+                                value: 'none',
+                                tags: [],
+                                groupName: ''
                             }
                         }
 
@@ -176,6 +189,10 @@
 
                             $rootScope.backgroundImage = WidgetHome.media.data.design.backgroundImage;
                             $rootScope.allowShare = WidgetHome.media.data.content.allowShare;
+                            $rootScope.allowFavorites = WidgetHome.media.data.content.allowFavorites;
+                            if (typeof $rootScope.allowFavorites === 'undefined')
+                                $rootScope.allowFavorites = true;
+
                             $rootScope.allowAddingNotes = WidgetHome.media.data.content.allowAddingNotes;
                             $rootScope.allowSource = WidgetHome.media.data.content.allowSource;
                             $rootScope.forceAutoPlay = WidgetHome.media.data.content.forceAutoPlay;
@@ -337,6 +354,10 @@
                             WidgetHome.media.data = event.data;
                             $rootScope.backgroundImage = WidgetHome.media.data.design && WidgetHome.media.data.design.backgroundImage;
                             $rootScope.allowShare = WidgetHome.media.data.content.allowShare;
+                            $rootScope.allowFavorites = WidgetHome.media.data.content.allowFavorites;
+                            if (typeof $rootScope.allowFavorites === 'undefined')
+                                $rootScope.allowFavorites = true;
+
                             $rootScope.allowAddingNotes = WidgetHome.media.data.content.allowAddingNotes;
                             $rootScope.allowSource = WidgetHome.media.data.content.allowSource;
                             $rootScope.forceAutoPlay = WidgetHome.media.data.content.forceAutoPlay;
@@ -359,6 +380,14 @@
                                 $rootScope.comments = {
                                     value: 'none',
                                     tags: [],
+                                }
+                            }
+                            $rootScope.reactions = WidgetHome.media.data.content.reactions;
+                            if (typeof ($rootScope.reactions  ) === 'undefined') {
+                                $rootScope.reactions = {
+                                    value: 'none',
+                                    tags: [],
+                                    groupName: ''
                                 }
                             }
 
@@ -1284,7 +1313,7 @@
                         }
                     }
 
-                    if ($rootScope.online) {
+                    if ($rootScope.online && WidgetHome.media.data.content.allowFavorites) {
                         if (item.data.bookmarked) {
                             listItems.push({ id: "removeFromFavorites", text: getString("homeDrawer.removeFromFavorites") });
                         }
