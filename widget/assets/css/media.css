@@ -87,9 +87,13 @@ h5 {
 }
 .media-action-icons .media-action-icon-element#reactions .reactions-total-count {
     width: unset;
-    min-width: unset;
+    min-width: fit-content;
     font-size: 12px;
-    padding-right: 5px;
+    padding: 5px;
+}
+
+.media-action-icons .media-action-icon-element#reactions .reactions-main-icon-container {
+    overflow: hidden;
 }
 
 .media-action-icons .action-icons-holder {
@@ -637,6 +641,19 @@ button.btn-icon.btn-lg {
     }
     .second-layout .link-list a+a {
         margin-left: 6px;
+    }
+}
+@media (max-width: 310px) {
+    .first-layout .media-action-icons .action-icons-holder {
+        gap: 10px;
+    }
+    .first-layout .media-action-icons .media-action-icon-element {
+        width: 30px;
+        height: 30px;
+    }
+    .first-layout .media-action-icons .media-action-icon-element#reactions {
+        width: fit-content;
+        min-width: 30px;
     }
 }
 
