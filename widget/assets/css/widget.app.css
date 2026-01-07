@@ -2,14 +2,6 @@
     --bodyText: #cecece;
     --primaryTheme: #cecece;
 }
-body {
-    padding-top: var(--bf-safe-area-inset-top);
-    padding-bottom: var(--bf-safe-area-inset-bottom);
-}
-.showing.slide {
-	position: relative !important;
-	overflow: scroll !important;
-}
 
 /* Plugin CSS */
 @media only screen and (max-width: 320px) {
@@ -1497,6 +1489,10 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
 .filter-funnel {
     font-size: 1.5em;
     color: var(--bf-theme-primary);
+}
+
+.slide.safe-area.launcher-with-filter {
+    padding-top: env(safe-area-inset-top) !important;
 }
 
 .categoryScreenIcon {
