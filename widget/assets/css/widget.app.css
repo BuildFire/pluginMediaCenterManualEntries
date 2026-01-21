@@ -1054,7 +1054,7 @@ img.done-icon {
 }
 
 .playlist-actions {
-    position: absolute;
+    position: fixed;
     bottom: 5px;
     padding: 0 4px;
     right: 5px;
