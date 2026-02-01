@@ -334,6 +334,7 @@
         }])
         .run(['Location', '$location', '$rootScope', '$window', 'Messaging', 'EVENTS', 'PATHS', 'openedMediaHandler', function (Location, $location, $rootScope, $window, Messaging, EVENTS, PATHS, openedMediaHandler) {
             openedMediaHandler.sync();
+            buildfire.appearance.titlebar.show();
             buildfire.appearance.navbar.show(null, (err) => {
                 if (err) return console.error(err);
             });

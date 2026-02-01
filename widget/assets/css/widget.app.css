@@ -1492,7 +1492,7 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
 }
 
 .slide.safe-area.launcher-with-filter {
-    padding-top: env(safe-area-inset-top) !important;
+    padding-top: var(--bf-safe-area-inset-top) !important;
 }
 
 .categoryScreenIcon {
