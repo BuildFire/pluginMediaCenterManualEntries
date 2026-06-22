@@ -7,7 +7,7 @@ html {
     font-size: 16px !important;
 }
 
-.slide.safe-area {
+.slide {
     padding-top: var(--bf-safe-area-inset-top) !important;
 }
 .caption {
