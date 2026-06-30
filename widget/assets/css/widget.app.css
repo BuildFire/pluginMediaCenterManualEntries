@@ -1474,7 +1474,7 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
 #filtersContainer {
     height: 100%;
     overflow-y: scroll;
-    padding-bottom: 100px;
+    padding-bottom: calc(100px + var(--bf-safe-area-inset-bottom));
 }
 
 #filterScreen {
