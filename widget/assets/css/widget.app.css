@@ -1020,7 +1020,7 @@ img.done-icon {
 }
 
 .playlist-empty-container {
-    height: calc(100vh - 5rem);
+    height: calc(100vh - 65px - var(--bf-safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1055,7 +1055,7 @@ img.done-icon {
 
 .playlist-actions {
     position: absolute;
-    bottom: 5px;
+    bottom: calc(var(--bf-safe-area-inset-bottom) + 10px);
     padding: 0 4px;
     right: 5px;
 }
@@ -1466,13 +1466,15 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
     left: 0;
     right: 0;
     padding: 15px;
+    padding-bottom: calc(16px + var(--bf-safe-area-inset-bottom));
+    background-color: var(--bf-theme-background);
     justify-content: center;
 }
 
 #filtersContainer {
     height: 100%;
     overflow-y: scroll;
-    padding-bottom: 100px;
+    padding-bottom: calc(100px + var(--bf-safe-area-inset-bottom));
 }
 
 #filterScreen {
@@ -1484,6 +1486,7 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
     font-size: .875rem !important;
     padding: 0 16px 0 16px !important;
     height: 36px;
+    width: calc(100% - 32px);
 }
 
 .filter-funnel {
@@ -1491,7 +1494,7 @@ input[type="checkbox"]:checked+.subcategory-label.minus::before {
     color: var(--bf-theme-primary);
 }
 
-.slide.safe-area.launcher-with-filter {
+.slide {
     padding-top: var(--bf-safe-area-inset-top) !important;
 }
 
