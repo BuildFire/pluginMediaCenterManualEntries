@@ -1,0 +1,68 @@
+{
+  "name": "deleteCategory",
+  "displayName": "Delete category",
+  "type": "function",
+  "crudMode": "delete",
+  "flags": [
+    "mutable",
+    "dangerous",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "alternatives": [
+    {
+      "operationName": "deleteCategoryAdvanced",
+      "label": "Advanced"
+    }
+  ],
+  "context": {
+    "functionName": "deleteCategory",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Permanently removes a category and its subcategories, found by its name.",
+  "parameters": {
+    "name": {
+      "type": "string",
+      "displayName": "Category name",
+      "required": true,
+      "description": "The exact name of the category.",
+      "sampleValue": "[category name]"
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the category is deleted.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't deleted, such as no category or several categories having that name."
+        },
+        "result": {
+          "type": "object",
+          "description": "The category that was deleted.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The category's id."
+            },
+            "name": {
+              "type": "string",
+              "description": "The category's name."
+            },
+            "deleted": {
+              "type": "boolean",
+              "description": "Whether the category was deleted."
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "events": [
+    {
+      "name": "mediaItemCreated",
+      "displayName": "Media Item Created",
+      "description": "A media item was added.",
+      "data": {
+        "mediaItemId": {
+          "type": "string",
+          "displayName": "Media Item ID",
+          "description": "The media item's id."
+        },
+        "title": {
+          "type": "string",
+          "displayName": "Title",
+          "description": "The item's title."
+        },
+        "summary": {
+          "type": "string",
+          "displayName": "Summary",
+          "description": "The short text shown under its title."
+        },
+        "thumbnailImage": {
+          "type": "string",
+          "displayName": "Thumbnail",
+          "description": "The picture shown in the list."
+        },
+        "videoUrl": {
+          "type": "string",
+          "displayName": "Video URL",
+          "description": "The link to its video, if it has one."
+        },
+        "audioUrl": {
+          "type": "string",
+          "displayName": "Audio URL",
+          "description": "The link to its audio, if it has one."
+        },
+        "mediaDate": {
+          "type": "datetime",
+          "displayName": "Media Date",
+          "description": "The date shown for it."
+        },
+        "createdAt": {
+          "type": "datetime",
+          "displayName": "Added On",
+          "description": "When it was added."
+        }
+      }
+    },
+    {
+      "name": "mediaItemUpdated",
+      "displayName": "Media Item Updated",
+      "description": "A media item's details were changed.",
+      "data": {
+        "mediaItemId": {
+          "type": "string",
+          "displayName": "Media Item ID",
+          "description": "The media item's id."
+        },
+        "title": {
+          "type": "string",
+          "displayName": "Title",
+          "description": "The item's title."
+        },
+        "summary": {
+          "type": "string",
+          "displayName": "Summary",
+          "description": "The short text shown under its title."
+        },
+        "thumbnailImage": {
+          "type": "string",
+          "displayName": "Thumbnail",
+          "description": "The picture shown in the list."
+        },
+        "videoUrl": {
+          "type": "string",
+          "displayName": "Video URL",
+          "description": "The link to its video, if it has one."
+        },
+        "audioUrl": {
+          "type": "string",
+          "displayName": "Audio URL",
+          "description": "The link to its audio, if it has one."
+        },
+        "mediaDate": {
+          "type": "datetime",
+          "displayName": "Media Date",
+          "description": "The date shown for it."
+        },
+        "createdAt": {
+          "type": "datetime",
+          "displayName": "Added On",
+          "description": "When it was added."
+        },
+        "previousTitle": {
+          "type": "string",
+          "displayName": "Previous Title",
+          "description": "The title it had before the change."
+        }
+      }
+    },
+    {
+      "name": "mediaItemDeleted",
+      "displayName": "Media Item Deleted",
+      "description": "A media item was removed.",
+      "data": {
+        "mediaItemId": {
+          "type": "string",
+          "displayName": "Media Item ID",
+          "description": "The removed item's id."
+        },
+        "title": {
+          "type": "string",
+          "displayName": "Title",
+          "description": "The title it had."
+        }
+      }
+    }
+  ]
+}

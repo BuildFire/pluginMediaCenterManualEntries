@@ -1,0 +1,411 @@
+{
+  "name": "updateSettings",
+  "displayName": "Update settings",
+  "type": "function",
+  "crudMode": "update",
+  "flags": [
+    "mutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "availableFor": [
+    "API"
+  ],
+  "context": {
+    "functionName": "updateSettings",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Changes the plugin's content and behavior settings, only those given.",
+  "parameters": {
+    "description": {
+      "type": "wysiwyg",
+      "displayName": "Description",
+      "required": false,
+      "description": "The formatted text shown above the media list, as HTML. Leave it out to keep the current text, or leave it empty to remove it.",
+      "nullable": true,
+      "sampleValue": "<p>[description]</p>"
+    },
+    "carouselImages": {
+      "type": "action",
+      "displayName": "Carousel images",
+      "required": false,
+      "description": "The pictures shown in the carousel above the list, in order, each with what tapping it does; they replace the current ones. Leave it out to keep them, or pass an empty list to remove them all.",
+      "minValue": 0,
+      "nullable": true,
+      "sampleValue": [
+        {
+          "title": "[image title]",
+          "iconUrl": "https://example.com/slide.png",
+          "action": "noAction"
+        }
+      ]
+    },
+    "mediaSortOrder": {
+      "type": "select",
+      "displayName": "Media order",
+      "required": false,
+      "description": "How media items are ordered in the app. Leave it out to keep the current order.",
+      "enums": [
+        {
+          "label": "Manual",
+          "value": "Manually"
+        },
+        {
+          "label": "Media Title A-Z",
+          "value": "Media Title A-Z"
+        },
+        {
+          "label": "Media Title Z-A",
+          "value": "Media Title Z-A"
+        },
+        {
+          "label": "Media Date Asc",
+          "value": "Media Date Asc"
+        },
+        {
+          "label": "Media Date Desc",
+          "value": "Media Date Desc"
+        },
+        {
+          "label": "Newest",
+          "value": "Newest"
+        },
+        {
+          "label": "Oldest",
+          "value": "Oldest"
+        }
+      ],
+      "allowEnumCustomOption": false,
+      "sampleValue": "Newest"
+    },
+    "categorySortOrder": {
+      "type": "select",
+      "displayName": "Category order",
+      "required": false,
+      "description": "How categories are ordered in the app. Leave it out to keep the current order.",
+      "enums": [
+        {
+          "label": "Manual",
+          "value": "Manually"
+        },
+        {
+          "label": "Category Title A-Z",
+          "value": "Category Title A-Z"
+        },
+        {
+          "label": "Category Title Z-A",
+          "value": "Category Title Z-A"
+        },
+        {
+          "label": "Newest",
+          "value": "Newest"
+        },
+        {
+          "label": "Oldest",
+          "value": "Oldest"
+        }
+      ],
+      "allowEnumCustomOption": false,
+      "sampleValue": "Manually"
+    },
+    "allowSharing": {
+      "type": "boolean",
+      "displayName": "Enable sharing",
+      "required": false,
+      "description": "Whether people can share media items. Leave it out to keep the current setting.",
+      "sampleValue": true
+    },
+    "allowFavorites": {
+      "type": "boolean",
+      "displayName": "Enable favorites",
+      "required": false,
+      "description": "Whether people can save media items as favorites. Leave it out to keep the current setting.",
+      "sampleValue": true
+    },
+    "allowNotes": {
+      "type": "boolean",
+      "displayName": "Enable personal notes",
+      "required": false,
+      "description": "Whether people can add personal notes to media items. Leave it out to keep the current setting.",
+      "sampleValue": true
+    },
+    "showMediaSource": {
+      "type": "boolean",
+      "displayName": "Display media source",
+      "required": false,
+      "description": "Whether a link to the media source is shown. Leave it out to keep the current setting.",
+      "sampleValue": true
+    },
+    "allowOfflineAccess": {
+      "type": "boolean",
+      "displayName": "Enable offline access",
+      "required": false,
+      "description": "Whether people can download media items to use offline. Leave it out to keep the current setting.",
+      "sampleValue": true
+    },
+    "enableFiltering": {
+      "type": "boolean",
+      "displayName": "Enable media filtering",
+      "required": false,
+      "description": "Whether people can narrow the media list by category. Leave it out to keep the current setting.",
+      "sampleValue": true
+    },
+    "showViewCount": {
+      "type": "boolean",
+      "displayName": "Display view count",
+      "required": false,
+      "description": "Whether the number of times an item was opened is shown. Leave it out to keep the current setting.",
+      "sampleValue": true
+    },
+    "highlightPlayedItems": {
+      "type": "boolean",
+      "displayName": "Highlight played items",
+      "required": false,
+      "description": "Whether items a person already played are marked. Leave it out to keep the current setting.",
+      "sampleValue": true
+    },
+    "useGlobalPlaylist": {
+      "type": "boolean",
+      "displayName": "Use global playlist",
+      "required": false,
+      "description": "Whether people can add items to the global playlist; turned off while every audio item is added to the playlist on its own. Leave it out to keep the current setting.",
+      "sampleValue": true
+    },
+    "showAddAllToPlaylistButton": {
+      "type": "boolean",
+      "displayName": "Enable add all to global playlist button",
+      "required": false,
+      "description": "Whether the button adding every item to the global playlist is shown. Leave it out to keep the current setting.",
+      "sampleValue": true
+    },
+    "showPlaylistButton": {
+      "type": "boolean",
+      "displayName": "Enable navigate to global playlist button",
+      "required": false,
+      "description": "Whether the button opening the global playlist is shown. Leave it out to keep the current setting.",
+      "sampleValue": true
+    },
+    "continuousPlayback": {
+      "type": "boolean",
+      "displayName": "Continuous playback",
+      "required": false,
+      "description": "Whether the next item plays on its own; turned off while every audio item is added to the playlist on its own. Leave it out to keep the current setting.",
+      "sampleValue": true
+    },
+    "autoplayDelay": {
+      "type": "select",
+      "displayName": "Autoplay delay",
+      "required": false,
+      "description": "How long to wait before the next item plays. Leave it out to keep the current delay.",
+      "enums": [
+        {
+          "label": "Off",
+          "value": 0
+        },
+        {
+          "label": "1s",
+          "value": 1
+        },
+        {
+          "label": "2s",
+          "value": 2
+        },
+        {
+          "label": "3s",
+          "value": 3
+        },
+        {
+          "label": "5s",
+          "value": 5
+        }
+      ],
+      "allowEnumCustomOption": false,
+      "sampleValue": 2
+    },
+    "shuffleList": {
+      "type": "boolean",
+      "displayName": "Enable list shuffle",
+      "required": false,
+      "description": "Whether the player offers shuffle; it only stays on with continuous playback. Leave it out to keep the current setting.",
+      "sampleValue": true
+    },
+    "autoAddAudioToPlaylist": {
+      "type": "boolean",
+      "displayName": "Auto-add all audio to playlist",
+      "required": false,
+      "description": "Whether every audio item is added to the playlist on its own, which turns off continuous playback, shuffle and the global playlist. Leave it out to keep the current setting.",
+      "sampleValue": true
+    },
+    "resumePlayback": {
+      "type": "boolean",
+      "displayName": "Resume playback from last position",
+      "required": false,
+      "description": "Whether playback resumes where the person left off; it only stays on while every audio item is added to the playlist on its own. Leave it out to keep the current setting.",
+      "sampleValue": true
+    },
+    "bypassInfoPage": {
+      "type": "boolean",
+      "displayName": "Bypass info page",
+      "required": false,
+      "description": "Whether tapping an item goes straight to its player, skipping its page. Leave it out to keep the current setting.",
+      "sampleValue": true
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the settings are saved.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why they weren't saved, such as a choice that isn't offered or nothing to change."
+        },
+        "result": {
+          "type": "object",
+          "description": "The settings as they now stand.",
+          "properties": {
+            "content": {
+              "type": "object",
+              "description": "The content and app behavior settings.",
+              "properties": {
+                "descriptionHTML": {
+                  "type": "string",
+                  "description": "The formatted text shown above the list."
+                },
+                "images": {
+                  "type": "array",
+                  "description": "The carousel shown above the list, in order.",
+                  "items": {
+                    "type": "object",
+                    "description": "One carousel image and what tapping it does.",
+                    "properties": {
+                      "iconUrl": {
+                        "type": "string",
+                        "description": "The picture."
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Its title."
+                      },
+                      "action": {
+                        "type": "string",
+                        "description": "What tapping it does."
+                      }
+                    }
+                  }
+                },
+                "sortBy": {
+                  "type": "string",
+                  "description": "How media items are ordered."
+                },
+                "sortCategoriesBy": {
+                  "type": "string",
+                  "description": "How categories are ordered."
+                },
+                "allowShare": {
+                  "type": "boolean",
+                  "description": "Whether people can share items."
+                },
+                "allowFavorites": {
+                  "type": "boolean",
+                  "description": "Whether people can save items as favorites."
+                },
+                "allowAddingNotes": {
+                  "type": "boolean",
+                  "description": "Whether people can add personal notes."
+                },
+                "allowSource": {
+                  "type": "boolean",
+                  "description": "Whether a link to the media source is shown."
+                },
+                "allowOfflineDownload": {
+                  "type": "boolean",
+                  "description": "Whether people can download items to use offline."
+                },
+                "enableFiltering": {
+                  "type": "boolean",
+                  "description": "Whether people can narrow the list by category."
+                },
+                "showViewCount": {
+                  "type": "boolean",
+                  "description": "Whether view counts are shown."
+                },
+                "indicatePlayedItems": {
+                  "type": "boolean",
+                  "description": "Whether items already played are marked."
+                },
+                "globalPlaylist": {
+                  "type": "boolean",
+                  "description": "Whether people can add items to the global playlist."
+                },
+                "showGlobalAddAllToPlaylistButton": {
+                  "type": "boolean",
+                  "description": "Whether the add-all-to-playlist button is shown."
+                },
+                "showGlobalPlaylistNavButton": {
+                  "type": "boolean",
+                  "description": "Whether the button to open the global playlist is shown."
+                },
+                "autoPlay": {
+                  "type": "boolean",
+                  "description": "Whether the next item plays on its own."
+                },
+                "autoPlayDelay": {
+                  "type": "object",
+                  "description": "How long to wait before the next item plays.",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "The delay as shown, such as 2s."
+                    },
+                    "value": {
+                      "type": "number",
+                      "description": "The delay in seconds."
+                    }
+                  }
+                },
+                "shuffleAudioListItems": {
+                  "type": "boolean",
+                  "description": "Whether the player offers shuffle."
+                },
+                "forceAutoPlay": {
+                  "type": "boolean",
+                  "description": "Whether every audio item is added to the playlist on its own."
+                },
+                "startWithAutoJumpByDefault": {
+                  "type": "boolean",
+                  "description": "Whether playback resumes where the person left off."
+                }
+              }
+            },
+            "design": {
+              "type": "object",
+              "description": "The design settings.",
+              "properties": {
+                "listLayout": {
+                  "type": "string",
+                  "description": "The layout of the list."
+                },
+                "itemLayout": {
+                  "type": "string",
+                  "description": "The layout of an item's page."
+                },
+                "backgroundImage": {
+                  "type": "string",
+                  "description": "The background picture."
+                },
+                "skipMediaPage": {
+                  "type": "boolean",
+                  "description": "Whether tapping an item goes straight to its player, skipping its page."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "name": "deleteSubcategoriesAdvanced",
+  "displayName": "Delete subcategories",
+  "type": "function",
+  "crudMode": "delete",
+  "flags": [
+    "mutable",
+    "dangerous",
+    "throttable"
+  ],
+  "usage": "advanced",
+  "availableFor": [
+    "API"
+  ],
+  "context": {
+    "functionName": "deleteSubcategoriesAdvanced",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Permanently removes several subcategories at once.",
+  "parameters": {
+    "subcategories": {
+      "type": "list",
+      "displayName": "Subcategories",
+      "required": true,
+      "minValue": 1,
+      "maxValue": 50,
+      "description": "The subcategories to remove, up to 50 at a time.",
+      "items": {
+        "categoryId": {
+          "type": "string",
+          "displayName": "Category id",
+          "required": true,
+          "description": "The category's id, as shown in search results.",
+          "sampleValue": "[category id]"
+        },
+        "subcategoryId": {
+          "type": "string",
+          "displayName": "Subcategory id",
+          "required": true,
+          "description": "The subcategory's id, as shown with its category in search results.",
+          "sampleValue": "[subcategory id]"
+        }
+      },
+      "sampleValue": [
+        {
+          "categoryId": "[category id]",
+          "subcategoryId": "[subcategory id]"
+        }
+      ]
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when all the subcategories are done.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why nothing was deleted, such as an id that matches nothing."
+        },
+        "result": {
+          "type": "object",
+          "description": "How each subcategory went.",
+          "properties": {
+            "subcategories": {
+              "type": "array",
+              "description": "One result per subcategory, in the order they were given.",
+              "items": {
+                "type": "object",
+                "description": "How one subcategory went.",
+                "properties": {
+                  "index": {
+                    "type": "number",
+                    "description": "Which subcategory this is, counting from 0."
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "The subcategory's id, if it was deleted."
+                  },
+                  "error": {
+                    "type": "string",
+                    "description": "Why it wasn't deleted, if it wasn't."
+                  }
+                }
+              }
+            },
+            "succeeded": {
+              "type": "number",
+              "description": "How many were deleted."
+            },
+            "failed": {
+              "type": "number",
+              "description": "How many weren't deleted."
+            }
+          }
+        }
+      }
+    }
+  }
+}

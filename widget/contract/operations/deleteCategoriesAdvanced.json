@@ -1,0 +1,94 @@
+{
+  "name": "deleteCategoriesAdvanced",
+  "displayName": "Delete categories",
+  "type": "function",
+  "crudMode": "delete",
+  "flags": [
+    "mutable",
+    "dangerous",
+    "throttable"
+  ],
+  "usage": "advanced",
+  "availableFor": [
+    "API"
+  ],
+  "context": {
+    "functionName": "deleteCategoriesAdvanced",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Permanently removes several categories at once.",
+  "parameters": {
+    "categories": {
+      "type": "list",
+      "displayName": "Categories",
+      "required": true,
+      "minValue": 1,
+      "maxValue": 50,
+      "description": "The categories to remove, up to 50 at a time.",
+      "items": {
+        "categoryId": {
+          "type": "string",
+          "displayName": "Category id",
+          "required": true,
+          "description": "The category's id, as shown in search results.",
+          "sampleValue": "[category id]"
+        }
+      },
+      "sampleValue": [
+        {
+          "categoryId": "[category id]"
+        }
+      ]
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when all the categories are done.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why nothing was deleted, such as a category id that matches nothing."
+        },
+        "result": {
+          "type": "object",
+          "description": "How each category went.",
+          "properties": {
+            "categories": {
+              "type": "array",
+              "description": "One result per category, in the order they were given.",
+              "items": {
+                "type": "object",
+                "description": "How one category went.",
+                "properties": {
+                  "index": {
+                    "type": "number",
+                    "description": "Which category this is, counting from 0."
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "The category's id, if it was deleted."
+                  },
+                  "error": {
+                    "type": "string",
+                    "description": "Why it wasn't deleted, if it wasn't."
+                  }
+                }
+              }
+            },
+            "succeeded": {
+              "type": "number",
+              "description": "How many were deleted."
+            },
+            "failed": {
+              "type": "number",
+              "description": "How many weren't deleted."
+            }
+          }
+        }
+      }
+    }
+  }
+}

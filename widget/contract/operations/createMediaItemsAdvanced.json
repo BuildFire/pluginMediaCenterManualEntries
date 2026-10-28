@@ -1,0 +1,202 @@
+{
+  "name": "createMediaItemsAdvanced",
+  "displayName": "Create media items",
+  "type": "function",
+  "crudMode": "create",
+  "flags": [
+    "mutable",
+    "safe",
+    "throttable"
+  ],
+  "usage": "advanced",
+  "availableFor": [
+    "API"
+  ],
+  "context": {
+    "functionName": "createMediaItemsAdvanced",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Adds several media items at once.",
+  "parameters": {
+    "mediaItems": {
+      "type": "list",
+      "displayName": "Media items",
+      "required": true,
+      "minValue": 1,
+      "maxValue": 50,
+      "description": "The media items to add, up to 50 at a time.",
+      "items": {
+        "title": {
+          "type": "string",
+          "displayName": "Title",
+          "required": true,
+          "description": "The item's title, up to 70 characters.",
+          "sampleValue": "[media title]"
+        },
+        "summary": {
+          "type": "string",
+          "displayName": "Summary text",
+          "required": false,
+          "description": "Short text shown under the title, up to 250 characters. Leave it out for none.",
+          "sampleValue": "[media summary]"
+        },
+        "body": {
+          "type": "wysiwyg",
+          "displayName": "Body content",
+          "required": false,
+          "description": "The item's formatted content, as HTML. Leave it out for none.",
+          "sampleValue": "<p>[media body]</p>"
+        },
+        "sourceUrl": {
+          "type": "string",
+          "displayName": "Source URL",
+          "required": false,
+          "description": "Link to where the media comes from. Leave it out for none.",
+          "sampleValue": "https://example.com/source"
+        },
+        "videoUrl": {
+          "type": "string",
+          "displayName": "Video URL",
+          "required": false,
+          "description": "Link to the video: an MP4, WebM or Ogg file, or a YouTube, Vimeo or Dropbox link. Leave it out for no video.",
+          "sampleValue": "https://example.com/video.mp4"
+        },
+        "audioTitle": {
+          "type": "string",
+          "displayName": "Audio title",
+          "required": false,
+          "description": "Title shown in the audio player, up to 70 characters. Leave it out for none.",
+          "sampleValue": "[audio title]"
+        },
+        "artists": {
+          "type": "string",
+          "displayName": "Album artists",
+          "required": false,
+          "description": "Artists shown in the audio player, up to 70 characters. Leave it out for none.",
+          "sampleValue": "[album artists]"
+        },
+        "audioUrl": {
+          "type": "string",
+          "displayName": "Audio URL",
+          "required": false,
+          "description": "Link to the audio file or stream. Leave it out for no audio.",
+          "sampleValue": "https://example.com/audio.mp3"
+        },
+        "thumbnailImage": {
+          "type": "image",
+          "displayName": "Media thumbnail",
+          "required": false,
+          "description": "Picture shown in the list and on the item's page, as a list holding one image. Leave it out for none.",
+          "minValue": 0,
+          "maxValue": 1,
+          "sampleValue": [
+            "[image url]"
+          ]
+        },
+        "audioImage": {
+          "type": "image",
+          "displayName": "Audio image",
+          "required": false,
+          "description": "Picture shown in the audio player, as a list holding one image. Leave it out for none.",
+          "minValue": 0,
+          "maxValue": 1,
+          "sampleValue": [
+            "[image url]"
+          ]
+        },
+        "audioBackgroundImage": {
+          "type": "image",
+          "displayName": "Audio background",
+          "required": false,
+          "description": "Picture shown blurred behind the audio player, as a list holding one image. Leave it out for none.",
+          "minValue": 0,
+          "maxValue": 1,
+          "sampleValue": [
+            "[image url]"
+          ]
+        },
+        "mediaDate": {
+          "type": "date",
+          "displayName": "Media date",
+          "required": false,
+          "description": "The date shown for the item. Leave it out for today.",
+          "sampleValue": "2026-08-17"
+        },
+        "actionLinks": {
+          "type": "action",
+          "displayName": "Actions",
+          "required": false,
+          "description": "Action buttons shown on the item's page, in order, such as opening a website or calling a number. Leave it out for none.",
+          "minValue": 0,
+          "sampleValue": [
+            {
+              "title": "Visit website",
+              "action": "linkToWeb",
+              "url": "https://example.com"
+            }
+          ]
+        }
+      },
+      "sampleValue": [
+        {
+          "title": "[media title]",
+          "videoUrl": "https://example.com/video.mp4"
+        },
+        {
+          "title": "[media title]",
+          "audioUrl": "https://example.com/audio.mp3"
+        }
+      ]
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when all the items are done.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why nothing was added, such as an item missing its title."
+        },
+        "result": {
+          "type": "object",
+          "description": "How each item went.",
+          "properties": {
+            "mediaItems": {
+              "type": "array",
+              "description": "One result per item, in the order they were given.",
+              "items": {
+                "type": "object",
+                "description": "How one item went.",
+                "properties": {
+                  "index": {
+                    "type": "number",
+                    "description": "Which item this is, counting from 0."
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "The item's id, if it was added."
+                  },
+                  "error": {
+                    "type": "string",
+                    "description": "Why it wasn't added, if it wasn't."
+                  }
+                }
+              }
+            },
+            "succeeded": {
+              "type": "number",
+              "description": "How many were added."
+            },
+            "failed": {
+              "type": "number",
+              "description": "How many weren't added."
+            }
+          }
+        }
+      }
+    }
+  }
+}

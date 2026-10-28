@@ -1,0 +1,131 @@
+{
+  "name": "deleteSubcategory",
+  "displayName": "Delete subcategory",
+  "type": "function",
+  "crudMode": "delete",
+  "flags": [
+    "mutable",
+    "dangerous",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "alternatives": [
+    {
+      "operationName": "deleteSubcategoryAdvanced",
+      "label": "Advanced"
+    }
+  ],
+  "context": {
+    "functionName": "deleteSubcategory",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Permanently removes a subcategory, found by its name and its category's name.",
+  "parameters": {
+    "categoryName": {
+      "type": "string",
+      "displayName": "Category name",
+      "required": true,
+      "description": "The exact name of the category.",
+      "sampleValue": "[category name]"
+    },
+    "subcategoryName": {
+      "type": "string",
+      "displayName": "Subcategory name",
+      "required": true,
+      "description": "The exact name of the subcategory, within that category.",
+      "sampleValue": "[subcategory name]"
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the subcategory is deleted.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't deleted, such as no subcategory having that name."
+        },
+        "result": {
+          "type": "object",
+          "description": "The subcategory that was deleted.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The subcategory's id."
+            },
+            "name": {
+              "type": "string",
+              "description": "The subcategory's name."
+            },
+            "deleted": {
+              "type": "boolean",
+              "description": "Whether the subcategory was deleted."
+            },
+            "category": {
+              "type": "object",
+              "description": "The category it belonged to, as it now stands.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The category's id."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "The category's name."
+                },
+                "icon": {
+                  "type": "string",
+                  "description": "Its picture or icon."
+                },
+                "subcategorySortOrder": {
+                  "type": "string",
+                  "description": "How its subcategories are ordered."
+                },
+                "rank": {
+                  "type": "number",
+                  "description": "Its place in the manual order."
+                },
+                "createdOn": {
+                  "type": "datetime",
+                  "description": "When it was added."
+                },
+                "lastUpdatedOn": {
+                  "type": "datetime",
+                  "description": "When it was last changed."
+                },
+                "subcategories": {
+                  "type": "array",
+                  "description": "Its subcategories, in order.",
+                  "items": {
+                    "type": "object",
+                    "description": "One subcategory.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "The subcategory's id."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "The subcategory's name."
+                      },
+                      "rank": {
+                        "type": "number",
+                        "description": "Its place in the list."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "name": "updateMediaItemsCategoryAdvanced",
+  "displayName": "Update media items' category",
+  "type": "function",
+  "crudMode": "update",
+  "flags": [
+    "mutable",
+    "safe",
+    "throttable"
+  ],
+  "usage": "advanced",
+  "availableFor": [
+    "API"
+  ],
+  "context": {
+    "functionName": "updateMediaItemsCategoryAdvanced",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Puts several media items in categories or subcategories, or takes them out, at once.",
+  "parameters": {
+    "mediaItems": {
+      "type": "list",
+      "displayName": "Changes",
+      "required": true,
+      "minValue": 1,
+      "maxValue": 50,
+      "description": "The changes to make, up to 50 at a time.",
+      "items": {
+        "mediaItemId": {
+          "type": "string",
+          "displayName": "Media item id",
+          "required": true,
+          "description": "The media item's id, as shown in search results.",
+          "sampleValue": "[media item id]"
+        },
+        "categoryId": {
+          "type": "string",
+          "displayName": "Category id",
+          "required": true,
+          "description": "The category's id, as shown in search results.",
+          "sampleValue": "[category id]"
+        },
+        "subcategoryId": {
+          "type": "string",
+          "displayName": "Subcategory id",
+          "required": false,
+          "description": "The id of a subcategory of that category. Leave it out for the whole category.",
+          "sampleValue": "[subcategory id]"
+        },
+        "included": {
+          "type": "boolean",
+          "displayName": "In category",
+          "required": true,
+          "description": "Turn on to put the item in the category or subcategory, off to take it out.",
+          "sampleValue": true
+        }
+      },
+      "sampleValue": [
+        {
+          "mediaItemId": "[media item id]",
+          "categoryId": "[category id]",
+          "included": true
+        }
+      ]
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when all the changes are done.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why nothing was changed, such as an id that matches nothing."
+        },
+        "result": {
+          "type": "object",
+          "description": "How each item went.",
+          "properties": {
+            "mediaItems": {
+              "type": "array",
+              "description": "One result per item, in the order they were given.",
+              "items": {
+                "type": "object",
+                "description": "How one item went.",
+                "properties": {
+                  "index": {
+                    "type": "number",
+                    "description": "Which item this is, counting from 0."
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "The item's id, if it was changed."
+                  },
+                  "error": {
+                    "type": "string",
+                    "description": "Why it wasn't changed, if it wasn't."
+                  }
+                }
+              }
+            },
+            "succeeded": {
+              "type": "number",
+              "description": "How many were changed."
+            },
+            "failed": {
+              "type": "number",
+              "description": "How many weren't changed."
+            }
+          }
+        }
+      }
+    }
+  }
+}

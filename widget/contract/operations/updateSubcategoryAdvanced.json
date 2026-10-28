@@ -1,0 +1,138 @@
+{
+  "name": "updateSubcategoryAdvanced",
+  "displayName": "Update subcategory",
+  "type": "function",
+  "crudMode": "update",
+  "flags": [
+    "mutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "advanced",
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "alternatives": [
+    {
+      "operationName": "updateSubcategory",
+      "label": "Basic"
+    }
+  ],
+  "context": {
+    "functionName": "updateSubcategoryAdvanced",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Renames a subcategory, using its id and its category's id.",
+  "parameters": {
+    "categoryId": {
+      "type": "string",
+      "displayName": "Category id",
+      "required": true,
+      "description": "The category's id, as shown in search results.",
+      "sampleValue": "[category id]"
+    },
+    "subcategoryId": {
+      "type": "string",
+      "displayName": "Subcategory id",
+      "required": true,
+      "description": "The subcategory's id, as shown with its category in search results.",
+      "sampleValue": "[subcategory id]"
+    },
+    "newName": {
+      "type": "string",
+      "displayName": "New name",
+      "required": true,
+      "description": "The subcategory's new name.",
+      "sampleValue": "[new subcategory name]"
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the subcategory is renamed.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't renamed, such as no subcategory having that id."
+        },
+        "result": {
+          "type": "object",
+          "description": "The renamed subcategory.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The subcategory's id."
+            },
+            "name": {
+              "type": "string",
+              "description": "The subcategory's name."
+            },
+            "rank": {
+              "type": "number",
+              "description": "Its place in the list."
+            },
+            "category": {
+              "type": "object",
+              "description": "The category it belongs to, as it now stands.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The category's id."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "The category's name."
+                },
+                "icon": {
+                  "type": "string",
+                  "description": "Its picture or icon."
+                },
+                "subcategorySortOrder": {
+                  "type": "string",
+                  "description": "How its subcategories are ordered."
+                },
+                "rank": {
+                  "type": "number",
+                  "description": "Its place in the manual order."
+                },
+                "createdOn": {
+                  "type": "datetime",
+                  "description": "When it was added."
+                },
+                "lastUpdatedOn": {
+                  "type": "datetime",
+                  "description": "When it was last changed."
+                },
+                "subcategories": {
+                  "type": "array",
+                  "description": "Its subcategories, in order.",
+                  "items": {
+                    "type": "object",
+                    "description": "One subcategory.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "The subcategory's id."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "The subcategory's name."
+                      },
+                      "rank": {
+                        "type": "number",
+                        "description": "Its place in the list."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
