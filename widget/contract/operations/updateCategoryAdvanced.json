@@ -1,0 +1,169 @@
+{
+  "name": "updateCategoryAdvanced",
+  "displayName": "Update category",
+  "type": "function",
+  "crudMode": "update",
+  "flags": [
+    "mutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "advanced",
+  "alternatives": [
+    {
+      "operationName": "updateCategory",
+      "label": "Basic"
+    }
+  ],
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "updateCategoryAdvanced",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Changes a category's name, icon or subcategory order, using the category's id.",
+  "parameters": {
+    "categoryId": {
+      "type": "string",
+      "displayName": "Category id",
+      "required": true,
+      "description": "The category's id, as shown in search results.",
+      "sampleValue": "[category id]"
+    },
+    "newName": {
+      "type": "string",
+      "displayName": "New name",
+      "required": false,
+      "description": "The category's new name. Leave it out to keep the current one.",
+      "sampleValue": "[new category name]"
+    },
+    "newIcon": {
+      "type": "image",
+      "displayName": "New icon",
+      "required": false,
+      "nullable": true,
+      "minValue": 0,
+      "maxValue": 1,
+      "description": "The category's new icon, as a list holding one image or icon. Leave it out to keep the current one, or pass an empty list to remove it.",
+      "sampleValue": [
+        "[image url]"
+      ]
+    },
+    "newSubcategorySortBy": {
+      "type": "select",
+      "displayName": "Subcategory order",
+      "required": false,
+      "description": "How the category's subcategories are ordered; they are reordered right away. Leave it out to keep the current order.",
+      "enums": [
+        {
+          "label": "Manual",
+          "value": "Manually"
+        },
+        {
+          "label": "Subcategory Title A-Z",
+          "value": "Subcategory Title A-Z"
+        },
+        {
+          "label": "Subcategory Title Z-A",
+          "value": "Subcategory Title Z-A"
+        },
+        {
+          "label": "Subcategory Date Asc",
+          "value": "Subcategory Date Asc"
+        },
+        {
+          "label": "Subcategory Date Desc",
+          "value": "Subcategory Date Desc"
+        },
+        {
+          "label": "Newest",
+          "value": "Newest"
+        },
+        {
+          "label": "Oldest",
+          "value": "Oldest"
+        }
+      ],
+      "allowEnumCustomOption": false,
+      "sampleValue": "Subcategory Title A-Z"
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the category is changed.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't changed, such as no category having that name."
+        },
+        "result": {
+          "type": "object",
+          "description": "The category as saved.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The category's id."
+            },
+            "data": {
+              "type": "object",
+              "description": "The category's details.",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The category's name."
+                },
+                "icon": {
+                  "type": "string",
+                  "description": "The category's icon or image."
+                },
+                "subcategories": {
+                  "type": "array",
+                  "description": "The category's subcategories, in order.",
+                  "items": {
+                    "type": "object",
+                    "description": "One subcategory.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "The subcategory's id."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "The subcategory's name."
+                      },
+                      "rank": {
+                        "type": "number",
+                        "description": "Its place in the manual order."
+                      }
+                    }
+                  }
+                },
+                "sortBy": {
+                  "type": "string",
+                  "description": "How its subcategories are ordered."
+                },
+                "rank": {
+                  "type": "number",
+                  "description": "Its place in the manual order."
+                },
+                "createdOn": {
+                  "type": "datetime",
+                  "description": "When the category was added."
+                },
+                "lastUpdatedOn": {
+                  "type": "datetime",
+                  "description": "When the category was last changed."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

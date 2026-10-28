@@ -669,6 +669,7 @@
                             GlobalPlaylist.insertAndUpdateAll(itemsToAdd).then(() => {
                                 for (let item of itemsToAdd) {
                                     $rootScope.globalPlaylistItems.playlist[item.id] = item.data;
+                                    sendAddedToPlaylist(item);
                                 }
 
                                 var message = (itemsToAdd.length == WidgetHome.items.length) ?
@@ -685,6 +686,16 @@
                         }
                     }
                 }
+
+                const sendAddedToPlaylist = (item) => {
+                    const user = $rootScope.user;
+                    if (buildfire.services && buildfire.services.contract) buildfire.services.contract.events.send('mediaAddedToPlaylist', {
+                        mediaId: item.id,
+                        title: item.data.title || null,
+                        imageUrl: item.data.topImage || null,
+                        user: user ? { userId: user._id, displayName: user.displayName || null, email: user.email || null } : null
+                    });
+                };
 
                 $rootScope.toggleGlobalPlaylistItem = (item, callback) => {
                     if ($rootScope.isInGlobalPlaylist(item.id)) {
@@ -708,6 +719,7 @@
                             // Save Item in the globalPlaylist
                             GlobalPlaylist.insertAndUpdate(item).then(() => {
                                 $rootScope.globalPlaylistItems.playlist[item.id] = item.data;
+                                sendAddedToPlaylist(item);
                                 buildfire.dialog.toast({
                                     message: getString('globalPlaylist.itemAdded'),
                                     type: 'success',

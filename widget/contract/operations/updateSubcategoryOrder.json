@@ -1,0 +1,87 @@
+{
+  "name": "updateSubcategoryOrder",
+  "displayName": "Move subcategory",
+  "type": "function",
+  "crudMode": "update",
+  "flags": [
+    "mutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "alternatives": [
+    {
+      "operationName": "updateSubcategoryOrderAdvanced",
+      "label": "Advanced"
+    }
+  ],
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "updateSubcategoryOrder",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Moves a subcategory to another place within its category.",
+  "parameters": {
+    "categoryName": {
+      "type": "string",
+      "displayName": "Category name",
+      "required": true,
+      "description": "The exact name of the category it is in.",
+      "sampleValue": "[category name]"
+    },
+    "subcategoryName": {
+      "type": "string",
+      "displayName": "Subcategory name",
+      "required": true,
+      "description": "The exact name of the subcategory to move.",
+      "sampleValue": "[subcategory name]"
+    },
+    "position": {
+      "type": "number",
+      "displayName": "Position",
+      "required": true,
+      "minValue": 1,
+      "description": "Where to put the subcategory in the manual order, counting from 1 for the top.",
+      "sampleValue": 1
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the subcategory is moved.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't moved, such as no subcategory having that name."
+        },
+        "result": {
+          "type": "object",
+          "description": "The subcategory in its new place.",
+          "properties": {
+            "categoryId": {
+              "type": "string",
+              "description": "The id of the category it belongs to."
+            },
+            "id": {
+              "type": "string",
+              "description": "The subcategory's id."
+            },
+            "name": {
+              "type": "string",
+              "description": "The subcategory's name."
+            },
+            "rank": {
+              "type": "number",
+              "description": "Its place in the manual order."
+            }
+          }
+        }
+      }
+    }
+  }
+}

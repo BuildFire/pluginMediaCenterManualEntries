@@ -12,6 +12,13 @@ var bookmarks = {
         };
         var callback = function callback(err, data) {
             if (err) throw err;
+            var user = $scope.$root && $scope.$root.user;
+            if (buildfire.services && buildfire.services.contract) buildfire.services.contract.events.send('mediaFavorited', {
+                mediaId: item.id,
+                title: item.data.title || null,
+                imageUrl: item.data.topImage || null,
+                user: user ? { userId: user._id, displayName: user.displayName || null, email: user.email || null } : null
+            });
             if ($scope.WidgetHome) {
                 $scope.WidgetHome.items.map(function (i) {
                     var isBookmarked = i.id === item.id;

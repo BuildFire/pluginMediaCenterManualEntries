@@ -1,0 +1,102 @@
+{
+  "name": "createPlaylistItemsAdvanced",
+  "displayName": "Add items to playlist",
+  "type": "function",
+  "crudMode": "create",
+  "flags": [
+    "mutable",
+    "safe",
+    "throttable"
+  ],
+  "usage": "advanced",
+  "availableFor": [
+    "API"
+  ],
+  "context": {
+    "functionName": "createPlaylistItemsAdvanced",
+    "hosts": [
+      "widgetBackground",
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Adds several audio or video items to a person's playlist at once, on behalf of the app.",
+  "parameters": {
+    "userId": {
+      "type": "user",
+      "displayName": "User",
+      "required": true,
+      "description": "The person whose playlist it is, by their id or email address.",
+      "sampleValue": "[user id]"
+    },
+    "playlistItems": {
+      "type": "list",
+      "displayName": "Playlist items",
+      "required": true,
+      "minValue": 1,
+      "maxValue": 50,
+      "description": "The media items to add, up to 50 at a time.",
+      "items": {
+        "mediaId": {
+          "type": "string",
+          "displayName": "Media id",
+          "required": true,
+          "description": "The media item's id, as shown in search results.",
+          "sampleValue": "[media id]"
+        }
+      },
+      "sampleValue": [
+        {
+          "mediaId": "[media id]"
+        }
+      ]
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when all the items are done.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why nothing was added, such as an unknown media item."
+        },
+        "result": {
+          "type": "object",
+          "description": "How each item went.",
+          "properties": {
+            "playlistItems": {
+              "type": "array",
+              "description": "One result per item, in the order they were given.",
+              "items": {
+                "type": "object",
+                "description": "How one item went.",
+                "properties": {
+                  "index": {
+                    "type": "number",
+                    "description": "Which item this is, counting from 0."
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "The item's id, if it was added."
+                  },
+                  "error": {
+                    "type": "string",
+                    "description": "Why it wasn't added, if it wasn't."
+                  }
+                }
+              }
+            },
+            "succeeded": {
+              "type": "number",
+              "description": "How many were added."
+            },
+            "failed": {
+              "type": "number",
+              "description": "How many weren't added."
+            }
+          }
+        }
+      }
+    }
+  }
+}

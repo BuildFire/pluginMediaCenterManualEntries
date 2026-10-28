@@ -1,0 +1,110 @@
+{
+  "name": "updateSubcategoriesAdvanced",
+  "displayName": "Rename subcategories",
+  "type": "function",
+  "crudMode": "update",
+  "flags": [
+    "mutable",
+    "safe",
+    "throttable"
+  ],
+  "usage": "advanced",
+  "availableFor": [
+    "API"
+  ],
+  "context": {
+    "functionName": "updateSubcategoriesAdvanced",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Renames several subcategories at once.",
+  "parameters": {
+    "subcategories": {
+      "type": "list",
+      "displayName": "Subcategories",
+      "required": true,
+      "minValue": 1,
+      "maxValue": 50,
+      "description": "The subcategories to rename, up to 50 at a time.",
+      "items": {
+        "categoryId": {
+          "type": "string",
+          "displayName": "Category id",
+          "required": true,
+          "description": "The id of the category it is in, as shown in search results.",
+          "sampleValue": "[category id]"
+        },
+        "subcategoryId": {
+          "type": "string",
+          "displayName": "Subcategory id",
+          "required": true,
+          "description": "The subcategory's id, as shown in search results.",
+          "sampleValue": "[subcategory id]"
+        },
+        "newName": {
+          "type": "string",
+          "displayName": "New name",
+          "required": true,
+          "description": "The subcategory's new name.",
+          "sampleValue": "[new subcategory name]"
+        }
+      },
+      "sampleValue": [
+        {
+          "categoryId": "[category id]",
+          "subcategoryId": "[subcategory id]",
+          "newName": "[new subcategory name]"
+        }
+      ]
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when all the subcategories are done.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why nothing was renamed, such as an unknown subcategory."
+        },
+        "result": {
+          "type": "object",
+          "description": "How each subcategory went.",
+          "properties": {
+            "subcategories": {
+              "type": "array",
+              "description": "One result per subcategory, in the order they were given.",
+              "items": {
+                "type": "object",
+                "description": "How one subcategory went.",
+                "properties": {
+                  "index": {
+                    "type": "number",
+                    "description": "Which subcategory this is, counting from 0."
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "The subcategory's id, if it was renamed."
+                  },
+                  "error": {
+                    "type": "string",
+                    "description": "Why it wasn't renamed, if it wasn't."
+                  }
+                }
+              }
+            },
+            "succeeded": {
+              "type": "number",
+              "description": "How many were renamed."
+            },
+            "failed": {
+              "type": "number",
+              "description": "How many weren't renamed."
+            }
+          }
+        }
+      }
+    }
+  }
+}

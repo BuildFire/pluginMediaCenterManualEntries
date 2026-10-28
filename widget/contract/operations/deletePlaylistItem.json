@@ -1,0 +1,72 @@
+{
+  "name": "deletePlaylistItem",
+  "displayName": "Remove from playlist",
+  "type": "function",
+  "crudMode": "delete",
+  "flags": [
+    "mutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "alternatives": [
+    {
+      "operationName": "deletePlaylistItemAdvanced",
+      "label": "Advanced"
+    }
+  ],
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "deletePlaylistItem",
+    "hosts": [
+      "widgetBackground",
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Removes a media item from a person's playlist, on behalf of the app.",
+  "parameters": {
+    "userId": {
+      "type": "user",
+      "displayName": "User",
+      "required": true,
+      "description": "The person whose playlist it is, by their id or email address.",
+      "sampleValue": "[user id]"
+    },
+    "title": {
+      "type": "string",
+      "displayName": "Media title",
+      "required": true,
+      "description": "The exact title of the playlist item to remove.",
+      "sampleValue": "[media title]"
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the item is removed.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't removed, such as no playlist item having that title."
+        },
+        "result": {
+          "type": "object",
+          "description": "The removed item.",
+          "properties": {
+            "mediaId": {
+              "type": "string",
+              "description": "The media item's id."
+            },
+            "title": {
+              "type": "string",
+              "description": "The media item's title."
+            }
+          }
+        }
+      }
+    }
+  }
+}

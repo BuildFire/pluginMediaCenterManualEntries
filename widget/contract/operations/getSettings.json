@@ -1,0 +1,167 @@
+{
+  "name": "getSettings",
+  "displayName": "Get settings",
+  "type": "function",
+  "crudMode": "read",
+  "flags": [
+    "immutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "getSettings",
+    "hosts": [
+      "widgetBackground",
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Shows the media center's current settings and design.",
+  "parameters": {
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the settings are read.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it didn't work, if it didn't."
+        },
+        "result": {
+          "type": "object",
+          "description": "The current settings.",
+          "properties": {
+            "content": {
+              "type": "object",
+              "description": "The content and feature settings.",
+              "properties": {
+                "descriptionHTML": {
+                  "type": "string",
+                  "description": "The text shown above the media list."
+                },
+                "images": {
+                  "type": "array",
+                  "description": "The carousel shown above the media list.",
+                  "items": {
+                    "type": "object",
+                    "description": "One carousel image and what tapping it does.",
+                    "properties": {}
+                  }
+                },
+                "sortBy": {
+                  "type": "string",
+                  "description": "How the media list is ordered."
+                },
+                "sortCategoriesBy": {
+                  "type": "string",
+                  "description": "How the categories are ordered."
+                },
+                "allowShare": {
+                  "type": "boolean",
+                  "description": "Whether people can share media."
+                },
+                "allowFavorites": {
+                  "type": "boolean",
+                  "description": "Whether people can keep favorites."
+                },
+                "allowAddingNotes": {
+                  "type": "boolean",
+                  "description": "Whether people can add personal notes."
+                },
+                "allowSource": {
+                  "type": "boolean",
+                  "description": "Whether the media source link is shown."
+                },
+                "allowOfflineDownload": {
+                  "type": "boolean",
+                  "description": "Whether people can download media for offline use."
+                },
+                "enableFiltering": {
+                  "type": "boolean",
+                  "description": "Whether people can filter media by category."
+                },
+                "showViewCount": {
+                  "type": "boolean",
+                  "description": "Whether view counts are shown."
+                },
+                "indicatePlayedItems": {
+                  "type": "boolean",
+                  "description": "Whether played items are highlighted."
+                },
+                "globalPlaylist": {
+                  "type": "boolean",
+                  "description": "Whether people can add media to their playlist."
+                },
+                "showGlobalAddAllToPlaylistButton": {
+                  "type": "boolean",
+                  "description": "Whether the add-all-to-playlist button is shown."
+                },
+                "showGlobalPlaylistNavButton": {
+                  "type": "boolean",
+                  "description": "Whether the go-to-playlist button is shown."
+                },
+                "autoPlay": {
+                  "type": "boolean",
+                  "description": "Whether the next item plays on its own."
+                },
+                "autoPlayDelay": {
+                  "type": "object",
+                  "description": "The pause before the next item plays.",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "The pause as shown."
+                    },
+                    "value": {
+                      "type": "number",
+                      "description": "The pause in seconds."
+                    }
+                  }
+                },
+                "shuffleAudioListItems": {
+                  "type": "boolean",
+                  "description": "Whether the list is shuffled while playing."
+                },
+                "forceAutoPlay": {
+                  "type": "boolean",
+                  "description": "Whether all audio is added to the player's playlist."
+                },
+                "startWithAutoJumpByDefault": {
+                  "type": "boolean",
+                  "description": "Whether playback resumes from the last position."
+                }
+              }
+            },
+            "design": {
+              "type": "object",
+              "description": "The look of the media list and pages.",
+              "properties": {
+                "listLayout": {
+                  "type": "string",
+                  "description": "The layout of the media list."
+                },
+                "itemLayout": {
+                  "type": "string",
+                  "description": "The layout of a media item's page."
+                },
+                "backgroundImage": {
+                  "type": "string",
+                  "description": "The background image."
+                },
+                "skipMediaPage": {
+                  "type": "boolean",
+                  "description": "Whether tapping an item skips its info page."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

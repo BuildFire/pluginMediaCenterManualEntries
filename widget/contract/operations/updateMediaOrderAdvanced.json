@@ -1,0 +1,72 @@
+{
+  "name": "updateMediaOrderAdvanced",
+  "displayName": "Move media item",
+  "type": "function",
+  "crudMode": "update",
+  "flags": [
+    "mutable",
+    "safe",
+    "throttable"
+  ],
+  "usage": "advanced",
+  "alternatives": [
+    {
+      "operationName": "updateMediaOrder",
+      "label": "Basic"
+    }
+  ],
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "updateMediaOrderAdvanced",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Moves a media item to another place in the manual order, using the media item's id.",
+  "parameters": {
+    "mediaId": {
+      "type": "string",
+      "displayName": "Media id",
+      "required": true,
+      "description": "The media item's id, as shown in search results.",
+      "sampleValue": "[media id]"
+    },
+    "position": {
+      "type": "number",
+      "displayName": "Position",
+      "required": true,
+      "minValue": 1,
+      "description": "Where to put the media item in the manual order, counting from 1 for the top.",
+      "sampleValue": 1
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the media item is moved.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't moved, such as no media item having that title."
+        },
+        "result": {
+          "type": "object",
+          "description": "The media item's new place.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The media item's id."
+            },
+            "rank": {
+              "type": "number",
+              "description": "Its new place in the manual order, counting from 1."
+            }
+          }
+        }
+      }
+    }
+  }
+}

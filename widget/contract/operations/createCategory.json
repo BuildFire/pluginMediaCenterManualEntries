@@ -1,0 +1,117 @@
+{
+  "name": "createCategory",
+  "displayName": "Create category",
+  "type": "function",
+  "crudMode": "create",
+  "flags": [
+    "mutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "createCategory",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Adds a media category.",
+  "parameters": {
+    "name": {
+      "type": "string",
+      "displayName": "Category name",
+      "required": true,
+      "description": "The new category's name.",
+      "sampleValue": "[category name]"
+    },
+    "icon": {
+      "type": "image",
+      "displayName": "Icon",
+      "required": false,
+      "minValue": 0,
+      "maxValue": 1,
+      "description": "The category's icon, as a list holding one image or icon. Leave it out for no icon.",
+      "sampleValue": [
+        "[image url]"
+      ]
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the category is added.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't added, such as a missing name."
+        },
+        "result": {
+          "type": "object",
+          "description": "The new category.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The category's id."
+            },
+            "data": {
+              "type": "object",
+              "description": "The category's details.",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The category's name."
+                },
+                "icon": {
+                  "type": "string",
+                  "description": "The category's icon or image."
+                },
+                "subcategories": {
+                  "type": "array",
+                  "description": "The category's subcategories, in order.",
+                  "items": {
+                    "type": "object",
+                    "description": "One subcategory.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "The subcategory's id."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "The subcategory's name."
+                      },
+                      "rank": {
+                        "type": "number",
+                        "description": "Its place in the manual order."
+                      }
+                    }
+                  }
+                },
+                "sortBy": {
+                  "type": "string",
+                  "description": "How its subcategories are ordered."
+                },
+                "rank": {
+                  "type": "number",
+                  "description": "Its place in the manual order."
+                },
+                "createdOn": {
+                  "type": "datetime",
+                  "description": "When the category was added."
+                },
+                "lastUpdatedOn": {
+                  "type": "datetime",
+                  "description": "When the category was last changed."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

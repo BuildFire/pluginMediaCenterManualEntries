@@ -1,0 +1,86 @@
+{
+  "name": "updateSubcategory",
+  "displayName": "Rename subcategory",
+  "type": "function",
+  "crudMode": "update",
+  "flags": [
+    "mutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "alternatives": [
+    {
+      "operationName": "updateSubcategoryAdvanced",
+      "label": "Advanced"
+    }
+  ],
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "updateSubcategory",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Renames a subcategory.",
+  "parameters": {
+    "categoryName": {
+      "type": "string",
+      "displayName": "Category name",
+      "required": true,
+      "description": "The exact name of the category it is in.",
+      "sampleValue": "[category name]"
+    },
+    "subcategoryName": {
+      "type": "string",
+      "displayName": "Subcategory name",
+      "required": true,
+      "description": "The exact current name of the subcategory to rename.",
+      "sampleValue": "[subcategory name]"
+    },
+    "newName": {
+      "type": "string",
+      "displayName": "New name",
+      "required": true,
+      "description": "The subcategory's new name.",
+      "sampleValue": "[new subcategory name]"
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the subcategory is renamed.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't renamed, such as no subcategory having that name."
+        },
+        "result": {
+          "type": "object",
+          "description": "The renamed subcategory.",
+          "properties": {
+            "categoryId": {
+              "type": "string",
+              "description": "The id of the category it belongs to."
+            },
+            "id": {
+              "type": "string",
+              "description": "The subcategory's id."
+            },
+            "name": {
+              "type": "string",
+              "description": "The subcategory's name."
+            },
+            "rank": {
+              "type": "number",
+              "description": "Its place in the manual order."
+            }
+          }
+        }
+      }
+    }
+  }
+}

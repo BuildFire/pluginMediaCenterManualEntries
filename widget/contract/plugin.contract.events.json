@@ -1,0 +1,92 @@
+{
+  "events": [
+    {
+      "name": "mediaFavorited",
+      "displayName": "Media Favorited",
+      "description": "A media item was saved as a favorite.",
+      "data": {
+        "mediaId": {
+          "type": "string",
+          "displayName": "Media ID",
+          "description": "The media item's id."
+        },
+        "title": {
+          "type": "string",
+          "displayName": "Title",
+          "description": "The media item's title."
+        },
+        "imageUrl": {
+          "type": "string",
+          "displayName": "Image",
+          "description": "The media item's list image."
+        },
+        "user": {
+          "type": "object",
+          "displayName": "User",
+          "description": "Who saved it, when signed in.",
+          "properties": {
+            "userId": {
+              "type": "string",
+              "displayName": "User ID",
+              "description": "Their id."
+            },
+            "displayName": {
+              "type": "string",
+              "displayName": "Name",
+              "description": "Their name."
+            },
+            "email": {
+              "type": "string",
+              "displayName": "Email",
+              "description": "Their email."
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "mediaAddedToPlaylist",
+      "displayName": "Media Added To Playlist",
+      "description": "A media item was added to a person's playlist.",
+      "data": {
+        "mediaId": {
+          "type": "string",
+          "displayName": "Media ID",
+          "description": "The media item's id."
+        },
+        "title": {
+          "type": "string",
+          "displayName": "Title",
+          "description": "The media item's title."
+        },
+        "imageUrl": {
+          "type": "string",
+          "displayName": "Image",
+          "description": "The media item's list image."
+        },
+        "user": {
+          "type": "object",
+          "displayName": "User",
+          "description": "Whose playlist it was added to.",
+          "properties": {
+            "userId": {
+              "type": "string",
+              "displayName": "User ID",
+              "description": "Their id."
+            },
+            "displayName": {
+              "type": "string",
+              "displayName": "Name",
+              "description": "Their name."
+            },
+            "email": {
+              "type": "string",
+              "displayName": "Email",
+              "description": "Their email."
+            }
+          }
+        }
+      }
+    }
+  ]
+}

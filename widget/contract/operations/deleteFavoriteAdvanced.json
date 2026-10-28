@@ -1,0 +1,63 @@
+{
+  "name": "deleteFavoriteAdvanced",
+  "displayName": "Remove favorite",
+  "type": "function",
+  "crudMode": "delete",
+  "flags": [
+    "mutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "advanced",
+  "alternatives": [
+    {
+      "operationName": "deleteFavorite",
+      "label": "Basic"
+    }
+  ],
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "deleteFavoriteAdvanced",
+    "hosts": [
+      "widgetBackground"
+    ]
+  },
+  "description": "Removes a media item from the favorites on this app, using the media item's id.",
+  "parameters": {
+    "mediaId": {
+      "type": "string",
+      "displayName": "Media id",
+      "required": true,
+      "description": "The media item's id, as shown in the favorites.",
+      "sampleValue": "[media id]"
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the favorite is removed.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't removed, such as the item not being a favorite."
+        },
+        "result": {
+          "type": "object",
+          "description": "The removed favorite.",
+          "properties": {
+            "mediaId": {
+              "type": "string",
+              "description": "The media item's id."
+            },
+            "title": {
+              "type": "string",
+              "description": "The media item's title."
+            }
+          }
+        }
+      }
+    }
+  }
+}

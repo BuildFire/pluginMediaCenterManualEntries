@@ -1,0 +1,93 @@
+{
+  "name": "createFavoritesAdvanced",
+  "displayName": "Add favorites",
+  "type": "function",
+  "crudMode": "create",
+  "flags": [
+    "mutable",
+    "safe",
+    "throttable"
+  ],
+  "usage": "advanced",
+  "availableFor": [
+    "API"
+  ],
+  "context": {
+    "functionName": "createFavoritesAdvanced",
+    "hosts": [
+      "widgetBackground"
+    ]
+  },
+  "description": "Saves several media items as favorites at once.",
+  "parameters": {
+    "favorites": {
+      "type": "list",
+      "displayName": "Favorites",
+      "required": true,
+      "minValue": 1,
+      "maxValue": 50,
+      "description": "The media items to save, up to 50 at a time.",
+      "items": {
+        "mediaId": {
+          "type": "string",
+          "displayName": "Media id",
+          "required": true,
+          "description": "The media item's id, as shown in search results.",
+          "sampleValue": "[media id]"
+        }
+      },
+      "sampleValue": [
+        {
+          "mediaId": "[media id]"
+        }
+      ]
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when all the favorites are done.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why nothing was saved, such as an unknown media item."
+        },
+        "result": {
+          "type": "object",
+          "description": "How each favorite went.",
+          "properties": {
+            "favorites": {
+              "type": "array",
+              "description": "One result per favorite, in the order they were given.",
+              "items": {
+                "type": "object",
+                "description": "How one favorite went.",
+                "properties": {
+                  "index": {
+                    "type": "number",
+                    "description": "Which favorite this is, counting from 0."
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "The favorite's id, if it was saved."
+                  },
+                  "error": {
+                    "type": "string",
+                    "description": "Why it wasn't saved, if it wasn't."
+                  }
+                }
+              }
+            },
+            "succeeded": {
+              "type": "number",
+              "description": "How many were saved."
+            },
+            "failed": {
+              "type": "number",
+              "description": "How many weren't saved."
+            }
+          }
+        }
+      }
+    }
+  }
+}

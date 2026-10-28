@@ -1,0 +1,79 @@
+{
+  "name": "createSubcategory",
+  "displayName": "Create subcategory",
+  "type": "function",
+  "crudMode": "create",
+  "flags": [
+    "mutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "alternatives": [
+    {
+      "operationName": "createSubcategoryAdvanced",
+      "label": "Advanced"
+    }
+  ],
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "createSubcategory",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Adds a subcategory at the end of a category.",
+  "parameters": {
+    "categoryName": {
+      "type": "string",
+      "displayName": "Category name",
+      "required": true,
+      "description": "The exact name of the category to add it to.",
+      "sampleValue": "[category name]"
+    },
+    "name": {
+      "type": "string",
+      "displayName": "Subcategory name",
+      "required": true,
+      "description": "The new subcategory's name.",
+      "sampleValue": "[subcategory name]"
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the subcategory is added.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't added, such as no category having that name."
+        },
+        "result": {
+          "type": "object",
+          "description": "The new subcategory.",
+          "properties": {
+            "categoryId": {
+              "type": "string",
+              "description": "The id of the category it belongs to."
+            },
+            "id": {
+              "type": "string",
+              "description": "The subcategory's id."
+            },
+            "name": {
+              "type": "string",
+              "description": "The subcategory's name."
+            },
+            "rank": {
+              "type": "number",
+              "description": "Its place in the manual order."
+            }
+          }
+        }
+      }
+    }
+  }
+}

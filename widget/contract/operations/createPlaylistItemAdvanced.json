@@ -1,0 +1,72 @@
+{
+  "name": "createPlaylistItemAdvanced",
+  "displayName": "Add to playlist",
+  "type": "function",
+  "crudMode": "create",
+  "flags": [
+    "mutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "advanced",
+  "alternatives": [
+    {
+      "operationName": "createPlaylistItem",
+      "label": "Basic"
+    }
+  ],
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "createPlaylistItemAdvanced",
+    "hosts": [
+      "widgetBackground",
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Adds an audio or video item to a person's playlist on behalf of the app, using the media item's id.",
+  "parameters": {
+    "userId": {
+      "type": "user",
+      "displayName": "User",
+      "required": true,
+      "description": "The person whose playlist it is, by their id or email address.",
+      "sampleValue": "[user id]"
+    },
+    "mediaId": {
+      "type": "string",
+      "displayName": "Media id",
+      "required": true,
+      "description": "The media item's id, as shown in search results.",
+      "sampleValue": "[media id]"
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the item is added.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't added, such as an unknown media item."
+        },
+        "result": {
+          "type": "object",
+          "description": "The added item.",
+          "properties": {
+            "mediaId": {
+              "type": "string",
+              "description": "The media item's id."
+            },
+            "title": {
+              "type": "string",
+              "description": "The media item's title."
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "name": "createCategoriesAdvanced",
+  "displayName": "Create categories",
+  "type": "function",
+  "crudMode": "create",
+  "flags": [
+    "mutable",
+    "safe",
+    "throttable"
+  ],
+  "usage": "advanced",
+  "availableFor": [
+    "API"
+  ],
+  "context": {
+    "functionName": "createCategoriesAdvanced",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Adds several media categories at once.",
+  "parameters": {
+    "categories": {
+      "type": "list",
+      "displayName": "Categories",
+      "required": true,
+      "minValue": 1,
+      "maxValue": 50,
+      "description": "The categories to add, up to 50 at a time.",
+      "items": {
+        "name": {
+          "type": "string",
+          "displayName": "Category name",
+          "required": true,
+          "description": "The new category's name.",
+          "sampleValue": "[category name]"
+        },
+        "icon": {
+          "type": "image",
+          "displayName": "Icon",
+          "required": false,
+          "minValue": 0,
+          "maxValue": 1,
+          "description": "The category's icon, as a list holding one image or icon. Leave it out for no icon.",
+          "sampleValue": [
+            "[image url]"
+          ]
+        }
+      },
+      "sampleValue": [
+        {
+          "name": "[category name]"
+        },
+        {
+          "name": "[category name]",
+          "icon": [
+            "[image url]"
+          ]
+        }
+      ]
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when all the categories are done.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why nothing was added, such as a category missing its name."
+        },
+        "result": {
+          "type": "object",
+          "description": "How each category went.",
+          "properties": {
+            "categories": {
+              "type": "array",
+              "description": "One result per category, in the order they were given.",
+              "items": {
+                "type": "object",
+                "description": "How one category went.",
+                "properties": {
+                  "index": {
+                    "type": "number",
+                    "description": "Which category this is, counting from 0."
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "The category's id, if it was added."
+                  },
+                  "error": {
+                    "type": "string",
+                    "description": "Why it wasn't added, if it wasn't."
+                  }
+                }
+              }
+            },
+            "succeeded": {
+              "type": "number",
+              "description": "How many were added."
+            },
+            "failed": {
+              "type": "number",
+              "description": "How many weren't added."
+            }
+          }
+        }
+      }
+    }
+  }
+}

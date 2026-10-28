@@ -1,0 +1,139 @@
+{
+  "name": "searchCategories",
+  "displayName": "Search categories",
+  "type": "datastore",
+  "crudMode": "read",
+  "flags": [
+    "immutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "hosts": [
+      "widgetBackground",
+      "controlBackground",
+      "headlessSdk"
+    ],
+    "collection": "CategoryContent",
+    "operationType": "search",
+    "scope": "instance",
+    "query": {
+      "filter": {
+        "$json.name": "$params.name"
+      },
+      "page": "$params.page",
+      "pageSize": 50,
+      "recordCount": true
+    }
+  },
+  "description": "Shows the media categories with their subcategories, 50 at a time.",
+  "parameters": {
+    "name": {
+      "type": "string",
+      "displayName": "Category name",
+      "required": false,
+      "description": "Only show categories with exactly this name. Leave it out to show every category.",
+      "sampleValue": "[category name]"
+    },
+    "page": {
+      "type": "number",
+      "displayName": "Page",
+      "required": false,
+      "minValue": 0,
+      "description": "Which page of 50 to show, counting from 0. Leave it out for the first page.",
+      "sampleValue": 0
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the search is done.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it didn't work, if it didn't."
+        },
+        "result": {
+          "type": "object",
+          "description": "The categories found.",
+          "properties": {
+            "result": {
+              "type": "array",
+              "description": "The categories on this page.",
+              "items": {
+                "type": "object",
+                "description": "One category.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "The category's id."
+                  },
+                  "data": {
+                    "type": "object",
+                    "description": "The category's details.",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "The category's name."
+                      },
+                      "icon": {
+                        "type": "string",
+                        "description": "The category's icon or image."
+                      },
+                      "subcategories": {
+                        "type": "array",
+                        "description": "The category's subcategories, in order.",
+                        "items": {
+                          "type": "object",
+                          "description": "One subcategory.",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "The subcategory's id."
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "The subcategory's name."
+                            },
+                            "rank": {
+                              "type": "number",
+                              "description": "Its place in the manual order."
+                            }
+                          }
+                        }
+                      },
+                      "sortBy": {
+                        "type": "string",
+                        "description": "How its subcategories are ordered."
+                      },
+                      "rank": {
+                        "type": "number",
+                        "description": "Its place in the manual order."
+                      },
+                      "createdOn": {
+                        "type": "datetime",
+                        "description": "When the category was added."
+                      },
+                      "lastUpdatedOn": {
+                        "type": "datetime",
+                        "description": "When the category was last changed."
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "totalRecord": {
+              "type": "number",
+              "description": "How many categories match in all."
+            }
+          }
+        }
+      }
+    }
+  }
+}

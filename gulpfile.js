@@ -63,6 +63,7 @@ const jsTasks = [
             "widget/**/**/**/*.js",
             "!widget/js/**",
             "!widget/assets/**",
+            "!widget/contract/**",
         ],
         dest: "/widget",
     },
@@ -181,6 +182,13 @@ gulp.task("widgetHtml", function () {
     );
 });
 
+// The contract ships as is: the platform fetches its JSON files and loads plugin.contract.js by these paths.
+gulp.task("contract", function () {
+    return gulp
+      .src(["widget/contract/**/*"], { base: "." })
+      .pipe(gulp.dest(destinationFolder));
+});
+
 gulp.task("resources", function () {
     return gulp
       .src(["resources/**/*", "resources/*", "plugin.json"], { base: "." })
@@ -198,6 +206,7 @@ var buildTasksToRun = [
     "assetsJs",
     "contentAssetsJs",
     "designAssets",
+    "contract",
 ];
 
 cssTasks.forEach(function (task) {

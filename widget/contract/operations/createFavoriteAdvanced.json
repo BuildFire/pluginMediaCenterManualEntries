@@ -1,0 +1,63 @@
+{
+  "name": "createFavoriteAdvanced",
+  "displayName": "Add favorite",
+  "type": "function",
+  "crudMode": "create",
+  "flags": [
+    "mutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "advanced",
+  "alternatives": [
+    {
+      "operationName": "createFavorite",
+      "label": "Basic"
+    }
+  ],
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "createFavoriteAdvanced",
+    "hosts": [
+      "widgetBackground"
+    ]
+  },
+  "description": "Saves a media item as a favorite on this app, using the media item's id.",
+  "parameters": {
+    "mediaId": {
+      "type": "string",
+      "displayName": "Media id",
+      "required": true,
+      "description": "The media item's id, as shown in search results.",
+      "sampleValue": "[media id]"
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the favorite is saved.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't saved, such as an unknown media item."
+        },
+        "result": {
+          "type": "object",
+          "description": "The saved favorite.",
+          "properties": {
+            "mediaId": {
+              "type": "string",
+              "description": "The media item's id."
+            },
+            "title": {
+              "type": "string",
+              "description": "The media item's title."
+            }
+          }
+        }
+      }
+    }
+  }
+}

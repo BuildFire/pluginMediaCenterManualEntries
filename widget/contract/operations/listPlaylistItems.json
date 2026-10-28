@@ -1,0 +1,81 @@
+{
+  "name": "listPlaylistItems",
+  "displayName": "List playlist",
+  "type": "function",
+  "crudMode": "read",
+  "flags": [
+    "immutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "listPlaylistItems",
+    "hosts": [
+      "widgetBackground",
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Shows the media items in a person's playlist.",
+  "parameters": {
+    "userId": {
+      "type": "user",
+      "displayName": "User",
+      "required": true,
+      "description": "The person whose playlist it is, by their id or email address.",
+      "sampleValue": "[user id]"
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the playlist is read.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it didn't work, such as no person having that email address."
+        },
+        "result": {
+          "type": "object",
+          "description": "The playlist.",
+          "properties": {
+            "playlistItems": {
+              "type": "array",
+              "description": "The media items in the playlist.",
+              "items": {
+                "type": "object",
+                "description": "One playlist item.",
+                "properties": {
+                  "mediaId": {
+                    "type": "string",
+                    "description": "The media item's id."
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "The media item's title."
+                  },
+                  "topImage": {
+                    "type": "string",
+                    "description": "The media item's image."
+                  },
+                  "audioUrl": {
+                    "type": "string",
+                    "description": "The audio's link."
+                  },
+                  "videoUrl": {
+                    "type": "string",
+                    "description": "The video's link."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

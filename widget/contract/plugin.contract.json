@@ -1,0 +1,4290 @@
+{
+  "description": "Lets you share videos, audio and articles in categories, and lets people play them, keep favorites and build their own playlist.",
+  "events": [
+    {
+      "name": "mediaFavorited",
+      "displayName": "Media Favorited",
+      "description": "A media item was saved as a favorite.",
+      "data": {
+        "mediaId": {
+          "type": "string",
+          "displayName": "Media ID",
+          "description": "The media item's id."
+        },
+        "title": {
+          "type": "string",
+          "displayName": "Title",
+          "description": "The media item's title."
+        },
+        "imageUrl": {
+          "type": "string",
+          "displayName": "Image",
+          "description": "The media item's list image."
+        },
+        "user": {
+          "type": "object",
+          "displayName": "User",
+          "description": "Who saved it, when signed in.",
+          "properties": {
+            "userId": {
+              "type": "string",
+              "displayName": "User ID",
+              "description": "Their id."
+            },
+            "displayName": {
+              "type": "string",
+              "displayName": "Name",
+              "description": "Their name."
+            },
+            "email": {
+              "type": "string",
+              "displayName": "Email",
+              "description": "Their email."
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "mediaAddedToPlaylist",
+      "displayName": "Media Added To Playlist",
+      "description": "A media item was added to a person's playlist.",
+      "data": {
+        "mediaId": {
+          "type": "string",
+          "displayName": "Media ID",
+          "description": "The media item's id."
+        },
+        "title": {
+          "type": "string",
+          "displayName": "Title",
+          "description": "The media item's title."
+        },
+        "imageUrl": {
+          "type": "string",
+          "displayName": "Image",
+          "description": "The media item's list image."
+        },
+        "user": {
+          "type": "object",
+          "displayName": "User",
+          "description": "Whose playlist it was added to.",
+          "properties": {
+            "userId": {
+              "type": "string",
+              "displayName": "User ID",
+              "description": "Their id."
+            },
+            "displayName": {
+              "type": "string",
+              "displayName": "Name",
+              "description": "Their name."
+            },
+            "email": {
+              "type": "string",
+              "displayName": "Email",
+              "description": "Their email."
+            }
+          }
+        }
+      }
+    }
+  ],
+  "operations": [
+    {
+      "name": "getSettings",
+      "displayName": "Get settings",
+      "type": "function",
+      "crudMode": "read",
+      "flags": [
+        "immutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "getSettings",
+        "hosts": [
+          "widgetBackground",
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Shows the media center's current settings and design.",
+      "parameters": {
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the settings are read.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it didn't work, if it didn't."
+            },
+            "result": {
+              "type": "object",
+              "description": "The current settings.",
+              "properties": {
+                "content": {
+                  "type": "object",
+                  "description": "The content and feature settings.",
+                  "properties": {
+                    "descriptionHTML": {
+                      "type": "string",
+                      "description": "The text shown above the media list."
+                    },
+                    "images": {
+                      "type": "array",
+                      "description": "The carousel shown above the media list.",
+                      "items": {
+                        "type": "object",
+                        "description": "One carousel image and what tapping it does.",
+                        "properties": {}
+                      }
+                    },
+                    "sortBy": {
+                      "type": "string",
+                      "description": "How the media list is ordered."
+                    },
+                    "sortCategoriesBy": {
+                      "type": "string",
+                      "description": "How the categories are ordered."
+                    },
+                    "allowShare": {
+                      "type": "boolean",
+                      "description": "Whether people can share media."
+                    },
+                    "allowFavorites": {
+                      "type": "boolean",
+                      "description": "Whether people can keep favorites."
+                    },
+                    "allowAddingNotes": {
+                      "type": "boolean",
+                      "description": "Whether people can add personal notes."
+                    },
+                    "allowSource": {
+                      "type": "boolean",
+                      "description": "Whether the media source link is shown."
+                    },
+                    "allowOfflineDownload": {
+                      "type": "boolean",
+                      "description": "Whether people can download media for offline use."
+                    },
+                    "enableFiltering": {
+                      "type": "boolean",
+                      "description": "Whether people can filter media by category."
+                    },
+                    "showViewCount": {
+                      "type": "boolean",
+                      "description": "Whether view counts are shown."
+                    },
+                    "indicatePlayedItems": {
+                      "type": "boolean",
+                      "description": "Whether played items are highlighted."
+                    },
+                    "globalPlaylist": {
+                      "type": "boolean",
+                      "description": "Whether people can add media to their playlist."
+                    },
+                    "showGlobalAddAllToPlaylistButton": {
+                      "type": "boolean",
+                      "description": "Whether the add-all-to-playlist button is shown."
+                    },
+                    "showGlobalPlaylistNavButton": {
+                      "type": "boolean",
+                      "description": "Whether the go-to-playlist button is shown."
+                    },
+                    "autoPlay": {
+                      "type": "boolean",
+                      "description": "Whether the next item plays on its own."
+                    },
+                    "autoPlayDelay": {
+                      "type": "object",
+                      "description": "The pause before the next item plays.",
+                      "properties": {
+                        "label": {
+                          "type": "string",
+                          "description": "The pause as shown."
+                        },
+                        "value": {
+                          "type": "number",
+                          "description": "The pause in seconds."
+                        }
+                      }
+                    },
+                    "shuffleAudioListItems": {
+                      "type": "boolean",
+                      "description": "Whether the list is shuffled while playing."
+                    },
+                    "forceAutoPlay": {
+                      "type": "boolean",
+                      "description": "Whether all audio is added to the player's playlist."
+                    },
+                    "startWithAutoJumpByDefault": {
+                      "type": "boolean",
+                      "description": "Whether playback resumes from the last position."
+                    }
+                  }
+                },
+                "design": {
+                  "type": "object",
+                  "description": "The look of the media list and pages.",
+                  "properties": {
+                    "listLayout": {
+                      "type": "string",
+                      "description": "The layout of the media list."
+                    },
+                    "itemLayout": {
+                      "type": "string",
+                      "description": "The layout of a media item's page."
+                    },
+                    "backgroundImage": {
+                      "type": "string",
+                      "description": "The background image."
+                    },
+                    "skipMediaPage": {
+                      "type": "boolean",
+                      "description": "Whether tapping an item skips its info page."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "updateSettings",
+      "displayName": "Update settings",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "updateSettings",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Changes the media center's settings and design, keeping every setting not given.",
+      "parameters": {
+        "description": {
+          "type": "wysiwyg",
+          "displayName": "Description",
+          "required": false,
+          "nullable": true,
+          "description": "The formatted text shown above the media list. Leave it out to keep the current one, or leave it empty to remove it.",
+          "sampleValue": "<p>[description]</p>"
+        },
+        "carouselImages": {
+          "type": "action",
+          "displayName": "Carousel images",
+          "required": false,
+          "nullable": true,
+          "minValue": 0,
+          "description": "The carousel above the media list, in order, each an image and what tapping it does. Replaces the current images; pass an empty list to remove them all.",
+          "sampleValue": [
+            {
+              "title": "Visit website",
+              "action": "linkToWeb",
+              "url": "https://example.com",
+              "iconUrl": "https://example.com/slide.png"
+            }
+          ]
+        },
+        "mediaSortOrder": {
+          "type": "select",
+          "displayName": "Media order",
+          "required": false,
+          "description": "How the media list is ordered. Leave it out to keep the current order.",
+          "enums": [
+            {
+              "label": "Manual",
+              "value": "Manually"
+            },
+            {
+              "label": "Media Title A-Z",
+              "value": "Media Title A-Z"
+            },
+            {
+              "label": "Media Title Z-A",
+              "value": "Media Title Z-A"
+            },
+            {
+              "label": "Media Date Asc",
+              "value": "Media Date Asc"
+            },
+            {
+              "label": "Media Date Desc",
+              "value": "Media Date Desc"
+            },
+            {
+              "label": "Newest",
+              "value": "Newest"
+            },
+            {
+              "label": "Oldest",
+              "value": "Oldest"
+            }
+          ],
+          "allowEnumCustomOption": false,
+          "sampleValue": "Newest"
+        },
+        "categorySortOrder": {
+          "type": "select",
+          "displayName": "Category order",
+          "required": false,
+          "description": "How the categories are ordered. Leave it out to keep the current order.",
+          "enums": [
+            {
+              "label": "Manual",
+              "value": "Manually"
+            },
+            {
+              "label": "Category Title A-Z",
+              "value": "Category Title A-Z"
+            },
+            {
+              "label": "Category Title Z-A",
+              "value": "Category Title Z-A"
+            },
+            {
+              "label": "Newest",
+              "value": "Newest"
+            },
+            {
+              "label": "Oldest",
+              "value": "Oldest"
+            }
+          ],
+          "allowEnumCustomOption": false,
+          "sampleValue": "Category Title A-Z"
+        },
+        "allowShare": {
+          "type": "boolean",
+          "displayName": "Enable sharing",
+          "required": false,
+          "description": "Whether people can share media. Leave it out to keep the current setting.",
+          "sampleValue": true
+        },
+        "allowFavorites": {
+          "type": "boolean",
+          "displayName": "Enable favorites",
+          "required": false,
+          "description": "Whether people can keep favorites. Leave it out to keep the current setting.",
+          "sampleValue": true
+        },
+        "allowAddingNotes": {
+          "type": "boolean",
+          "displayName": "Enable personal notes",
+          "required": false,
+          "description": "Whether people can add personal notes. Leave it out to keep the current setting.",
+          "sampleValue": true
+        },
+        "allowSource": {
+          "type": "boolean",
+          "displayName": "Display media source",
+          "required": false,
+          "description": "Whether the media source link is shown. Leave it out to keep the current setting.",
+          "sampleValue": true
+        },
+        "allowOfflineDownload": {
+          "type": "boolean",
+          "displayName": "Enable offline access",
+          "required": false,
+          "description": "Whether people can download media for offline use. Leave it out to keep the current setting.",
+          "sampleValue": true
+        },
+        "enableFiltering": {
+          "type": "boolean",
+          "displayName": "Enable media filtering",
+          "required": false,
+          "description": "Whether people can filter media by category. Leave it out to keep the current setting.",
+          "sampleValue": true
+        },
+        "showViewCount": {
+          "type": "boolean",
+          "displayName": "Display view count",
+          "required": false,
+          "description": "Whether view counts are shown. Leave it out to keep the current setting.",
+          "sampleValue": true
+        },
+        "indicatePlayedItems": {
+          "type": "boolean",
+          "displayName": "Highlight played items",
+          "required": false,
+          "description": "Whether played items are highlighted. Leave it out to keep the current setting.",
+          "sampleValue": true
+        },
+        "globalPlaylist": {
+          "type": "boolean",
+          "displayName": "Use global playlist",
+          "required": false,
+          "description": "Whether people can add media to their playlist; always off while auto-add all audio is on. Leave it out to keep the current setting.",
+          "sampleValue": true
+        },
+        "showGlobalAddAllToPlaylistButton": {
+          "type": "boolean",
+          "displayName": "Enable add all to global playlist button",
+          "required": false,
+          "description": "Whether the add-all-to-playlist button is shown. Leave it out to keep the current setting.",
+          "sampleValue": true
+        },
+        "showGlobalPlaylistNavButton": {
+          "type": "boolean",
+          "displayName": "Enable navigate to global playlist button",
+          "required": false,
+          "description": "Whether the go-to-playlist button is shown. Leave it out to keep the current setting.",
+          "sampleValue": true
+        },
+        "autoPlay": {
+          "type": "boolean",
+          "displayName": "Continuous playback",
+          "required": false,
+          "description": "Whether the next item plays on its own; always off while auto-add all audio is on. Leave it out to keep the current setting.",
+          "sampleValue": true
+        },
+        "autoPlayDelay": {
+          "type": "select",
+          "displayName": "Autoplay delay",
+          "required": false,
+          "description": "The pause before the next item plays. Leave it out to keep the current pause.",
+          "enums": [
+            {
+              "label": "Off",
+              "value": 0
+            },
+            {
+              "label": "1s",
+              "value": 1
+            },
+            {
+              "label": "2s",
+              "value": 2
+            },
+            {
+              "label": "3s",
+              "value": 3
+            },
+            {
+              "label": "5s",
+              "value": 5
+            }
+          ],
+          "allowEnumCustomOption": false,
+          "sampleValue": 2
+        },
+        "shuffleAudioListItems": {
+          "type": "boolean",
+          "displayName": "Enable list shuffle",
+          "required": false,
+          "description": "Whether the list is shuffled while playing; always off while continuous playback is off. Leave it out to keep the current setting.",
+          "sampleValue": true
+        },
+        "forceAutoPlay": {
+          "type": "boolean",
+          "displayName": "Auto-add all audio to playlist",
+          "required": false,
+          "description": "Whether all audio is added to the player's playlist. Leave it out to keep the current setting.",
+          "sampleValue": true
+        },
+        "startWithAutoJumpByDefault": {
+          "type": "boolean",
+          "displayName": "Resume playback from last position",
+          "required": false,
+          "description": "Whether playback resumes from the last position; always off while auto-add all audio is off. Leave it out to keep the current setting.",
+          "sampleValue": true
+        },
+        "skipMediaPage": {
+          "type": "boolean",
+          "displayName": "Bypass info page",
+          "required": false,
+          "description": "Whether tapping an item skips its info page. Leave it out to keep the current setting.",
+          "sampleValue": true
+        },
+        "listLayout": {
+          "type": "select",
+          "displayName": "List layout",
+          "required": false,
+          "description": "The layout of the media list. Leave it out to keep the current one.",
+          "enums": [
+            {
+              "label": "List 1",
+              "value": "list-1"
+            },
+            {
+              "label": "List 2",
+              "value": "list-2"
+            },
+            {
+              "label": "List 3",
+              "value": "list-3"
+            },
+            {
+              "label": "List 4",
+              "value": "list-4"
+            }
+          ],
+          "allowEnumCustomOption": false,
+          "sampleValue": "list-2"
+        },
+        "itemLayout": {
+          "type": "select",
+          "displayName": "Item layout",
+          "required": false,
+          "description": "The layout of a media item's page. Leave it out to keep the current one.",
+          "enums": [
+            {
+              "label": "Item 1",
+              "value": "item-1"
+            },
+            {
+              "label": "Item 2",
+              "value": "item-2"
+            }
+          ],
+          "allowEnumCustomOption": false,
+          "sampleValue": "item-2"
+        },
+        "backgroundImage": {
+          "type": "image",
+          "displayName": "Background image",
+          "required": false,
+          "nullable": true,
+          "minValue": 0,
+          "maxValue": 1,
+          "description": "The background image, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
+          "sampleValue": [
+            "[image url]"
+          ]
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the settings are saved.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why nothing was changed, such as no setting being given."
+            },
+            "result": {
+              "type": "object",
+              "description": "The settings as saved.",
+              "properties": {
+                "content": {
+                  "type": "object",
+                  "description": "The content and feature settings.",
+                  "properties": {
+                    "descriptionHTML": {
+                      "type": "string",
+                      "description": "The text shown above the media list."
+                    },
+                    "images": {
+                      "type": "array",
+                      "description": "The carousel shown above the media list.",
+                      "items": {
+                        "type": "object",
+                        "description": "One carousel image and what tapping it does.",
+                        "properties": {}
+                      }
+                    },
+                    "sortBy": {
+                      "type": "string",
+                      "description": "How the media list is ordered."
+                    },
+                    "sortCategoriesBy": {
+                      "type": "string",
+                      "description": "How the categories are ordered."
+                    },
+                    "allowShare": {
+                      "type": "boolean",
+                      "description": "Whether people can share media."
+                    },
+                    "allowFavorites": {
+                      "type": "boolean",
+                      "description": "Whether people can keep favorites."
+                    },
+                    "allowAddingNotes": {
+                      "type": "boolean",
+                      "description": "Whether people can add personal notes."
+                    },
+                    "allowSource": {
+                      "type": "boolean",
+                      "description": "Whether the media source link is shown."
+                    },
+                    "allowOfflineDownload": {
+                      "type": "boolean",
+                      "description": "Whether people can download media for offline use."
+                    },
+                    "enableFiltering": {
+                      "type": "boolean",
+                      "description": "Whether people can filter media by category."
+                    },
+                    "showViewCount": {
+                      "type": "boolean",
+                      "description": "Whether view counts are shown."
+                    },
+                    "indicatePlayedItems": {
+                      "type": "boolean",
+                      "description": "Whether played items are highlighted."
+                    },
+                    "globalPlaylist": {
+                      "type": "boolean",
+                      "description": "Whether people can add media to their playlist."
+                    },
+                    "showGlobalAddAllToPlaylistButton": {
+                      "type": "boolean",
+                      "description": "Whether the add-all-to-playlist button is shown."
+                    },
+                    "showGlobalPlaylistNavButton": {
+                      "type": "boolean",
+                      "description": "Whether the go-to-playlist button is shown."
+                    },
+                    "autoPlay": {
+                      "type": "boolean",
+                      "description": "Whether the next item plays on its own."
+                    },
+                    "autoPlayDelay": {
+                      "type": "object",
+                      "description": "The pause before the next item plays.",
+                      "properties": {
+                        "label": {
+                          "type": "string",
+                          "description": "The pause as shown."
+                        },
+                        "value": {
+                          "type": "number",
+                          "description": "The pause in seconds."
+                        }
+                      }
+                    },
+                    "shuffleAudioListItems": {
+                      "type": "boolean",
+                      "description": "Whether the list is shuffled while playing."
+                    },
+                    "forceAutoPlay": {
+                      "type": "boolean",
+                      "description": "Whether all audio is added to the player's playlist."
+                    },
+                    "startWithAutoJumpByDefault": {
+                      "type": "boolean",
+                      "description": "Whether playback resumes from the last position."
+                    }
+                  }
+                },
+                "design": {
+                  "type": "object",
+                  "description": "The look of the media list and pages.",
+                  "properties": {
+                    "listLayout": {
+                      "type": "string",
+                      "description": "The layout of the media list."
+                    },
+                    "itemLayout": {
+                      "type": "string",
+                      "description": "The layout of a media item's page."
+                    },
+                    "backgroundImage": {
+                      "type": "string",
+                      "description": "The background image."
+                    },
+                    "skipMediaPage": {
+                      "type": "boolean",
+                      "description": "Whether tapping an item skips its info page."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "searchMedia",
+      "displayName": "Search media",
+      "type": "function",
+      "crudMode": "read",
+      "flags": [
+        "immutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "searchMedia",
+        "hosts": [
+          "widgetBackground",
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Shows the media items, 50 at a time, in the order the app shows them.",
+      "parameters": {
+        "title": {
+          "type": "string",
+          "displayName": "Media title",
+          "required": false,
+          "description": "Only show media with exactly this title. Leave it out to show every title.",
+          "sampleValue": "[media title]"
+        },
+        "categoryName": {
+          "type": "string",
+          "displayName": "Category name",
+          "required": false,
+          "description": "Only show media in this category. Leave it out to show every category.",
+          "sampleValue": "[category name]"
+        },
+        "subcategoryName": {
+          "type": "string",
+          "displayName": "Subcategory name",
+          "required": false,
+          "description": "Only show media in this subcategory of the category given. Leave it out to show the whole category.",
+          "sampleValue": "[subcategory name]"
+        },
+        "page": {
+          "type": "number",
+          "displayName": "Page",
+          "required": false,
+          "minValue": 0,
+          "description": "Which page of 50 to show, counting from 0. Leave it out for the first page.",
+          "sampleValue": 0
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the search is done.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it didn't work, such as no category having that name."
+            },
+            "result": {
+              "type": "object",
+              "description": "The media items found.",
+              "properties": {
+                "media": {
+                  "type": "array",
+                  "description": "The media items on this page, in the order the app shows them.",
+                  "items": {
+                    "type": "object",
+                    "description": "One media item.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "The media item's id."
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "The media item's title."
+                      },
+                      "summary": {
+                        "type": "string",
+                        "description": "The short summary shown in the list."
+                      },
+                      "bodyHTML": {
+                        "type": "string",
+                        "description": "The media item's formatted content."
+                      },
+                      "topImage": {
+                        "type": "string",
+                        "description": "The image shown in the list."
+                      },
+                      "image": {
+                        "type": "string",
+                        "description": "The image shown while the audio plays."
+                      },
+                      "backgroundImage": {
+                        "type": "string",
+                        "description": "The background shown while the audio plays."
+                      },
+                      "audioTitle": {
+                        "type": "string",
+                        "description": "The audio's title."
+                      },
+                      "artists": {
+                        "type": "string",
+                        "description": "The album artists."
+                      },
+                      "audioUrl": {
+                        "type": "string",
+                        "description": "The audio's link."
+                      },
+                      "videoUrl": {
+                        "type": "string",
+                        "description": "The video's link."
+                      },
+                      "srcUrl": {
+                        "type": "string",
+                        "description": "The link to the original source."
+                      },
+                      "mediaDate": {
+                        "type": "datetime",
+                        "description": "The media item's date."
+                      },
+                      "dateCreated": {
+                        "type": "number",
+                        "description": "When it was added, in milliseconds."
+                      },
+                      "categories": {
+                        "type": "array",
+                        "description": "The ids of the categories it is in.",
+                        "items": {
+                          "type": "string",
+                          "description": "A category's id."
+                        }
+                      },
+                      "subcategories": {
+                        "type": "array",
+                        "description": "The ids of the subcategories it is in.",
+                        "items": {
+                          "type": "string",
+                          "description": "A subcategory's id."
+                        }
+                      },
+                      "rank": {
+                        "type": "number",
+                        "description": "Its place in the manual order."
+                      },
+                      "deepLinkUrl": {
+                        "type": "string",
+                        "description": "The link that opens it in the app."
+                      },
+                      "views": {
+                        "type": "number",
+                        "description": "How many times it was played, when view counts are shown; otherwise empty."
+                      }
+                    }
+                  }
+                },
+                "total": {
+                  "type": "number",
+                  "description": "How many media items match in all."
+                },
+                "page": {
+                  "type": "number",
+                  "description": "Which page this is, counting from 0."
+                },
+                "hasMore": {
+                  "type": "boolean",
+                  "description": "Whether there is another page."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "updateMediaOrder",
+      "displayName": "Move media item",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "updateMediaOrderAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateMediaOrder",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Moves a media item to another place in the manual order.",
+      "parameters": {
+        "title": {
+          "type": "string",
+          "displayName": "Media title",
+          "required": true,
+          "description": "The exact title of the media item to move.",
+          "sampleValue": "[media title]"
+        },
+        "position": {
+          "type": "number",
+          "displayName": "Position",
+          "required": true,
+          "minValue": 1,
+          "description": "Where to put the media item in the manual order, counting from 1 for the top.",
+          "sampleValue": 1
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the media item is moved.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't moved, such as no media item having that title."
+            },
+            "result": {
+              "type": "object",
+              "description": "The media item's new place.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The media item's id."
+                },
+                "rank": {
+                  "type": "number",
+                  "description": "Its new place in the manual order, counting from 1."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "updateMediaOrderAdvanced",
+      "displayName": "Move media item",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "updateMediaOrder",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateMediaOrderAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Moves a media item to another place in the manual order, using the media item's id.",
+      "parameters": {
+        "mediaId": {
+          "type": "string",
+          "displayName": "Media id",
+          "required": true,
+          "description": "The media item's id, as shown in search results.",
+          "sampleValue": "[media id]"
+        },
+        "position": {
+          "type": "number",
+          "displayName": "Position",
+          "required": true,
+          "minValue": 1,
+          "description": "Where to put the media item in the manual order, counting from 1 for the top.",
+          "sampleValue": 1
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the media item is moved.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't moved, such as no media item having that title."
+            },
+            "result": {
+              "type": "object",
+              "description": "The media item's new place.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The media item's id."
+                },
+                "rank": {
+                  "type": "number",
+                  "description": "Its new place in the manual order, counting from 1."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "searchCategories",
+      "displayName": "Search categories",
+      "type": "datastore",
+      "crudMode": "read",
+      "flags": [
+        "immutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "hosts": [
+          "widgetBackground",
+          "controlBackground",
+          "headlessSdk"
+        ],
+        "collection": "CategoryContent",
+        "operationType": "search",
+        "scope": "instance",
+        "query": {
+          "filter": {
+            "$json.name": "$params.name"
+          },
+          "page": "$params.page",
+          "pageSize": 50,
+          "recordCount": true
+        }
+      },
+      "description": "Shows the media categories with their subcategories, 50 at a time.",
+      "parameters": {
+        "name": {
+          "type": "string",
+          "displayName": "Category name",
+          "required": false,
+          "description": "Only show categories with exactly this name. Leave it out to show every category.",
+          "sampleValue": "[category name]"
+        },
+        "page": {
+          "type": "number",
+          "displayName": "Page",
+          "required": false,
+          "minValue": 0,
+          "description": "Which page of 50 to show, counting from 0. Leave it out for the first page.",
+          "sampleValue": 0
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the search is done.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it didn't work, if it didn't."
+            },
+            "result": {
+              "type": "object",
+              "description": "The categories found.",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "description": "The categories on this page.",
+                  "items": {
+                    "type": "object",
+                    "description": "One category.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "The category's id."
+                      },
+                      "data": {
+                        "type": "object",
+                        "description": "The category's details.",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "description": "The category's name."
+                          },
+                          "icon": {
+                            "type": "string",
+                            "description": "The category's icon or image."
+                          },
+                          "subcategories": {
+                            "type": "array",
+                            "description": "The category's subcategories, in order.",
+                            "items": {
+                              "type": "object",
+                              "description": "One subcategory.",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "description": "The subcategory's id."
+                                },
+                                "name": {
+                                  "type": "string",
+                                  "description": "The subcategory's name."
+                                },
+                                "rank": {
+                                  "type": "number",
+                                  "description": "Its place in the manual order."
+                                }
+                              }
+                            }
+                          },
+                          "sortBy": {
+                            "type": "string",
+                            "description": "How its subcategories are ordered."
+                          },
+                          "rank": {
+                            "type": "number",
+                            "description": "Its place in the manual order."
+                          },
+                          "createdOn": {
+                            "type": "datetime",
+                            "description": "When the category was added."
+                          },
+                          "lastUpdatedOn": {
+                            "type": "datetime",
+                            "description": "When the category was last changed."
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "totalRecord": {
+                  "type": "number",
+                  "description": "How many categories match in all."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "createCategory",
+      "displayName": "Create category",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "createCategory",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Adds a media category.",
+      "parameters": {
+        "name": {
+          "type": "string",
+          "displayName": "Category name",
+          "required": true,
+          "description": "The new category's name.",
+          "sampleValue": "[category name]"
+        },
+        "icon": {
+          "type": "image",
+          "displayName": "Icon",
+          "required": false,
+          "minValue": 0,
+          "maxValue": 1,
+          "description": "The category's icon, as a list holding one image or icon. Leave it out for no icon.",
+          "sampleValue": [
+            "[image url]"
+          ]
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the category is added.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't added, such as a missing name."
+            },
+            "result": {
+              "type": "object",
+              "description": "The new category.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The category's id."
+                },
+                "data": {
+                  "type": "object",
+                  "description": "The category's details.",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "The category's name."
+                    },
+                    "icon": {
+                      "type": "string",
+                      "description": "The category's icon or image."
+                    },
+                    "subcategories": {
+                      "type": "array",
+                      "description": "The category's subcategories, in order.",
+                      "items": {
+                        "type": "object",
+                        "description": "One subcategory.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "The subcategory's id."
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "The subcategory's name."
+                          },
+                          "rank": {
+                            "type": "number",
+                            "description": "Its place in the manual order."
+                          }
+                        }
+                      }
+                    },
+                    "sortBy": {
+                      "type": "string",
+                      "description": "How its subcategories are ordered."
+                    },
+                    "rank": {
+                      "type": "number",
+                      "description": "Its place in the manual order."
+                    },
+                    "createdOn": {
+                      "type": "datetime",
+                      "description": "When the category was added."
+                    },
+                    "lastUpdatedOn": {
+                      "type": "datetime",
+                      "description": "When the category was last changed."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "createCategoriesAdvanced",
+      "displayName": "Create categories",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "createCategoriesAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Adds several media categories at once.",
+      "parameters": {
+        "categories": {
+          "type": "list",
+          "displayName": "Categories",
+          "required": true,
+          "minValue": 1,
+          "maxValue": 50,
+          "description": "The categories to add, up to 50 at a time.",
+          "items": {
+            "name": {
+              "type": "string",
+              "displayName": "Category name",
+              "required": true,
+              "description": "The new category's name.",
+              "sampleValue": "[category name]"
+            },
+            "icon": {
+              "type": "image",
+              "displayName": "Icon",
+              "required": false,
+              "minValue": 0,
+              "maxValue": 1,
+              "description": "The category's icon, as a list holding one image or icon. Leave it out for no icon.",
+              "sampleValue": [
+                "[image url]"
+              ]
+            }
+          },
+          "sampleValue": [
+            {
+              "name": "[category name]"
+            },
+            {
+              "name": "[category name]",
+              "icon": [
+                "[image url]"
+              ]
+            }
+          ]
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when all the categories are done.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why nothing was added, such as a category missing its name."
+            },
+            "result": {
+              "type": "object",
+              "description": "How each category went.",
+              "properties": {
+                "categories": {
+                  "type": "array",
+                  "description": "One result per category, in the order they were given.",
+                  "items": {
+                    "type": "object",
+                    "description": "How one category went.",
+                    "properties": {
+                      "index": {
+                        "type": "number",
+                        "description": "Which category this is, counting from 0."
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "The category's id, if it was added."
+                      },
+                      "error": {
+                        "type": "string",
+                        "description": "Why it wasn't added, if it wasn't."
+                      }
+                    }
+                  }
+                },
+                "succeeded": {
+                  "type": "number",
+                  "description": "How many were added."
+                },
+                "failed": {
+                  "type": "number",
+                  "description": "How many weren't added."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "updateCategory",
+      "displayName": "Update category",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "updateCategoryAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateCategory",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Changes a category's name, icon or subcategory order.",
+      "parameters": {
+        "categoryName": {
+          "type": "string",
+          "displayName": "Category name",
+          "required": true,
+          "description": "The exact current name of the category to change.",
+          "sampleValue": "[category name]"
+        },
+        "newName": {
+          "type": "string",
+          "displayName": "New name",
+          "required": false,
+          "description": "The category's new name. Leave it out to keep the current one.",
+          "sampleValue": "[new category name]"
+        },
+        "newIcon": {
+          "type": "image",
+          "displayName": "New icon",
+          "required": false,
+          "nullable": true,
+          "minValue": 0,
+          "maxValue": 1,
+          "description": "The category's new icon, as a list holding one image or icon. Leave it out to keep the current one, or pass an empty list to remove it.",
+          "sampleValue": [
+            "[image url]"
+          ]
+        },
+        "newSubcategorySortBy": {
+          "type": "select",
+          "displayName": "Subcategory order",
+          "required": false,
+          "description": "How the category's subcategories are ordered; they are reordered right away. Leave it out to keep the current order.",
+          "enums": [
+            {
+              "label": "Manual",
+              "value": "Manually"
+            },
+            {
+              "label": "Subcategory Title A-Z",
+              "value": "Subcategory Title A-Z"
+            },
+            {
+              "label": "Subcategory Title Z-A",
+              "value": "Subcategory Title Z-A"
+            },
+            {
+              "label": "Subcategory Date Asc",
+              "value": "Subcategory Date Asc"
+            },
+            {
+              "label": "Subcategory Date Desc",
+              "value": "Subcategory Date Desc"
+            },
+            {
+              "label": "Newest",
+              "value": "Newest"
+            },
+            {
+              "label": "Oldest",
+              "value": "Oldest"
+            }
+          ],
+          "allowEnumCustomOption": false,
+          "sampleValue": "Subcategory Title A-Z"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the category is changed.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't changed, such as no category having that name."
+            },
+            "result": {
+              "type": "object",
+              "description": "The category as saved.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The category's id."
+                },
+                "data": {
+                  "type": "object",
+                  "description": "The category's details.",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "The category's name."
+                    },
+                    "icon": {
+                      "type": "string",
+                      "description": "The category's icon or image."
+                    },
+                    "subcategories": {
+                      "type": "array",
+                      "description": "The category's subcategories, in order.",
+                      "items": {
+                        "type": "object",
+                        "description": "One subcategory.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "The subcategory's id."
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "The subcategory's name."
+                          },
+                          "rank": {
+                            "type": "number",
+                            "description": "Its place in the manual order."
+                          }
+                        }
+                      }
+                    },
+                    "sortBy": {
+                      "type": "string",
+                      "description": "How its subcategories are ordered."
+                    },
+                    "rank": {
+                      "type": "number",
+                      "description": "Its place in the manual order."
+                    },
+                    "createdOn": {
+                      "type": "datetime",
+                      "description": "When the category was added."
+                    },
+                    "lastUpdatedOn": {
+                      "type": "datetime",
+                      "description": "When the category was last changed."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "updateCategoryAdvanced",
+      "displayName": "Update category",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "updateCategory",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateCategoryAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Changes a category's name, icon or subcategory order, using the category's id.",
+      "parameters": {
+        "categoryId": {
+          "type": "string",
+          "displayName": "Category id",
+          "required": true,
+          "description": "The category's id, as shown in search results.",
+          "sampleValue": "[category id]"
+        },
+        "newName": {
+          "type": "string",
+          "displayName": "New name",
+          "required": false,
+          "description": "The category's new name. Leave it out to keep the current one.",
+          "sampleValue": "[new category name]"
+        },
+        "newIcon": {
+          "type": "image",
+          "displayName": "New icon",
+          "required": false,
+          "nullable": true,
+          "minValue": 0,
+          "maxValue": 1,
+          "description": "The category's new icon, as a list holding one image or icon. Leave it out to keep the current one, or pass an empty list to remove it.",
+          "sampleValue": [
+            "[image url]"
+          ]
+        },
+        "newSubcategorySortBy": {
+          "type": "select",
+          "displayName": "Subcategory order",
+          "required": false,
+          "description": "How the category's subcategories are ordered; they are reordered right away. Leave it out to keep the current order.",
+          "enums": [
+            {
+              "label": "Manual",
+              "value": "Manually"
+            },
+            {
+              "label": "Subcategory Title A-Z",
+              "value": "Subcategory Title A-Z"
+            },
+            {
+              "label": "Subcategory Title Z-A",
+              "value": "Subcategory Title Z-A"
+            },
+            {
+              "label": "Subcategory Date Asc",
+              "value": "Subcategory Date Asc"
+            },
+            {
+              "label": "Subcategory Date Desc",
+              "value": "Subcategory Date Desc"
+            },
+            {
+              "label": "Newest",
+              "value": "Newest"
+            },
+            {
+              "label": "Oldest",
+              "value": "Oldest"
+            }
+          ],
+          "allowEnumCustomOption": false,
+          "sampleValue": "Subcategory Title A-Z"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the category is changed.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't changed, such as no category having that name."
+            },
+            "result": {
+              "type": "object",
+              "description": "The category as saved.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The category's id."
+                },
+                "data": {
+                  "type": "object",
+                  "description": "The category's details.",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "The category's name."
+                    },
+                    "icon": {
+                      "type": "string",
+                      "description": "The category's icon or image."
+                    },
+                    "subcategories": {
+                      "type": "array",
+                      "description": "The category's subcategories, in order.",
+                      "items": {
+                        "type": "object",
+                        "description": "One subcategory.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "The subcategory's id."
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "The subcategory's name."
+                          },
+                          "rank": {
+                            "type": "number",
+                            "description": "Its place in the manual order."
+                          }
+                        }
+                      }
+                    },
+                    "sortBy": {
+                      "type": "string",
+                      "description": "How its subcategories are ordered."
+                    },
+                    "rank": {
+                      "type": "number",
+                      "description": "Its place in the manual order."
+                    },
+                    "createdOn": {
+                      "type": "datetime",
+                      "description": "When the category was added."
+                    },
+                    "lastUpdatedOn": {
+                      "type": "datetime",
+                      "description": "When the category was last changed."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "updateCategoriesAdvanced",
+      "displayName": "Update categories",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "updateCategoriesAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Changes several categories at once.",
+      "parameters": {
+        "categories": {
+          "type": "list",
+          "displayName": "Categories",
+          "required": true,
+          "minValue": 1,
+          "maxValue": 50,
+          "description": "The categories to change and how, up to 50 at a time.",
+          "items": {
+            "categoryId": {
+              "type": "string",
+              "displayName": "Category id",
+              "required": true,
+              "description": "The category's id, as shown in search results.",
+              "sampleValue": "[category id]"
+            },
+            "newName": {
+              "type": "string",
+              "displayName": "New name",
+              "required": false,
+              "description": "The category's new name. Leave it out to keep the current one.",
+              "sampleValue": "[new category name]"
+            },
+            "newIcon": {
+              "type": "image",
+              "displayName": "New icon",
+              "required": false,
+              "nullable": true,
+              "minValue": 0,
+              "maxValue": 1,
+              "description": "The category's new icon, as a list holding one image or icon. Leave it out to keep the current one, or pass an empty list to remove it.",
+              "sampleValue": [
+                "[image url]"
+              ]
+            },
+            "newSubcategorySortBy": {
+              "type": "select",
+              "displayName": "Subcategory order",
+              "required": false,
+              "description": "How the category's subcategories are ordered; they are reordered right away. Leave it out to keep the current order.",
+              "enums": [
+                {
+                  "label": "Manual",
+                  "value": "Manually"
+                },
+                {
+                  "label": "Subcategory Title A-Z",
+                  "value": "Subcategory Title A-Z"
+                },
+                {
+                  "label": "Subcategory Title Z-A",
+                  "value": "Subcategory Title Z-A"
+                },
+                {
+                  "label": "Subcategory Date Asc",
+                  "value": "Subcategory Date Asc"
+                },
+                {
+                  "label": "Subcategory Date Desc",
+                  "value": "Subcategory Date Desc"
+                },
+                {
+                  "label": "Newest",
+                  "value": "Newest"
+                },
+                {
+                  "label": "Oldest",
+                  "value": "Oldest"
+                }
+              ],
+              "allowEnumCustomOption": false,
+              "sampleValue": "Subcategory Title A-Z"
+            }
+          },
+          "sampleValue": [
+            {
+              "categoryId": "[category id]",
+              "newName": "[new category name]"
+            }
+          ]
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when all the categories are done.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why nothing was changed, such as an unknown category."
+            },
+            "result": {
+              "type": "object",
+              "description": "How each category went.",
+              "properties": {
+                "categories": {
+                  "type": "array",
+                  "description": "One result per category, in the order they were given.",
+                  "items": {
+                    "type": "object",
+                    "description": "How one category went.",
+                    "properties": {
+                      "index": {
+                        "type": "number",
+                        "description": "Which category this is, counting from 0."
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "The category's id, if it was changed."
+                      },
+                      "error": {
+                        "type": "string",
+                        "description": "Why it wasn't changed, if it wasn't."
+                      }
+                    }
+                  }
+                },
+                "succeeded": {
+                  "type": "number",
+                  "description": "How many were changed."
+                },
+                "failed": {
+                  "type": "number",
+                  "description": "How many weren't changed."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "deleteCategory",
+      "displayName": "Delete category",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "dangerous",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "deleteCategoryAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "deleteCategory",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Permanently removes a category and its subcategories.",
+      "parameters": {
+        "categoryName": {
+          "type": "string",
+          "displayName": "Category name",
+          "required": true,
+          "description": "The exact name of the category to remove.",
+          "sampleValue": "[category name]"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the category is removed.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't removed, such as no category having that name."
+            },
+            "result": {
+              "type": "object",
+              "description": "The category that was removed.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The removed category's id."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "deleteCategoryAdvanced",
+      "displayName": "Delete category",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "dangerous",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "deleteCategory",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "deleteCategoryAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Permanently removes a category and its subcategories, using the category's id.",
+      "parameters": {
+        "categoryId": {
+          "type": "string",
+          "displayName": "Category id",
+          "required": true,
+          "description": "The category's id, as shown in search results.",
+          "sampleValue": "[category id]"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the category is removed.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't removed, such as no category having that name."
+            },
+            "result": {
+              "type": "object",
+              "description": "The category that was removed.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The removed category's id."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "deleteCategoriesAdvanced",
+      "displayName": "Delete categories",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "dangerous",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "deleteCategoriesAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Permanently removes several categories at once.",
+      "parameters": {
+        "categories": {
+          "type": "list",
+          "displayName": "Categories",
+          "required": true,
+          "minValue": 1,
+          "maxValue": 50,
+          "description": "The categories to remove, up to 50 at a time.",
+          "items": {
+            "categoryId": {
+              "type": "string",
+              "displayName": "Category id",
+              "required": true,
+              "description": "The category's id, as shown in search results.",
+              "sampleValue": "[category id]"
+            }
+          },
+          "sampleValue": [
+            {
+              "categoryId": "[category id]"
+            }
+          ]
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when all the categories are done.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why nothing was removed, such as an unknown category."
+            },
+            "result": {
+              "type": "object",
+              "description": "How each category went.",
+              "properties": {
+                "categories": {
+                  "type": "array",
+                  "description": "One result per category, in the order they were given.",
+                  "items": {
+                    "type": "object",
+                    "description": "How one category went.",
+                    "properties": {
+                      "index": {
+                        "type": "number",
+                        "description": "Which category this is, counting from 0."
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "The category's id, if it was removed."
+                      },
+                      "error": {
+                        "type": "string",
+                        "description": "Why it wasn't removed, if it wasn't."
+                      }
+                    }
+                  }
+                },
+                "succeeded": {
+                  "type": "number",
+                  "description": "How many were removed."
+                },
+                "failed": {
+                  "type": "number",
+                  "description": "How many weren't removed."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "updateCategoryOrder",
+      "displayName": "Move category",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "updateCategoryOrderAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateCategoryOrder",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Moves a category to another place in the manual order.",
+      "parameters": {
+        "categoryName": {
+          "type": "string",
+          "displayName": "Category name",
+          "required": true,
+          "description": "The exact name of the category to move.",
+          "sampleValue": "[category name]"
+        },
+        "position": {
+          "type": "number",
+          "displayName": "Position",
+          "required": true,
+          "minValue": 1,
+          "description": "Where to put the category in the manual order, counting from 1 for the top.",
+          "sampleValue": 1
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the category is moved.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't moved, such as no category having that name."
+            },
+            "result": {
+              "type": "object",
+              "description": "The category's new place.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The category's id."
+                },
+                "rank": {
+                  "type": "number",
+                  "description": "Its new place in the manual order, counting from 1."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "updateCategoryOrderAdvanced",
+      "displayName": "Move category",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "updateCategoryOrder",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateCategoryOrderAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Moves a category to another place in the manual order, using the category's id.",
+      "parameters": {
+        "categoryId": {
+          "type": "string",
+          "displayName": "Category id",
+          "required": true,
+          "description": "The category's id, as shown in search results.",
+          "sampleValue": "[category id]"
+        },
+        "position": {
+          "type": "number",
+          "displayName": "Position",
+          "required": true,
+          "minValue": 1,
+          "description": "Where to put the category in the manual order, counting from 1 for the top.",
+          "sampleValue": 1
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the category is moved.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't moved, such as no category having that name."
+            },
+            "result": {
+              "type": "object",
+              "description": "The category's new place.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The category's id."
+                },
+                "rank": {
+                  "type": "number",
+                  "description": "Its new place in the manual order, counting from 1."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "createSubcategory",
+      "displayName": "Create subcategory",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "createSubcategoryAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "createSubcategory",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Adds a subcategory at the end of a category.",
+      "parameters": {
+        "categoryName": {
+          "type": "string",
+          "displayName": "Category name",
+          "required": true,
+          "description": "The exact name of the category to add it to.",
+          "sampleValue": "[category name]"
+        },
+        "name": {
+          "type": "string",
+          "displayName": "Subcategory name",
+          "required": true,
+          "description": "The new subcategory's name.",
+          "sampleValue": "[subcategory name]"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the subcategory is added.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't added, such as no category having that name."
+            },
+            "result": {
+              "type": "object",
+              "description": "The new subcategory.",
+              "properties": {
+                "categoryId": {
+                  "type": "string",
+                  "description": "The id of the category it belongs to."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "The subcategory's id."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "The subcategory's name."
+                },
+                "rank": {
+                  "type": "number",
+                  "description": "Its place in the manual order."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "createSubcategoryAdvanced",
+      "displayName": "Create subcategory",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "createSubcategory",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "createSubcategoryAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Adds a subcategory at the end of a category, using the category's id.",
+      "parameters": {
+        "categoryId": {
+          "type": "string",
+          "displayName": "Category id",
+          "required": true,
+          "description": "The id of the category to add it to, as shown in search results.",
+          "sampleValue": "[category id]"
+        },
+        "name": {
+          "type": "string",
+          "displayName": "Subcategory name",
+          "required": true,
+          "description": "The new subcategory's name.",
+          "sampleValue": "[subcategory name]"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the subcategory is added.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't added, such as an unknown category."
+            },
+            "result": {
+              "type": "object",
+              "description": "The new subcategory.",
+              "properties": {
+                "categoryId": {
+                  "type": "string",
+                  "description": "The id of the category it belongs to."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "The subcategory's id."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "The subcategory's name."
+                },
+                "rank": {
+                  "type": "number",
+                  "description": "Its place in the manual order."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "createSubcategoriesAdvanced",
+      "displayName": "Create subcategories",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "createSubcategoriesAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Adds several subcategories at once.",
+      "parameters": {
+        "subcategories": {
+          "type": "list",
+          "displayName": "Subcategories",
+          "required": true,
+          "minValue": 1,
+          "maxValue": 50,
+          "description": "The subcategories to add, up to 50 at a time.",
+          "items": {
+            "categoryId": {
+              "type": "string",
+              "displayName": "Category id",
+              "required": true,
+              "description": "The id of the category to add it to, as shown in search results.",
+              "sampleValue": "[category id]"
+            },
+            "name": {
+              "type": "string",
+              "displayName": "Subcategory name",
+              "required": true,
+              "description": "The new subcategory's name.",
+              "sampleValue": "[subcategory name]"
+            }
+          },
+          "sampleValue": [
+            {
+              "categoryId": "[category id]",
+              "name": "[subcategory name]"
+            }
+          ]
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when all the subcategories are done.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why nothing was added, such as an unknown category."
+            },
+            "result": {
+              "type": "object",
+              "description": "How each subcategory went.",
+              "properties": {
+                "subcategories": {
+                  "type": "array",
+                  "description": "One result per subcategory, in the order they were given.",
+                  "items": {
+                    "type": "object",
+                    "description": "How one subcategory went.",
+                    "properties": {
+                      "index": {
+                        "type": "number",
+                        "description": "Which subcategory this is, counting from 0."
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "The subcategory's id, if it was added."
+                      },
+                      "error": {
+                        "type": "string",
+                        "description": "Why it wasn't added, if it wasn't."
+                      }
+                    }
+                  }
+                },
+                "succeeded": {
+                  "type": "number",
+                  "description": "How many were added."
+                },
+                "failed": {
+                  "type": "number",
+                  "description": "How many weren't added."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "updateSubcategory",
+      "displayName": "Rename subcategory",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "updateSubcategoryAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateSubcategory",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Renames a subcategory.",
+      "parameters": {
+        "categoryName": {
+          "type": "string",
+          "displayName": "Category name",
+          "required": true,
+          "description": "The exact name of the category it is in.",
+          "sampleValue": "[category name]"
+        },
+        "subcategoryName": {
+          "type": "string",
+          "displayName": "Subcategory name",
+          "required": true,
+          "description": "The exact current name of the subcategory to rename.",
+          "sampleValue": "[subcategory name]"
+        },
+        "newName": {
+          "type": "string",
+          "displayName": "New name",
+          "required": true,
+          "description": "The subcategory's new name.",
+          "sampleValue": "[new subcategory name]"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the subcategory is renamed.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't renamed, such as no subcategory having that name."
+            },
+            "result": {
+              "type": "object",
+              "description": "The renamed subcategory.",
+              "properties": {
+                "categoryId": {
+                  "type": "string",
+                  "description": "The id of the category it belongs to."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "The subcategory's id."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "The subcategory's name."
+                },
+                "rank": {
+                  "type": "number",
+                  "description": "Its place in the manual order."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "updateSubcategoryAdvanced",
+      "displayName": "Rename subcategory",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "updateSubcategory",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateSubcategoryAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Renames a subcategory, using its id and its category's id.",
+      "parameters": {
+        "categoryId": {
+          "type": "string",
+          "displayName": "Category id",
+          "required": true,
+          "description": "The id of the category it is in, as shown in search results.",
+          "sampleValue": "[category id]"
+        },
+        "subcategoryId": {
+          "type": "string",
+          "displayName": "Subcategory id",
+          "required": true,
+          "description": "The subcategory's id, as shown in search results.",
+          "sampleValue": "[subcategory id]"
+        },
+        "newName": {
+          "type": "string",
+          "displayName": "New name",
+          "required": true,
+          "description": "The subcategory's new name.",
+          "sampleValue": "[new subcategory name]"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the subcategory is renamed.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't renamed, such as an unknown subcategory."
+            },
+            "result": {
+              "type": "object",
+              "description": "The renamed subcategory.",
+              "properties": {
+                "categoryId": {
+                  "type": "string",
+                  "description": "The id of the category it belongs to."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "The subcategory's id."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "The subcategory's name."
+                },
+                "rank": {
+                  "type": "number",
+                  "description": "Its place in the manual order."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "updateSubcategoriesAdvanced",
+      "displayName": "Rename subcategories",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "updateSubcategoriesAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Renames several subcategories at once.",
+      "parameters": {
+        "subcategories": {
+          "type": "list",
+          "displayName": "Subcategories",
+          "required": true,
+          "minValue": 1,
+          "maxValue": 50,
+          "description": "The subcategories to rename, up to 50 at a time.",
+          "items": {
+            "categoryId": {
+              "type": "string",
+              "displayName": "Category id",
+              "required": true,
+              "description": "The id of the category it is in, as shown in search results.",
+              "sampleValue": "[category id]"
+            },
+            "subcategoryId": {
+              "type": "string",
+              "displayName": "Subcategory id",
+              "required": true,
+              "description": "The subcategory's id, as shown in search results.",
+              "sampleValue": "[subcategory id]"
+            },
+            "newName": {
+              "type": "string",
+              "displayName": "New name",
+              "required": true,
+              "description": "The subcategory's new name.",
+              "sampleValue": "[new subcategory name]"
+            }
+          },
+          "sampleValue": [
+            {
+              "categoryId": "[category id]",
+              "subcategoryId": "[subcategory id]",
+              "newName": "[new subcategory name]"
+            }
+          ]
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when all the subcategories are done.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why nothing was renamed, such as an unknown subcategory."
+            },
+            "result": {
+              "type": "object",
+              "description": "How each subcategory went.",
+              "properties": {
+                "subcategories": {
+                  "type": "array",
+                  "description": "One result per subcategory, in the order they were given.",
+                  "items": {
+                    "type": "object",
+                    "description": "How one subcategory went.",
+                    "properties": {
+                      "index": {
+                        "type": "number",
+                        "description": "Which subcategory this is, counting from 0."
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "The subcategory's id, if it was renamed."
+                      },
+                      "error": {
+                        "type": "string",
+                        "description": "Why it wasn't renamed, if it wasn't."
+                      }
+                    }
+                  }
+                },
+                "succeeded": {
+                  "type": "number",
+                  "description": "How many were renamed."
+                },
+                "failed": {
+                  "type": "number",
+                  "description": "How many weren't renamed."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "deleteSubcategory",
+      "displayName": "Delete subcategory",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "dangerous",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "deleteSubcategoryAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "deleteSubcategory",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Permanently removes a subcategory from its category.",
+      "parameters": {
+        "categoryName": {
+          "type": "string",
+          "displayName": "Category name",
+          "required": true,
+          "description": "The exact name of the category it is in.",
+          "sampleValue": "[category name]"
+        },
+        "subcategoryName": {
+          "type": "string",
+          "displayName": "Subcategory name",
+          "required": true,
+          "description": "The exact name of the subcategory to remove.",
+          "sampleValue": "[subcategory name]"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the subcategory is removed.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't removed, such as no subcategory having that name."
+            },
+            "result": {
+              "type": "object",
+              "description": "The subcategory that was removed.",
+              "properties": {
+                "categoryId": {
+                  "type": "string",
+                  "description": "The id of the category it was in."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "The removed subcategory's id."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "deleteSubcategoryAdvanced",
+      "displayName": "Delete subcategory",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "dangerous",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "deleteSubcategory",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "deleteSubcategoryAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Permanently removes a subcategory from its category, using their ids.",
+      "parameters": {
+        "categoryId": {
+          "type": "string",
+          "displayName": "Category id",
+          "required": true,
+          "description": "The id of the category it is in, as shown in search results.",
+          "sampleValue": "[category id]"
+        },
+        "subcategoryId": {
+          "type": "string",
+          "displayName": "Subcategory id",
+          "required": true,
+          "description": "The subcategory's id, as shown in search results.",
+          "sampleValue": "[subcategory id]"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the subcategory is removed.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't removed, such as an unknown subcategory."
+            },
+            "result": {
+              "type": "object",
+              "description": "The subcategory that was removed.",
+              "properties": {
+                "categoryId": {
+                  "type": "string",
+                  "description": "The id of the category it was in."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "The removed subcategory's id."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "deleteSubcategoriesAdvanced",
+      "displayName": "Delete subcategories",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "dangerous",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "deleteSubcategoriesAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Permanently removes several subcategories at once.",
+      "parameters": {
+        "subcategories": {
+          "type": "list",
+          "displayName": "Subcategories",
+          "required": true,
+          "minValue": 1,
+          "maxValue": 50,
+          "description": "The subcategories to remove, up to 50 at a time.",
+          "items": {
+            "categoryId": {
+              "type": "string",
+              "displayName": "Category id",
+              "required": true,
+              "description": "The id of the category it is in, as shown in search results.",
+              "sampleValue": "[category id]"
+            },
+            "subcategoryId": {
+              "type": "string",
+              "displayName": "Subcategory id",
+              "required": true,
+              "description": "The subcategory's id, as shown in search results.",
+              "sampleValue": "[subcategory id]"
+            }
+          },
+          "sampleValue": [
+            {
+              "categoryId": "[category id]",
+              "subcategoryId": "[subcategory id]"
+            }
+          ]
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when all the subcategories are done.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why nothing was removed, such as an unknown subcategory."
+            },
+            "result": {
+              "type": "object",
+              "description": "How each subcategory went.",
+              "properties": {
+                "subcategories": {
+                  "type": "array",
+                  "description": "One result per subcategory, in the order they were given.",
+                  "items": {
+                    "type": "object",
+                    "description": "How one subcategory went.",
+                    "properties": {
+                      "index": {
+                        "type": "number",
+                        "description": "Which subcategory this is, counting from 0."
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "The subcategory's id, if it was removed."
+                      },
+                      "error": {
+                        "type": "string",
+                        "description": "Why it wasn't removed, if it wasn't."
+                      }
+                    }
+                  }
+                },
+                "succeeded": {
+                  "type": "number",
+                  "description": "How many were removed."
+                },
+                "failed": {
+                  "type": "number",
+                  "description": "How many weren't removed."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "updateSubcategoryOrder",
+      "displayName": "Move subcategory",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "updateSubcategoryOrderAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateSubcategoryOrder",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Moves a subcategory to another place within its category.",
+      "parameters": {
+        "categoryName": {
+          "type": "string",
+          "displayName": "Category name",
+          "required": true,
+          "description": "The exact name of the category it is in.",
+          "sampleValue": "[category name]"
+        },
+        "subcategoryName": {
+          "type": "string",
+          "displayName": "Subcategory name",
+          "required": true,
+          "description": "The exact name of the subcategory to move.",
+          "sampleValue": "[subcategory name]"
+        },
+        "position": {
+          "type": "number",
+          "displayName": "Position",
+          "required": true,
+          "minValue": 1,
+          "description": "Where to put the subcategory in the manual order, counting from 1 for the top.",
+          "sampleValue": 1
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the subcategory is moved.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't moved, such as no subcategory having that name."
+            },
+            "result": {
+              "type": "object",
+              "description": "The subcategory in its new place.",
+              "properties": {
+                "categoryId": {
+                  "type": "string",
+                  "description": "The id of the category it belongs to."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "The subcategory's id."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "The subcategory's name."
+                },
+                "rank": {
+                  "type": "number",
+                  "description": "Its place in the manual order."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "updateSubcategoryOrderAdvanced",
+      "displayName": "Move subcategory",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "updateSubcategoryOrder",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateSubcategoryOrderAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Moves a subcategory to another place within its category, using their ids.",
+      "parameters": {
+        "categoryId": {
+          "type": "string",
+          "displayName": "Category id",
+          "required": true,
+          "description": "The id of the category it is in, as shown in search results.",
+          "sampleValue": "[category id]"
+        },
+        "subcategoryId": {
+          "type": "string",
+          "displayName": "Subcategory id",
+          "required": true,
+          "description": "The subcategory's id, as shown in search results.",
+          "sampleValue": "[subcategory id]"
+        },
+        "position": {
+          "type": "number",
+          "displayName": "Position",
+          "required": true,
+          "minValue": 1,
+          "description": "Where to put the subcategory in the manual order, counting from 1 for the top.",
+          "sampleValue": 1
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the subcategory is moved.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't moved, such as no subcategory having that name."
+            },
+            "result": {
+              "type": "object",
+              "description": "The subcategory in its new place.",
+              "properties": {
+                "categoryId": {
+                  "type": "string",
+                  "description": "The id of the category it belongs to."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "The subcategory's id."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "The subcategory's name."
+                },
+                "rank": {
+                  "type": "number",
+                  "description": "Its place in the manual order."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "listFavorites",
+      "displayName": "List favorites",
+      "type": "function",
+      "crudMode": "read",
+      "flags": [
+        "immutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "listFavorites",
+        "hosts": [
+          "widgetBackground"
+        ]
+      },
+      "description": "Shows the media items saved as favorites on this app.",
+      "parameters": {
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the favorites are read.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it didn't work, if it didn't."
+            },
+            "result": {
+              "type": "object",
+              "description": "The favorites.",
+              "properties": {
+                "favorites": {
+                  "type": "array",
+                  "description": "The saved favorites.",
+                  "items": {
+                    "type": "object",
+                    "description": "One favorite.",
+                    "properties": {
+                      "mediaId": {
+                        "type": "string",
+                        "description": "The media item's id."
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "The media item's title."
+                      },
+                      "icon": {
+                        "type": "string",
+                        "description": "The media item's image."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "createFavorite",
+      "displayName": "Add favorite",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "createFavoriteAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "createFavorite",
+        "hosts": [
+          "widgetBackground"
+        ]
+      },
+      "description": "Saves a media item as a favorite on this app.",
+      "parameters": {
+        "title": {
+          "type": "string",
+          "displayName": "Media title",
+          "required": true,
+          "description": "The exact title of the media item to save.",
+          "sampleValue": "[media title]"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the favorite is saved.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't saved, such as favorites being turned off or the item already being a favorite."
+            },
+            "result": {
+              "type": "object",
+              "description": "The saved favorite.",
+              "properties": {
+                "mediaId": {
+                  "type": "string",
+                  "description": "The media item's id."
+                },
+                "title": {
+                  "type": "string",
+                  "description": "The media item's title."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "createFavoriteAdvanced",
+      "displayName": "Add favorite",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "createFavorite",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "createFavoriteAdvanced",
+        "hosts": [
+          "widgetBackground"
+        ]
+      },
+      "description": "Saves a media item as a favorite on this app, using the media item's id.",
+      "parameters": {
+        "mediaId": {
+          "type": "string",
+          "displayName": "Media id",
+          "required": true,
+          "description": "The media item's id, as shown in search results.",
+          "sampleValue": "[media id]"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the favorite is saved.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't saved, such as an unknown media item."
+            },
+            "result": {
+              "type": "object",
+              "description": "The saved favorite.",
+              "properties": {
+                "mediaId": {
+                  "type": "string",
+                  "description": "The media item's id."
+                },
+                "title": {
+                  "type": "string",
+                  "description": "The media item's title."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "createFavoritesAdvanced",
+      "displayName": "Add favorites",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "createFavoritesAdvanced",
+        "hosts": [
+          "widgetBackground"
+        ]
+      },
+      "description": "Saves several media items as favorites at once.",
+      "parameters": {
+        "favorites": {
+          "type": "list",
+          "displayName": "Favorites",
+          "required": true,
+          "minValue": 1,
+          "maxValue": 50,
+          "description": "The media items to save, up to 50 at a time.",
+          "items": {
+            "mediaId": {
+              "type": "string",
+              "displayName": "Media id",
+              "required": true,
+              "description": "The media item's id, as shown in search results.",
+              "sampleValue": "[media id]"
+            }
+          },
+          "sampleValue": [
+            {
+              "mediaId": "[media id]"
+            }
+          ]
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when all the favorites are done.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why nothing was saved, such as an unknown media item."
+            },
+            "result": {
+              "type": "object",
+              "description": "How each favorite went.",
+              "properties": {
+                "favorites": {
+                  "type": "array",
+                  "description": "One result per favorite, in the order they were given.",
+                  "items": {
+                    "type": "object",
+                    "description": "How one favorite went.",
+                    "properties": {
+                      "index": {
+                        "type": "number",
+                        "description": "Which favorite this is, counting from 0."
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "The favorite's id, if it was saved."
+                      },
+                      "error": {
+                        "type": "string",
+                        "description": "Why it wasn't saved, if it wasn't."
+                      }
+                    }
+                  }
+                },
+                "succeeded": {
+                  "type": "number",
+                  "description": "How many were saved."
+                },
+                "failed": {
+                  "type": "number",
+                  "description": "How many weren't saved."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "deleteFavorite",
+      "displayName": "Remove favorite",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "deleteFavoriteAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "deleteFavorite",
+        "hosts": [
+          "widgetBackground"
+        ]
+      },
+      "description": "Removes a media item from the favorites on this app.",
+      "parameters": {
+        "title": {
+          "type": "string",
+          "displayName": "Media title",
+          "required": true,
+          "description": "The exact title of the favorite to remove.",
+          "sampleValue": "[media title]"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the favorite is removed.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't removed, such as no favorite having that title."
+            },
+            "result": {
+              "type": "object",
+              "description": "The removed favorite.",
+              "properties": {
+                "mediaId": {
+                  "type": "string",
+                  "description": "The media item's id."
+                },
+                "title": {
+                  "type": "string",
+                  "description": "The media item's title."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "deleteFavoriteAdvanced",
+      "displayName": "Remove favorite",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "deleteFavorite",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "deleteFavoriteAdvanced",
+        "hosts": [
+          "widgetBackground"
+        ]
+      },
+      "description": "Removes a media item from the favorites on this app, using the media item's id.",
+      "parameters": {
+        "mediaId": {
+          "type": "string",
+          "displayName": "Media id",
+          "required": true,
+          "description": "The media item's id, as shown in the favorites.",
+          "sampleValue": "[media id]"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the favorite is removed.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't removed, such as the item not being a favorite."
+            },
+            "result": {
+              "type": "object",
+              "description": "The removed favorite.",
+              "properties": {
+                "mediaId": {
+                  "type": "string",
+                  "description": "The media item's id."
+                },
+                "title": {
+                  "type": "string",
+                  "description": "The media item's title."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "deleteFavoritesAdvanced",
+      "displayName": "Remove favorites",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "dangerous",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "deleteFavoritesAdvanced",
+        "hosts": [
+          "widgetBackground"
+        ]
+      },
+      "description": "Removes several media items from the favorites at once.",
+      "parameters": {
+        "favorites": {
+          "type": "list",
+          "displayName": "Favorites",
+          "required": true,
+          "minValue": 1,
+          "maxValue": 50,
+          "description": "The favorites to remove, up to 50 at a time.",
+          "items": {
+            "mediaId": {
+              "type": "string",
+              "displayName": "Media id",
+              "required": true,
+              "description": "The media item's id, as shown in the favorites.",
+              "sampleValue": "[media id]"
+            }
+          },
+          "sampleValue": [
+            {
+              "mediaId": "[media id]"
+            }
+          ]
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when all the favorites are done.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why nothing was removed, such as an item that is not a favorite."
+            },
+            "result": {
+              "type": "object",
+              "description": "How each favorite went.",
+              "properties": {
+                "favorites": {
+                  "type": "array",
+                  "description": "One result per favorite, in the order they were given.",
+                  "items": {
+                    "type": "object",
+                    "description": "How one favorite went.",
+                    "properties": {
+                      "index": {
+                        "type": "number",
+                        "description": "Which favorite this is, counting from 0."
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "The favorite's id, if it was removed."
+                      },
+                      "error": {
+                        "type": "string",
+                        "description": "Why it wasn't removed, if it wasn't."
+                      }
+                    }
+                  }
+                },
+                "succeeded": {
+                  "type": "number",
+                  "description": "How many were removed."
+                },
+                "failed": {
+                  "type": "number",
+                  "description": "How many weren't removed."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "listPlaylistItems",
+      "displayName": "List playlist",
+      "type": "function",
+      "crudMode": "read",
+      "flags": [
+        "immutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "listPlaylistItems",
+        "hosts": [
+          "widgetBackground",
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Shows the media items in a person's playlist.",
+      "parameters": {
+        "userId": {
+          "type": "user",
+          "displayName": "User",
+          "required": true,
+          "description": "The person whose playlist it is, by their id or email address.",
+          "sampleValue": "[user id]"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the playlist is read.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it didn't work, such as no person having that email address."
+            },
+            "result": {
+              "type": "object",
+              "description": "The playlist.",
+              "properties": {
+                "playlistItems": {
+                  "type": "array",
+                  "description": "The media items in the playlist.",
+                  "items": {
+                    "type": "object",
+                    "description": "One playlist item.",
+                    "properties": {
+                      "mediaId": {
+                        "type": "string",
+                        "description": "The media item's id."
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "The media item's title."
+                      },
+                      "topImage": {
+                        "type": "string",
+                        "description": "The media item's image."
+                      },
+                      "audioUrl": {
+                        "type": "string",
+                        "description": "The audio's link."
+                      },
+                      "videoUrl": {
+                        "type": "string",
+                        "description": "The video's link."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "createPlaylistItem",
+      "displayName": "Add to playlist",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "createPlaylistItemAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "createPlaylistItem",
+        "hosts": [
+          "widgetBackground",
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Adds an audio or video item to a person's playlist, on behalf of the app.",
+      "parameters": {
+        "userId": {
+          "type": "user",
+          "displayName": "User",
+          "required": true,
+          "description": "The person whose playlist it is, by their id or email address.",
+          "sampleValue": "[user id]"
+        },
+        "title": {
+          "type": "string",
+          "displayName": "Media title",
+          "required": true,
+          "description": "The exact title of the media item to add.",
+          "sampleValue": "[media title]"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the item is added.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't added, such as the playlist being turned off or full."
+            },
+            "result": {
+              "type": "object",
+              "description": "The added item.",
+              "properties": {
+                "mediaId": {
+                  "type": "string",
+                  "description": "The media item's id."
+                },
+                "title": {
+                  "type": "string",
+                  "description": "The media item's title."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "createPlaylistItemAdvanced",
+      "displayName": "Add to playlist",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "createPlaylistItem",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "createPlaylistItemAdvanced",
+        "hosts": [
+          "widgetBackground",
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Adds an audio or video item to a person's playlist on behalf of the app, using the media item's id.",
+      "parameters": {
+        "userId": {
+          "type": "user",
+          "displayName": "User",
+          "required": true,
+          "description": "The person whose playlist it is, by their id or email address.",
+          "sampleValue": "[user id]"
+        },
+        "mediaId": {
+          "type": "string",
+          "displayName": "Media id",
+          "required": true,
+          "description": "The media item's id, as shown in search results.",
+          "sampleValue": "[media id]"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the item is added.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't added, such as an unknown media item."
+            },
+            "result": {
+              "type": "object",
+              "description": "The added item.",
+              "properties": {
+                "mediaId": {
+                  "type": "string",
+                  "description": "The media item's id."
+                },
+                "title": {
+                  "type": "string",
+                  "description": "The media item's title."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "createPlaylistItemsAdvanced",
+      "displayName": "Add items to playlist",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "createPlaylistItemsAdvanced",
+        "hosts": [
+          "widgetBackground",
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Adds several audio or video items to a person's playlist at once, on behalf of the app.",
+      "parameters": {
+        "userId": {
+          "type": "user",
+          "displayName": "User",
+          "required": true,
+          "description": "The person whose playlist it is, by their id or email address.",
+          "sampleValue": "[user id]"
+        },
+        "playlistItems": {
+          "type": "list",
+          "displayName": "Playlist items",
+          "required": true,
+          "minValue": 1,
+          "maxValue": 50,
+          "description": "The media items to add, up to 50 at a time.",
+          "items": {
+            "mediaId": {
+              "type": "string",
+              "displayName": "Media id",
+              "required": true,
+              "description": "The media item's id, as shown in search results.",
+              "sampleValue": "[media id]"
+            }
+          },
+          "sampleValue": [
+            {
+              "mediaId": "[media id]"
+            }
+          ]
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when all the items are done.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why nothing was added, such as an unknown media item."
+            },
+            "result": {
+              "type": "object",
+              "description": "How each item went.",
+              "properties": {
+                "playlistItems": {
+                  "type": "array",
+                  "description": "One result per item, in the order they were given.",
+                  "items": {
+                    "type": "object",
+                    "description": "How one item went.",
+                    "properties": {
+                      "index": {
+                        "type": "number",
+                        "description": "Which item this is, counting from 0."
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "The item's id, if it was added."
+                      },
+                      "error": {
+                        "type": "string",
+                        "description": "Why it wasn't added, if it wasn't."
+                      }
+                    }
+                  }
+                },
+                "succeeded": {
+                  "type": "number",
+                  "description": "How many were added."
+                },
+                "failed": {
+                  "type": "number",
+                  "description": "How many weren't added."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "deletePlaylistItem",
+      "displayName": "Remove from playlist",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "deletePlaylistItemAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "deletePlaylistItem",
+        "hosts": [
+          "widgetBackground",
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Removes a media item from a person's playlist, on behalf of the app.",
+      "parameters": {
+        "userId": {
+          "type": "user",
+          "displayName": "User",
+          "required": true,
+          "description": "The person whose playlist it is, by their id or email address.",
+          "sampleValue": "[user id]"
+        },
+        "title": {
+          "type": "string",
+          "displayName": "Media title",
+          "required": true,
+          "description": "The exact title of the playlist item to remove.",
+          "sampleValue": "[media title]"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the item is removed.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't removed, such as no playlist item having that title."
+            },
+            "result": {
+              "type": "object",
+              "description": "The removed item.",
+              "properties": {
+                "mediaId": {
+                  "type": "string",
+                  "description": "The media item's id."
+                },
+                "title": {
+                  "type": "string",
+                  "description": "The media item's title."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "deletePlaylistItemAdvanced",
+      "displayName": "Remove from playlist",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "deletePlaylistItem",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "deletePlaylistItemAdvanced",
+        "hosts": [
+          "widgetBackground",
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Removes a media item from a person's playlist on behalf of the app, using the media item's id.",
+      "parameters": {
+        "userId": {
+          "type": "user",
+          "displayName": "User",
+          "required": true,
+          "description": "The person whose playlist it is, by their id or email address.",
+          "sampleValue": "[user id]"
+        },
+        "mediaId": {
+          "type": "string",
+          "displayName": "Media id",
+          "required": true,
+          "description": "The media item's id, as shown in the playlist.",
+          "sampleValue": "[media id]"
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when the item is removed.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why it wasn't removed, such as the item not being in the playlist."
+            },
+            "result": {
+              "type": "object",
+              "description": "The removed item.",
+              "properties": {
+                "mediaId": {
+                  "type": "string",
+                  "description": "The media item's id."
+                },
+                "title": {
+                  "type": "string",
+                  "description": "The media item's title."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "deletePlaylistItemsAdvanced",
+      "displayName": "Remove items from playlist",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "dangerous",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "deletePlaylistItemsAdvanced",
+        "hosts": [
+          "widgetBackground",
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Removes several media items from a person's playlist at once, on behalf of the app.",
+      "parameters": {
+        "userId": {
+          "type": "user",
+          "displayName": "User",
+          "required": true,
+          "description": "The person whose playlist it is, by their id or email address.",
+          "sampleValue": "[user id]"
+        },
+        "playlistItems": {
+          "type": "list",
+          "displayName": "Playlist items",
+          "required": true,
+          "minValue": 1,
+          "maxValue": 50,
+          "description": "The playlist items to remove, up to 50 at a time.",
+          "items": {
+            "mediaId": {
+              "type": "string",
+              "displayName": "Media id",
+              "required": true,
+              "description": "The media item's id, as shown in the playlist.",
+              "sampleValue": "[media id]"
+            }
+          },
+          "sampleValue": [
+            {
+              "mediaId": "[media id]"
+            }
+          ]
+        },
+        "callback": {
+          "type": "function",
+          "required": true,
+          "description": "Runs when all the items are done.",
+          "parameters": {
+            "error": {
+              "type": "object|string",
+              "description": "Why nothing was removed, such as an item that is not in the playlist."
+            },
+            "result": {
+              "type": "object",
+              "description": "How each item went.",
+              "properties": {
+                "playlistItems": {
+                  "type": "array",
+                  "description": "One result per item, in the order they were given.",
+                  "items": {
+                    "type": "object",
+                    "description": "How one item went.",
+                    "properties": {
+                      "index": {
+                        "type": "number",
+                        "description": "Which item this is, counting from 0."
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "The item's id, if it was removed."
+                      },
+                      "error": {
+                        "type": "string",
+                        "description": "Why it wasn't removed, if it wasn't."
+                      }
+                    }
+                  }
+                },
+                "succeeded": {
+                  "type": "number",
+                  "description": "How many were removed."
+                },
+                "failed": {
+                  "type": "number",
+                  "description": "How many weren't removed."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "name": "searchMedia",
+  "displayName": "Search media",
+  "type": "function",
+  "crudMode": "read",
+  "flags": [
+    "immutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "searchMedia",
+    "hosts": [
+      "widgetBackground",
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Shows the media items, 50 at a time, in the order the app shows them.",
+  "parameters": {
+    "title": {
+      "type": "string",
+      "displayName": "Media title",
+      "required": false,
+      "description": "Only show media with exactly this title. Leave it out to show every title.",
+      "sampleValue": "[media title]"
+    },
+    "categoryName": {
+      "type": "string",
+      "displayName": "Category name",
+      "required": false,
+      "description": "Only show media in this category. Leave it out to show every category.",
+      "sampleValue": "[category name]"
+    },
+    "subcategoryName": {
+      "type": "string",
+      "displayName": "Subcategory name",
+      "required": false,
+      "description": "Only show media in this subcategory of the category given. Leave it out to show the whole category.",
+      "sampleValue": "[subcategory name]"
+    },
+    "page": {
+      "type": "number",
+      "displayName": "Page",
+      "required": false,
+      "minValue": 0,
+      "description": "Which page of 50 to show, counting from 0. Leave it out for the first page.",
+      "sampleValue": 0
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the search is done.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it didn't work, such as no category having that name."
+        },
+        "result": {
+          "type": "object",
+          "description": "The media items found.",
+          "properties": {
+            "media": {
+              "type": "array",
+              "description": "The media items on this page, in the order the app shows them.",
+              "items": {
+                "type": "object",
+                "description": "One media item.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "The media item's id."
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "The media item's title."
+                  },
+                  "summary": {
+                    "type": "string",
+                    "description": "The short summary shown in the list."
+                  },
+                  "bodyHTML": {
+                    "type": "string",
+                    "description": "The media item's formatted content."
+                  },
+                  "topImage": {
+                    "type": "string",
+                    "description": "The image shown in the list."
+                  },
+                  "image": {
+                    "type": "string",
+                    "description": "The image shown while the audio plays."
+                  },
+                  "backgroundImage": {
+                    "type": "string",
+                    "description": "The background shown while the audio plays."
+                  },
+                  "audioTitle": {
+                    "type": "string",
+                    "description": "The audio's title."
+                  },
+                  "artists": {
+                    "type": "string",
+                    "description": "The album artists."
+                  },
+                  "audioUrl": {
+                    "type": "string",
+                    "description": "The audio's link."
+                  },
+                  "videoUrl": {
+                    "type": "string",
+                    "description": "The video's link."
+                  },
+                  "srcUrl": {
+                    "type": "string",
+                    "description": "The link to the original source."
+                  },
+                  "mediaDate": {
+                    "type": "datetime",
+                    "description": "The media item's date."
+                  },
+                  "dateCreated": {
+                    "type": "number",
+                    "description": "When it was added, in milliseconds."
+                  },
+                  "categories": {
+                    "type": "array",
+                    "description": "The ids of the categories it is in.",
+                    "items": {
+                      "type": "string",
+                      "description": "A category's id."
+                    }
+                  },
+                  "subcategories": {
+                    "type": "array",
+                    "description": "The ids of the subcategories it is in.",
+                    "items": {
+                      "type": "string",
+                      "description": "A subcategory's id."
+                    }
+                  },
+                  "rank": {
+                    "type": "number",
+                    "description": "Its place in the manual order."
+                  },
+                  "deepLinkUrl": {
+                    "type": "string",
+                    "description": "The link that opens it in the app."
+                  },
+                  "views": {
+                    "type": "number",
+                    "description": "How many times it was played, when view counts are shown; otherwise empty."
+                  }
+                }
+              }
+            },
+            "total": {
+              "type": "number",
+              "description": "How many media items match in all."
+            },
+            "page": {
+              "type": "number",
+              "description": "Which page this is, counting from 0."
+            },
+            "hasMore": {
+              "type": "boolean",
+              "description": "Whether there is another page."
+            }
+          }
+        }
+      }
+    }
+  }
+}

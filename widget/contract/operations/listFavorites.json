@@ -1,0 +1,64 @@
+{
+  "name": "listFavorites",
+  "displayName": "List favorites",
+  "type": "function",
+  "crudMode": "read",
+  "flags": [
+    "immutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "listFavorites",
+    "hosts": [
+      "widgetBackground"
+    ]
+  },
+  "description": "Shows the media items saved as favorites on this app.",
+  "parameters": {
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the favorites are read.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it didn't work, if it didn't."
+        },
+        "result": {
+          "type": "object",
+          "description": "The favorites.",
+          "properties": {
+            "favorites": {
+              "type": "array",
+              "description": "The saved favorites.",
+              "items": {
+                "type": "object",
+                "description": "One favorite.",
+                "properties": {
+                  "mediaId": {
+                    "type": "string",
+                    "description": "The media item's id."
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "The media item's title."
+                  },
+                  "icon": {
+                    "type": "string",
+                    "description": "The media item's image."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

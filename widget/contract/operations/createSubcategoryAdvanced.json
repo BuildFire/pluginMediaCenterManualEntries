@@ -1,0 +1,79 @@
+{
+  "name": "createSubcategoryAdvanced",
+  "displayName": "Create subcategory",
+  "type": "function",
+  "crudMode": "create",
+  "flags": [
+    "mutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "advanced",
+  "alternatives": [
+    {
+      "operationName": "createSubcategory",
+      "label": "Basic"
+    }
+  ],
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "createSubcategoryAdvanced",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Adds a subcategory at the end of a category, using the category's id.",
+  "parameters": {
+    "categoryId": {
+      "type": "string",
+      "displayName": "Category id",
+      "required": true,
+      "description": "The id of the category to add it to, as shown in search results.",
+      "sampleValue": "[category id]"
+    },
+    "name": {
+      "type": "string",
+      "displayName": "Subcategory name",
+      "required": true,
+      "description": "The new subcategory's name.",
+      "sampleValue": "[subcategory name]"
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the subcategory is added.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't added, such as an unknown category."
+        },
+        "result": {
+          "type": "object",
+          "description": "The new subcategory.",
+          "properties": {
+            "categoryId": {
+              "type": "string",
+              "description": "The id of the category it belongs to."
+            },
+            "id": {
+              "type": "string",
+              "description": "The subcategory's id."
+            },
+            "name": {
+              "type": "string",
+              "description": "The subcategory's name."
+            },
+            "rank": {
+              "type": "number",
+              "description": "Its place in the manual order."
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "name": "updateCategoryOrder",
+  "displayName": "Move category",
+  "type": "function",
+  "crudMode": "update",
+  "flags": [
+    "mutable",
+    "safe",
+    "throttable"
+  ],
+  "usage": "basic",
+  "alternatives": [
+    {
+      "operationName": "updateCategoryOrderAdvanced",
+      "label": "Advanced"
+    }
+  ],
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "updateCategoryOrder",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Moves a category to another place in the manual order.",
+  "parameters": {
+    "categoryName": {
+      "type": "string",
+      "displayName": "Category name",
+      "required": true,
+      "description": "The exact name of the category to move.",
+      "sampleValue": "[category name]"
+    },
+    "position": {
+      "type": "number",
+      "displayName": "Position",
+      "required": true,
+      "minValue": 1,
+      "description": "Where to put the category in the manual order, counting from 1 for the top.",
+      "sampleValue": 1
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the category is moved.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't moved, such as no category having that name."
+        },
+        "result": {
+          "type": "object",
+          "description": "The category's new place.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The category's id."
+            },
+            "rank": {
+              "type": "number",
+              "description": "Its new place in the manual order, counting from 1."
+            }
+          }
+        }
+      }
+    }
+  }
+}
