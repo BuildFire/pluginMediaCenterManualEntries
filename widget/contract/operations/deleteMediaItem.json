@@ -1,0 +1,68 @@
+{
+  "name": "deleteMediaItem",
+  "displayName": "Delete media item",
+  "type": "function",
+  "crudMode": "delete",
+  "flags": [
+    "mutable",
+    "dangerous",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "alternatives": [
+    {
+      "operationName": "deleteMediaItemAdvanced",
+      "label": "Advanced"
+    }
+  ],
+  "context": {
+    "functionName": "deleteMediaItem",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Permanently removes a media item, found by its title.",
+  "parameters": {
+    "title": {
+      "type": "string",
+      "displayName": "Media title",
+      "required": true,
+      "description": "The exact title of the media item.",
+      "sampleValue": "[media title]"
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the item is deleted.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't deleted, such as no item or several items having that title."
+        },
+        "result": {
+          "type": "object",
+          "description": "The media item that was deleted.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The media item's id."
+            },
+            "title": {
+              "type": "string",
+              "description": "The item's title."
+            },
+            "deleted": {
+              "type": "boolean",
+              "description": "Whether the media item was deleted."
+            }
+          }
+        }
+      }
+    }
+  }
+}

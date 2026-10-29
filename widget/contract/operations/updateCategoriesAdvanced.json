@@ -1,0 +1,152 @@
+{
+  "name": "updateCategoriesAdvanced",
+  "displayName": "Update categories",
+  "type": "function",
+  "crudMode": "update",
+  "flags": [
+    "mutable",
+    "safe",
+    "throttable"
+  ],
+  "usage": "advanced",
+  "availableFor": [
+    "API"
+  ],
+  "context": {
+    "functionName": "updateCategoriesAdvanced",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Changes several categories at once.",
+  "parameters": {
+    "categories": {
+      "type": "list",
+      "displayName": "Categories",
+      "required": true,
+      "minValue": 1,
+      "maxValue": 50,
+      "description": "The changes to make, one per category, up to 50 at a time.",
+      "items": {
+        "categoryId": {
+          "type": "string",
+          "displayName": "Category id",
+          "required": true,
+          "description": "The category's id, as shown in search results.",
+          "sampleValue": "[category id]"
+        },
+        "newName": {
+          "type": "string",
+          "displayName": "New name",
+          "required": false,
+          "description": "The category's new name. Leave it out to keep the current one.",
+          "sampleValue": "[new category name]"
+        },
+        "newIcon": {
+          "type": "image",
+          "displayName": "New icon",
+          "required": false,
+          "description": "A new picture or icon for the category, as a list holding one. Leave it out to keep the current one, or pass an empty list to remove it.",
+          "minValue": 0,
+          "maxValue": 1,
+          "nullable": true,
+          "sampleValue": [
+            "[image url]"
+          ]
+        },
+        "newSubcategorySortOrder": {
+          "type": "select",
+          "displayName": "New subcategory order",
+          "required": false,
+          "description": "How its subcategories are ordered; changing it sorts them again. Leave it out to keep the current order.",
+          "enums": [
+            {
+              "label": "Manual",
+              "value": "Manually"
+            },
+            {
+              "label": "Subcategory Title A-Z",
+              "value": "Subcategory Title A-Z"
+            },
+            {
+              "label": "Subcategory Title Z-A",
+              "value": "Subcategory Title Z-A"
+            },
+            {
+              "label": "Subcategory Date Asc",
+              "value": "Subcategory Date Asc"
+            },
+            {
+              "label": "Subcategory Date Desc",
+              "value": "Subcategory Date Desc"
+            },
+            {
+              "label": "Newest",
+              "value": "Newest"
+            },
+            {
+              "label": "Oldest",
+              "value": "Oldest"
+            }
+          ],
+          "allowEnumCustomOption": false,
+          "sampleValue": "Manually"
+        }
+      },
+      "sampleValue": [
+        {
+          "categoryId": "[category id]",
+          "newName": "[new category name]"
+        }
+      ]
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when all the categories are done.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why nothing was changed, such as a category id that matches nothing."
+        },
+        "result": {
+          "type": "object",
+          "description": "How each category went.",
+          "properties": {
+            "categories": {
+              "type": "array",
+              "description": "One result per category, in the order they were given.",
+              "items": {
+                "type": "object",
+                "description": "How one category went.",
+                "properties": {
+                  "index": {
+                    "type": "number",
+                    "description": "Which category this is, counting from 0."
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "The category's id, if it was changed."
+                  },
+                  "error": {
+                    "type": "string",
+                    "description": "Why it wasn't changed, if it wasn't."
+                  }
+                }
+              }
+            },
+            "succeeded": {
+              "type": "number",
+              "description": "How many were changed."
+            },
+            "failed": {
+              "type": "number",
+              "description": "How many weren't changed."
+            }
+          }
+        }
+      }
+    }
+  }
+}

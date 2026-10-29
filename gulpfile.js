@@ -63,6 +63,7 @@ const jsTasks = [
             "widget/**/**/**/*.js",
             "!widget/js/**",
             "!widget/assets/**",
+            "!widget/contract/**",
         ],
         dest: "/widget",
     },
@@ -141,6 +142,13 @@ gulp.task("designAssets", function () {
       .pipe(gulp.dest(destinationFolder + "/control/design"));
 });
 
+// The plugin contract ships as written: the platform fetches these files by their own paths.
+gulp.task("contractFiles", function () {
+    return gulp
+      .src(["widget/contract/**/*"], { base: "widget" })
+      .pipe(gulp.dest(destinationFolder + "/widget"));
+});
+
 gulp.task("clean", function () {
     return del([destinationFolder], { force: true });
 });
@@ -198,6 +206,7 @@ var buildTasksToRun = [
     "assetsJs",
     "contentAssetsJs",
     "designAssets",
+    "contractFiles",
 ];
 
 cssTasks.forEach(function (task) {

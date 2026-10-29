@@ -1,0 +1,94 @@
+{
+  "name": "deleteMediaItemsAdvanced",
+  "displayName": "Delete media items",
+  "type": "function",
+  "crudMode": "delete",
+  "flags": [
+    "mutable",
+    "dangerous",
+    "throttable"
+  ],
+  "usage": "advanced",
+  "availableFor": [
+    "API"
+  ],
+  "context": {
+    "functionName": "deleteMediaItemsAdvanced",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Permanently removes several media items at once.",
+  "parameters": {
+    "mediaItems": {
+      "type": "list",
+      "displayName": "Media items",
+      "required": true,
+      "minValue": 1,
+      "maxValue": 50,
+      "description": "The items to remove, up to 50 at a time.",
+      "items": {
+        "mediaItemId": {
+          "type": "string",
+          "displayName": "Media item id",
+          "required": true,
+          "description": "The media item's id, as shown in search results.",
+          "sampleValue": "[media item id]"
+        }
+      },
+      "sampleValue": [
+        {
+          "mediaItemId": "[media item id]"
+        }
+      ]
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when all the items are done.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why nothing was deleted, such as an item id that matches nothing."
+        },
+        "result": {
+          "type": "object",
+          "description": "How each item went.",
+          "properties": {
+            "mediaItems": {
+              "type": "array",
+              "description": "One result per item, in the order they were given.",
+              "items": {
+                "type": "object",
+                "description": "How one item went.",
+                "properties": {
+                  "index": {
+                    "type": "number",
+                    "description": "Which item this is, counting from 0."
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "The item's id, if it was deleted."
+                  },
+                  "error": {
+                    "type": "string",
+                    "description": "Why it wasn't deleted, if it wasn't."
+                  }
+                }
+              }
+            },
+            "succeeded": {
+              "type": "number",
+              "description": "How many were deleted."
+            },
+            "failed": {
+              "type": "number",
+              "description": "How many weren't deleted."
+            }
+          }
+        }
+      }
+    }
+  }
+}

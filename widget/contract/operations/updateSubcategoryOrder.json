@@ -1,0 +1,121 @@
+{
+  "name": "updateSubcategoryOrder",
+  "displayName": "Move subcategory",
+  "type": "function",
+  "crudMode": "update",
+  "flags": [
+    "mutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "alternatives": [
+    {
+      "operationName": "updateSubcategoryOrderAdvanced",
+      "label": "Advanced"
+    }
+  ],
+  "context": {
+    "functionName": "updateSubcategoryOrder",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Moves a subcategory to another place in its category's list, found by its name and its category's name.",
+  "parameters": {
+    "categoryName": {
+      "type": "string",
+      "displayName": "Category name",
+      "required": true,
+      "description": "The exact name of the category.",
+      "sampleValue": "[category name]"
+    },
+    "subcategoryName": {
+      "type": "string",
+      "displayName": "Subcategory name",
+      "required": true,
+      "description": "The exact name of the subcategory, within that category.",
+      "sampleValue": "[subcategory name]"
+    },
+    "position": {
+      "type": "number",
+      "displayName": "New position",
+      "required": true,
+      "description": "Where to move it in its category's list, counting from 1 for the first place.",
+      "minValue": 1,
+      "sampleValue": 1
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the subcategory is moved.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't moved, such as no subcategory having that name or a place past the end of the list."
+        },
+        "result": {
+          "type": "object",
+          "description": "The category as it now stands.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The category's id."
+            },
+            "name": {
+              "type": "string",
+              "description": "The category's name."
+            },
+            "icon": {
+              "type": "string",
+              "description": "Its picture or icon."
+            },
+            "subcategorySortOrder": {
+              "type": "string",
+              "description": "How its subcategories are ordered."
+            },
+            "rank": {
+              "type": "number",
+              "description": "Its place in the manual order."
+            },
+            "createdOn": {
+              "type": "datetime",
+              "description": "When it was added."
+            },
+            "lastUpdatedOn": {
+              "type": "datetime",
+              "description": "When it was last changed."
+            },
+            "subcategories": {
+              "type": "array",
+              "description": "Its subcategories, in order.",
+              "items": {
+                "type": "object",
+                "description": "One subcategory.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "The subcategory's id."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "The subcategory's name."
+                  },
+                  "rank": {
+                    "type": "number",
+                    "description": "Its place in the list."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
