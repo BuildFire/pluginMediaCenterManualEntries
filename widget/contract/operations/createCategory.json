@@ -1,0 +1,149 @@
+{
+  "name": "createCategory",
+  "displayName": "Create category",
+  "type": "function",
+  "crudMode": "create",
+  "flags": [
+    "mutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "createCategory",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Adds a category that people can narrow the media list by.",
+  "parameters": {
+    "name": {
+      "type": "string",
+      "displayName": "Name",
+      "required": true,
+      "description": "The category's name.",
+      "sampleValue": "[category name]"
+    },
+    "icon": {
+      "type": "image",
+      "displayName": "Icon",
+      "required": false,
+      "description": "A picture or icon for the category, as a list holding one. Leave it out for none.",
+      "minValue": 0,
+      "maxValue": 1,
+      "sampleValue": [
+        "[image url]"
+      ]
+    },
+    "subcategorySortOrder": {
+      "type": "select",
+      "displayName": "Subcategory order",
+      "required": false,
+      "description": "How its subcategories are ordered. Leave it out for newest first.",
+      "enums": [
+        {
+          "label": "Manual",
+          "value": "Manually"
+        },
+        {
+          "label": "Subcategory Title A-Z",
+          "value": "Subcategory Title A-Z"
+        },
+        {
+          "label": "Subcategory Title Z-A",
+          "value": "Subcategory Title Z-A"
+        },
+        {
+          "label": "Subcategory Date Asc",
+          "value": "Subcategory Date Asc"
+        },
+        {
+          "label": "Subcategory Date Desc",
+          "value": "Subcategory Date Desc"
+        },
+        {
+          "label": "Newest",
+          "value": "Newest"
+        },
+        {
+          "label": "Oldest",
+          "value": "Oldest"
+        }
+      ],
+      "allowEnumCustomOption": false,
+      "sampleValue": "Manually"
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the category is added.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't added, such as a missing name."
+        },
+        "result": {
+          "type": "object",
+          "description": "The category as it now stands.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The category's id."
+            },
+            "name": {
+              "type": "string",
+              "description": "The category's name."
+            },
+            "icon": {
+              "type": "string",
+              "description": "Its picture or icon."
+            },
+            "subcategorySortOrder": {
+              "type": "string",
+              "description": "How its subcategories are ordered."
+            },
+            "rank": {
+              "type": "number",
+              "description": "Its place in the manual order."
+            },
+            "createdOn": {
+              "type": "datetime",
+              "description": "When it was added."
+            },
+            "lastUpdatedOn": {
+              "type": "datetime",
+              "description": "When it was last changed."
+            },
+            "subcategories": {
+              "type": "array",
+              "description": "Its subcategories, in order.",
+              "items": {
+                "type": "object",
+                "description": "One subcategory.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "The subcategory's id."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "The subcategory's name."
+                  },
+                  "rank": {
+                    "type": "number",
+                    "description": "Its place in the list."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

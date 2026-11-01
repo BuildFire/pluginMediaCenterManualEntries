@@ -1,0 +1,1383 @@
+{
+  "operations": [
+    {
+      "name": "searchMediaItems",
+      "displayName": "Search media items",
+      "type": "function",
+      "crudMode": "read",
+      "flags": [
+        "immutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "searchMediaItems",
+        "hosts": [
+          "widgetBackground",
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Shows the media items in the order the app lists them, optionally only those matching a title or in a category.",
+      "parameters": [
+        "title",
+        "categoryName",
+        "subcategoryName",
+        "page",
+        "pageSize"
+      ],
+      "definitionPath": "operations/searchMediaItems.json"
+    },
+    {
+      "name": "getMediaItem",
+      "displayName": "Get media item",
+      "type": "function",
+      "crudMode": "read",
+      "flags": [
+        "immutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "getMediaItemAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "getMediaItem",
+        "hosts": [
+          "widgetBackground",
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Shows one media item and everything on its page, found by its title.",
+      "parameters": [
+        "title"
+      ],
+      "definitionPath": "operations/getMediaItem.json"
+    },
+    {
+      "name": "getMediaItemAdvanced",
+      "displayName": "Get media item",
+      "type": "function",
+      "crudMode": "read",
+      "flags": [
+        "immutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "getMediaItem",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "getMediaItemAdvanced",
+        "hosts": [
+          "widgetBackground",
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Shows one media item and everything on its page, using the item's id.",
+      "parameters": [
+        "mediaItemId"
+      ],
+      "definitionPath": "operations/getMediaItemAdvanced.json"
+    },
+    {
+      "name": "createMediaItem",
+      "displayName": "Create media item",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "createMediaItem",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Adds a media item, such as a video, a song, a podcast or an article, to the list.",
+      "parameters": [
+        "title",
+        "summary",
+        "body",
+        "sourceUrl",
+        "videoUrl",
+        "audioTitle",
+        "artists",
+        "audioUrl",
+        "thumbnailImage",
+        "audioImage",
+        "audioBackgroundImage",
+        "mediaDate",
+        "actionLinks"
+      ],
+      "definitionPath": "operations/createMediaItem.json"
+    },
+    {
+      "name": "createMediaItemsAdvanced",
+      "displayName": "Create media items",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "createMediaItemsAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Adds several media items at once.",
+      "parameters": [
+        "mediaItems"
+      ],
+      "definitionPath": "operations/createMediaItemsAdvanced.json"
+    },
+    {
+      "name": "updateMediaItem",
+      "displayName": "Update media item",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "updateMediaItemAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "updateMediaItem",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Changes a media item's details, such as its title, links, pictures or actions, found by its title.",
+      "parameters": [
+        "title",
+        "newTitle",
+        "newSummary",
+        "newBody",
+        "newSourceUrl",
+        "newVideoUrl",
+        "newAudioTitle",
+        "newArtists",
+        "newAudioUrl",
+        "newThumbnailImage",
+        "newAudioImage",
+        "newAudioBackgroundImage",
+        "newMediaDate",
+        "newActionLinks",
+        "resetViews"
+      ],
+      "definitionPath": "operations/updateMediaItem.json"
+    },
+    {
+      "name": "updateMediaItemAdvanced",
+      "displayName": "Update media item",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "updateMediaItem",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "updateMediaItemAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Changes a media item's details, such as its title, links, pictures or actions, using the item's id.",
+      "parameters": [
+        "mediaItemId",
+        "newTitle",
+        "newSummary",
+        "newBody",
+        "newSourceUrl",
+        "newVideoUrl",
+        "newAudioTitle",
+        "newArtists",
+        "newAudioUrl",
+        "newThumbnailImage",
+        "newAudioImage",
+        "newAudioBackgroundImage",
+        "newMediaDate",
+        "newActionLinks",
+        "resetViews"
+      ],
+      "definitionPath": "operations/updateMediaItemAdvanced.json"
+    },
+    {
+      "name": "updateMediaItemsAdvanced",
+      "displayName": "Update media items",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "updateMediaItemsAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Changes the details of several media items at once.",
+      "parameters": [
+        "mediaItems"
+      ],
+      "definitionPath": "operations/updateMediaItemsAdvanced.json"
+    },
+    {
+      "name": "deleteMediaItem",
+      "displayName": "Delete media item",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "dangerous",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "deleteMediaItemAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "deleteMediaItem",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Permanently removes a media item, found by its title.",
+      "parameters": [
+        "title"
+      ],
+      "definitionPath": "operations/deleteMediaItem.json"
+    },
+    {
+      "name": "deleteMediaItemAdvanced",
+      "displayName": "Delete media item",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "dangerous",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "deleteMediaItem",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "deleteMediaItemAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Permanently removes a media item, using the item's id.",
+      "parameters": [
+        "mediaItemId"
+      ],
+      "definitionPath": "operations/deleteMediaItemAdvanced.json"
+    },
+    {
+      "name": "deleteMediaItemsAdvanced",
+      "displayName": "Delete media items",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "dangerous",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "deleteMediaItemsAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Permanently removes several media items at once.",
+      "parameters": [
+        "mediaItems"
+      ],
+      "definitionPath": "operations/deleteMediaItemsAdvanced.json"
+    },
+    {
+      "name": "updateMediaItemOrder",
+      "displayName": "Move media item",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "updateMediaItemOrderAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateMediaItemOrder",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Moves a media item to another place in the manual order, found by its title.",
+      "parameters": [
+        "title",
+        "position"
+      ],
+      "definitionPath": "operations/updateMediaItemOrder.json"
+    },
+    {
+      "name": "updateMediaItemOrderAdvanced",
+      "displayName": "Move media item",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "updateMediaItemOrder",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateMediaItemOrderAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Moves a media item to another place in the manual order, using the item's id.",
+      "parameters": [
+        "mediaItemId",
+        "position"
+      ],
+      "definitionPath": "operations/updateMediaItemOrderAdvanced.json"
+    },
+    {
+      "name": "updateMediaItemCategory",
+      "displayName": "Update media item's category",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "updateMediaItemCategoryAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateMediaItemCategory",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Puts a media item in a category or one of its subcategories, or takes it out, found by their names.",
+      "parameters": [
+        "title",
+        "categoryName",
+        "subcategoryName",
+        "included"
+      ],
+      "definitionPath": "operations/updateMediaItemCategory.json"
+    },
+    {
+      "name": "updateMediaItemCategoryAdvanced",
+      "displayName": "Update media item's category",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "updateMediaItemCategory",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateMediaItemCategoryAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Puts a media item in a category or one of its subcategories, or takes it out, using their ids.",
+      "parameters": [
+        "mediaItemId",
+        "categoryId",
+        "subcategoryId",
+        "included"
+      ],
+      "definitionPath": "operations/updateMediaItemCategoryAdvanced.json"
+    },
+    {
+      "name": "updateMediaItemsCategoryAdvanced",
+      "displayName": "Update media items' category",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "updateMediaItemsCategoryAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Puts several media items in categories or subcategories, or takes them out, at once.",
+      "parameters": [
+        "mediaItems"
+      ],
+      "definitionPath": "operations/updateMediaItemsCategoryAdvanced.json"
+    },
+    {
+      "name": "searchCategories",
+      "displayName": "Search categories",
+      "type": "function",
+      "crudMode": "read",
+      "flags": [
+        "immutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "searchCategories",
+        "hosts": [
+          "widgetBackground",
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Shows the categories and their subcategories in the order the app lists them, optionally only those matching a name.",
+      "parameters": [
+        "name",
+        "page",
+        "pageSize"
+      ],
+      "definitionPath": "operations/searchCategories.json"
+    },
+    {
+      "name": "createCategory",
+      "displayName": "Create category",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "createCategory",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Adds a category that people can narrow the media list by.",
+      "parameters": [
+        "name",
+        "icon",
+        "subcategorySortOrder"
+      ],
+      "definitionPath": "operations/createCategory.json"
+    },
+    {
+      "name": "createCategoriesAdvanced",
+      "displayName": "Create categories",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "createCategoriesAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Adds several categories at once.",
+      "parameters": [
+        "categories"
+      ],
+      "definitionPath": "operations/createCategoriesAdvanced.json"
+    },
+    {
+      "name": "updateCategory",
+      "displayName": "Update category",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "updateCategoryAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateCategory",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Changes a category's name, icon or subcategory order, found by its name.",
+      "parameters": [
+        "name",
+        "newName",
+        "newIcon",
+        "newSubcategorySortOrder"
+      ],
+      "definitionPath": "operations/updateCategory.json"
+    },
+    {
+      "name": "updateCategoryAdvanced",
+      "displayName": "Update category",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "updateCategory",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateCategoryAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Changes a category's name, icon or subcategory order, using the category's id.",
+      "parameters": [
+        "categoryId",
+        "newName",
+        "newIcon",
+        "newSubcategorySortOrder"
+      ],
+      "definitionPath": "operations/updateCategoryAdvanced.json"
+    },
+    {
+      "name": "updateCategoriesAdvanced",
+      "displayName": "Update categories",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "updateCategoriesAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Changes several categories at once.",
+      "parameters": [
+        "categories"
+      ],
+      "definitionPath": "operations/updateCategoriesAdvanced.json"
+    },
+    {
+      "name": "deleteCategory",
+      "displayName": "Delete category",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "dangerous",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "deleteCategoryAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "deleteCategory",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Permanently removes a category and its subcategories, found by its name.",
+      "parameters": [
+        "name"
+      ],
+      "definitionPath": "operations/deleteCategory.json"
+    },
+    {
+      "name": "deleteCategoryAdvanced",
+      "displayName": "Delete category",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "dangerous",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "deleteCategory",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "deleteCategoryAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Permanently removes a category and its subcategories, using the category's id.",
+      "parameters": [
+        "categoryId"
+      ],
+      "definitionPath": "operations/deleteCategoryAdvanced.json"
+    },
+    {
+      "name": "deleteCategoriesAdvanced",
+      "displayName": "Delete categories",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "dangerous",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "deleteCategoriesAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Permanently removes several categories at once.",
+      "parameters": [
+        "categories"
+      ],
+      "definitionPath": "operations/deleteCategoriesAdvanced.json"
+    },
+    {
+      "name": "updateCategoryOrder",
+      "displayName": "Move category",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "updateCategoryOrderAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateCategoryOrder",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Moves a category to another place in the manual order, found by its name.",
+      "parameters": [
+        "name",
+        "position"
+      ],
+      "definitionPath": "operations/updateCategoryOrder.json"
+    },
+    {
+      "name": "updateCategoryOrderAdvanced",
+      "displayName": "Move category",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "updateCategoryOrder",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateCategoryOrderAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Moves a category to another place in the manual order, using the category's id.",
+      "parameters": [
+        "categoryId",
+        "position"
+      ],
+      "definitionPath": "operations/updateCategoryOrderAdvanced.json"
+    },
+    {
+      "name": "createSubcategory",
+      "displayName": "Create subcategory",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "createSubcategoryAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "createSubcategory",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Adds a subcategory at the end of a category, found by its name.",
+      "parameters": [
+        "categoryName",
+        "name"
+      ],
+      "definitionPath": "operations/createSubcategory.json"
+    },
+    {
+      "name": "createSubcategoryAdvanced",
+      "displayName": "Create subcategory",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "createSubcategory",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "createSubcategoryAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Adds a subcategory at the end of a category, using the category's id.",
+      "parameters": [
+        "categoryId",
+        "name"
+      ],
+      "definitionPath": "operations/createSubcategoryAdvanced.json"
+    },
+    {
+      "name": "createSubcategoriesAdvanced",
+      "displayName": "Create subcategories",
+      "type": "function",
+      "crudMode": "create",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "createSubcategoriesAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Adds several subcategories at once.",
+      "parameters": [
+        "subcategories"
+      ],
+      "definitionPath": "operations/createSubcategoriesAdvanced.json"
+    },
+    {
+      "name": "updateSubcategory",
+      "displayName": "Update subcategory",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "updateSubcategoryAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateSubcategory",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Renames a subcategory, found by its name and its category's name.",
+      "parameters": [
+        "categoryName",
+        "subcategoryName",
+        "newName"
+      ],
+      "definitionPath": "operations/updateSubcategory.json"
+    },
+    {
+      "name": "updateSubcategoryAdvanced",
+      "displayName": "Update subcategory",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "updateSubcategory",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateSubcategoryAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Renames a subcategory, using its id and its category's id.",
+      "parameters": [
+        "categoryId",
+        "subcategoryId",
+        "newName"
+      ],
+      "definitionPath": "operations/updateSubcategoryAdvanced.json"
+    },
+    {
+      "name": "updateSubcategoriesAdvanced",
+      "displayName": "Update subcategories",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "updateSubcategoriesAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Renames several subcategories at once.",
+      "parameters": [
+        "subcategories"
+      ],
+      "definitionPath": "operations/updateSubcategoriesAdvanced.json"
+    },
+    {
+      "name": "deleteSubcategory",
+      "displayName": "Delete subcategory",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "dangerous",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "deleteSubcategoryAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "deleteSubcategory",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Permanently removes a subcategory, found by its name and its category's name.",
+      "parameters": [
+        "categoryName",
+        "subcategoryName"
+      ],
+      "definitionPath": "operations/deleteSubcategory.json"
+    },
+    {
+      "name": "deleteSubcategoryAdvanced",
+      "displayName": "Delete subcategory",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "dangerous",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "deleteSubcategory",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "deleteSubcategoryAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Permanently removes a subcategory, using its id and its category's id.",
+      "parameters": [
+        "categoryId",
+        "subcategoryId"
+      ],
+      "definitionPath": "operations/deleteSubcategoryAdvanced.json"
+    },
+    {
+      "name": "deleteSubcategoriesAdvanced",
+      "displayName": "Delete subcategories",
+      "type": "function",
+      "crudMode": "delete",
+      "flags": [
+        "mutable",
+        "dangerous",
+        "throttable"
+      ],
+      "usage": "advanced",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "deleteSubcategoriesAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Permanently removes several subcategories at once.",
+      "parameters": [
+        "subcategories"
+      ],
+      "definitionPath": "operations/deleteSubcategoriesAdvanced.json"
+    },
+    {
+      "name": "updateSubcategoryOrder",
+      "displayName": "Move subcategory",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "alternatives": [
+        {
+          "operationName": "updateSubcategoryOrderAdvanced",
+          "label": "Advanced"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateSubcategoryOrder",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Moves a subcategory to another place in its category's list, found by its name and its category's name.",
+      "parameters": [
+        "categoryName",
+        "subcategoryName",
+        "position"
+      ],
+      "definitionPath": "operations/updateSubcategoryOrder.json"
+    },
+    {
+      "name": "updateSubcategoryOrderAdvanced",
+      "displayName": "Move subcategory",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "advanced",
+      "alternatives": [
+        {
+          "operationName": "updateSubcategoryOrder",
+          "label": "Basic"
+        }
+      ],
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateSubcategoryOrderAdvanced",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Moves a subcategory to another place in its category's list, using its id and its category's id.",
+      "parameters": [
+        "categoryId",
+        "subcategoryId",
+        "position"
+      ],
+      "definitionPath": "operations/updateSubcategoryOrderAdvanced.json"
+    },
+    {
+      "name": "getSettings",
+      "displayName": "Get settings",
+      "type": "function",
+      "crudMode": "read",
+      "flags": [
+        "immutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "getSettings",
+        "hosts": [
+          "widgetBackground",
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Shows the plugin's content, behavior and design settings.",
+      "parameters": [],
+      "definitionPath": "operations/getSettings.json"
+    },
+    {
+      "name": "updateSettings",
+      "displayName": "Update settings",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "availableFor": [
+        "API"
+      ],
+      "context": {
+        "functionName": "updateSettings",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Changes the plugin's content and behavior settings, only those given.",
+      "parameters": [
+        "description",
+        "carouselImages",
+        "mediaSortOrder",
+        "categorySortOrder",
+        "allowSharing",
+        "allowFavorites",
+        "allowNotes",
+        "showMediaSource",
+        "allowOfflineAccess",
+        "enableFiltering",
+        "showViewCount",
+        "highlightPlayedItems",
+        "useGlobalPlaylist",
+        "showAddAllToPlaylistButton",
+        "showPlaylistButton",
+        "continuousPlayback",
+        "autoplayDelay",
+        "shuffleList",
+        "autoAddAudioToPlaylist",
+        "resumePlayback",
+        "bypassInfoPage"
+      ],
+      "definitionPath": "operations/updateSettings.json"
+    },
+    {
+      "name": "updateDesign",
+      "displayName": "Update design",
+      "type": "function",
+      "crudMode": "update",
+      "flags": [
+        "mutable",
+        "safe",
+        "unthrottable"
+      ],
+      "usage": "basic",
+      "availableFor": [
+        "API",
+        "form"
+      ],
+      "context": {
+        "functionName": "updateDesign",
+        "hosts": [
+          "controlBackground",
+          "headlessSdk"
+        ]
+      },
+      "description": "Changes the layout of the media list and of an item's page, or the background picture, only those given.",
+      "parameters": [
+        "listLayout",
+        "itemLayout",
+        "backgroundImage"
+      ],
+      "definitionPath": "operations/updateDesign.json"
+    }
+  ]
+}

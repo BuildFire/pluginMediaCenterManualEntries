@@ -1,0 +1,235 @@
+{
+  "name": "updateDesign",
+  "displayName": "Update design",
+  "type": "function",
+  "crudMode": "update",
+  "flags": [
+    "mutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "updateDesign",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Changes the layout of the media list and of an item's page, or the background picture, only those given.",
+  "parameters": {
+    "listLayout": {
+      "type": "select",
+      "displayName": "List layout",
+      "required": false,
+      "description": "The layout of the media list. Leave it out to keep the current one.",
+      "enums": [
+        {
+          "label": "List 1",
+          "value": "list-1"
+        },
+        {
+          "label": "List 2",
+          "value": "list-2"
+        },
+        {
+          "label": "List 3",
+          "value": "list-3"
+        },
+        {
+          "label": "List 4",
+          "value": "list-4"
+        }
+      ],
+      "allowEnumCustomOption": false,
+      "sampleValue": "list-1"
+    },
+    "itemLayout": {
+      "type": "select",
+      "displayName": "Item layout",
+      "required": false,
+      "description": "The layout of an item's page. Leave it out to keep the current one.",
+      "enums": [
+        {
+          "label": "Item 1",
+          "value": "item-1"
+        },
+        {
+          "label": "Item 2",
+          "value": "item-2"
+        }
+      ],
+      "allowEnumCustomOption": false,
+      "sampleValue": "item-1"
+    },
+    "backgroundImage": {
+      "type": "image",
+      "displayName": "Background image",
+      "required": false,
+      "description": "The background picture, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
+      "minValue": 0,
+      "maxValue": 1,
+      "nullable": true,
+      "sampleValue": [
+        "[image url]"
+      ]
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the design is saved.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't saved, such as a layout that isn't offered or nothing to change."
+        },
+        "result": {
+          "type": "object",
+          "description": "The settings as they now stand.",
+          "properties": {
+            "content": {
+              "type": "object",
+              "description": "The content and app behavior settings.",
+              "properties": {
+                "descriptionHTML": {
+                  "type": "string",
+                  "description": "The formatted text shown above the list."
+                },
+                "images": {
+                  "type": "array",
+                  "description": "The carousel shown above the list, in order.",
+                  "items": {
+                    "type": "object",
+                    "description": "One carousel image and what tapping it does.",
+                    "properties": {
+                      "iconUrl": {
+                        "type": "string",
+                        "description": "The picture."
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Its title."
+                      },
+                      "action": {
+                        "type": "string",
+                        "description": "What tapping it does."
+                      }
+                    }
+                  }
+                },
+                "sortBy": {
+                  "type": "string",
+                  "description": "How media items are ordered."
+                },
+                "sortCategoriesBy": {
+                  "type": "string",
+                  "description": "How categories are ordered."
+                },
+                "allowShare": {
+                  "type": "boolean",
+                  "description": "Whether people can share items."
+                },
+                "allowFavorites": {
+                  "type": "boolean",
+                  "description": "Whether people can save items as favorites."
+                },
+                "allowAddingNotes": {
+                  "type": "boolean",
+                  "description": "Whether people can add personal notes."
+                },
+                "allowSource": {
+                  "type": "boolean",
+                  "description": "Whether a link to the media source is shown."
+                },
+                "allowOfflineDownload": {
+                  "type": "boolean",
+                  "description": "Whether people can download items to use offline."
+                },
+                "enableFiltering": {
+                  "type": "boolean",
+                  "description": "Whether people can narrow the list by category."
+                },
+                "showViewCount": {
+                  "type": "boolean",
+                  "description": "Whether view counts are shown."
+                },
+                "indicatePlayedItems": {
+                  "type": "boolean",
+                  "description": "Whether items already played are marked."
+                },
+                "globalPlaylist": {
+                  "type": "boolean",
+                  "description": "Whether people can add items to the global playlist."
+                },
+                "showGlobalAddAllToPlaylistButton": {
+                  "type": "boolean",
+                  "description": "Whether the add-all-to-playlist button is shown."
+                },
+                "showGlobalPlaylistNavButton": {
+                  "type": "boolean",
+                  "description": "Whether the button to open the global playlist is shown."
+                },
+                "autoPlay": {
+                  "type": "boolean",
+                  "description": "Whether the next item plays on its own."
+                },
+                "autoPlayDelay": {
+                  "type": "object",
+                  "description": "How long to wait before the next item plays.",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "The delay as shown, such as 2s."
+                    },
+                    "value": {
+                      "type": "number",
+                      "description": "The delay in seconds."
+                    }
+                  }
+                },
+                "shuffleAudioListItems": {
+                  "type": "boolean",
+                  "description": "Whether the player offers shuffle."
+                },
+                "forceAutoPlay": {
+                  "type": "boolean",
+                  "description": "Whether every audio item is added to the playlist on its own."
+                },
+                "startWithAutoJumpByDefault": {
+                  "type": "boolean",
+                  "description": "Whether playback resumes where the person left off."
+                }
+              }
+            },
+            "design": {
+              "type": "object",
+              "description": "The design settings.",
+              "properties": {
+                "listLayout": {
+                  "type": "string",
+                  "description": "The layout of the list."
+                },
+                "itemLayout": {
+                  "type": "string",
+                  "description": "The layout of an item's page."
+                },
+                "backgroundImage": {
+                  "type": "string",
+                  "description": "The background picture."
+                },
+                "skipMediaPage": {
+                  "type": "boolean",
+                  "description": "Whether tapping an item goes straight to its player, skipping its page."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "name": "createSubcategoryAdvanced",
+  "displayName": "Create subcategory",
+  "type": "function",
+  "crudMode": "create",
+  "flags": [
+    "mutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "advanced",
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "alternatives": [
+    {
+      "operationName": "createSubcategory",
+      "label": "Basic"
+    }
+  ],
+  "context": {
+    "functionName": "createSubcategoryAdvanced",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Adds a subcategory at the end of a category, using the category's id.",
+  "parameters": {
+    "categoryId": {
+      "type": "string",
+      "displayName": "Category id",
+      "required": true,
+      "description": "The category's id, as shown in search results.",
+      "sampleValue": "[category id]"
+    },
+    "name": {
+      "type": "string",
+      "displayName": "Name",
+      "required": true,
+      "description": "The subcategory's name.",
+      "sampleValue": "[subcategory name]"
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the subcategory is added.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't added, such as no category having that id."
+        },
+        "result": {
+          "type": "object",
+          "description": "The new subcategory.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The subcategory's id."
+            },
+            "name": {
+              "type": "string",
+              "description": "The subcategory's name."
+            },
+            "rank": {
+              "type": "number",
+              "description": "Its place in the list."
+            },
+            "category": {
+              "type": "object",
+              "description": "The category it belongs to, as it now stands.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The category's id."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "The category's name."
+                },
+                "icon": {
+                  "type": "string",
+                  "description": "Its picture or icon."
+                },
+                "subcategorySortOrder": {
+                  "type": "string",
+                  "description": "How its subcategories are ordered."
+                },
+                "rank": {
+                  "type": "number",
+                  "description": "Its place in the manual order."
+                },
+                "createdOn": {
+                  "type": "datetime",
+                  "description": "When it was added."
+                },
+                "lastUpdatedOn": {
+                  "type": "datetime",
+                  "description": "When it was last changed."
+                },
+                "subcategories": {
+                  "type": "array",
+                  "description": "Its subcategories, in order.",
+                  "items": {
+                    "type": "object",
+                    "description": "One subcategory.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "The subcategory's id."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "The subcategory's name."
+                      },
+                      "rank": {
+                        "type": "number",
+                        "description": "Its place in the list."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

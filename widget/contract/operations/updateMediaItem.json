@@ -1,0 +1,281 @@
+{
+  "name": "updateMediaItem",
+  "displayName": "Update media item",
+  "type": "function",
+  "crudMode": "update",
+  "flags": [
+    "mutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "availableFor": [
+    "API"
+  ],
+  "alternatives": [
+    {
+      "operationName": "updateMediaItemAdvanced",
+      "label": "Advanced"
+    }
+  ],
+  "context": {
+    "functionName": "updateMediaItem",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Changes a media item's details, such as its title, links, pictures or actions, found by its title.",
+  "parameters": {
+    "title": {
+      "type": "string",
+      "displayName": "Media title",
+      "required": true,
+      "description": "The exact title of the media item.",
+      "sampleValue": "[media title]"
+    },
+    "newTitle": {
+      "type": "string",
+      "displayName": "New title",
+      "required": false,
+      "description": "The item's new title, up to 70 characters. Leave it out to keep the current one.",
+      "sampleValue": "[new media title]"
+    },
+    "newSummary": {
+      "type": "string",
+      "displayName": "New summary text",
+      "required": false,
+      "description": "Short text shown under the title, up to 250 characters. Leave it out to keep the current one, or leave it empty to remove it.",
+      "nullable": true,
+      "sampleValue": "[media summary]"
+    },
+    "newBody": {
+      "type": "wysiwyg",
+      "displayName": "New body content",
+      "required": false,
+      "description": "The item's formatted content, as HTML. Leave it out to keep the current one, or leave it empty to remove it.",
+      "nullable": true,
+      "sampleValue": "<p>[media body]</p>"
+    },
+    "newSourceUrl": {
+      "type": "string",
+      "displayName": "New source URL",
+      "required": false,
+      "description": "Link to where the media comes from. Leave it out to keep the current one, or leave it empty to remove it.",
+      "nullable": true,
+      "sampleValue": "https://example.com/source"
+    },
+    "newVideoUrl": {
+      "type": "string",
+      "displayName": "New video URL",
+      "required": false,
+      "description": "Link to the video: an MP4, WebM or Ogg file, or a YouTube, Vimeo or Dropbox link. Leave it out to keep the current one, or leave it empty to remove it.",
+      "nullable": true,
+      "sampleValue": "https://example.com/video.mp4"
+    },
+    "newAudioTitle": {
+      "type": "string",
+      "displayName": "New audio title",
+      "required": false,
+      "description": "Title shown in the audio player, up to 70 characters. Leave it out to keep the current one, or leave it empty to remove it.",
+      "nullable": true,
+      "sampleValue": "[audio title]"
+    },
+    "newArtists": {
+      "type": "string",
+      "displayName": "New album artists",
+      "required": false,
+      "description": "Artists shown in the audio player, up to 70 characters. Leave it out to keep the current one, or leave it empty to remove it.",
+      "nullable": true,
+      "sampleValue": "[album artists]"
+    },
+    "newAudioUrl": {
+      "type": "string",
+      "displayName": "New audio URL",
+      "required": false,
+      "description": "Link to the audio file or stream. Leave it out to keep the current one, or leave it empty to remove it.",
+      "nullable": true,
+      "sampleValue": "https://example.com/audio.mp3"
+    },
+    "newThumbnailImage": {
+      "type": "image",
+      "displayName": "New media thumbnail",
+      "required": false,
+      "description": "Picture shown in the list and on the item's page, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
+      "minValue": 0,
+      "maxValue": 1,
+      "nullable": true,
+      "sampleValue": [
+        "[image url]"
+      ]
+    },
+    "newAudioImage": {
+      "type": "image",
+      "displayName": "New audio image",
+      "required": false,
+      "description": "Picture shown in the audio player, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
+      "minValue": 0,
+      "maxValue": 1,
+      "nullable": true,
+      "sampleValue": [
+        "[image url]"
+      ]
+    },
+    "newAudioBackgroundImage": {
+      "type": "image",
+      "displayName": "New audio background",
+      "required": false,
+      "description": "Picture shown blurred behind the audio player, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
+      "minValue": 0,
+      "maxValue": 1,
+      "nullable": true,
+      "sampleValue": [
+        "[image url]"
+      ]
+    },
+    "newMediaDate": {
+      "type": "date",
+      "displayName": "New media date",
+      "required": false,
+      "description": "The date shown for the item. Leave it out to keep the current one.",
+      "sampleValue": "2026-08-17"
+    },
+    "newActionLinks": {
+      "type": "action",
+      "displayName": "New actions",
+      "required": false,
+      "description": "Action buttons shown on the item's page, in order; they replace the current ones. Leave it out to keep them, or pass an empty list to remove them all.",
+      "minValue": 0,
+      "nullable": true,
+      "sampleValue": [
+        {
+          "title": "Visit website",
+          "action": "linkToWeb",
+          "url": "https://example.com"
+        }
+      ]
+    },
+    "resetViews": {
+      "type": "boolean",
+      "displayName": "Restart view count",
+      "required": false,
+      "description": "Whether the item's view count starts again when its video or audio link changes. Leave it out to start it again only while view counts are hidden in the app.",
+      "sampleValue": false
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the item is changed.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it wasn't changed, such as no item having that title, nothing to change, or an attempt to remove the title."
+        },
+        "result": {
+          "type": "object",
+          "description": "The media item as it now stands.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The media item's id."
+            },
+            "title": {
+              "type": "string",
+              "description": "The item's title."
+            },
+            "summary": {
+              "type": "string",
+              "description": "The short text shown under its title."
+            },
+            "body": {
+              "type": "string",
+              "description": "The item's formatted content."
+            },
+            "sourceUrl": {
+              "type": "string",
+              "description": "The link to where the media comes from."
+            },
+            "videoUrl": {
+              "type": "string",
+              "description": "The link to its video."
+            },
+            "audioTitle": {
+              "type": "string",
+              "description": "The title shown in the audio player."
+            },
+            "artists": {
+              "type": "string",
+              "description": "The album artists shown in the audio player."
+            },
+            "audioUrl": {
+              "type": "string",
+              "description": "The link to its audio."
+            },
+            "thumbnailImage": {
+              "type": "string",
+              "description": "The picture shown in the list and on its page."
+            },
+            "audioImage": {
+              "type": "string",
+              "description": "The picture shown in the audio player."
+            },
+            "audioBackgroundImage": {
+              "type": "string",
+              "description": "The picture shown blurred behind the audio player."
+            },
+            "mediaDate": {
+              "type": "datetime",
+              "description": "The date shown for it."
+            },
+            "actionLinks": {
+              "type": "array",
+              "description": "The action buttons on its page, in order.",
+              "items": {
+                "type": "object",
+                "description": "One action.",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "The button's text."
+                  },
+                  "action": {
+                    "type": "string",
+                    "description": "What the button does, such as opening a website."
+                  }
+                }
+              }
+            },
+            "categoryIds": {
+              "type": "array",
+              "description": "The categories it is in.",
+              "items": {
+                "type": "string",
+                "description": "A category's id."
+              }
+            },
+            "subcategoryIds": {
+              "type": "array",
+              "description": "The subcategories it is in.",
+              "items": {
+                "type": "string",
+                "description": "A subcategory's id."
+              }
+            },
+            "rank": {
+              "type": "number",
+              "description": "Its place in the manual order."
+            },
+            "createdOn": {
+              "type": "datetime",
+              "description": "When it was added."
+            },
+            "deepLinkUrl": {
+              "type": "string",
+              "description": "The link that opens it in the app."
+            }
+          }
+        }
+      }
+    }
+  }
+}

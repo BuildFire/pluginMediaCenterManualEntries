@@ -331,6 +331,7 @@
 
         function updateData() {
           MediaContent.update(ContentMedia.item.id, ContentMedia.item.data).then((data) => {
+            sendMediaEvent('mediaItemUpdated', ContentMedia.item.id, ContentMedia.item.data, { previousTitle: ContentMedia.dbItem.title || null });
 
             const promises = [registerAnalytics(ContentMedia.item, createNewDeeplink(ContentMedia.item))];
             if (ContentMedia.item.data.searchEngineId) {
@@ -428,6 +429,22 @@
           })
         }
 
+        // The contract event's data for a saved media item, from values already in hand.
+        function sendMediaEvent(eventName, id, data, extra) {
+          if (!buildfire.services.contract || !buildfire.services.contract.events) return;
+          const toIso = (value) => (value || value === 0) && !isNaN(new Date(value).getTime()) ? new Date(value).toISOString() : null;
+          buildfire.services.contract.events.send(eventName, Object.assign({
+            mediaItemId: id,
+            title: data.title,
+            summary: data.summary || null,
+            thumbnailImage: data.topImage || null,
+            videoUrl: data.videoUrl || null,
+            audioUrl: data.audioUrl || null,
+            mediaDate: toIso(data.mediaDate),
+            createdAt: toIso(data.dateCreated)
+          }, extra || {}));
+        }
+
         function addNewItem(callback) {
           ContentMedia.item.data.bodyHTML = ContentMedia.item.data.body;
           ContentMedia.item.data && ContentMedia.item.data.title ?
@@ -435,6 +452,7 @@
 
           MediaContent.insert(ContentMedia.item.data).then((item) => {
             item.data.deepLinkUrl = Buildfire.deeplink.createLink({ id: item.id });
+            sendMediaEvent('mediaItemCreated', item.id, item.data);
 
             Promise.all([registerAnalytics(item), SearchEngineService.insert({ ...item.data, id: item.id }), createNewDeeplink(item)])
               .then(() => {

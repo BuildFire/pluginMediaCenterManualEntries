@@ -1,0 +1,140 @@
+{
+  "name": "searchCategories",
+  "displayName": "Search categories",
+  "type": "function",
+  "crudMode": "read",
+  "flags": [
+    "immutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "searchCategories",
+    "hosts": [
+      "widgetBackground",
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Shows the categories and their subcategories in the order the app lists them, optionally only those matching a name.",
+  "parameters": {
+    "name": {
+      "type": "string",
+      "displayName": "Name contains",
+      "required": false,
+      "description": "Only show categories whose name contains this text. Leave it out to show every category.",
+      "sampleValue": "[category name]"
+    },
+    "page": {
+      "type": "number",
+      "displayName": "Page",
+      "required": false,
+      "description": "Which page of results to show, starting at 0 for the first. Leave it out for the first page.",
+      "minValue": 0,
+      "sampleValue": 0
+    },
+    "pageSize": {
+      "type": "number",
+      "displayName": "Categories per page",
+      "required": false,
+      "description": "How many categories a page shows, up to 50. Leave it out for 20.",
+      "minValue": 1,
+      "maxValue": 50,
+      "sampleValue": 20
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the search is done.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it didn't work, if it didn't."
+        },
+        "result": {
+          "type": "object",
+          "description": "The categories that were found.",
+          "properties": {
+            "categories": {
+              "type": "array",
+              "description": "The categories on this page, in the order the app lists them.",
+              "items": {
+                "type": "object",
+                "description": "One category.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "The category's id."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "The category's name."
+                  },
+                  "icon": {
+                    "type": "string",
+                    "description": "Its picture or icon."
+                  },
+                  "subcategorySortOrder": {
+                    "type": "string",
+                    "description": "How its subcategories are ordered."
+                  },
+                  "rank": {
+                    "type": "number",
+                    "description": "Its place in the manual order."
+                  },
+                  "createdOn": {
+                    "type": "datetime",
+                    "description": "When it was added."
+                  },
+                  "lastUpdatedOn": {
+                    "type": "datetime",
+                    "description": "When it was last changed."
+                  },
+                  "subcategories": {
+                    "type": "array",
+                    "description": "Its subcategories, in order.",
+                    "items": {
+                      "type": "object",
+                      "description": "One subcategory.",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "The subcategory's id."
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "The subcategory's name."
+                        },
+                        "rank": {
+                          "type": "number",
+                          "description": "Its place in the list."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "total": {
+              "type": "number",
+              "description": "How many categories match in all."
+            },
+            "page": {
+              "type": "number",
+              "description": "The page shown."
+            },
+            "hasMore": {
+              "type": "boolean",
+              "description": "Whether another page follows."
+            }
+          }
+        }
+      }
+    }
+  }
+}

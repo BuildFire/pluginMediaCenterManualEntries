@@ -1,0 +1,155 @@
+{
+  "name": "getMediaItem",
+  "displayName": "Get media item",
+  "type": "function",
+  "crudMode": "read",
+  "flags": [
+    "immutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "alternatives": [
+    {
+      "operationName": "getMediaItemAdvanced",
+      "label": "Advanced"
+    }
+  ],
+  "context": {
+    "functionName": "getMediaItem",
+    "hosts": [
+      "widgetBackground",
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Shows one media item and everything on its page, found by its title.",
+  "parameters": {
+    "title": {
+      "type": "string",
+      "displayName": "Media title",
+      "required": true,
+      "description": "The exact title of the media item.",
+      "sampleValue": "[media title]"
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the item is found.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it didn't work, such as no item or several items having that title."
+        },
+        "result": {
+          "type": "object",
+          "description": "The media item.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The media item's id."
+            },
+            "title": {
+              "type": "string",
+              "description": "The item's title."
+            },
+            "summary": {
+              "type": "string",
+              "description": "The short text shown under its title."
+            },
+            "body": {
+              "type": "string",
+              "description": "The item's formatted content."
+            },
+            "sourceUrl": {
+              "type": "string",
+              "description": "The link to where the media comes from."
+            },
+            "videoUrl": {
+              "type": "string",
+              "description": "The link to its video."
+            },
+            "audioTitle": {
+              "type": "string",
+              "description": "The title shown in the audio player."
+            },
+            "artists": {
+              "type": "string",
+              "description": "The album artists shown in the audio player."
+            },
+            "audioUrl": {
+              "type": "string",
+              "description": "The link to its audio."
+            },
+            "thumbnailImage": {
+              "type": "string",
+              "description": "The picture shown in the list and on its page."
+            },
+            "audioImage": {
+              "type": "string",
+              "description": "The picture shown in the audio player."
+            },
+            "audioBackgroundImage": {
+              "type": "string",
+              "description": "The picture shown blurred behind the audio player."
+            },
+            "mediaDate": {
+              "type": "datetime",
+              "description": "The date shown for it."
+            },
+            "actionLinks": {
+              "type": "array",
+              "description": "The action buttons on its page, in order.",
+              "items": {
+                "type": "object",
+                "description": "One action.",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "The button's text."
+                  },
+                  "action": {
+                    "type": "string",
+                    "description": "What the button does, such as opening a website."
+                  }
+                }
+              }
+            },
+            "categoryIds": {
+              "type": "array",
+              "description": "The categories it is in.",
+              "items": {
+                "type": "string",
+                "description": "A category's id."
+              }
+            },
+            "subcategoryIds": {
+              "type": "array",
+              "description": "The subcategories it is in.",
+              "items": {
+                "type": "string",
+                "description": "A subcategory's id."
+              }
+            },
+            "rank": {
+              "type": "number",
+              "description": "Its place in the manual order."
+            },
+            "createdOn": {
+              "type": "datetime",
+              "description": "When it was added."
+            },
+            "deepLinkUrl": {
+              "type": "string",
+              "description": "The link that opens it in the app."
+            }
+          }
+        }
+      }
+    }
+  }
+}

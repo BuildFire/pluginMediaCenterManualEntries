@@ -258,6 +258,9 @@
 										}
 
 										MediaContent.delete(item.id).then(() => {
+											if (buildfire.services.contract && buildfire.services.contract.events) {
+												buildfire.services.contract.events.send('mediaItemDeleted', { mediaItemId: item.id, title: item.title || null });
+											}
 											buildfire.components.comments.deleteSummary({
 											    itemId: item.id,
 											    deleteComments: true

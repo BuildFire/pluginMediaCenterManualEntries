@@ -1,0 +1,102 @@
+{
+  "name": "createSubcategoriesAdvanced",
+  "displayName": "Create subcategories",
+  "type": "function",
+  "crudMode": "create",
+  "flags": [
+    "mutable",
+    "safe",
+    "throttable"
+  ],
+  "usage": "advanced",
+  "availableFor": [
+    "API"
+  ],
+  "context": {
+    "functionName": "createSubcategoriesAdvanced",
+    "hosts": [
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Adds several subcategories at once.",
+  "parameters": {
+    "subcategories": {
+      "type": "list",
+      "displayName": "Subcategories",
+      "required": true,
+      "minValue": 1,
+      "maxValue": 50,
+      "description": "The subcategories to add, each with its category, up to 50 at a time.",
+      "items": {
+        "categoryId": {
+          "type": "string",
+          "displayName": "Category id",
+          "required": true,
+          "description": "The category's id, as shown in search results.",
+          "sampleValue": "[category id]"
+        },
+        "name": {
+          "type": "string",
+          "displayName": "Name",
+          "required": true,
+          "description": "The subcategory's name.",
+          "sampleValue": "[subcategory name]"
+        }
+      },
+      "sampleValue": [
+        {
+          "categoryId": "[category id]",
+          "name": "[subcategory name]"
+        }
+      ]
+    },
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when all the subcategories are done.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why nothing was added, such as a category id that matches nothing."
+        },
+        "result": {
+          "type": "object",
+          "description": "How each subcategory went.",
+          "properties": {
+            "subcategories": {
+              "type": "array",
+              "description": "One result per subcategory, in the order they were given.",
+              "items": {
+                "type": "object",
+                "description": "How one subcategory went.",
+                "properties": {
+                  "index": {
+                    "type": "number",
+                    "description": "Which subcategory this is, counting from 0."
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "The subcategory's id, if it was added."
+                  },
+                  "error": {
+                    "type": "string",
+                    "description": "Why it wasn't added, if it wasn't."
+                  }
+                }
+              }
+            },
+            "succeeded": {
+              "type": "number",
+              "description": "How many were added."
+            },
+            "failed": {
+              "type": "number",
+              "description": "How many weren't added."
+            }
+          }
+        }
+      }
+    }
+  }
+}

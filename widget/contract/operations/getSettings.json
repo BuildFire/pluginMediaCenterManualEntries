@@ -1,0 +1,180 @@
+{
+  "name": "getSettings",
+  "displayName": "Get settings",
+  "type": "function",
+  "crudMode": "read",
+  "flags": [
+    "immutable",
+    "safe",
+    "unthrottable"
+  ],
+  "usage": "basic",
+  "availableFor": [
+    "API",
+    "form"
+  ],
+  "context": {
+    "functionName": "getSettings",
+    "hosts": [
+      "widgetBackground",
+      "controlBackground",
+      "headlessSdk"
+    ]
+  },
+  "description": "Shows the plugin's content, behavior and design settings.",
+  "parameters": {
+    "callback": {
+      "type": "function",
+      "required": true,
+      "description": "Runs when the settings are read.",
+      "parameters": {
+        "error": {
+          "type": "object|string",
+          "description": "Why it didn't work, if it didn't."
+        },
+        "result": {
+          "type": "object",
+          "description": "The settings, with the usual choices filled in where none were made.",
+          "properties": {
+            "content": {
+              "type": "object",
+              "description": "The content and app behavior settings.",
+              "properties": {
+                "descriptionHTML": {
+                  "type": "string",
+                  "description": "The formatted text shown above the list."
+                },
+                "images": {
+                  "type": "array",
+                  "description": "The carousel shown above the list, in order.",
+                  "items": {
+                    "type": "object",
+                    "description": "One carousel image and what tapping it does.",
+                    "properties": {
+                      "iconUrl": {
+                        "type": "string",
+                        "description": "The picture."
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Its title."
+                      },
+                      "action": {
+                        "type": "string",
+                        "description": "What tapping it does."
+                      }
+                    }
+                  }
+                },
+                "sortBy": {
+                  "type": "string",
+                  "description": "How media items are ordered."
+                },
+                "sortCategoriesBy": {
+                  "type": "string",
+                  "description": "How categories are ordered."
+                },
+                "allowShare": {
+                  "type": "boolean",
+                  "description": "Whether people can share items."
+                },
+                "allowFavorites": {
+                  "type": "boolean",
+                  "description": "Whether people can save items as favorites."
+                },
+                "allowAddingNotes": {
+                  "type": "boolean",
+                  "description": "Whether people can add personal notes."
+                },
+                "allowSource": {
+                  "type": "boolean",
+                  "description": "Whether a link to the media source is shown."
+                },
+                "allowOfflineDownload": {
+                  "type": "boolean",
+                  "description": "Whether people can download items to use offline."
+                },
+                "enableFiltering": {
+                  "type": "boolean",
+                  "description": "Whether people can narrow the list by category."
+                },
+                "showViewCount": {
+                  "type": "boolean",
+                  "description": "Whether view counts are shown."
+                },
+                "indicatePlayedItems": {
+                  "type": "boolean",
+                  "description": "Whether items already played are marked."
+                },
+                "globalPlaylist": {
+                  "type": "boolean",
+                  "description": "Whether people can add items to the global playlist."
+                },
+                "showGlobalAddAllToPlaylistButton": {
+                  "type": "boolean",
+                  "description": "Whether the add-all-to-playlist button is shown."
+                },
+                "showGlobalPlaylistNavButton": {
+                  "type": "boolean",
+                  "description": "Whether the button to open the global playlist is shown."
+                },
+                "autoPlay": {
+                  "type": "boolean",
+                  "description": "Whether the next item plays on its own."
+                },
+                "autoPlayDelay": {
+                  "type": "object",
+                  "description": "How long to wait before the next item plays.",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "The delay as shown, such as 2s."
+                    },
+                    "value": {
+                      "type": "number",
+                      "description": "The delay in seconds."
+                    }
+                  }
+                },
+                "shuffleAudioListItems": {
+                  "type": "boolean",
+                  "description": "Whether the player offers shuffle."
+                },
+                "forceAutoPlay": {
+                  "type": "boolean",
+                  "description": "Whether every audio item is added to the playlist on its own."
+                },
+                "startWithAutoJumpByDefault": {
+                  "type": "boolean",
+                  "description": "Whether playback resumes where the person left off."
+                }
+              }
+            },
+            "design": {
+              "type": "object",
+              "description": "The design settings.",
+              "properties": {
+                "listLayout": {
+                  "type": "string",
+                  "description": "The layout of the list."
+                },
+                "itemLayout": {
+                  "type": "string",
+                  "description": "The layout of an item's page."
+                },
+                "backgroundImage": {
+                  "type": "string",
+                  "description": "The background picture."
+                },
+                "skipMediaPage": {
+                  "type": "boolean",
+                  "description": "Whether tapping an item goes straight to its player, skipping its page."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
