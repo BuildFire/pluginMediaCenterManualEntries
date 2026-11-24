@@ -102,30 +102,47 @@ const checkText = (value, name, max) => {
   return null;
 };
 
+// The picker options every image and action param declares in dialogOptions (plugin.contract.json). They keep accepting
+// everything the params accepted before they were declared: any picture or icon, and every kind of action item.
+const IMAGE_DIALOG_OPTIONS = { showIcons: true, showFiles: true, showStockImages: true, showAiImages: true };
+const LINK_DIALOG_OPTIONS = { showIcon: true, imgLibOptions: { showIcons: true }, showTitle: false, hideActionText: false, allowNoAction: true, removePurchase: false, removePushNotifications: false };
+const CAROUSEL_DIALOG_OPTIONS = { showIcon: true, imgLibOptions: { showIcons: true }, showTitle: true, hideActionText: false, allowNoAction: true, removePurchase: false, removePushNotifications: false };
+
+// backward compatible: a single value on its own is the older way of sending one entry
+const asList = (value) => (Array.isArray(value) ? value : ((value === undefined || value === null || value === '') ? [] : [value]));
+// an image entry that is an icon's class names (what the image library returns for an icon), not an image URL
+const isIconEntry = (entry) => typeof entry === 'string' && !!entry.trim() && !/[/:]/.test(entry);
+
 /**
- * An image param, checked against its declared count. Image params are always arrays, even for a single image, so a bare string is refused rather than wrapped: it means the caller misread the contract.
+ * An image param, checked against its declared count and dialogOptions. Image params are declared and sent as lists, even for a single image; a single image URL on its own is still accepted as a one-item list.
  * @returns {{ images?: string[], error?: string }}
  */
-const readImageList = (value, { name, minValue, maxValue }) => {
+const readImageList = (value, { name, minValue, maxValue, dialogOptions = IMAGE_DIALOG_OPTIONS }) => {
   const range = maxValue === undefined ? `at least ${minValue}`
     : (minValue === maxValue ? `exactly ${minValue}` : (minValue === 0 ? `up to ${maxValue}` : `${minValue} to ${maxValue}`));
-  if (!Array.isArray(value)) return { error: `${name} must be a list of image URLs (${range}), even for one image` };
-  if (value.length < minValue || (maxValue !== undefined && value.length > maxValue)) {
-    return { error: `${name} must hold ${range} image${maxValue === 1 ? '' : 's'}; got ${value.length}` };
+  const list = asList(value);
+  if (list.length < minValue || (maxValue !== undefined && list.length > maxValue)) {
+    return { error: `${name} must hold ${range} image${maxValue === 1 ? '' : 's'}; got ${list.length}` };
   }
-  if (value.some((url) => typeof url !== 'string' || !url)) return { error: `${name} must contain only image URLs` };
-  return { images: value };
+  const validImage = (entry) => typeof entry === 'string' && !!entry && (isIconEntry(entry)
+    ? dialogOptions.showIcons : (dialogOptions.showFiles || dialogOptions.showStockImages || dialogOptions.showAiImages));
+  if (!list.every(validImage)) return { error: `${name} must contain only image URLs${dialogOptions.showIcons ? ' or icons' : ''}` };
+  return { images: list };
 };
 
 /**
- * A list of action items, stored as passed. The plugin takes whatever its action item editor makes, so every action kind is accepted; each entry must still be an action item, an object naming its action.
+ * A list of action items, stored as passed. The plugin takes whatever its action item editor makes, so every action kind is accepted; each entry must still be an action item, an object naming its action. One action item on its own is still accepted as a one-item list.
  * @returns {{ actions?: object[], error?: string }}
  */
-const readActionList = (value, name) => {
-  if (!Array.isArray(value)) return { error: `${name} must be a list of action items` };
-  const bad = value.findIndex((action) => !isPlainObject(action) || typeof action.action !== 'string' || !action.action);
+const readActionList = (value, name, dialogOptions = LINK_DIALOG_OPTIONS) => {
+  const list = asList(value);
+  const bad = list.findIndex((action) => !isPlainObject(action) || typeof action.action !== 'string' || !action.action);
   if (bad !== -1) return { error: `${name} entry ${bad} must be an action item, with its action` };
-  return { actions: value };
+  const refused = list.find((action) => (action.action === 'noAction' && !dialogOptions.allowNoAction)
+    || (action.action === 'purchase' && dialogOptions.removePurchase)
+    || (action.action === 'sendPushNotification' && dialogOptions.removePushNotifications));
+  if (refused) return { error: `${name} does not allow a "${refused.action}" action item` };
+  return { actions: list };
 };
 
 /** A date param ("2026-08-17" or a full instant), or an error message. */
@@ -1674,7 +1691,7 @@ widgetContract = {
       if (options.carouselImages === null) {
         content.images = [];
       } else {
-        const { actions, error } = readActionList(options.carouselImages, 'carouselImages');
+        const { actions, error } = readActionList(options.carouselImages, 'carouselImages', CAROUSEL_DIALOG_OPTIONS);
         if (error) return fail(callback, error);
         content.images = actions;
       }

@@ -50,6 +50,12 @@
       "minValue": 0,
       "maxValue": 1,
       "nullable": true,
+      "dialogOptions": {
+        "showIcons": true,
+        "showFiles": true,
+        "showStockImages": true,
+        "showAiImages": true
+      },
       "sampleValue": [
         "[image url]"
       ]

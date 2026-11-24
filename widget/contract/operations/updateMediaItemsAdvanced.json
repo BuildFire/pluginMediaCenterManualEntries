@@ -107,6 +107,12 @@
           "minValue": 0,
           "maxValue": 1,
           "nullable": true,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "sampleValue": [
             "[image url]"
           ]
@@ -119,6 +125,12 @@
           "minValue": 0,
           "maxValue": 1,
           "nullable": true,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "sampleValue": [
             "[image url]"
           ]
@@ -131,6 +143,12 @@
           "minValue": 0,
           "maxValue": 1,
           "nullable": true,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "sampleValue": [
             "[image url]"
           ]
@@ -149,6 +167,17 @@
           "description": "Action buttons shown on the item's page, in order; they replace the current ones. Leave it out to keep them, or pass an empty list to remove them all.",
           "minValue": 0,
           "nullable": true,
+          "dialogOptions": {
+            "showIcon": true,
+            "imgLibOptions": {
+              "showIcons": true
+            },
+            "showTitle": false,
+            "hideActionText": false,
+            "allowNoAction": true,
+            "removePurchase": false,
+            "removePushNotifications": false
+          },
           "sampleValue": [
             {
               "title": "Visit website",
