@@ -1,0 +1,9 @@
+name: Generate BuildFire Plugin Metadata
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate:
+    uses: BuildFire/github-workflows/.github/workflows/generate-buildfire-plugin-metadata.yml@main
+    secrets: inherit
