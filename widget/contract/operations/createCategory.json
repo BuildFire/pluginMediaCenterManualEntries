@@ -36,6 +36,12 @@
       "description": "A picture or icon for the category, as a list holding one. Leave it out for none.",
       "minValue": 0,
       "maxValue": 1,
+      "dialogOptions": {
+        "showIcons": true,
+        "showFiles": true,
+        "showStockImages": true,
+        "showAiImages": true
+      },
       "sampleValue": [
         "[image url]"
       ]

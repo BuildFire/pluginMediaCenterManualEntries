@@ -102,30 +102,61 @@ const checkText = (value, name, max) => {
   return null;
 };
 
-/**
- * An image param, checked against its declared count. Image params are always arrays, even for a single image, so a bare string is refused rather than wrapped: it means the caller misread the contract.
- * @returns {{ images?: string[], error?: string }}
- */
-const readImageList = (value, { name, minValue, maxValue }) => {
-  const range = maxValue === undefined ? `at least ${minValue}`
-    : (minValue === maxValue ? `exactly ${minValue}` : (minValue === 0 ? `up to ${maxValue}` : `${minValue} to ${maxValue}`));
-  if (!Array.isArray(value)) return { error: `${name} must be a list of image URLs (${range}), even for one image` };
-  if (value.length < minValue || (maxValue !== undefined && value.length > maxValue)) {
-    return { error: `${name} must hold ${range} image${maxValue === 1 ? '' : 's'}; got ${value.length}` };
-  }
-  if (value.some((url) => typeof url !== 'string' || !url)) return { error: `${name} must contain only image URLs` };
-  return { images: value };
+// What each list type holds, for checking its entries and naming them in a message.
+const LIST_ENTRIES = {
+  image: { noun: 'image URL', valid: (entry) => typeof entry === 'string' && !!entry },
+  // The plugin takes whatever its action item editors make, so every action kind is accepted; each entry must still name its action.
+  action: { noun: 'action item', valid: (entry) => isPlainObject(entry) && typeof entry.action === 'string' && !!entry.action }
 };
 
+// The SDK dialog options an image or action param leaves out; icons stay off unless declared.
+const DIALOG_DEFAULTS = {
+  image: { showIcons: false, showFiles: true, showStockImages: true, showAiImages: true },
+  action: { allowNoAction: true, removePurchase: false, removePushNotifications: false }
+};
+// an image entry that is an icon's class names (what the image library returns for an icon), not an image URL
+const isIconEntry = (entry) => typeof entry === 'string' && !!entry.trim() && !/[/:]/.test(entry);
+
+// The dialogOptions each image and action param declares in plugin.contract.json, traced to the plugin's own pickers.
+const MEDIA_IMAGE_OPTIONS = { showIcons: false, showFiles: true, showStockImages: true, showAiImages: true };   // addEditMediaController.js addListImage / addAudioImage / addAudioBackgroundImage
+const ICON_OPTIONS = { showIcons: true, showFiles: true, showStockImages: true, showAiImages: true };          // addEditCategoryController.js addIcon; the filter page draws icon class names
+const BACKGROUND_OPTIONS = { showIcons: false, showFiles: true, showStockImages: true, showAiImages: true };   // design.home.controller.js background thumbnail
+const LINK_OPTIONS = { showIcon: true, imgLibOptions: { showIcons: false }, showTitle: false, hideActionText: false, allowNoAction: true, removePurchase: false, removePushNotifications: false };     // actionItems.sortableList
+const CAROUSEL_OPTIONS = { showIcon: true, imgLibOptions: { showIcons: false }, showTitle: true, hideActionText: false, allowNoAction: true, removePurchase: false, removePushNotifications: false };  // carousel.editor: each slide's iconUrl is its picture
+
 /**
- * A list of action items, stored as passed. The plugin takes whatever its action item editor makes, so every action kind is accepted; each entry must still be an action item, an object naming its action.
- * @returns {{ actions?: object[], error?: string }}
+ * An image or action param, checked against its declared count and dialogOptions. These types are declared and sent as arrays, even for a single value; a single value on its own (an image URL, one action item) is still accepted as a one-item list, so callers sending it that way keep working while they move to arrays.
+ * @param {*} value - the param as passed
+ * @param {{ name: string, type: 'image'|'action', minValue: number, maxValue?: number, dialogOptions?: object }} declared - exactly as declared
+ * @returns {{ list?: Array, error?: string }}
  */
-const readActionList = (value, name) => {
-  if (!Array.isArray(value)) return { error: `${name} must be a list of action items` };
-  const bad = value.findIndex((action) => !isPlainObject(action) || typeof action.action !== 'string' || !action.action);
-  if (bad !== -1) return { error: `${name} entry ${bad} must be an action item, with its action` };
-  return { actions: value };
+const readList = (value, { name, type, minValue, maxValue, dialogOptions }) => {
+  const { noun, valid } = LIST_ENTRIES[type];
+  const range = maxValue === undefined ? `at least ${minValue}`
+    : (minValue === maxValue ? `exactly ${minValue}` : (minValue === 0 ? `up to ${maxValue}` : `${minValue} to ${maxValue}`));
+  // backward compatible: a single value is the older way of sending one entry
+  if (!Array.isArray(value)) value = (value === undefined || value === null || value === '') ? [] : [value];
+  if (value.length < minValue || (maxValue !== undefined && value.length > maxValue)) {
+    return { error: `${name} must hold ${range} ${noun}${maxValue === 1 ? '' : 's'}; got ${value.length}` };
+  }
+  if (type === 'image' && dialogOptions) {
+    const options = Object.assign({}, DIALOG_DEFAULTS.image, dialogOptions);
+    // with icons shown, an entry may be an icon's class names instead of an image URL
+    const validImage = (entry) => typeof entry === 'string' && !!entry && (isIconEntry(entry)
+      ? options.showIcons : (options.showFiles || options.showStockImages || options.showAiImages));
+    if (!value.every(validImage)) return { error: options.showIcons ? `${name} must contain only images or icons` : `${name} must contain only image URLs` };
+    return { list: value };
+  }
+  const bad = value.findIndex((entry) => !valid(entry));
+  if (bad !== -1) return { error: `${name} entry ${bad} must be an ${noun}${type === 'action' ? ', with its action' : ''}` };
+  if (type === 'action' && dialogOptions) {
+    const options = Object.assign({}, DIALOG_DEFAULTS.action, dialogOptions);
+    const refused = value.find((item) => (item.action === 'noAction' && !options.allowNoAction)
+      || (item.action === 'purchase' && options.removePurchase)
+      || (item.action === 'sendPushNotification' && options.removePushNotifications));
+    if (refused) return { error: `${name} does not allow a "${refused.action}" action item` };
+  }
+  return { list: value };
 };
 
 /** A date param ("2026-08-17" or a full instant), or an error message. */
@@ -508,9 +539,9 @@ const collectMediaChanges = (options, isUpdate) => {
       changes[field] = '';
       continue;
     }
-    const { images, error } = readImageList(value, { name, minValue: 0, maxValue: 1 });
+    const { list, error } = readList(value, { name, type: 'image', minValue: 0, maxValue: 1, dialogOptions: MEDIA_IMAGE_OPTIONS });
     if (error) return { error };
-    changes[field] = images.length ? images[0] : '';
+    changes[field] = list.length ? list[0] : '';
   }
   const dateName = isUpdate ? 'newMediaDate' : 'mediaDate';
   if (options[dateName] !== undefined) {
@@ -524,9 +555,9 @@ const collectMediaChanges = (options, isUpdate) => {
     if (options[linksName] === null && isUpdate) {
       changes.links = [];
     } else {
-      const { actions, error } = readActionList(options[linksName], linksName);
+      const { list, error } = readList(options[linksName], { name: linksName, type: 'action', minValue: 0, dialogOptions: LINK_OPTIONS });
       if (error) return { error };
-      changes.links = actions;
+      changes.links = list;
     }
   }
   if (isUpdate && options.resetViews !== undefined && typeof options.resetViews !== 'boolean') return { error: 'resetViews must be true or false' };
@@ -732,9 +763,9 @@ const sortSubcategories = (subcategories, sortBy) => {
 const readIcon = (value, name, isUpdate) => {
   // The icon picker allows a picture or one of BuildFire's icons, stored as one value; a removed icon is stored as ''.
   if (value === null && isUpdate) return { icon: '' };
-  const { images, error } = readImageList(value, { name, minValue: 0, maxValue: 1 });
+  const { list, error } = readList(value, { name, type: 'image', minValue: 0, maxValue: 1, dialogOptions: ICON_OPTIONS });
   if (error) return { error };
-  return { icon: images.length ? images[0] : '' };
+  return { icon: list.length ? list[0] : '' };
 };
 
 /** The changes a category update asks for: name (never cleared), icon (null or [] removes it), subcategory order. */
@@ -1674,9 +1705,9 @@ widgetContract = {
       if (options.carouselImages === null) {
         content.images = [];
       } else {
-        const { actions, error } = readActionList(options.carouselImages, 'carouselImages');
+        const { list, error } = readList(options.carouselImages, { name: 'carouselImages', type: 'action', minValue: 0, dialogOptions: CAROUSEL_OPTIONS });
         if (error) return fail(callback, error);
-        content.images = actions;
+        content.images = list;
       }
     }
     if (options.mediaSortOrder !== undefined) {
@@ -1755,9 +1786,9 @@ widgetContract = {
       if (options.backgroundImage === null) {
         design.backgroundImage = '';
       } else {
-        const { images, error } = readImageList(options.backgroundImage, { name: 'backgroundImage', minValue: 0, maxValue: 1 });
+        const { list, error } = readList(options.backgroundImage, { name: 'backgroundImage', type: 'image', minValue: 0, maxValue: 1, dialogOptions: BACKGROUND_OPTIONS });
         if (error) return fail(callback, error);
-        design.backgroundImage = images.length ? images[0] : '';
+        design.backgroundImage = list.length ? list[0] : '';
       }
     }
     if (!Object.keys(design).length) return fail(callback, 'Pass at least one of listLayout, itemLayout or backgroundImage');

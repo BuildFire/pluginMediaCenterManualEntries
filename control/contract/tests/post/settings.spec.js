@@ -180,6 +180,12 @@ contract.describe('updateSettings', () => {
     expect((await call('updateSettings', { carouselImages: null })).content.images).toEqual([]);
   });
 
+  it('takes a single carousel image given on its own, as a list holding one', async () => {
+    const slide = { title: 'Only slide', iconUrl: 'https://example.com/only.png', action: 'noAction' };
+    expect((await call('updateSettings', { carouselImages: slide })).content.images).toEqual([jasmine.objectContaining(slide)]);
+    expect((await settings()).content.images).toEqual([jasmine.objectContaining(slide)]);
+  });
+
   describe('refuses, and changes nothing', () => {
     let before;
     beforeEach(async () => {
@@ -197,7 +203,7 @@ contract.describe('updateSettings', () => {
     refuses('a switch that is not true or false', { allowSharing: 'yes' }, 'allowSharing');
     refuses('a bypass choice that is not true or false', { bypassInfoPage: 1 }, 'bypassInfoPage');
     refuses('a description that is not text', { description: 42 }, 'description');
-    refuses('carousel images that are not a list', { carouselImages: { title: 'Slide', action: 'noAction' } }, 'carouselImages');
+    refuses('carousel images that are not action items', { carouselImages: ['https://example.com/slide.png'] }, 'carouselImages');
     refuses('a carousel image without its action', { carouselImages: [{ title: 'Slide', iconUrl: 'https://example.com/slide.png' }] }, 'carouselImages');
     refuses('a valid change beside an invalid one', { allowSharing: true, mediaSortOrder: 'Random' }, 'mediaSortOrder');
 
@@ -235,6 +241,11 @@ contract.describe('updateDesign', () => {
     expect((await settings()).design.backgroundImage).toBe('');
   });
 
+  it('takes a single background given on its own, as a list holding one', async () => {
+    expect((await call('updateDesign', { backgroundImage: 'https://example.com/single-background.png' })).design.backgroundImage).toBe('https://example.com/single-background.png');
+    expect((await settings()).design.backgroundImage).toBe('https://example.com/single-background.png');
+  });
+
   describe('refuses, and changes nothing', () => {
     let before;
     beforeEach(async () => {
@@ -247,7 +258,7 @@ contract.describe('updateDesign', () => {
 
     refuses('a list layout it does not offer', { listLayout: 'list-9' }, 'listLayout');
     refuses('an item layout it does not offer', { itemLayout: 'item-3' }, 'itemLayout');
-    refuses('a background given as a bare link', { backgroundImage: 'https://example.com/background.png' }, 'backgroundImage');
+    refuses('an icon for a background, where only pictures are offered', { backgroundImage: ['glyphicon glyphicon-star'] }, 'backgroundImage');
     refuses('two backgrounds', { backgroundImage: ['https://example.com/a.png', 'https://example.com/b.png'] }, 'backgroundImage');
     refuses('a valid change beside an invalid one', { listLayout: 'list-1', itemLayout: 'item-3' }, 'itemLayout');
 

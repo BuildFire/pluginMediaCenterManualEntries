@@ -148,6 +148,15 @@ contract.describe('createCategory', () => {
     expect(await category(name)).toEqual(jasmine.objectContaining({ icon: 'https://example.com/icon.png', subcategorySortOrder: 'Manually' }));
   });
 
+  it('takes one of the app\'s icons instead of a picture, and a single icon given on its own', async () => {
+    const name = unique('app icon');
+    expect((await call('createCategory', { name, icon: ['glyphicon glyphicon-star'] })).icon).toBe('glyphicon glyphicon-star');
+    expect((await category(name)).icon).toBe('glyphicon glyphicon-star');
+    const single = unique('single icon');
+    expect((await call('createCategory', { name: single, icon: 'https://example.com/icon.png' })).icon).toBe('https://example.com/icon.png');
+    expect((await category(single)).icon).toBe('https://example.com/icon.png');
+  });
+
   describe('refuses, and stores nothing', () => {
     refusesEachRequired('createCategory', async () => ({}), ['name']);
 
@@ -157,7 +166,7 @@ contract.describe('createCategory', () => {
       expect(await listed(name)).toEqual([]);
     });
     refuses('a name that is not text', 'name type', { name: 42 }, 'name');
-    refuses('an icon given as a bare link', 'bare icon', { icon: 'https://example.com/icon.png' }, 'icon');
+    refuses('an icon that is not a picture', 'bad icon', { icon: [42] }, 'icon');
     refuses('two icons', 'two icons', { icon: ['https://example.com/a.png', 'https://example.com/b.png'] }, 'icon');
     refuses('a subcategory order it does not offer', 'bad order', { subcategorySortOrder: 'Random' }, 'subcategorySortOrder');
   });
@@ -283,6 +292,13 @@ contract.describe('updateCategory', () => {
     expect(await category(made.name)).toEqual(jasmine.objectContaining({ icon: 'https://example.com/new-icon.png', subcategorySortOrder: 'Manually' }));
   });
 
+  it('takes a single new icon given on its own, or one of the app\'s icons', async () => {
+    const made = await create('single new icon', [], { icon: ['https://example.com/icon.png'] });
+    expect((await call('updateCategory', { name: made.name, newIcon: 'https://example.com/other.png' })).icon).toBe('https://example.com/other.png');
+    expect((await call('updateCategory', { name: made.name, newIcon: ['glyphicon glyphicon-heart'] })).icon).toBe('glyphicon glyphicon-heart');
+    expect((await category(made.name)).icon).toBe('glyphicon glyphicon-heart');
+  });
+
   it('removes the icon with an empty list, and with null', async () => {
     const first = await create('no icon', [], { icon: ['https://example.com/icon.png'] });
     await call('updateCategory', { name: first.name, newIcon: [] });
@@ -327,10 +343,10 @@ contract.describe('updateCategory', () => {
       expect(await category(made.name)).toEqual(made);
     });
 
-    it('a subcategory order it does not offer, or an icon given as a bare link', async () => {
+    it('a subcategory order it does not offer, an icon that is not a picture, or two icons', async () => {
       const made = await create('bad values', [], { icon: ['https://example.com/icon.png'] });
       expect(await refusal(call('updateCategory', { name: made.name, newSubcategorySortOrder: 'Random' }))).toContain('newSubcategorySortOrder');
-      expect(await refusal(call('updateCategory', { name: made.name, newIcon: 'https://example.com/other.png' }))).toContain('newIcon');
+      expect(await refusal(call('updateCategory', { name: made.name, newIcon: [42] }))).toContain('newIcon');
       expect(await refusal(call('updateCategory', { name: made.name, newIcon: ['https://example.com/a.png', 'https://example.com/b.png'] }))).toContain('newIcon');
       expect(await category(made.name)).toEqual(made);
     });

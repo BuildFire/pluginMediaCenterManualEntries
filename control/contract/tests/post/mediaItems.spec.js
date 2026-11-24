@@ -264,6 +264,13 @@ contract.describe('createMediaItem', () => {
     }));
   });
 
+  it('takes a single picture or action given on its own, as a list holding one', async () => {
+    const title = unique('single');
+    const made = await call('createMediaItem', { title, thumbnailImage: 'https://example.com/single.png', actionLinks: action });
+    expect(made).toEqual(jasmine.objectContaining({ thumbnailImage: 'https://example.com/single.png', actionLinks: [jasmine.objectContaining(action)] }));
+    expect(await item(title)).toEqual(jasmine.objectContaining({ thumbnailImage: 'https://example.com/single.png', actionLinks: [jasmine.objectContaining(action)] }));
+  });
+
   it('takes a title of exactly 70 characters', async () => {
     const base = unique('long');
     const title = `${base}${'x'.repeat(70 - base.length)}`;
@@ -290,11 +297,11 @@ contract.describe('createMediaItem', () => {
     refuses('an audio title longer than 70 characters', 'long audio', { audioTitle: 'x'.repeat(71) }, 'audioTitle');
     refuses('artists longer than 70 characters', 'long artists', { artists: 'x'.repeat(71) }, 'artists');
     refuses('a body that is not text', 'body type', { body: { html: '<p>x</p>' } }, 'body');
-    refuses('a thumbnail given as a bare link', 'bare image', { thumbnailImage: 'https://example.com/thumb.png' }, 'thumbnailImage');
     refuses('two thumbnails', 'two images', { thumbnailImage: ['https://example.com/a.png', 'https://example.com/b.png'] }, 'thumbnailImage');
+    refuses('an icon for a thumbnail, where only pictures are offered', 'icon image', { thumbnailImage: ['glyphicon glyphicon-star'] }, 'thumbnailImage');
     refuses('an audio background that is not a link', 'bad background', { audioBackgroundImage: [42] }, 'audioBackgroundImage');
     refuses('a media date that is not a date', 'bad date', { mediaDate: 'yesterday' }, 'mediaDate');
-    refuses('actions that are not a list', 'bad actions', { actionLinks: action }, 'actionLinks');
+    refuses('actions that are not action items', 'bad actions', { actionLinks: ['https://example.com'] }, 'actionLinks');
     refuses('an action without its action', 'bad action', { actionLinks: [{ title: 'Nothing' }] }, 'actionLinks');
   });
 });
@@ -396,7 +403,7 @@ contract.describe('createMediaItemsAdvanced', () => {
     it('when one entry is invalid', async () => {
       const valid = unique('valid entry');
       expect(await refusal(call('createMediaItemsAdvanced', { mediaItems: [{ title: valid }, { title: '' }] }))).toContain('title');
-      expect(await refusal(call('createMediaItemsAdvanced', { mediaItems: [{ title: valid }, { title: unique('bad image'), thumbnailImage: 'https://example.com/a.png' }] }))).toContain('thumbnailImage');
+      expect(await refusal(call('createMediaItemsAdvanced', { mediaItems: [{ title: valid }, { title: unique('bad image'), thumbnailImage: ['https://example.com/a.png', 'https://example.com/b.png'] }] }))).toContain('thumbnailImage');
       expect(await listed(valid)).toEqual([]);
       expect(sent()).not.toHaveBeenCalled();
     });
@@ -490,6 +497,12 @@ contract.describe('updateMediaItem', () => {
     expect(await item(title)).toEqual(jasmine.objectContaining({ thumbnailImage: '', audioImage: '' }));
   });
 
+  it('takes a single new picture given on its own, as a list holding one', async () => {
+    const { title } = await create('single picture', { thumbnailImage: ['https://example.com/a.png'] });
+    expect((await call('updateMediaItem', { title, newThumbnailImage: 'https://example.com/b.png' })).thumbnailImage).toBe('https://example.com/b.png');
+    expect((await item(title)).thumbnailImage).toBe('https://example.com/b.png');
+  });
+
   it('replaces the actions with the list given, and removes them with an empty list or null', async () => {
     const other = { title: 'Call us', action: 'callNumber', phoneNumber: '+15550100' };
     const { title } = await create('actions', { actionLinks: [action] });
@@ -549,11 +562,11 @@ contract.describe('updateMediaItem', () => {
       await unchanged(title, before);
     });
 
-    it('a picture given as a bare link, or two pictures', async () => {
+    it('two pictures, or an icon for a picture', async () => {
       const { title } = await create('bad picture');
       const before = await item(title);
       sent().calls.reset();
-      expect(await refusal(call('updateMediaItem', { title, newThumbnailImage: 'https://example.com/a.png' }))).toContain('newThumbnailImage');
+      expect(await refusal(call('updateMediaItem', { title, newThumbnailImage: ['glyphicon glyphicon-star'] }))).toContain('newThumbnailImage');
       expect(await refusal(call('updateMediaItem', { title, newAudioImage: ['https://example.com/a.png', 'https://example.com/b.png'] }))).toContain('newAudioImage');
       await unchanged(title, before);
     });

@@ -73,6 +73,12 @@
       "description": "The background picture, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
       "minValue": 0,
       "maxValue": 1,
+      "dialogOptions": {
+        "showIcons": false,
+        "showFiles": true,
+        "showStockImages": true,
+        "showAiImages": true
+      },
       "nullable": true,
       "sampleValue": [
         "[image url]"

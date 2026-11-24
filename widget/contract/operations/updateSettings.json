@@ -35,6 +35,17 @@
       "required": false,
       "description": "The pictures shown in the carousel above the list, in order, each with what tapping it does; they replace the current ones. Leave it out to keep them, or pass an empty list to remove them all.",
       "minValue": 0,
+      "dialogOptions": {
+        "showIcon": true,
+        "imgLibOptions": {
+          "showIcons": false
+        },
+        "showTitle": true,
+        "hideActionText": false,
+        "allowNoAction": true,
+        "removePurchase": false,
+        "removePushNotifications": false
+      },
       "nullable": true,
       "sampleValue": [
         {
