@@ -23,7 +23,7 @@ $ karma start --reporters progress
 ```bash
 $ karma start
 ```
-
+ 
 ##How to validate js via eslint
 ###Prerequisite are node.js,bower,npm,karma, karma-coverage
 ```bash
