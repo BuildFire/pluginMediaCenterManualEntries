@@ -1,4 +1,4 @@
-// mediaItems: every operation on media items, their order and their categories, one block each, after the helpers they share.
+// mediaItems: every operation on media items, their manual order and their categories, one block each, after the helpers they share.
 const call = (operation, parameters) => new Promise((resolve, reject) =>
   contract.invoke(operation, parameters, (error, result) => (error ? reject(error) : resolve(result))));
 const reason = (error) => String((error && error.message) || error);
@@ -6,19 +6,21 @@ const reason = (error) => String((error && error.message) || error);
 const refusal = (promise) => promise.then(() => fail('expected the call to be refused'), reason);
 let sequence = 0;
 // Short labels: a media title holds at most 70 characters, and this adds about 30.
-const unique = (label) => `Post ${label} ${++sequence} (${contract.host}) ${Date.now()}`;
+const unique = (label) => `${label} ${++sequence} (${contract.host}) ${Date.now()}`;
+// One word, for the items a spec finds through the title search and expects to be the only ones holding it.
+const stamp = (label) => `${label}${++sequence}${contract.host}${Date.now()}`;
 const missingId = '000000000000000000000000';
 const action = { title: 'Visit website', action: 'linkToWeb', url: 'https://example.com' };
 // What the contract's own reads find.
-const listed = async (title) => (await call('searchMediaItems', { title })).mediaItems;
+const listed = async (title) => (await call('searchMediaItems', { title, pageSize: 50 })).mediaItems;
 const item = (title) => call('getMediaItem', { title });
-const create = async (label, extra) => call('createMediaItem', Object.assign({ title: unique(label) }, extra || {}));
+const create = (label, extra) => call('createMediaItem', Object.assign({ title: unique(label) }, extra || {}));
 const newCategory = async (label, subcategoryNames) => {
-  const category = await call('createCategory', { name: unique(label) });
+  const made = await call('createCategory', { name: unique(label) });
   for (const name of subcategoryNames || []) {
-    await call('createSubcategory', { categoryName: category.name, name });
+    await call('createSubcategory', { categoryName: made.name, name });
   }
-  return (await call('searchCategories', { name: category.name })).categories[0];
+  return (await call('searchCategories', { name: made.name })).categories.find((record) => record.id === made.id);
 };
 // Calls nothing here answers. The plugin's own bookkeeping (analytics, deep links, the widget's refresh message) is not
 // part of the contract: these spies only answer. The contract events are asserted where the manifest declares them.
@@ -32,33 +34,33 @@ const standIns = () => {
       });
     }
   });
-  spyOn(buildfire.services.contract.events, 'send').and.callFake((eventName, data, done) => done && done(null, []));
+  const events = buildfire.services.contract && buildfire.services.contract.events;
+  if (events && typeof events.send === 'function') spyOn(events, 'send').and.callFake((eventName, data, done) => done && done(null, []));
 };
 const sent = () => buildfire.services.contract.events.send;
 // Every required parameter left out, null and empty is refused, naming it, and nothing is written.
-const refusesEachRequired = (operation, parameters, names, unchanged) => names.forEach((name) => {
+const refusesEachRequired = (operation, parameters, required, unchanged) => required.forEach((name) => {
   [['without', undefined], ['with a null', null], ['with an empty', '']].forEach(([how, value]) => {
     it(`${how} ${name}`, async () => {
-      const call_ = Object.assign({}, await parameters());
-      if (value === undefined) delete call_[name];
-      else call_[name] = value;
-      expect(await refusal(call(operation, call_))).toContain(name);
-      if (unchanged) await unchanged(call_);
+      const given = Object.assign({}, await parameters());
+      if (value === undefined) delete given[name];
+      else given[name] = value;
+      expect(await refusal(call(operation, given))).toContain(name);
+      if (unchanged) await unchanged(given);
     });
   });
 });
 // Only the control panel makes media items and categories, and its run comes first: it makes these once, and the app's run finds them.
-const appTitle = 'Post media for the app';
-const appCategory = 'Post media category for the app';
-const appSubcategory = 'Post media subcategory for the app';
+const appTitle = 'Media for the app';
+const appCategory = 'Media category for the app';
+const appSubcategory = 'Media subcategory for the app';
 let madeForTheApp;
 const forTheApp = () => {
   madeForTheApp = madeForTheApp || (contract.host === 'control'
     ? (async () => {
-      standIns();
       await call('createCategory', { name: appCategory });
       await call('createSubcategory', { categoryName: appCategory, name: appSubcategory });
-      await call('createMediaItem', { title: appTitle, summary: 'Made by the control run', thumbnailImage: ['https://example.com/app.png'] });
+      await call('createMediaItem', { title: appTitle, summary: 'Made by the control run', thumbnailImage: ['https://example.com/app.png'], actionLinks: [action] });
       return call('updateMediaItemCategory', { title: appTitle, categoryName: appCategory, subcategoryName: appSubcategory, included: true });
     })()
     : call('getMediaItem', { title: appTitle }).catch((error) => Promise.reject(new Error(`no media item titled "${appTitle}": the control run makes it (${reason(error)})`))));
@@ -66,13 +68,15 @@ const forTheApp = () => {
 };
 
 contract.describe('searchMediaItems', () => {
+  beforeEach(standIns);
+
   it('finds the item the control panel made, by part of its title, with its details', async () => {
     const made = await forTheApp();
     const result = await call('searchMediaItems', { title: 'media for the app' });
     expect(result).toEqual(jasmine.objectContaining({ mediaItems: jasmine.any(Array), total: jasmine.any(Number), page: 0, hasMore: jasmine.any(Boolean) }));
     expect(result.mediaItems).toContain(jasmine.objectContaining({
-      id: made.id, title: appTitle, summary: 'Made by the control run', thumbnailImage: 'https://example.com/app.png',
-      categoryIds: jasmine.any(Array), subcategoryIds: jasmine.any(Array), createdOn: jasmine.any(String)
+      id: made.id, title: appTitle, summary: 'Made by the control run', thumbnailImage: 'https://example.com/app.png', actionLinks: [jasmine.objectContaining(action)],
+      categoryIds: made.categoryIds, subcategoryIds: made.subcategoryIds, rank: jasmine.any(Number), createdOn: jasmine.any(String), mediaDate: jasmine.any(String)
     }));
   });
 
@@ -85,43 +89,58 @@ contract.describe('searchMediaItems', () => {
   });
 
   it('finds nothing for a title no item has', async () => {
-    expect(await call('searchMediaItems', { title: unique('nothing') })).toEqual(jasmine.objectContaining({ mediaItems: [], total: 0, hasMore: false }));
+    expect(await call('searchMediaItems', { title: stamp('nothing') })).toEqual(jasmine.objectContaining({ mediaItems: [], total: 0, page: 0, hasMore: false }));
   });
 
-  it('pages through the items it finds', async () => {
-    const stamp = unique('paged');
-    if (contract.host === 'control') {
-      standIns();
-      await call('createMediaItemsAdvanced', { mediaItems: [1, 2, 3].map((index) => ({ title: `${stamp} ${index}` })) });
-    } else {
-      // The app cannot add items: the items the control panel made are paged instead.
-      await forTheApp();
-    }
-    const title = contract.host === 'control' ? stamp : appTitle;
-    const all = await call('searchMediaItems', { title });
-    const first = await call('searchMediaItems', { title, page: 0, pageSize: 1 });
-    expect(first.mediaItems.length).toBe(1);
-    expect(first.total).toBe(all.total);
-    expect(first.hasMore).toBe(all.total > 1);
-    const last = await call('searchMediaItems', { title, page: all.total - 1, pageSize: 1 });
-    expect(last.mediaItems.length).toBe(1);
-    expect(last.hasMore).toBe(false);
-  });
-
-  it('shows 20 items a page when no page size is given', async () => {
+  it('shows every item when nothing narrows it, 20 a page', async () => {
+    await forTheApp();
     const result = await call('searchMediaItems', {});
-    expect(result.mediaItems.length).toBeLessThanOrEqual(20);
+    expect(result.total).toBeGreaterThan(0);
+    expect(result.mediaItems.length).toBe(Math.min(result.total, 20));
     expect(result.hasMore).toBe(result.total > 20);
   });
+
+  if (contract.host === 'control') {
+    it('shows 20 a page when no page size is given, and the rest on the next page', async () => {
+      // More items than a page, made in one call to the contract's batch operation, given the time that takes.
+      const word = stamp('paged');
+      const made = await call('createMediaItemsAdvanced', { mediaItems: Array.from({ length: 21 }, (value, index) => ({ title: `${word} ${index}` })) });
+      expect(made.succeeded).toBe(21);
+      const first = await call('searchMediaItems', { title: word });
+      expect(first).toEqual(jasmine.objectContaining({ total: 21, page: 0, hasMore: true }));
+      expect(first.mediaItems.length).toBe(20);
+      const second = await call('searchMediaItems', { title: word, page: 1 });
+      expect(second).toEqual(jasmine.objectContaining({ total: 21, page: 1, hasMore: false }));
+      expect(second.mediaItems.length).toBe(1);
+      const small = await call('searchMediaItems', { title: word, pageSize: 5, page: 4 });
+      expect(small.mediaItems.length).toBe(1);
+    }, 180000);
+
+    it('lists the items in the order the owner chose', async () => {
+      const word = stamp('ordered');
+      await call('createMediaItemsAdvanced', { mediaItems: ['Beta', 'Alpha', 'Gamma'].map((name) => ({ title: `${word} ${name}` })) });
+      await call('updateSettings', { mediaSortOrder: 'Media Title A-Z' });
+      expect((await call('searchMediaItems', { title: word })).mediaItems.map((found) => found.title))
+        .toEqual([`${word} Alpha`, `${word} Beta`, `${word} Gamma`]);
+      await call('updateSettings', { mediaSortOrder: 'Media Title Z-A' });
+      expect((await call('searchMediaItems', { title: word })).mediaItems.map((found) => found.title))
+        .toEqual([`${word} Gamma`, `${word} Beta`, `${word} Alpha`]);
+    }, 120000);
+  }
 
   describe('refuses', () => {
     it('a subcategory without its category', async () => {
       expect(await refusal(call('searchMediaItems', { subcategoryName: appSubcategory }))).toContain('subcategoryName');
     });
 
-    it('a category nothing is named', async () => {
+    it('a category nothing is named, naming it', async () => {
       const name = unique('no category');
       expect(await refusal(call('searchMediaItems', { categoryName: name }))).toContain(name);
+    });
+
+    it('a subcategory the category does not have, naming it', async () => {
+      await forTheApp();
+      expect(await refusal(call('searchMediaItems', { categoryName: appCategory, subcategoryName: 'No such subcategory' }))).toContain('No such subcategory');
     });
 
     it('a page size above 50 or below 1', async () => {
@@ -134,17 +153,21 @@ contract.describe('searchMediaItems', () => {
       expect(await refusal(call('searchMediaItems', { page: 'first' }))).toContain('page');
     });
 
-    it('an empty title', async () => {
+    it('an empty title, or one that is not text', async () => {
       expect(await refusal(call('searchMediaItems', { title: '' }))).toContain('title');
+      expect(await refusal(call('searchMediaItems', { title: 42 }))).toContain('title');
     });
   });
 });
 
 contract.describe('getMediaItem', () => {
+  beforeEach(standIns);
+
   it('finds one item by its exact title, with everything on its page', async () => {
     const made = await forTheApp();
     expect(await call('getMediaItem', { title: appTitle })).toEqual(jasmine.objectContaining({
-      id: made.id, title: appTitle, summary: 'Made by the control run', thumbnailImage: 'https://example.com/app.png', actionLinks: jasmine.any(Array)
+      id: made.id, title: appTitle, summary: 'Made by the control run', thumbnailImage: 'https://example.com/app.png', actionLinks: [jasmine.objectContaining(action)],
+      categoryIds: made.categoryIds, subcategoryIds: made.subcategoryIds
     }));
   });
 
@@ -153,7 +176,7 @@ contract.describe('getMediaItem', () => {
     expect(await refusal(call('getMediaItem', { title }))).toContain(title);
   });
 
-  it('refuses without a title, or with an empty one', async () => {
+  it('refuses without a title, or with a null or empty one', async () => {
     expect(await refusal(call('getMediaItem', {}))).toContain('title');
     expect(await refusal(call('getMediaItem', { title: null }))).toContain('title');
     expect(await refusal(call('getMediaItem', { title: '' }))).toContain('title');
@@ -161,7 +184,6 @@ contract.describe('getMediaItem', () => {
 
   if (contract.host === 'control') {
     it('refuses a title two items share, saying how many', async () => {
-      standIns();
       const title = unique('shared');
       await call('createMediaItem', { title });
       await call('createMediaItem', { title });
@@ -171,27 +193,31 @@ contract.describe('getMediaItem', () => {
 });
 
 contract.describe('getMediaItemAdvanced', () => {
+  beforeEach(standIns);
+
   it('finds one item by its id', async () => {
     const made = await forTheApp();
-    expect(await call('getMediaItemAdvanced', { mediaItemId: made.id })).toEqual(jasmine.objectContaining({ id: made.id, title: appTitle }));
+    expect(await call('getMediaItemAdvanced', { mediaItemId: made.id })).toEqual(jasmine.objectContaining({
+      id: made.id, title: appTitle, summary: 'Made by the control run', thumbnailImage: 'https://example.com/app.png'
+    }));
   });
 
   it('refuses an id that matches nothing', async () => {
     expect(await refusal(call('getMediaItemAdvanced', { mediaItemId: missingId }))).toContain(missingId);
   });
 
-  it('refuses without an id, or with an empty one', async () => {
+  it('refuses without an id, or with a null or empty one', async () => {
     expect(await refusal(call('getMediaItemAdvanced', {}))).toContain('mediaItemId');
     expect(await refusal(call('getMediaItemAdvanced', { mediaItemId: null }))).toContain('mediaItemId');
     expect(await refusal(call('getMediaItemAdvanced', { mediaItemId: '' }))).toContain('mediaItemId');
   });
 });
 
-// controlBackground only (with the server): this block runs in the control frame, where the datastore is writable.
+// controlBackground only (with the server): the blocks from here on run in the control frame, where the datastore is writable.
 contract.describe('createMediaItem', () => {
   beforeEach(standIns);
 
-  it('adds an item from its title alone, with the form\'s defaults, and announces it', async () => {
+  it("adds an item from its title alone, with the form's defaults, and announces it", async () => {
     const title = unique('item');
     const made = await call('createMediaItem', { title });
     expect(made).toEqual(jasmine.objectContaining({
@@ -200,7 +226,10 @@ contract.describe('createMediaItem', () => {
     // Leaving the media date out dates the item today.
     expect(Math.abs(new Date(made.mediaDate).getTime() - Date.now())).toBeLessThan(10 * 60 * 1000);
     expect(await item(title)).toEqual(jasmine.objectContaining({ id: made.id, title }));
-    expect(sent().calls.argsFor(0).slice(0, 2)).toEqual(['mediaItemCreated', jasmine.objectContaining({ mediaItemId: made.id, title })]);
+    expect(sent().calls.count()).toBe(1);
+    expect(sent().calls.argsFor(0).slice(0, 2)).toEqual(['mediaItemCreated', {
+      mediaItemId: made.id, title, summary: null, thumbnailImage: null, videoUrl: null, audioUrl: null, mediaDate: made.mediaDate, createdAt: made.createdOn
+    }]);
   });
 
   it('adds an item with every detail, keeping each picture as one link', async () => {
@@ -230,13 +259,21 @@ contract.describe('createMediaItem', () => {
     expect(await call('createMediaItem', details)).toEqual(jasmine.objectContaining(expected));
     expect(await item(title)).toEqual(jasmine.objectContaining(expected));
     expect(sent().calls.argsFor(0)[1]).toEqual(jasmine.objectContaining({
-      title, summary: 'A short summary', thumbnailImage: 'https://example.com/thumb.png', videoUrl: 'https://example.com/video.mp4', audioUrl: 'https://example.com/audio.mp3'
+      title, summary: 'A short summary', thumbnailImage: 'https://example.com/thumb.png', videoUrl: 'https://example.com/video.mp4',
+      audioUrl: 'https://example.com/audio.mp3', mediaDate: '2026-01-15T00:00:00.000Z'
     }));
+  });
+
+  it('takes a title of exactly 70 characters', async () => {
+    const base = unique('long');
+    const title = `${base}${'x'.repeat(70 - base.length)}`;
+    expect((await call('createMediaItem', { title })).title).toBe(title);
+    expect((await item(title)).title).toBe(title);
   });
 
   describe('refuses, stores nothing and announces nothing', () => {
     const nothingStored = async (parameters) => {
-      if (parameters.title) expect(await listed(parameters.title)).toEqual([]);
+      if (typeof parameters.title === 'string' && parameters.title) expect(await listed(parameters.title)).toEqual([]);
       expect(sent()).not.toHaveBeenCalled();
     };
     refusesEachRequired('createMediaItem', async () => ({ title: unique('required') }), ['title'], nothingStored);
@@ -246,15 +283,94 @@ contract.describe('createMediaItem', () => {
       expect(await refusal(call('createMediaItem', parameters))).toContain(named);
       await nothingStored(parameters);
     });
-    refuses('a title longer than 70 characters', 'long', { title: `Post long ${'x'.repeat(70)}` }, 'title');
+    refuses('a title longer than 70 characters', 'long', { title: `long ${'x'.repeat(70)}` }, 'title');
+    refuses('a title that is not text', 'title type', { title: 42 }, 'title');
     refuses('a summary longer than 250 characters', 'long summary', { summary: 'x'.repeat(251) }, 'summary');
     refuses('a summary that is not text', 'summary type', { summary: 42 }, 'summary');
+    refuses('an audio title longer than 70 characters', 'long audio', { audioTitle: 'x'.repeat(71) }, 'audioTitle');
+    refuses('artists longer than 70 characters', 'long artists', { artists: 'x'.repeat(71) }, 'artists');
     refuses('a body that is not text', 'body type', { body: { html: '<p>x</p>' } }, 'body');
     refuses('a thumbnail given as a bare link', 'bare image', { thumbnailImage: 'https://example.com/thumb.png' }, 'thumbnailImage');
     refuses('two thumbnails', 'two images', { thumbnailImage: ['https://example.com/a.png', 'https://example.com/b.png'] }, 'thumbnailImage');
+    refuses('an audio background that is not a link', 'bad background', { audioBackgroundImage: [42] }, 'audioBackgroundImage');
     refuses('a media date that is not a date', 'bad date', { mediaDate: 'yesterday' }, 'mediaDate');
     refuses('actions that are not a list', 'bad actions', { actionLinks: action }, 'actionLinks');
     refuses('an action without its action', 'bad action', { actionLinks: [{ title: 'Nothing' }] }, 'actionLinks');
+  });
+});
+
+contract.describe('updateMediaItemOrder', () => {
+  beforeEach(standIns);
+
+  it('moves the item to the first place of the manual order', async () => {
+    const { title, id } = await create('move first');
+    expect(await call('updateMediaItemOrder', { title, position: 1 })).toEqual(jasmine.objectContaining({ id, title, rank: 1 }));
+    expect((await item(title)).rank).toBe(1);
+  }, 180000);
+
+  it('moves the item to the second place, after the first', async () => {
+    const first = await create('move one');
+    const second = await create('move two');
+    await call('updateMediaItemOrder', { title: first.title, position: 1 });
+    await call('updateMediaItemOrder', { title: second.title, position: 2 });
+    expect((await item(first.title)).rank).toBe(1);
+    expect((await item(second.title)).rank).toBe(2);
+  }, 180000);
+
+  describe('refuses, and moves nothing', () => {
+    it('a place past the end of the list', async () => {
+      const { title } = await create('too far');
+      const before = (await item(title)).rank;
+      expect(await refusal(call('updateMediaItemOrder', { title, position: 100000 }))).toContain('position');
+      expect((await item(title)).rank).toBe(before);
+    }, 120000);
+
+    it('a place below 1, one that is not a whole number, or none', async () => {
+      const { title, rank } = await create('bad place');
+      expect(await refusal(call('updateMediaItemOrder', { title, position: 0 }))).toContain('position');
+      expect(await refusal(call('updateMediaItemOrder', { title, position: 1.5 }))).toContain('position');
+      expect(await refusal(call('updateMediaItemOrder', { title, position: '1' }))).toContain('position');
+      expect(await refusal(call('updateMediaItemOrder', { title }))).toContain('position');
+      expect((await item(title)).rank).toBe(rank);
+    });
+
+    it('a title no item has, naming it', async () => {
+      const title = unique('missing');
+      expect(await refusal(call('updateMediaItemOrder', { title, position: 1 }))).toContain(title);
+    });
+
+    it('a title two items share, saying how many', async () => {
+      const title = unique('shared');
+      await call('createMediaItem', { title });
+      await call('createMediaItem', { title });
+      expect((await refusal(call('updateMediaItemOrder', { title, position: 1 }))).replace(title, '')).toContain('2');
+    });
+
+    refusesEachRequired('updateMediaItemOrder', async () => ({ title: unique('no title'), position: 1 }), ['title']);
+  });
+});
+
+contract.describe('updateMediaItemOrderAdvanced', () => {
+  beforeEach(standIns);
+
+  it('moves the item with that id to the first place of the manual order', async () => {
+    const { title, id } = await create('move by id');
+    expect(await call('updateMediaItemOrderAdvanced', { mediaItemId: id, position: 1 })).toEqual(jasmine.objectContaining({ id, rank: 1 }));
+    expect((await item(title)).rank).toBe(1);
+  }, 180000);
+
+  describe('refuses, and moves nothing', () => {
+    it('an id that matches nothing', async () => {
+      expect(await refusal(call('updateMediaItemOrderAdvanced', { mediaItemId: missingId, position: 1 }))).toContain(missingId);
+    });
+
+    it('a place below 1', async () => {
+      const { title, id, rank } = await create('bad place by id');
+      expect(await refusal(call('updateMediaItemOrderAdvanced', { mediaItemId: id, position: 0 }))).toContain('position');
+      expect((await item(title)).rank).toBe(rank);
+    });
+
+    refusesEachRequired('updateMediaItemOrderAdvanced', async () => ({ mediaItemId: missingId, position: 1 }), ['mediaItemId']);
   });
 });
 
@@ -263,21 +379,24 @@ contract.describe('createMediaItemsAdvanced', () => {
 
   it('adds every item, reports each, and announces each', async () => {
     const titles = [unique('batch one'), unique('batch two')];
-    const result = await call('createMediaItemsAdvanced', { mediaItems: [{ title: titles[0] }, { title: titles[1], audioUrl: 'https://example.com/audio.mp3' }] });
+    const result = await call('createMediaItemsAdvanced', { mediaItems: [{ title: titles[0] }, { title: titles[1], audioUrl: 'https://example.com/audio.mp3', thumbnailImage: ['https://example.com/thumb.png'] }] });
     expect(result).toEqual(jasmine.objectContaining({
       mediaItems: [jasmine.objectContaining({ index: 0, id: jasmine.any(String), error: null }), jasmine.objectContaining({ index: 1, id: jasmine.any(String), error: null })],
       succeeded: 2,
       failed: 0
     }));
     expect(await item(titles[0])).toEqual(jasmine.objectContaining({ id: result.mediaItems[0].id }));
-    expect(await item(titles[1])).toEqual(jasmine.objectContaining({ audioUrl: 'https://example.com/audio.mp3' }));
-    expect(sent().calls.allArgs().map((args) => args[0])).toEqual(['mediaItemCreated', 'mediaItemCreated']);
+    expect(await item(titles[1])).toEqual(jasmine.objectContaining({ id: result.mediaItems[1].id, audioUrl: 'https://example.com/audio.mp3', thumbnailImage: 'https://example.com/thumb.png' }));
+    expect(sent().calls.allArgs().map((args) => [args[0], args[1].mediaItemId])).toEqual([
+      ['mediaItemCreated', result.mediaItems[0].id], ['mediaItemCreated', result.mediaItems[1].id]
+    ]);
   });
 
   describe('refuses the whole list, and writes none of it', () => {
     it('when one entry is invalid', async () => {
       const valid = unique('valid entry');
       expect(await refusal(call('createMediaItemsAdvanced', { mediaItems: [{ title: valid }, { title: '' }] }))).toContain('title');
+      expect(await refusal(call('createMediaItemsAdvanced', { mediaItems: [{ title: valid }, { title: unique('bad image'), thumbnailImage: 'https://example.com/a.png' }] }))).toContain('thumbnailImage');
       expect(await listed(valid)).toEqual([]);
       expect(sent()).not.toHaveBeenCalled();
     });
@@ -287,10 +406,11 @@ contract.describe('createMediaItemsAdvanced', () => {
     });
 
     it('when it holds more than 50 entries', async () => {
-      const stamp = unique('too many');
-      const mediaItems = Array.from({ length: 51 }, (value, index) => ({ title: `${stamp} ${index}` }));
+      const word = stamp('toomany');
+      const mediaItems = Array.from({ length: 51 }, (value, index) => ({ title: `${word} ${index}` }));
       expect(await refusal(call('createMediaItemsAdvanced', { mediaItems }))).toContain('mediaItems');
-      expect(await listed(stamp)).toEqual([]);
+      expect(await listed(word)).toEqual([]);
+      expect(sent()).not.toHaveBeenCalled();
     });
 
     it('when it is missing or not a list', async () => {
@@ -308,17 +428,20 @@ contract.describe('updateMediaItem', () => {
     sent().calls.reset();
     expect(await call('updateMediaItem', { title, newSummary: 'Second' })).toEqual(jasmine.objectContaining({ id, title, summary: 'Second', videoUrl: 'https://example.com/video.mp4' }));
     expect(await item(title)).toEqual(jasmine.objectContaining({ summary: 'Second', videoUrl: 'https://example.com/video.mp4' }));
-    expect(sent().calls.argsFor(0).slice(0, 2)).toEqual(['mediaItemUpdated', jasmine.objectContaining({ mediaItemId: id, title, summary: 'Second', previousTitle: title })]);
+    expect(sent().calls.count()).toBe(1);
+    expect(sent().calls.argsFor(0).slice(0, 2)).toEqual(['mediaItemUpdated', jasmine.objectContaining({
+      mediaItemId: id, title, summary: 'Second', videoUrl: 'https://example.com/video.mp4', previousTitle: title
+    })]);
   });
 
   it('renames the item, telling the old title', async () => {
     const { title, id } = await create('rename');
     sent().calls.reset();
     const renamed = `${title} new`;
-    await call('updateMediaItem', { title, newTitle: renamed });
+    expect((await call('updateMediaItem', { title, newTitle: renamed })).title).toBe(renamed);
     expect(await item(renamed)).toEqual(jasmine.objectContaining({ id }));
     expect(await refusal(item(title))).toContain(title);
-    expect(sent().calls.argsFor(0)[1]).toEqual(jasmine.objectContaining({ title: renamed, previousTitle: title }));
+    expect(sent().calls.argsFor(0)[1]).toEqual(jasmine.objectContaining({ mediaItemId: id, title: renamed, previousTitle: title }));
   });
 
   it('changes every detail at once', async () => {
@@ -340,6 +463,7 @@ contract.describe('updateMediaItem', () => {
       resetViews: false
     });
     const expected = {
+      title,
       summary: 'New summary', body: '<p>New body</p>', sourceUrl: 'https://example.com/new-source', videoUrl: 'https://example.com/new-video.mp4',
       audioTitle: 'New audio title', artists: 'New artists', audioUrl: 'https://example.com/new-audio.mp3',
       thumbnailImage: 'https://example.com/new-thumb.png', audioImage: 'https://example.com/new-audio.png',
@@ -349,12 +473,14 @@ contract.describe('updateMediaItem', () => {
     expect(await item(title)).toEqual(jasmine.objectContaining(expected));
   });
 
-  it('clears a field with null, and with an empty text', async () => {
-    const { title } = await create('clear', { summary: 'Something', artists: 'Someone' });
+  it('clears a text field with null, and with an empty text', async () => {
+    const { title } = await create('clear', { summary: 'Something', artists: 'Someone', body: '<p>Body</p>' });
     await call('updateMediaItem', { title, newSummary: null });
     expect((await item(title)).summary).toBeNull();
     await call('updateMediaItem', { title, newArtists: '' });
     expect((await item(title)).artists).toBe('');
+    await call('updateMediaItem', { title, newBody: '' });
+    expect(await item(title)).toEqual(jasmine.objectContaining({ body: '', summary: null, artists: '' }));
   });
 
   it('removes a picture with an empty list, and with null', async () => {
@@ -364,13 +490,23 @@ contract.describe('updateMediaItem', () => {
     expect(await item(title)).toEqual(jasmine.objectContaining({ thumbnailImage: '', audioImage: '' }));
   });
 
-  it('replaces the actions with the list given, and removes them with an empty list', async () => {
+  it('replaces the actions with the list given, and removes them with an empty list or null', async () => {
     const other = { title: 'Call us', action: 'callNumber', phoneNumber: '+15550100' };
     const { title } = await create('actions', { actionLinks: [action] });
     await call('updateMediaItem', { title, newActionLinks: [other] });
     expect((await item(title)).actionLinks).toEqual([jasmine.objectContaining(other)]);
     await call('updateMediaItem', { title, newActionLinks: [] });
     expect((await item(title)).actionLinks).toEqual([]);
+    await call('updateMediaItem', { title, newActionLinks: [action] });
+    await call('updateMediaItem', { title, newActionLinks: null });
+    expect((await item(title)).actionLinks).toEqual([]);
+  });
+
+  it('takes a new video link with or without restarting the view count', async () => {
+    const { title } = await create('new video', { videoUrl: 'https://example.com/first.mp4' });
+    expect((await call('updateMediaItem', { title, newVideoUrl: 'https://example.com/second.mp4', resetViews: true })).videoUrl).toBe('https://example.com/second.mp4');
+    expect((await call('updateMediaItem', { title, newVideoUrl: 'https://example.com/third.mp4' })).videoUrl).toBe('https://example.com/third.mp4');
+    expect((await item(title)).videoUrl).toBe('https://example.com/third.mp4');
   });
 
   describe('refuses, changes nothing and announces nothing', () => {
@@ -409,6 +545,7 @@ contract.describe('updateMediaItem', () => {
       const before = await item(title);
       sent().calls.reset();
       await expectAsync(call('updateMediaItem', { title })).toBeRejected();
+      await expectAsync(call('updateMediaItem', { title, resetViews: true })).toBeRejected();
       await unchanged(title, before);
     });
 
@@ -421,13 +558,16 @@ contract.describe('updateMediaItem', () => {
       await unchanged(title, before);
     });
 
-    it('a media date that is not a date, a summary that is too long, or a restart choice that is not true or false', async () => {
+    it('a media date that is not a date, a summary that is too long, a title over 70 characters, or a restart choice that is not true or false', async () => {
       const { title } = await create('bad values');
       const before = await item(title);
       sent().calls.reset();
       expect(await refusal(call('updateMediaItem', { title, newMediaDate: 'soon' }))).toContain('newMediaDate');
+      expect(await refusal(call('updateMediaItem', { title, newMediaDate: null }))).toContain('newMediaDate');
       expect(await refusal(call('updateMediaItem', { title, newSummary: 'x'.repeat(251) }))).toContain('newSummary');
+      expect(await refusal(call('updateMediaItem', { title, newTitle: 'x'.repeat(71) }))).toContain('newTitle');
       expect(await refusal(call('updateMediaItem', { title, newSummary: 'x', resetViews: 'yes' }))).toContain('resetViews');
+      expect(await refusal(call('updateMediaItem', { title, newActionLinks: [{ title: 'Nothing' }] }))).toContain('newActionLinks');
       await unchanged(title, before);
     });
 
@@ -441,30 +581,33 @@ contract.describe('updateMediaItemAdvanced', () => {
   it('changes only the fields it is given, on the item with that id', async () => {
     const { title, id } = await create('by id', { summary: 'First', artists: 'Kept' });
     sent().calls.reset();
-    expect(await call('updateMediaItemAdvanced', { mediaItemId: id, newSummary: 'Second' })).toEqual(jasmine.objectContaining({ id, summary: 'Second', artists: 'Kept' }));
+    expect(await call('updateMediaItemAdvanced', { mediaItemId: id, newSummary: 'Second' })).toEqual(jasmine.objectContaining({ id, title, summary: 'Second', artists: 'Kept' }));
     expect(await item(title)).toEqual(jasmine.objectContaining({ summary: 'Second', artists: 'Kept' }));
-    expect(sent().calls.argsFor(0).slice(0, 2)).toEqual(['mediaItemUpdated', jasmine.objectContaining({ mediaItemId: id })]);
+    expect(sent().calls.argsFor(0).slice(0, 2)).toEqual(['mediaItemUpdated', jasmine.objectContaining({ mediaItemId: id, title, summary: 'Second', previousTitle: title })]);
   });
 
-  it('clears a field with null', async () => {
-    const { title, id } = await create('clear by id', { audioTitle: 'Something' });
-    await call('updateMediaItemAdvanced', { mediaItemId: id, newAudioTitle: null });
-    expect((await item(title)).audioTitle).toBeNull();
+  it('clears a field with null, and removes a picture with an empty list', async () => {
+    const { title, id } = await create('clear by id', { audioTitle: 'Something', audioBackgroundImage: ['https://example.com/background.png'] });
+    await call('updateMediaItemAdvanced', { mediaItemId: id, newAudioTitle: null, newAudioBackgroundImage: [] });
+    expect(await item(title)).toEqual(jasmine.objectContaining({ audioTitle: null, audioBackgroundImage: '' }));
   });
 
-  it('refuses an id that matches nothing, and announces nothing', async () => {
-    expect(await refusal(call('updateMediaItemAdvanced', { mediaItemId: missingId, newSummary: 'x' }))).toContain(missingId);
-    expect(sent()).not.toHaveBeenCalled();
-  });
+  describe('refuses, changes nothing and announces nothing', () => {
+    it('an id that matches nothing', async () => {
+      expect(await refusal(call('updateMediaItemAdvanced', { mediaItemId: missingId, newSummary: 'x' }))).toContain(missingId);
+      expect(sent()).not.toHaveBeenCalled();
+    });
 
-  it('refuses a call that changes nothing, or removes the title', async () => {
-    const { title, id } = await create('nothing by id');
-    await expectAsync(call('updateMediaItemAdvanced', { mediaItemId: id })).toBeRejected();
-    expect(await refusal(call('updateMediaItemAdvanced', { mediaItemId: id, newTitle: '' }))).toContain('newTitle');
-    expect((await item(title)).title).toBe(title);
-  });
+    it('a call that changes nothing, or removes the title', async () => {
+      const { title, id } = await create('nothing by id');
+      const before = await item(title);
+      sent().calls.reset();
+      await expectAsync(call('updateMediaItemAdvanced', { mediaItemId: id })).toBeRejected();
+      expect(await refusal(call('updateMediaItemAdvanced', { mediaItemId: id, newTitle: '' }))).toContain('newTitle');
+      expect(await item(title)).toEqual(before);
+      expect(sent()).not.toHaveBeenCalled();
+    });
 
-  describe('refuses', () => {
     refusesEachRequired('updateMediaItemAdvanced', async () => ({ mediaItemId: missingId, newSummary: 'x' }), ['mediaItemId']);
   });
 });
@@ -472,22 +615,27 @@ contract.describe('updateMediaItemAdvanced', () => {
 contract.describe('updateMediaItemsAdvanced', () => {
   beforeEach(standIns);
 
-  it('changes every item, and reports each', async () => {
+  it('changes every item, reports each, and announces each', async () => {
     const first = await create('batch update one', { summary: 'One' });
     const second = await create('batch update two', { summary: 'Two', artists: 'Kept' });
+    sent().calls.reset();
     const result = await call('updateMediaItemsAdvanced', { mediaItems: [{ mediaItemId: first.id, newSummary: 'One changed' }, { mediaItemId: second.id, newSummary: null }] });
     expect(result).toEqual(jasmine.objectContaining({
-      mediaItems: [jasmine.objectContaining({ index: 0, id: first.id }), jasmine.objectContaining({ index: 1, id: second.id })], succeeded: 2, failed: 0
+      mediaItems: [jasmine.objectContaining({ index: 0, id: first.id, error: null }), jasmine.objectContaining({ index: 1, id: second.id, error: null })], succeeded: 2, failed: 0
     }));
     expect((await item(first.title)).summary).toBe('One changed');
     expect(await item(second.title)).toEqual(jasmine.objectContaining({ summary: null, artists: 'Kept' }));
+    expect(sent().calls.allArgs().map((args) => [args[0], args[1].mediaItemId])).toEqual([['mediaItemUpdated', first.id], ['mediaItemUpdated', second.id]]);
   });
 
   describe('refuses the whole list, and writes none of it', () => {
     it('when one entry is invalid', async () => {
       const made = await create('batch invalid', { summary: 'Kept' });
+      sent().calls.reset();
       expect(await refusal(call('updateMediaItemsAdvanced', { mediaItems: [{ mediaItemId: made.id, newSummary: 'x' }, { mediaItemId: made.id, newTitle: '' }] }))).toContain('newTitle');
+      expect(await refusal(call('updateMediaItemsAdvanced', { mediaItems: [{ mediaItemId: made.id, newSummary: 'x' }, {}] }))).toContain('mediaItemId');
       expect((await item(made.title)).summary).toBe('Kept');
+      expect(sent()).not.toHaveBeenCalled();
     });
 
     it('when an id matches nothing', async () => {
@@ -518,7 +666,8 @@ contract.describe('deleteMediaItem', () => {
     sent().calls.reset();
     expect(await call('deleteMediaItem', { title })).toEqual(jasmine.objectContaining({ id, title, deleted: true }));
     expect(await listed(title)).toEqual([]);
-    expect(sent().calls.argsFor(0).slice(0, 2)).toEqual(['mediaItemDeleted', jasmine.objectContaining({ mediaItemId: id, title })]);
+    expect(sent().calls.count()).toBe(1);
+    expect(sent().calls.argsFor(0).slice(0, 2)).toEqual(['mediaItemDeleted', { mediaItemId: id, title }]);
   });
 
   it('leaves every other item alone', async () => {
@@ -545,7 +694,7 @@ contract.describe('deleteMediaItem', () => {
       expect(sent()).not.toHaveBeenCalled();
     });
 
-    refusesEachRequired('deleteMediaItem', async () => ({ title: unique('no title') }), ['title']);
+    refusesEachRequired('deleteMediaItem', async () => ({ title: unique('no title') }), ['title'], async () => expect(sent()).not.toHaveBeenCalled());
   });
 });
 
@@ -557,15 +706,16 @@ contract.describe('deleteMediaItemAdvanced', () => {
     sent().calls.reset();
     expect(await call('deleteMediaItemAdvanced', { mediaItemId: id })).toEqual(jasmine.objectContaining({ id, title, deleted: true }));
     expect(await listed(title)).toEqual([]);
-    expect(sent().calls.argsFor(0).slice(0, 2)).toEqual(['mediaItemDeleted', jasmine.objectContaining({ mediaItemId: id })]);
+    expect(await refusal(call('getMediaItemAdvanced', { mediaItemId: id }))).toContain(id);
+    expect(sent().calls.argsFor(0).slice(0, 2)).toEqual(['mediaItemDeleted', { mediaItemId: id, title }]);
   });
 
-  it('refuses an id that matches nothing', async () => {
-    expect(await refusal(call('deleteMediaItemAdvanced', { mediaItemId: missingId }))).toContain(missingId);
-    expect(sent()).not.toHaveBeenCalled();
-  });
+  describe('refuses, and announces nothing', () => {
+    it('an id that matches nothing', async () => {
+      expect(await refusal(call('deleteMediaItemAdvanced', { mediaItemId: missingId }))).toContain(missingId);
+      expect(sent()).not.toHaveBeenCalled();
+    });
 
-  describe('refuses', () => {
     refusesEachRequired('deleteMediaItemAdvanced', async () => ({ mediaItemId: missingId }), ['mediaItemId']);
   });
 });
@@ -573,21 +723,25 @@ contract.describe('deleteMediaItemAdvanced', () => {
 contract.describe('deleteMediaItemsAdvanced', () => {
   beforeEach(standIns);
 
-  it('deletes every item, and reports each', async () => {
+  it('deletes every item, reports each, and announces each', async () => {
     const first = await create('batch delete one');
     const second = await create('batch delete two');
+    sent().calls.reset();
     expect(await call('deleteMediaItemsAdvanced', { mediaItems: [{ mediaItemId: first.id }, { mediaItemId: second.id }] })).toEqual(jasmine.objectContaining({
-      mediaItems: [jasmine.objectContaining({ index: 0, id: first.id }), jasmine.objectContaining({ index: 1, id: second.id })], succeeded: 2, failed: 0
+      mediaItems: [jasmine.objectContaining({ index: 0, id: first.id, error: null }), jasmine.objectContaining({ index: 1, id: second.id, error: null })], succeeded: 2, failed: 0
     }));
     expect(await listed(first.title)).toEqual([]);
     expect(await listed(second.title)).toEqual([]);
+    expect(sent().calls.allArgs().map((args) => [args[0], args[1].mediaItemId])).toEqual([['mediaItemDeleted', first.id], ['mediaItemDeleted', second.id]]);
   });
 
   describe('refuses the whole list, and deletes none of it', () => {
     it('when an id matches nothing', async () => {
       const made = await create('batch delete kept');
+      sent().calls.reset();
       expect(await refusal(call('deleteMediaItemsAdvanced', { mediaItems: [{ mediaItemId: made.id }, { mediaItemId: missingId }] }))).toContain(missingId);
       expect(await item(made.title)).toEqual(jasmine.objectContaining({ id: made.id }));
+      expect(sent()).not.toHaveBeenCalled();
     });
 
     it('when the same item is listed twice', async () => {
@@ -609,92 +763,33 @@ contract.describe('deleteMediaItemsAdvanced', () => {
   });
 });
 
-contract.describe('updateMediaItemOrder', () => {
-  beforeEach(standIns);
-
-  it('moves the item to the first place of the manual order', async () => {
-    const { title, id } = await create('move first');
-    expect(await call('updateMediaItemOrder', { title, position: 1 })).toEqual(jasmine.objectContaining({ id, rank: 1 }));
-    expect((await item(title)).rank).toBe(1);
-  }, 120000);
-
-  it('moves the item to the second place, after the first', async () => {
-    const first = await create('move one');
-    const second = await create('move two');
-    await call('updateMediaItemOrder', { title: first.title, position: 1 });
-    await call('updateMediaItemOrder', { title: second.title, position: 2 });
-    expect((await item(first.title)).rank).toBe(1);
-    expect((await item(second.title)).rank).toBe(2);
-  }, 120000);
-
-  describe('refuses, and moves nothing', () => {
-    it('a place past the end of the list', async () => {
-      const { title } = await create('too far');
-      const before = (await item(title)).rank;
-      expect(await refusal(call('updateMediaItemOrder', { title, position: 100000 }))).toContain('position');
-      expect((await item(title)).rank).toBe(before);
-    }, 120000);
-
-    it('a place below 1, or one that is not a whole number', async () => {
-      const { title } = await create('bad place');
-      expect(await refusal(call('updateMediaItemOrder', { title, position: 0 }))).toContain('position');
-      expect(await refusal(call('updateMediaItemOrder', { title, position: 1.5 }))).toContain('position');
-      expect(await refusal(call('updateMediaItemOrder', { title }))).toContain('position');
-    });
-
-    it('a title no item has, naming it', async () => {
-      const title = unique('missing');
-      expect(await refusal(call('updateMediaItemOrder', { title, position: 1 }))).toContain(title);
-    });
-
-    refusesEachRequired('updateMediaItemOrder', async () => ({ title: unique('no title'), position: 1 }), ['title']);
-  });
-});
-
-contract.describe('updateMediaItemOrderAdvanced', () => {
-  beforeEach(standIns);
-
-  it('moves the item with that id to the first place of the manual order', async () => {
-    const { title, id } = await create('move by id');
-    expect(await call('updateMediaItemOrderAdvanced', { mediaItemId: id, position: 1 })).toEqual(jasmine.objectContaining({ id, rank: 1 }));
-    expect((await item(title)).rank).toBe(1);
-  }, 120000);
-
-  it('refuses an id that matches nothing', async () => {
-    expect(await refusal(call('updateMediaItemOrderAdvanced', { mediaItemId: missingId, position: 1 }))).toContain(missingId);
-  });
-
-  it('refuses a place below 1', async () => {
-    const { id } = await create('bad place by id');
-    expect(await refusal(call('updateMediaItemOrderAdvanced', { mediaItemId: id, position: 0 }))).toContain('position');
-  });
-
-  describe('refuses', () => {
-    refusesEachRequired('updateMediaItemOrderAdvanced', async () => ({ mediaItemId: missingId, position: 1 }), ['mediaItemId']);
-  });
-});
-
 contract.describe('updateMediaItemCategory', () => {
   beforeEach(standIns);
 
-  it('puts the item in a category, so a search of that category finds it', async () => {
+  it('puts the item in a category, so a search of that category finds it, and announces the change', async () => {
     const category = await newCategory('category', []);
     const { title, id } = await create('in category');
     sent().calls.reset();
-    expect(await call('updateMediaItemCategory', { title, categoryName: category.name, included: true })).toEqual(jasmine.objectContaining({ id, categoryIds: [category.id] }));
+    expect(await call('updateMediaItemCategory', { title, categoryName: category.name, included: true })).toEqual(jasmine.objectContaining({ id, categoryIds: [category.id], subcategoryIds: [] }));
     expect((await call('searchMediaItems', { title, categoryName: category.name })).mediaItems.map((found) => found.id)).toEqual([id]);
-    expect(sent().calls.argsFor(0)[0]).toBe('mediaItemUpdated');
+    expect(sent().calls.argsFor(0).slice(0, 2)).toEqual(['mediaItemUpdated', jasmine.objectContaining({ mediaItemId: id, title })]);
   });
 
   it('puts the item in a subcategory, and its category', async () => {
     const category = await newCategory('with subcategories', ['First', 'Second']);
-    const [firstSub, secondSub] = category.subcategories;
+    const secondSub = category.subcategories[1];
     const { title } = await create('in subcategory');
     expect(await call('updateMediaItemCategory', { title, categoryName: category.name, subcategoryName: 'Second', included: true }))
       .toEqual(jasmine.objectContaining({ categoryIds: [category.id], subcategoryIds: [secondSub.id] }));
     expect((await call('searchMediaItems', { title, categoryName: category.name, subcategoryName: 'Second' })).total).toBe(1);
     expect((await call('searchMediaItems', { title, categoryName: category.name, subcategoryName: 'First' })).total).toBe(0);
-    expect(firstSub.name).toBe('First');
+  });
+
+  it('puts the item in a category only once, however often it is asked', async () => {
+    const category = await newCategory('twice', []);
+    const { title } = await create('in twice');
+    await call('updateMediaItemCategory', { title, categoryName: category.name, included: true });
+    expect((await call('updateMediaItemCategory', { title, categoryName: category.name, included: true })).categoryIds).toEqual([category.id]);
   });
 
   it('takes the item out of one subcategory only, then out of the whole category', async () => {
@@ -706,14 +801,17 @@ contract.describe('updateMediaItemCategory', () => {
       .toEqual(jasmine.objectContaining({ categoryIds: [category.id], subcategoryIds: [category.subcategories[1].id] }));
     expect(await call('updateMediaItemCategory', { title, categoryName: category.name, included: false }))
       .toEqual(jasmine.objectContaining({ categoryIds: [], subcategoryIds: [] }));
-  });
+    expect((await call('searchMediaItems', { title, categoryName: category.name })).total).toBe(0);
+  }, 120000);
 
-  describe('refuses, and changes nothing', () => {
+  describe('refuses, changes nothing and announces nothing', () => {
     it('a category nothing is named, naming it', async () => {
       const { title } = await create('no such category');
+      sent().calls.reset();
       const name = unique('no category');
       expect(await refusal(call('updateMediaItemCategory', { title, categoryName: name, included: true }))).toContain(name);
       expect((await item(title)).categoryIds).toEqual([]);
+      expect(sent()).not.toHaveBeenCalled();
     });
 
     it('a subcategory the category does not have, naming it', async () => {
@@ -732,8 +830,9 @@ contract.describe('updateMediaItemCategory', () => {
     });
 
     it('a title no item has, naming it', async () => {
+      const category = await newCategory('for missing', []);
       const title = unique('missing');
-      expect(await refusal(call('updateMediaItemCategory', { title, categoryName: appCategory, included: true }))).toContain(title);
+      expect(await refusal(call('updateMediaItemCategory', { title, categoryName: category.name, included: true }))).toContain(title);
     });
 
     refusesEachRequired('updateMediaItemCategory', async () => ({ title: unique('required'), categoryName: unique('category'), included: true }), ['title', 'categoryName']);
@@ -749,6 +848,7 @@ contract.describe('updateMediaItemCategoryAdvanced', () => {
     const subcategoryId = category.subcategories[0].id;
     expect(await call('updateMediaItemCategoryAdvanced', { mediaItemId: id, categoryId: category.id, subcategoryId, included: true }))
       .toEqual(jasmine.objectContaining({ id, categoryIds: [category.id], subcategoryIds: [subcategoryId] }));
+    expect((await call('searchMediaItems', { title, categoryName: category.name, subcategoryName: 'Sub' })).total).toBe(1);
     await call('updateMediaItemCategoryAdvanced', { mediaItemId: id, categoryId: category.id, included: false });
     expect(await item(title)).toEqual(jasmine.objectContaining({ categoryIds: [], subcategoryIds: [] }));
   });
@@ -772,6 +872,13 @@ contract.describe('updateMediaItemCategoryAdvanced', () => {
       expect((await item(title)).categoryIds).toEqual([]);
     });
 
+    it('without saying in or out', async () => {
+      const category = await newCategory('no choice by id', []);
+      const { title, id } = await create('no choice by id');
+      expect(await refusal(call('updateMediaItemCategoryAdvanced', { mediaItemId: id, categoryId: category.id }))).toContain('included');
+      expect((await item(title)).categoryIds).toEqual([]);
+    });
+
     refusesEachRequired('updateMediaItemCategoryAdvanced', async () => ({ mediaItemId: missingId, categoryId: missingId, included: true }), ['mediaItemId', 'categoryId']);
   });
 });
@@ -779,20 +886,28 @@ contract.describe('updateMediaItemCategoryAdvanced', () => {
 contract.describe('updateMediaItemsCategoryAdvanced', () => {
   beforeEach(standIns);
 
-  it('applies every change, and reports each', async () => {
+  it('applies every change, several to one item, and reports each', async () => {
     const category = await newCategory('batch category', ['Sub']);
+    const other = await newCategory('batch other category', []);
     const first = await create('batch category one');
     const second = await create('batch category two');
     const result = await call('updateMediaItemsCategoryAdvanced', { mediaItems: [
       { mediaItemId: first.id, categoryId: category.id, included: true },
-      { mediaItemId: second.id, categoryId: category.id, subcategoryId: category.subcategories[0].id, included: true }
+      { mediaItemId: second.id, categoryId: category.id, subcategoryId: category.subcategories[0].id, included: true },
+      { mediaItemId: first.id, categoryId: other.id, included: true }
     ] });
     expect(result).toEqual(jasmine.objectContaining({
-      mediaItems: [jasmine.objectContaining({ index: 0, id: first.id }), jasmine.objectContaining({ index: 1, id: second.id })], succeeded: 2, failed: 0
+      mediaItems: [
+        jasmine.objectContaining({ index: 0, id: first.id, error: null }),
+        jasmine.objectContaining({ index: 1, id: second.id, error: null }),
+        jasmine.objectContaining({ index: 2, id: first.id, error: null })
+      ],
+      succeeded: 3,
+      failed: 0
     }));
-    expect((await item(first.title)).categoryIds).toEqual([category.id]);
-    expect((await item(second.title)).subcategoryIds).toEqual([category.subcategories[0].id]);
-  });
+    expect((await item(first.title)).categoryIds).toEqual([category.id, other.id]);
+    expect(await item(second.title)).toEqual(jasmine.objectContaining({ categoryIds: [category.id], subcategoryIds: [category.subcategories[0].id] }));
+  }, 120000);
 
   describe('refuses the whole list, and changes none of it', () => {
     it('when an id matches nothing', async () => {
@@ -801,6 +916,10 @@ contract.describe('updateMediaItemsCategoryAdvanced', () => {
       expect(await refusal(call('updateMediaItemsCategoryAdvanced', { mediaItems: [
         { mediaItemId: made.id, categoryId: category.id, included: true },
         { mediaItemId: made.id, categoryId: missingId, included: true }
+      ] }))).toContain(missingId);
+      expect(await refusal(call('updateMediaItemsCategoryAdvanced', { mediaItems: [
+        { mediaItemId: made.id, categoryId: category.id, included: true },
+        { mediaItemId: missingId, categoryId: category.id, included: true }
       ] }))).toContain(missingId);
       expect((await item(made.title)).categoryIds).toEqual([]);
     });
