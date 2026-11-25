@@ -50,6 +50,12 @@
           "description": "A new picture or icon for the category, as a list holding one. Leave it out to keep the current one, or pass an empty list to remove it.",
           "minValue": 0,
           "maxValue": 1,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "nullable": true,
           "sampleValue": [
             "[image url]"

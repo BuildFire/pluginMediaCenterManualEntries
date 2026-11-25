@@ -106,6 +106,12 @@
           "description": "Picture shown in the list and on the item's page, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
           "minValue": 0,
           "maxValue": 1,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "nullable": true,
           "sampleValue": [
             "[image url]"
@@ -118,6 +124,12 @@
           "description": "Picture shown in the audio player, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
           "minValue": 0,
           "maxValue": 1,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "nullable": true,
           "sampleValue": [
             "[image url]"
@@ -130,6 +142,12 @@
           "description": "Picture shown blurred behind the audio player, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
           "minValue": 0,
           "maxValue": 1,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "nullable": true,
           "sampleValue": [
             "[image url]"
@@ -148,6 +166,17 @@
           "required": false,
           "description": "Action buttons shown on the item's page, in order; they replace the current ones. Leave it out to keep them, or pass an empty list to remove them all.",
           "minValue": 0,
+          "dialogOptions": {
+            "showIcon": true,
+            "imgLibOptions": {
+              "showIcons": true
+            },
+            "showTitle": false,
+            "hideActionText": false,
+            "allowNoAction": true,
+            "removePurchase": false,
+            "removePushNotifications": false
+          },
           "nullable": true,
           "sampleValue": [
             {

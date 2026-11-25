@@ -717,6 +717,12 @@
           "description": "Picture shown in the list and on the item's page, as a list holding one image. Leave it out for none.",
           "minValue": 0,
           "maxValue": 1,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "sampleValue": [
             "[image url]"
           ]
@@ -728,6 +734,12 @@
           "description": "Picture shown in the audio player, as a list holding one image. Leave it out for none.",
           "minValue": 0,
           "maxValue": 1,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "sampleValue": [
             "[image url]"
           ]
@@ -739,6 +751,12 @@
           "description": "Picture shown blurred behind the audio player, as a list holding one image. Leave it out for none.",
           "minValue": 0,
           "maxValue": 1,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "sampleValue": [
             "[image url]"
           ]
@@ -756,6 +774,17 @@
           "required": false,
           "description": "Action buttons shown on the item's page, in order, such as opening a website or calling a number. Leave it out for none.",
           "minValue": 0,
+          "dialogOptions": {
+            "showIcon": true,
+            "imgLibOptions": {
+              "showIcons": true
+            },
+            "showTitle": false,
+            "hideActionText": false,
+            "allowNoAction": true,
+            "removePurchase": false,
+            "removePushNotifications": false
+          },
           "sampleValue": [
             {
               "title": "Visit website",
@@ -975,6 +1004,12 @@
               "description": "Picture shown in the list and on the item's page, as a list holding one image. Leave it out for none.",
               "minValue": 0,
               "maxValue": 1,
+              "dialogOptions": {
+                "showIcons": true,
+                "showFiles": true,
+                "showStockImages": true,
+                "showAiImages": true
+              },
               "sampleValue": [
                 "[image url]"
               ]
@@ -986,6 +1021,12 @@
               "description": "Picture shown in the audio player, as a list holding one image. Leave it out for none.",
               "minValue": 0,
               "maxValue": 1,
+              "dialogOptions": {
+                "showIcons": true,
+                "showFiles": true,
+                "showStockImages": true,
+                "showAiImages": true
+              },
               "sampleValue": [
                 "[image url]"
               ]
@@ -997,6 +1038,12 @@
               "description": "Picture shown blurred behind the audio player, as a list holding one image. Leave it out for none.",
               "minValue": 0,
               "maxValue": 1,
+              "dialogOptions": {
+                "showIcons": true,
+                "showFiles": true,
+                "showStockImages": true,
+                "showAiImages": true
+              },
               "sampleValue": [
                 "[image url]"
               ]
@@ -1014,6 +1061,17 @@
               "required": false,
               "description": "Action buttons shown on the item's page, in order, such as opening a website or calling a number. Leave it out for none.",
               "minValue": 0,
+              "dialogOptions": {
+                "showIcon": true,
+                "imgLibOptions": {
+                  "showIcons": true
+                },
+                "showTitle": false,
+                "hideActionText": false,
+                "allowNoAction": true,
+                "removePurchase": false,
+                "removePushNotifications": false
+              },
               "sampleValue": [
                 {
                   "title": "Visit website",
@@ -1189,6 +1247,12 @@
           "description": "Picture shown in the list and on the item's page, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
           "minValue": 0,
           "maxValue": 1,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "nullable": true,
           "sampleValue": [
             "[image url]"
@@ -1201,6 +1265,12 @@
           "description": "Picture shown in the audio player, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
           "minValue": 0,
           "maxValue": 1,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "nullable": true,
           "sampleValue": [
             "[image url]"
@@ -1213,6 +1283,12 @@
           "description": "Picture shown blurred behind the audio player, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
           "minValue": 0,
           "maxValue": 1,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "nullable": true,
           "sampleValue": [
             "[image url]"
@@ -1231,6 +1307,17 @@
           "required": false,
           "description": "Action buttons shown on the item's page, in order; they replace the current ones. Leave it out to keep them, or pass an empty list to remove them all.",
           "minValue": 0,
+          "dialogOptions": {
+            "showIcon": true,
+            "imgLibOptions": {
+              "showIcons": true
+            },
+            "showTitle": false,
+            "hideActionText": false,
+            "allowNoAction": true,
+            "removePurchase": false,
+            "removePushNotifications": false
+          },
           "nullable": true,
           "sampleValue": [
             {
@@ -1470,6 +1557,12 @@
           "description": "Picture shown in the list and on the item's page, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
           "minValue": 0,
           "maxValue": 1,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "nullable": true,
           "sampleValue": [
             "[image url]"
@@ -1482,6 +1575,12 @@
           "description": "Picture shown in the audio player, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
           "minValue": 0,
           "maxValue": 1,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "nullable": true,
           "sampleValue": [
             "[image url]"
@@ -1494,6 +1593,12 @@
           "description": "Picture shown blurred behind the audio player, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
           "minValue": 0,
           "maxValue": 1,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "nullable": true,
           "sampleValue": [
             "[image url]"
@@ -1512,6 +1617,17 @@
           "required": false,
           "description": "Action buttons shown on the item's page, in order; they replace the current ones. Leave it out to keep them, or pass an empty list to remove them all.",
           "minValue": 0,
+          "dialogOptions": {
+            "showIcon": true,
+            "imgLibOptions": {
+              "showIcons": true
+            },
+            "showTitle": false,
+            "hideActionText": false,
+            "allowNoAction": true,
+            "removePurchase": false,
+            "removePushNotifications": false
+          },
           "nullable": true,
           "sampleValue": [
             {
@@ -1753,6 +1869,12 @@
               "description": "Picture shown in the list and on the item's page, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
               "minValue": 0,
               "maxValue": 1,
+              "dialogOptions": {
+                "showIcons": true,
+                "showFiles": true,
+                "showStockImages": true,
+                "showAiImages": true
+              },
               "nullable": true,
               "sampleValue": [
                 "[image url]"
@@ -1765,6 +1887,12 @@
               "description": "Picture shown in the audio player, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
               "minValue": 0,
               "maxValue": 1,
+              "dialogOptions": {
+                "showIcons": true,
+                "showFiles": true,
+                "showStockImages": true,
+                "showAiImages": true
+              },
               "nullable": true,
               "sampleValue": [
                 "[image url]"
@@ -1777,6 +1905,12 @@
               "description": "Picture shown blurred behind the audio player, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
               "minValue": 0,
               "maxValue": 1,
+              "dialogOptions": {
+                "showIcons": true,
+                "showFiles": true,
+                "showStockImages": true,
+                "showAiImages": true
+              },
               "nullable": true,
               "sampleValue": [
                 "[image url]"
@@ -1795,6 +1929,17 @@
               "required": false,
               "description": "Action buttons shown on the item's page, in order; they replace the current ones. Leave it out to keep them, or pass an empty list to remove them all.",
               "minValue": 0,
+              "dialogOptions": {
+                "showIcon": true,
+                "imgLibOptions": {
+                  "showIcons": true
+                },
+                "showTitle": false,
+                "hideActionText": false,
+                "allowNoAction": true,
+                "removePurchase": false,
+                "removePushNotifications": false
+              },
               "nullable": true,
               "sampleValue": [
                 {
@@ -3067,6 +3212,12 @@
           "description": "A picture or icon for the category, as a list holding one. Leave it out for none.",
           "minValue": 0,
           "maxValue": 1,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "sampleValue": [
             "[image url]"
           ]
@@ -3223,6 +3374,12 @@
               "description": "A picture or icon for the category, as a list holding one. Leave it out for none.",
               "minValue": 0,
               "maxValue": 1,
+              "dialogOptions": {
+                "showIcons": true,
+                "showFiles": true,
+                "showStockImages": true,
+                "showAiImages": true
+              },
               "sampleValue": [
                 "[image url]"
               ]
@@ -3376,6 +3533,12 @@
           "description": "A new picture or icon for the category, as a list holding one. Leave it out to keep the current one, or pass an empty list to remove it.",
           "minValue": 0,
           "maxValue": 1,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "nullable": true,
           "sampleValue": [
             "[image url]"
@@ -3539,6 +3702,12 @@
           "description": "A new picture or icon for the category, as a list holding one. Leave it out to keep the current one, or pass an empty list to remove it.",
           "minValue": 0,
           "maxValue": 1,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "nullable": true,
           "sampleValue": [
             "[image url]"
@@ -3703,6 +3872,12 @@
               "description": "A new picture or icon for the category, as a list holding one. Leave it out to keep the current one, or pass an empty list to remove it.",
               "minValue": 0,
               "maxValue": 1,
+              "dialogOptions": {
+                "showIcons": true,
+                "showFiles": true,
+                "showStockImages": true,
+                "showAiImages": true
+              },
               "nullable": true,
               "sampleValue": [
                 "[image url]"
@@ -5834,6 +6009,17 @@
           "required": false,
           "description": "The pictures shown in the carousel above the list, in order, each with what tapping it does; they replace the current ones. Leave it out to keep them, or pass an empty list to remove them all.",
           "minValue": 0,
+          "dialogOptions": {
+            "showIcon": true,
+            "imgLibOptions": {
+              "showIcons": true
+            },
+            "showTitle": true,
+            "hideActionText": false,
+            "allowNoAction": true,
+            "removePurchase": false,
+            "removePushNotifications": false
+          },
           "nullable": true,
           "sampleValue": [
             {
@@ -6283,6 +6469,12 @@
           "description": "The background picture, as a list holding one image. Leave it out to keep the current one, or pass an empty list to remove it.",
           "minValue": 0,
           "maxValue": 1,
+          "dialogOptions": {
+            "showIcons": true,
+            "showFiles": true,
+            "showStockImages": true,
+            "showAiImages": true
+          },
           "nullable": true,
           "sampleValue": [
             "[image url]"

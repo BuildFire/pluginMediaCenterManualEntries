@@ -21,7 +21,7 @@
  *
  * `buildfire` is resolved as a global: in the widget/control hosts it comes from the injected SDK, and on the server the headless SDK provides it. `widgetContract`, `controlContract` and `frameId` are assigned as implicit globals for the same reason — the consumer reaches them without importing this file. The widget frame (widget/contract.html) and the server dispatch to widgetContract; the control panel's frame (control/contract.html) loads this same file and dispatches to controlContract.
  *
- * Every function is Node-style: callback(error, result), invoked exactly once, never with both error and result populated. Invalid input is reported through the callback rather than thrown synchronously.
+ * Every function is Node-style: callback(error, result), invoked exactly once, never with both error and result populated. Invalid input is reported through the callback rather than thrown synchronously, and every refusal is a contractError(CODES.<code>, message): the caller gets it as a ContractOperationInvokeError carrying that code.
  *
  * Every option a function reads here must be declared in that operation's `parameters` block, or a caller cannot pass it: the MCP server refuses any param the contract does not declare.
  *
@@ -54,6 +54,13 @@ const MEDIA_TEXT_FIELDS = [
   ['artists', 'newArtists', 'artists', 70],
   ['audioUrl', 'newAudioUrl', 'audioUrl']
 ];
+// The image pickers' options every image param declares (dialogOptions in plugin.contract.json). Icons stay allowed:
+// the contract has always taken any image text, and declaring them off would refuse values it accepted.
+const IMAGE_DIALOG = { showIcons: true, showFiles: true, showStockImages: true, showAiImages: true };
+// The action item editor's options: the item page's actions (sortableList) and the carousel slides (carousel.editor, titled pictures).
+const ACTION_DIALOG = { showIcon: true, imgLibOptions: { showIcons: true }, showTitle: false, hideActionText: false, allowNoAction: true, removePurchase: false, removePushNotifications: false };
+const CAROUSEL_DIALOG = Object.assign({}, ACTION_DIALOG, { showTitle: true });
+
 const MEDIA_IMAGE_FIELDS = [
   ['thumbnailImage', 'newThumbnailImage', 'topImage'],
   ['audioImage', 'newAudioImage', 'image'],
@@ -62,7 +69,29 @@ const MEDIA_IMAGE_FIELDS = [
 
 /* ------------------------------------------------------------------ input checks */
 
-const fail = (callback, message) => callback(new Error(message), undefined);
+// The codes a caller gets with a refusal (ContractOperationInvokeError.CODES in the SDK's buildfire.js). The literal
+// copy is for an older SDK without the class; its values never change.
+const CODES = (typeof ContractOperationInvokeError === 'function' && ContractOperationInvokeError.CODES) || {
+  NOT_FOUND: 'notFound', VALIDATION: 'validation', NOT_SUPPORTED: 'notSupported', NOT_ALLOWED: 'notAllowed',
+  UNAUTHENTICATED: 'unauthenticated', ALREADY_EXISTS: 'alreadyExists', CONFLICT: 'conflict', LIMIT_EXCEEDED: 'limitExceeded',
+  CANCELLED: 'cancelled', TIMEOUT: 'timeout', NOT_AVAILABLE: 'notAvailable', NETWORK: 'network', INTERNAL: 'internal'
+};
+
+/**
+ * A refusal, with the code the caller branches on. A ContractOperationInvokeError where the SDK has the class; on an older
+ * SDK (or a headless one without it) an Error carrying the same code, which a newer SDK on the caller's side still reads.
+ * @param {string} code - one of CODES
+ * @param {string} message - what was refused and why, naming the parameter or the text the caller passed
+ */
+const contractError = (code, message) => {
+  if (typeof ContractOperationInvokeError === 'function') return new ContractOperationInvokeError({ code, message });
+  const error = new Error(message);
+  error.code = code;
+  return error;
+};
+
+/** Refuses the call: a parameter it does not accept, unless another code is given. */
+const fail = (callback, message, code = CODES.VALIDATION) => callback(contractError(code, message), undefined);
 const isPlainObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
 
 /**
@@ -102,30 +131,53 @@ const checkText = (value, name, max) => {
   return null;
 };
 
-/**
- * An image param, checked against its declared count. Image params are always arrays, even for a single image, so a bare string is refused rather than wrapped: it means the caller misread the contract.
- * @returns {{ images?: string[], error?: string }}
- */
-const readImageList = (value, { name, minValue, maxValue }) => {
-  const range = maxValue === undefined ? `at least ${minValue}`
-    : (minValue === maxValue ? `exactly ${minValue}` : (minValue === 0 ? `up to ${maxValue}` : `${minValue} to ${maxValue}`));
-  if (!Array.isArray(value)) return { error: `${name} must be a list of image URLs (${range}), even for one image` };
-  if (value.length < minValue || (maxValue !== undefined && value.length > maxValue)) {
-    return { error: `${name} must hold ${range} image${maxValue === 1 ? '' : 's'}; got ${value.length}` };
-  }
-  if (value.some((url) => typeof url !== 'string' || !url)) return { error: `${name} must contain only image URLs` };
-  return { images: value };
+// What each list type holds, for checking its entries and naming them in a message.
+const LIST_ENTRIES = {
+  image: { noun: 'image URL', valid: (entry) => typeof entry === 'string' && !!entry },
+  action: { noun: 'action item', valid: (entry) => isPlainObject(entry) && typeof entry.action === 'string' && !!entry.action }
 };
 
+// The SDK dialog options an image or action param leaves out: icons offered, "No Action" allowed.
+const DIALOG_DEFAULTS = {
+  image: { showIcons: true, showFiles: true, showStockImages: true, showAiImages: true },
+  action: { showIcon: true, allowNoAction: true, removePurchase: false, removePushNotifications: false }
+};
+// an image entry that is an icon's class names (what the image library returns for an icon), not an image URL
+const isIconEntry = (entry) => typeof entry === 'string' && !!entry.trim() && !/[/:]/.test(entry);
+
 /**
- * A list of action items, stored as passed. The plugin takes whatever its action item editor makes, so every action kind is accepted; each entry must still be an action item, an object naming its action.
- * @returns {{ actions?: object[], error?: string }}
+ * An image or action param, checked against its declared count and dialogOptions. These types are declared and sent as arrays, even for a single value; a single value on its own (an image URL, one action item object) is still accepted as a one-item list, and an empty value as none.
+ * @param {*} value - the param as passed
+ * @param {{ name: string, type: 'image'|'action', minValue: number, maxValue?: number, dialogOptions?: object }} declared - exactly as declared
+ * @returns {{ list?: Array, error?: string }}
  */
-const readActionList = (value, name) => {
-  if (!Array.isArray(value)) return { error: `${name} must be a list of action items` };
-  const bad = value.findIndex((action) => !isPlainObject(action) || typeof action.action !== 'string' || !action.action);
-  if (bad !== -1) return { error: `${name} entry ${bad} must be an action item, with its action` };
-  return { actions: value };
+const readList = (value, { name, type, minValue, maxValue, dialogOptions }) => {
+  const { noun, valid } = LIST_ENTRIES[type];
+  const range = maxValue === undefined ? `at least ${minValue}`
+    : (minValue === maxValue ? `exactly ${minValue}` : (minValue === 0 ? `up to ${maxValue}` : `${minValue} to ${maxValue}`));
+  // backward compatible: a single value is the older way of sending one entry
+  if (!Array.isArray(value)) value = (value === undefined || value === null || value === '') ? [] : [value];
+  if (value.length < minValue || (maxValue !== undefined && value.length > maxValue)) {
+    return { error: `${name} must hold ${range} ${noun}${maxValue === 1 ? '' : 's'}; got ${value.length}` };
+  }
+  if (type === 'image' && dialogOptions) {
+    const options = Object.assign({}, DIALOG_DEFAULTS.image, dialogOptions);
+    // with icons shown, an entry may be an icon's class names instead of an image URL
+    const validImage = (entry) => typeof entry === 'string' && !!entry && (isIconEntry(entry)
+      ? options.showIcons : (options.showFiles || options.showStockImages || options.showAiImages));
+    if (!value.every(validImage)) return { error: options.showIcons ? `${name} must contain only images or icons` : `${name} must contain only image URLs` };
+    return { list: value };
+  }
+  const bad = value.findIndex((entry) => !valid(entry));
+  if (bad !== -1) return { error: `${name} entry ${bad} must be an ${noun}${type === 'action' ? ', with its action' : ''}` };
+  if (type === 'action' && dialogOptions) {
+    const options = Object.assign({}, DIALOG_DEFAULTS.action, dialogOptions);
+    const refused = value.find((item) => (item.action === 'noAction' && !options.allowNoAction)
+      || (item.action === 'purchase' && options.removePurchase)
+      || (item.action === 'sendPushNotification' && options.removePushNotifications));
+    if (refused) return { error: `${name} does not allow a "${refused.action}" action item` };
+  }
+  return { list: value };
 };
 
 /** A date param ("2026-08-17" or a full instant), or an error message. */
@@ -196,8 +248,8 @@ const findOne = (tag, field, text, label, callback) => {
     if (err) return callback(err, undefined);
     const found = ((response && response.result) || []).filter(Boolean);
     const total = Math.max((response && response.totalRecord) || 0, found.length);
-    if (!total) return callback(new Error(`No ${label} named "${text}"`), undefined);
-    if (total > 1) return callback(new Error(`${total} ${label.replace(/y$/, 'ie')}s are named "${text}"`), undefined);
+    if (!total) return fail(callback, `No ${label} named "${text}"`, CODES.NOT_FOUND);
+    if (total > 1) return fail(callback, `${total} ${label.replace(/y$/, 'ie')}s are named "${text}"`, CODES.CONFLICT);
     callback(null, found[0]);
   });
 };
@@ -209,7 +261,7 @@ const findOne = (tag, field, text, label, callback) => {
 const requireById = (tag, id, label, callback) => {
   buildfire.datastore.getById(id, tag, (err, record) => {
     if (err) return callback(err, undefined);
-    if (!record || !record.data || !Object.keys(record.data).length) return callback(new Error(`No ${label} with id "${id}"`), undefined);
+    if (!record || !record.data || !Object.keys(record.data).length) return fail(callback, `No ${label} with id "${id}"`, CODES.NOT_FOUND);
     callback(null, { id: record.id || id, data: record.data });
   });
 };
@@ -508,9 +560,9 @@ const collectMediaChanges = (options, isUpdate) => {
       changes[field] = '';
       continue;
     }
-    const { images, error } = readImageList(value, { name, minValue: 0, maxValue: 1 });
+    const { list, error } = readList(value, { name, type: 'image', minValue: 0, maxValue: 1, dialogOptions: IMAGE_DIALOG });
     if (error) return { error };
-    changes[field] = images.length ? images[0] : '';
+    changes[field] = list.length ? list[0] : '';
   }
   const dateName = isUpdate ? 'newMediaDate' : 'mediaDate';
   if (options[dateName] !== undefined) {
@@ -524,9 +576,9 @@ const collectMediaChanges = (options, isUpdate) => {
     if (options[linksName] === null && isUpdate) {
       changes.links = [];
     } else {
-      const { actions, error } = readActionList(options[linksName], linksName);
+      const { list, error } = readList(options[linksName], { name: linksName, type: 'action', minValue: 0, dialogOptions: ACTION_DIALOG });
       if (error) return { error };
-      changes.links = actions;
+      changes.links = list;
     }
   }
   if (isUpdate && options.resetViews !== undefined && typeof options.resetViews !== 'boolean') return { error: 'resetViews must be true or false' };
@@ -645,7 +697,7 @@ const requireCategoryHandles = (categoryId, subcategoryId, callback) => {
     if (err) return callback(err, undefined);
     if (subcategoryId === undefined) return callback(null, { category, subcategoryId: undefined });
     const found = (category.data.subcategories || []).some((subcategory) => subcategory.id === subcategoryId);
-    if (!found) return callback(new Error(`Category "${category.data.name}" has no subcategory with id "${subcategoryId}"`), undefined);
+    if (!found) return fail(callback, `Category "${category.data.name}" has no subcategory with id "${subcategoryId}"`, CODES.NOT_FOUND);
     callback(null, { category, subcategoryId });
   });
 };
@@ -673,7 +725,7 @@ const checkIncluded = (options) => (typeof options.included === 'boolean' ? null
 
 /** Moves one record to a position of a manual order and renumbers the ranks that changed, 1 for the first place (mediaHomeController.js / categoryHomeController.js onOrderChange). */
 const moveInRankOrder = (tag, records, id, position, callback) => {
-  if (position > records.length) return callback(new Error(`position must be from 1 to ${records.length}`), undefined);
+  if (position > records.length) return fail(callback, `position must be from 1 to ${records.length}`);
   const ordered = records.slice();
   const from = ordered.findIndex((record) => record.id === id);
   const [moved] = ordered.splice(from, 1);
@@ -732,9 +784,9 @@ const sortSubcategories = (subcategories, sortBy) => {
 const readIcon = (value, name, isUpdate) => {
   // The icon picker allows a picture or one of BuildFire's icons, stored as one value; a removed icon is stored as ''.
   if (value === null && isUpdate) return { icon: '' };
-  const { images, error } = readImageList(value, { name, minValue: 0, maxValue: 1 });
+  const { list, error } = readList(value, { name, type: 'image', minValue: 0, maxValue: 1, dialogOptions: IMAGE_DIALOG });
   if (error) return { error };
-  return { icon: images.length ? images[0] : '' };
+  return { icon: list.length ? list[0] : '' };
 };
 
 /** The changes a category update asks for: name (never cleared), icon (null or [] removes it), subcategory order. */
@@ -842,14 +894,14 @@ const removeCategory = (record, callback) => {
 /** The one subcategory of a category with this exact name; several are refused. */
 const resolveSubcategory = (category, name, callback) => {
   const found = (category.data.subcategories || []).filter((subcategory) => subcategory.name === name);
-  if (!found.length) return callback(new Error(`Category "${category.data.name}" has no subcategory named "${name}"`), undefined);
-  if (found.length > 1) return callback(new Error(`${found.length} subcategories of "${category.data.name}" are named "${name}"`), undefined);
+  if (!found.length) return fail(callback, `Category "${category.data.name}" has no subcategory named "${name}"`, CODES.NOT_FOUND);
+  if (found.length > 1) return fail(callback, `${found.length} subcategories of "${category.data.name}" are named "${name}"`, CODES.CONFLICT);
   callback(null, found[0]);
 };
 
 const requireSubcategoryById = (category, subcategoryId, callback) => {
   const found = (category.data.subcategories || []).find((subcategory) => subcategory.id === subcategoryId);
-  if (!found) return callback(new Error(`Category "${category.data.name}" has no subcategory with id "${subcategoryId}"`), undefined);
+  if (!found) return fail(callback, `Category "${category.data.name}" has no subcategory with id "${subcategoryId}"`, CODES.NOT_FOUND);
   callback(null, found);
 };
 
@@ -888,7 +940,7 @@ const removeSubcategory = (category, subcategoryId, callback) => {
 /** Mirrors onOrderChange of addEditCategoryController.js: the list reordered, every subcategory ranked by its place, counting from 0. */
 const moveSubcategory = (category, subcategoryId, position, callback) => {
   const subcategories = (category.data.subcategories || []).slice();
-  if (position > subcategories.length) return callback(new Error(`position must be from 1 to ${subcategories.length}`), undefined);
+  if (position > subcategories.length) return fail(callback, `position must be from 1 to ${subcategories.length}`);
   const from = subcategories.findIndex((subcategory) => subcategory.id === subcategoryId);
   const [moved] = subcategories.splice(from, 1);
   subcategories.splice(position - 1, 0, moved);
@@ -954,7 +1006,7 @@ const runBatch = (options, callback, { listName, validate, duplicateKey, resolve
   const unknown = [];
   let pending = entries.length;
   const applyAll = () => {
-    if (unknown.length) return fail(callback, `Not found: ${unknown.join('; ')}`);
+    if (unknown.length) return fail(callback, `Not found: ${unknown.join('; ')}`, CODES.NOT_FOUND);
     const results = [];
     const applyNext = (index) => {
       if (index === entries.length) {
@@ -1674,9 +1726,9 @@ widgetContract = {
       if (options.carouselImages === null) {
         content.images = [];
       } else {
-        const { actions, error } = readActionList(options.carouselImages, 'carouselImages');
+        const { list, error } = readList(options.carouselImages, { name: 'carouselImages', type: 'action', minValue: 0, dialogOptions: CAROUSEL_DIALOG });
         if (error) return fail(callback, error);
-        content.images = actions;
+        content.images = list;
       }
     }
     if (options.mediaSortOrder !== undefined) {
@@ -1755,9 +1807,9 @@ widgetContract = {
       if (options.backgroundImage === null) {
         design.backgroundImage = '';
       } else {
-        const { images, error } = readImageList(options.backgroundImage, { name: 'backgroundImage', minValue: 0, maxValue: 1 });
+        const { list, error } = readList(options.backgroundImage, { name: 'backgroundImage', type: 'image', minValue: 0, maxValue: 1, dialogOptions: IMAGE_DIALOG });
         if (error) return fail(callback, error);
-        design.backgroundImage = images.length ? images[0] : '';
+        design.backgroundImage = list.length ? list[0] : '';
       }
     }
     if (!Object.keys(design).length) return fail(callback, 'Pass at least one of listLayout, itemLayout or backgroundImage');
